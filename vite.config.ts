@@ -31,4 +31,12 @@ export default defineConfig({
       plugins: [require('tailwindcss'), require('autoprefixer')],
     },
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://121.37.10.68:8081',
+        changeOrigin: true,
+      },
+    },
+  },
 });

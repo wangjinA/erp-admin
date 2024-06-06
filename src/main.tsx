@@ -7,7 +7,6 @@ import { ConfigProvider } from '@arco-design/web-react';
 import zhCN from '@arco-design/web-react/es/locale/zh-CN';
 import enUS from '@arco-design/web-react/es/locale/en-US';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import axios from 'axios';
 import rootReducer from './store';
 import PageLayout from './layout';
 import { GlobalContext } from './context';
@@ -15,7 +14,9 @@ import Login from './pages/login';
 import checkLogin from './utils/checkLogin';
 import changeTheme from './utils/changeTheme';
 import useStorage from './utils/useStorage';
-import './mock';
+import Mock from 'mockjs';
+// import './mock';
+import { generatePermission } from './routes';
 
 const store = createStore(rootReducer);
 
@@ -35,15 +36,33 @@ function Index() {
   }
 
   function fetchUserInfo() {
+    const userRole = window.localStorage.getItem('userRole') || 'admin';
+    const userInfo = {
+      name: 'admin',
+      avatar:
+        'https://lf1-xgcdn-tos.pstatp.com/obj/vcloud/vadmin/start.8e0e4855ee346a46ccff8ff3e24db27b.png',
+      email: 'wangliqun@email.com',
+      job: 'frontend',
+      jobName: '前端开发工程师',
+      organization: 'Frontend',
+      organizationName: '前端',
+      location: 'beijing',
+      locationName: '北京',
+      introduction: '王力群并非是一个真实存在的人。',
+      personalWebsite: 'https://www.arco.design',
+      verified: true,
+      phoneNumber: /177[*]{6}[0-9]{2}/,
+      accountId: /[a-z]{4}[-][0-9]{8}/,
+      registrationTime: Mock.Random.datetime('yyyy-MM-dd HH:mm:ss'),
+      permissions: generatePermission(userRole),
+    };
     store.dispatch({
       type: 'update-userInfo',
       payload: { userLoading: true },
     });
-    axios.get('/api/user/userInfo').then((res) => {
-      store.dispatch({
-        type: 'update-userInfo',
-        payload: { userInfo: res.data, userLoading: false },
-      });
+    store.dispatch({
+      type: 'update-userInfo',
+      payload: { userInfo, userLoading: false },
     });
   }
 
