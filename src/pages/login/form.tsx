@@ -36,14 +36,16 @@ export default function LoginForm() {
     loading,
     data,
   } = useRequest(async (params) => {
-    const res = await login(params);
-    console.log(res);
+    try {
+      const res = await login(params);
+      console.log(res);
 
-    if (res.data.code === SuccessCode) {
-      afterLoginSuccess(params);
-    } else {
-      Message.error(res.data.msg || t['login.form.login.errMsg']);
-    }
+      if (res.data.code === SuccessCode) {
+        afterLoginSuccess(params);
+      } else {
+        Message.error(res.data.msg || t['login.form.login.errMsg']);
+      }
+    } catch (error) {}
     afterLoginSuccess(params);
   }, {});
 
