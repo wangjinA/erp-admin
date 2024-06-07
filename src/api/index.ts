@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const baseURL = '';
+export const baseURL = import.meta.env.DEV ? '' : 'http://121.37.10.68:8081';
 
 const baseAxios = axios.create({
   baseURL,
