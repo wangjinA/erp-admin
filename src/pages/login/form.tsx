@@ -44,6 +44,7 @@ export default function LoginForm() {
     } else {
       Message.error(res.data.msg || t['login.form.login.errMsg']);
     }
+    afterLoginSuccess(params);
   }, {});
 
   function afterLoginSuccess(params) {
