@@ -15,7 +15,7 @@ const mockLine = (name) => {
 
 const mockPie = () => {
   return new Array(3).fill(0).map((_, index) => ({
-    name: ['纯文本', '图文类', '视频类'][index],
+    name: ['分类1', '分类2', '分类3'][index],
     count: Mock.Random.natural(20, 100),
   }));
 };
@@ -55,9 +55,9 @@ setupMock({
 
     Mock.mock(new RegExp('/api/data-analysis/content-publishing'), () => {
       return [
-        ...getTimeLine('纯文本'),
-        ...getTimeLine('视频类'),
-        ...getTimeLine('图文类'),
+        ...getTimeLine('分类1'),
+        ...getTimeLine('分类2'),
+        ...getTimeLine('分类3'),
       ];
     });
 

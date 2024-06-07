@@ -5,7 +5,7 @@ import setupMock from '@/utils/setupMock';
 
 const legend = ['活跃用户数', '内容生产量', '内容点击量', '内容曝光量'];
 const count = [0, 600, 1000, 2000, 4000];
-const category = ['纯文本', '图文类', '视频类'];
+const category = ['分类1', '分类2', '分类3'];
 const getLineData = (name, index) => {
   const { list } = Mock.mock({
     'list|10': [

@@ -1,8 +1,29 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
+  darkMode: 'class', // 启用暗黑模式
+  // darkMode: 'media', // 根据媒体查询切换暗黑模式
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        white: 'var(--color-menu-light-bg)',
+        // bg: {
+        //   1: 'var(--color-bg-1)',
+        //   2: 'var(--color-bg-2)',
+        //   3: 'var(--color-bg-3)',
+        //   4: 'var(--color-bg-4)',
+        //   5: 'var(--color-bg-5)',
+        //   white: 'var(--color-bg-1)',
+        // },
+        // // 文字颜色
+        // text: {
+        //   1: 'var(--color-text-1)',
+        //   2: 'var(--color-text-2)',
+        //   3: 'var(--color-text-3)',
+        //   4: 'var(--color-text-4)',
+        // },
+      },
+    },
   },
   plugins: [],
 };

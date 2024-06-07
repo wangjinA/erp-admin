@@ -1,3 +1,9 @@
+import React from 'react';
+import ScanCommon from '../ScanCommon';
 export default () => {
-  return <div>123</div>
-}
+  return (
+    <div>
+      <ScanCommon></ScanCommon>
+    </div>
+  );
+};

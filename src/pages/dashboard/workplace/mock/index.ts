@@ -67,17 +67,17 @@ setupMock({
     Mock.mock(new RegExp('/api/workplace/content-percentage'), () => {
       return [
         {
-          type: '纯文本',
+          type: '分类1',
           count: 148564,
           percent: 0.16,
         },
         {
-          type: '图文类',
+          type: '分类2',
           count: 334271,
           percent: 0.36,
         },
         {
-          type: '视频类',
+          type: '分类3',
           count: 445695,
           percent: 0.48,
         },

@@ -2,7 +2,7 @@ import Mock from 'mockjs';
 import dayjs from 'dayjs';
 import setupMock from '@/utils/setupMock';
 
-const qualityCategory = ['视频类', '图文类', '纯文本'];
+const qualityCategory = ['分类1', '分类2', '分类3'];
 const qualityName = ['历史导入', '内容版权', '敏感内容', '商业品牌'];
 
 const serviceName = [

@@ -5,7 +5,7 @@ const i18n = {
     'login.form.password.errMsg': 'Password cannot be empty',
     'login.form.login.errMsg': 'Login error, please refresh and try again',
     'login.form.userName.placeholder': 'Username: admin',
-    'login.form.password.placeholder': 'Password: admin',
+    'login.form.password.placeholder': 'Password: 123456',
     'login.form.rememberPassword': 'Remember password',
     'login.form.forgetPassword': 'Forgot password',
     'login.form.login': 'login',

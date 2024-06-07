@@ -6,9 +6,10 @@ import {
   Button,
   Space,
   Message,
+  Image,
 } from '@arco-design/web-react';
 import { FormInstance } from '@arco-design/web-react/es/Form';
-import { IconLock, IconUser } from '@arco-design/web-react/icon';
+import { IconLock, IconSafe, IconUser } from '@arco-design/web-react/icon';
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import useStorage from '@/utils/useStorage';
@@ -16,14 +17,16 @@ import useLocale from '@/utils/useLocale';
 import locale from './locale';
 import styles from './style/index.module.less';
 import { useRequest } from 'ahooks';
-import { login } from '@/api/user';
+import { getCaptcha, login } from '@/api/user';
+import { random } from 'lodash';
+import { SuccessCode } from '@/api';
 
 export default function LoginForm() {
   const formRef = useRef<FormInstance>();
   const [errorMessage, setErrorMessage] = useState('');
   const [loginParams, setLoginParams, removeLoginParams] =
     useStorage('loginParams');
-
+  const [randomStr, setRandomStr] = useState(null);
   const t = useLocale(locale);
 
   const [rememberPassword, setRememberPassword] = useState(!!loginParams);
@@ -36,14 +39,12 @@ export default function LoginForm() {
     const res = await login(params);
     console.log(res);
 
-    if (res.data.code === 0) {
+    if (res.data.code === SuccessCode) {
       afterLoginSuccess(params);
     } else {
       Message.error(res.data.msg || t['login.form.login.errMsg']);
-      afterLoginSuccess(params);
     }
   }, {});
-  console.log(data);
 
   function afterLoginSuccess(params) {
     // 记住密码
@@ -103,7 +104,10 @@ export default function LoginForm() {
         className={styles['login-form']}
         layout="vertical"
         ref={formRef}
-        initialValues={{ userName: 'admin', password: 'admin' }}
+        initialValues={{
+          userLoginAccount: 'admin',
+          userLoginPassword: '123456',
+        }}
       >
         <Form.Item
           field="userLoginAccount"
@@ -124,6 +128,28 @@ export default function LoginForm() {
             placeholder={t['login.form.password.placeholder']}
             onPressEnter={onSubmitClick}
           />
+        </Form.Item>
+        <Form.Item>
+          <div className="flex">
+            <Form.Item
+              noStyle={true}
+              field="captcha"
+              rules={[
+                { required: true, message: t['login.form.password.errMsg'] },
+              ]}
+            >
+              <Input
+                prefix={<IconSafe />}
+                placeholder="请输入验证码答案"
+                onPressEnter={onSubmitClick}
+              />
+            </Form.Item>
+            <Image
+              preview={false}
+              src={getCaptcha(randomStr)}
+              onClick={() => setRandomStr(random(1, 99999))}
+            />
+          </div>
         </Form.Item>
         <Space size={16} direction="vertical">
           <div className={styles['login-form-password-actions']}>

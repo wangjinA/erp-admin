@@ -7,4 +7,6 @@ const baseAxios = axios.create({
   timeout: 10 * 1000,
 });
 
+export const SuccessCode = 200;
+
 export default baseAxios;

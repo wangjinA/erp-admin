@@ -36,6 +36,7 @@ import styles from './style/index.module.less';
 import defaultLocale from '@/locale';
 import useStorage from '@/utils/useStorage';
 import { generatePermission } from '@/routes';
+import userPng from '@/assets/user.png';
 
 function Navbar({ show }: { show: boolean }) {
   const t = useLocale();
@@ -195,7 +196,9 @@ function Navbar({ show }: { show: boolean }) {
             />
           </Tooltip>
         </li>
-        <Settings />
+        <li>
+          <Settings />
+        </li>
         {userInfo && (
           <li>
             <Dropdown droplist={droplist} position="br" disabled={userLoading}>
@@ -203,7 +206,7 @@ function Navbar({ show }: { show: boolean }) {
                 {userLoading ? (
                   <IconLoading />
                 ) : (
-                  <img alt="avatar" src={userInfo.avatar} />
+                  <img alt="avatar" src={userPng} />
                 )}
               </Avatar>
             </Dropdown>

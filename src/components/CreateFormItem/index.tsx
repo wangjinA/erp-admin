@@ -1,5 +1,6 @@
 import React, { ReactNode, ReactElement } from 'react';
 import {
+  ColProps,
   Form,
   FormItemProps,
   Input,
@@ -26,6 +27,16 @@ export interface CreateFormItemType {
 }
 export type CreateFormItemParams = (params: CreateFormItemType) => ReactElement;
 
+const labelCol: ColProps = {
+  xl: {
+    span: 6,
+  },
+};
+const wrapperCol: ColProps = {
+  xl: {
+    span: 18,
+  },
+};
 const createFormItem: CreateFormItemParams = ({
   schema,
   control,
@@ -35,7 +46,13 @@ const createFormItem: CreateFormItemParams = ({
   const { field, label, tips, position, rules, defaultValue } = schema;
   const getFormControl = (s: FormSchema) => {
     if (!control || control === 'input') {
-      return <Input placeholder="请输入" allowClear={true} {...controlProps} />;
+      return (
+        <Input
+          placeholder={`请输入${label}`}
+          allowClear={true}
+          {...controlProps}
+        />
+      );
     } else if (typeof control === 'string') {
       switch (control.toLowerCase()) {
         case 'radio':
@@ -66,7 +83,9 @@ const createFormItem: CreateFormItemParams = ({
       label={<LabelWithTips label={label} tips={tips} position={position} />}
       field={field}
       rules={rules}
-      wrapperCol={{ style: { flex: 1, width: 0 } }}
+      labelCol={labelCol}
+      wrapperCol={wrapperCol}
+      // wrapperCol={{ style: { flex: 1, width: 0 } }}
       {...defaultValueObj}
       {...formItemProps}
     >
