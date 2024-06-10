@@ -5,6 +5,7 @@ import {
   FormItemProps,
   Input,
   Radio,
+  Select,
   Switch,
 } from '@arco-design/web-react';
 import LabelWithTips, { LabelWithTipsProps } from '../LabelWithTips';
@@ -28,20 +29,26 @@ export interface CreateFormItemType {
 export type CreateFormItemParams = (params: CreateFormItemType) => ReactElement;
 
 const labelCol: ColProps = {
-  xl: {
-    span: 6,
+  style: {
+    width: '8em',
+    paddingLeft: 2,
   },
+  // xl: {
+  //   span: 6,
+  // },
 };
 const wrapperCol: ColProps = {
-  xl: {
-    span: 18,
-  },
+  flex: 1,
+  // xl: {
+  //   span: 18,
+  // },
 };
 const createFormItem: CreateFormItemParams = ({
   schema,
   control,
   formItemProps,
   controlProps,
+  ...otherProps
 }) => {
   const { field, label, tips, position, rules, defaultValue } = schema;
   const getFormControl = (s: FormSchema) => {
@@ -65,6 +72,8 @@ const createFormItem: CreateFormItemParams = ({
           return (
             <Switch checkedText="是" uncheckedText="否" {...controlProps} />
           );
+        case 'select':
+          return <Select {...controlProps} />;
         default:
           return <span>{control}</span>;
       }
@@ -79,15 +88,22 @@ const createFormItem: CreateFormItemParams = ({
 
   return (
     <Form.Item
+      colon=":"
       key={field}
       label={<LabelWithTips label={label} tips={tips} position={position} />}
       field={field}
       rules={rules}
-      labelCol={labelCol}
+      // labelCol={{
+      //   style: {
+      //     width: '8em',
+      //     paddingLeft: 2,
+      //   },
+      // }}
       wrapperCol={wrapperCol}
       // wrapperCol={{ style: { flex: 1, width: 0 } }}
       {...defaultValueObj}
       {...formItemProps}
+      {...otherProps}
     >
       {getFormControl({ ...schema })}
     </Form.Item>

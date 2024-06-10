@@ -8,30 +8,28 @@ import InfoForm from './info';
 import Security from './security';
 import './mock';
 import Verified from './verified';
+import { GlobalState } from '@/store';
 
 function UserInfo() {
   const t = useLocale(locale);
-  const userInfo = useSelector((state: any) => state.userInfo);
-  const loading = useSelector((state: any) => state.userLoading);
+  const userInfo = useSelector((state: GlobalState) => state.userInfo);
+  const loading = useSelector((state: GlobalState) => state.userLoading);
+  const editPassword = useSelector((state: GlobalState) => state.editPassword);
   const [activeTab, setActiveTab] = useState('basic');
   return (
     <div>
       <Card style={{ padding: '14px 20px' }}>
         <InfoHeader userInfo={userInfo} loading={loading} />
       </Card>
-      <Card style={{ marginTop: '16px' }}>
-        <Tabs activeTab={activeTab} onChange={setActiveTab} type="rounded">
-          <Tabs.TabPane key="basic" title={t['userSetting.title.basicInfo']}>
-            <InfoForm loading={loading} />
-          </Tabs.TabPane>
-          <Tabs.TabPane key="security" title={t['userSetting.title.security']}>
-            <Security />
-          </Tabs.TabPane>
-          <Tabs.TabPane key="verified" title={t['userSetting.label.verified']}>
-            <Verified />
-          </Tabs.TabPane>
-        </Tabs>
-      </Card>
+      {editPassword && (
+        <Card style={{ marginTop: '16px' }}>
+          <Tabs activeTab={activeTab} onChange={setActiveTab} type="rounded">
+            <Tabs.TabPane key="basic" title="修改密码">
+              <InfoForm loading={loading} />
+            </Tabs.TabPane>
+          </Tabs>
+        </Card>
+      )}
     </div>
   );
 }

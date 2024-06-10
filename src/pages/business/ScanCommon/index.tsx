@@ -3,16 +3,17 @@ import { IconScan } from '@arco-design/web-react/icon';
 import classNames from 'classnames';
 import styles from './index.module.less';
 import React from 'react';
+import OrderTable from '@/components/OrderTable';
 export default () => {
   const height = 'h-20';
   return (
-    <div>
-      <Grid.Row className="mx-auto w-1/2 mt-12">
+    <div className="bg-white p-4">
+      <Grid.Row className="mx-auto w-1/2">
         <Grid.Col span={5}>
           <div
             className={classNames(
               height,
-              'flex flex-col border-r justify-center px-2'
+              'flex flex-col border-r border-neutral-3 justify-center px-2'
             )}
             style={{
               backgroundColor: 'var(--color-fill-2)',
@@ -49,6 +50,29 @@ export default () => {
           className="mt-4"
         />
       </Grid.Row>
+      <div>
+        <Alert
+          className="mt-4"
+          type="success"
+          title={<div>快递单号：【1212121】</div>}
+          content={
+            <div>
+              匹配1个订单，分配仓位为：405-08，签收时间：2024-06-0520：16：08
+            </div>
+          }
+        />
+        <Alert
+          className="mt-4"
+          type="success"
+          title={<div>快递单号：【1212121】</div>}
+          content={
+            <div>
+              匹配1个订单，分配仓位为：405-08，签收时间：2024-06-0520：16：08
+            </div>
+          }
+        />
+      </div>
+      <OrderTable className="mt-4"></OrderTable>
     </div>
   );
 };

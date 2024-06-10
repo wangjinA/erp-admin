@@ -1,9 +1,9 @@
 import { APIResponse, LoginResponse } from '@/types/user';
 import baseAxios, { baseURL } from '.';
 
-export const login = (params): Promise<APIResponse<LoginResponse>> => {
+export const login = (params) => {
   const { userLoginAccount, userLoginPassword, captcha } = params;
-  return baseAxios.post('/api/system/login', {
+  return baseAxios.post<APIResponse<LoginResponse>>('/api/system/login', {
     captcha,
     userLoginAccount,
     userLoginPassword,

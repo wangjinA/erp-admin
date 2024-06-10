@@ -11,6 +11,7 @@ export interface GlobalState {
     permissions: Record<string, string[]>;
   };
   userLoading?: boolean;
+  editPassword: boolean;
 }
 
 const initialState: GlobalState = {
@@ -18,6 +19,7 @@ const initialState: GlobalState = {
   userInfo: {
     permissions: {},
   },
+  editPassword: false,
 };
 
 export default function store(state = initialState, action) {
@@ -35,6 +37,13 @@ export default function store(state = initialState, action) {
         ...state,
         userLoading,
         userInfo,
+      };
+    }
+    case 'editPassword': {
+      const { editPassword } = action.payload;
+      return {
+        ...state,
+        editPassword,
       };
     }
     default:

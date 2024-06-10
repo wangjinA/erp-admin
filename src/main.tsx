@@ -17,11 +17,12 @@ import useStorage from './utils/useStorage';
 import Mock from 'mockjs';
 // import './mock';
 import { generatePermission } from './routes';
+import userPNG from '@/assets/user.png';
 
 const store = createStore(rootReducer);
 
 function Index() {
-  const [lang, setLang] = useStorage('arco-lang', 'en-US');
+  const [lang, setLang] = useStorage('arco-lang', 'zhCN');
   const [theme, setTheme] = useStorage('arco-theme', 'light');
 
   function getArcoLocale() {
@@ -39,8 +40,7 @@ function Index() {
     const userRole = window.localStorage.getItem('userRole') || 'admin';
     const userInfo = {
       name: 'admin',
-      avatar:
-        'https://lf1-xgcdn-tos.pstatp.com/obj/vcloud/vadmin/start.8e0e4855ee346a46ccff8ff3e24db27b.png',
+      avatar: userPNG,
       email: 'wangliqun@email.com',
       job: 'frontend',
       jobName: '前端开发工程师',
@@ -51,8 +51,8 @@ function Index() {
       introduction: '王力群并非是一个真实存在的人。',
       personalWebsite: 'https://www.arco.design',
       verified: true,
-      phoneNumber: /177[*]{6}[0-9]{2}/,
-      accountId: /[a-z]{4}[-][0-9]{8}/,
+      phoneNumber: 123123,
+      accountId: 123123,
       registrationTime: Mock.Random.datetime('yyyy-MM-dd HH:mm:ss'),
       permissions: generatePermission(userRole),
     };

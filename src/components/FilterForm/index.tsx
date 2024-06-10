@@ -7,6 +7,8 @@ import {
 } from '@arco-design/web-react';
 import React, { useEffect, useImperativeHandle, useRef } from 'react';
 import createFormItem, { CreateFormItemType } from '../CreateFormItem';
+import { isString, max } from 'lodash';
+import { login } from '@/api/user';
 
 const getFormItemConfigListDefaultValues = (list: CreateFormItemType[]) =>
   list.reduce((pre, cur) => {
@@ -29,7 +31,7 @@ const FilterForm = React.forwardRef(
       className = '',
       labelCol,
       onValuesChange,
-      gutter = 12,
+      gutter = [0, 10],
       span = 8,
       initialValues,
       ...otherFormProps
@@ -53,12 +55,20 @@ const FilterForm = React.forwardRef(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [formItemConfigList.map((item) => item.schema.field).toString()]);
 
+    const maxLabelLength =
+      max(
+        formItemConfigList.map((item) =>
+          isString(item.schema.label) ? item.schema.label.length : 0
+        )
+      ) + 2;
+
     return (
       <Form
         ref={formRef}
+        layout="inline"
         labelCol={{
           ...labelCol,
-          style: { flex: '0 0 6em', ...labelCol?.style },
+          style: { flex: `0 0 ${maxLabelLength}em`, ...labelCol?.style },
         }}
         wrapperCol={{
           className: 'w-0 flex-1',
@@ -71,7 +81,7 @@ const FilterForm = React.forwardRef(
         {...otherFormProps}
         className={`${className} bg-white`}
       >
-        <Grid.Row gutter={gutter}>
+        <Grid.Row gutter={gutter} className="w-full">
           {[...formItemConfigList]
             .filter((item) => item.schema.field || item.schema.key)
             .map((item) =>

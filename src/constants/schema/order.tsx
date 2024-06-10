@@ -1,16 +1,18 @@
 import { CreateFormItemType } from '@/components/CreateFormItem';
 import { DatePicker, Input } from '@arco-design/web-react';
 import React from 'react';
+import { TimeRangeDefaultProps } from '..';
 
 export const OrderFilter: CreateFormItemType[] = [
   {
     schema: {
-      field: 'timeRange',
-      label: '时间范围',
+      field: 'timeType123',
+      label: '订单编号',
     },
-    control: (props: any) => (
-      <DatePicker.RangePicker showTime={true} {...props} />
-    ),
+    controlProps: {
+      placeholder: "请输入订单号，多个订单号用英文逗号','或空格' '隔开",
+    },
+    control: 'input',
   },
   {
     schema: {
@@ -21,136 +23,136 @@ export const OrderFilter: CreateFormItemType[] = [
   },
   {
     schema: {
-      field: 'timeType',
+      field: 'timeType1',
       label: '物流单号',
     },
     control: 'input',
   },
   {
     schema: {
-      field: 'timeType',
+      field: 'timeType2',
       label: '快递单号',
     },
     control: 'input',
   },
   {
     schema: {
-      field: 'timeType',
+      field: 'timeType3',
       label: '屋程物流',
     },
     control: 'input',
   },
   {
     schema: {
-      field: 'timeType',
+      field: 'timeType4',
       label: '运输类型',
     },
     control: 'input',
   },
   {
     schema: {
-      field: 'timeType',
+      field: 'timeType55',
       label: '所属站点名称',
     },
     control: 'input',
   },
   {
     schema: {
-      field: 'timeType',
+      field: 'timeType6',
       label: '订单状态',
     },
     control: 'input',
   },
   {
     schema: {
-      field: 'timeType',
+      field: 'timeType7',
       label: '卖家标识',
     },
     control: 'input',
   },
   {
     schema: {
-      field: 'timeType',
+      field: 'timeType8',
       label: '卖家手机',
     },
     control: 'input',
   },
   {
     schema: {
-      field: 'timeType',
+      field: 'timeType9',
       label: '打包时间',
     },
     control: (props: any) => (
-      <DatePicker.RangePicker showTime={true} {...props} />
+      <DatePicker.RangePicker {...TimeRangeDefaultProps} {...props} />
     ),
   },
   {
     schema: {
-      field: 'timeType',
+      field: 'timeType11',
       label: '出库时间',
     },
     control: (props: any) => (
-      <DatePicker.RangePicker showTime={true} {...props} />
+      <DatePicker.RangePicker {...TimeRangeDefaultProps} {...props} />
     ),
   },
   {
     schema: {
-      field: 'timeType',
+      field: 'timeType12',
       label: '交运时间',
     },
     control: (props: any) => (
-      <DatePicker.RangePicker showTime={true} {...props} />
+      <DatePicker.RangePicker {...TimeRangeDefaultProps} {...props} />
     ),
   },
   {
     schema: {
-      field: 'timeType',
+      field: 'timeType13',
       label: '预刷时间',
     },
     control: (props: any) => (
-      <DatePicker.RangePicker showTime={true} {...props} />
+      <DatePicker.RangePicker {...TimeRangeDefaultProps} {...props} />
     ),
   },
   {
     schema: {
-      field: 'timeType',
+      field: 'timeType14',
       label: '申请面单时间',
     },
     control: (props: any) => (
-      <DatePicker.RangePicker showTime={true} {...props} />
+      <DatePicker.RangePicker {...TimeRangeDefaultProps} {...props} />
     ),
   },
   {
     schema: {
-      field: 'timeType',
+      field: 'timeType15',
       label: '发货类型',
     },
     control: 'input',
   },
   {
     schema: {
-      field: 'timeType',
+      field: 'timeType16',
       label: '标签',
     },
     control: 'input',
   },
   {
     schema: {
-      field: 'timeType',
+      field: 'timeType21',
       label: '仓位编码',
     },
     control: 'input',
   },
   {
     schema: {
-      field: 'timeType',
+      field: 'timeType22',
       label: '店铺ID',
     },
     control: 'input',
   },
   {
     schema: {
-      field: 'timeType',
+      field: 'timeType23',
       label: '商品ID',
     },
     control: 'input',

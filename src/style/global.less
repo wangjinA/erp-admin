@@ -13,6 +13,9 @@ body {
   background-color: var(--color-bg-1);
   --content-height: calc(100vh - 60px - 1rem - 40px);
 }
+.arco-form-item-symbol svg {
+  display: initial;
+}
 
 .content-style {
   min-height: var(--content-height);
@@ -45,5 +48,26 @@ body[arco-theme='dark'] {
       border-radius: 6px;
       box-shadow: none !important;
     }
+  }
+}
+
+.arco-list-style {
+  .arco-descriptions-item-label {
+    padding-right: 10px;
+  }
+  .arco-list-item-meta-title {
+    font-size: 12px;
+  }
+  .arco-list-item-meta {
+    align-items: start;
+  }
+  .arco-list-item {
+    padding: 0 !important;
+  }
+  .arco-descriptions {
+    margin-bottom: 0 !important;
+  }
+  .arco-descriptions-item-label {
+    vertical-align: top;
   }
 }

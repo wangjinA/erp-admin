@@ -263,44 +263,38 @@ function PageLayout() {
             </Sider>
           )}
           <Layout className={styles['layout-content']} style={paddingStyle}>
-            <div className="pt-4 px-5">
-              <div className="bg-white p-4 content-style">
-                {!!breadcrumb.length && (
-                  <div className="mb-4">
-                    <Breadcrumb>
-                      {breadcrumb.map((node, index) => (
-                        <Breadcrumb.Item key={index}>
-                          {typeof node === 'string'
-                            ? locale[node] || node
-                            : node}
-                        </Breadcrumb.Item>
-                      ))}
-                    </Breadcrumb>
-                  </div>
-                )}
-                <Content>
-                  <Switch>
-                    {flattenRoutes.map((route, index) => {
-                      return (
-                        <Route
-                          key={index}
-                          path={`/${route.key}`}
-                          component={route.component}
-                        />
-                      );
-                    })}
-                    <Route exact path="/">
-                      <Redirect to={`/${defaultRoute}`} />
-                    </Route>
-                    <Route
-                      path="*"
-                      component={lazyload(
-                        () => import('./pages/exception/403')
-                      )}
-                    />
-                  </Switch>
-                </Content>
-              </div>
+            <div className="content-style pt-4 px-5">
+              {!!breadcrumb.length && (
+                <div className="mb-4">
+                  <Breadcrumb>
+                    {breadcrumb.map((node, index) => (
+                      <Breadcrumb.Item key={index}>
+                        {typeof node === 'string' ? locale[node] || node : node}
+                      </Breadcrumb.Item>
+                    ))}
+                  </Breadcrumb>
+                </div>
+              )}
+              <Content>
+                <Switch>
+                  {flattenRoutes.map((route, index) => {
+                    return (
+                      <Route
+                        key={index}
+                        path={`/${route.key}`}
+                        component={route.component}
+                      />
+                    );
+                  })}
+                  <Route exact path="/">
+                    <Redirect to={`/${defaultRoute}`} />
+                  </Route>
+                  <Route
+                    path="*"
+                    component={lazyload(() => import('./pages/exception/403'))}
+                  />
+                </Switch>
+              </Content>
             </div>
             {showFooter && <Footer />}
           </Layout>

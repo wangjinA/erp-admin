@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import FilterForm from '@/components/FilterForm';
 import { OrderFilter } from '@/constants/schema/order';
-import { Table, Tabs } from '@arco-design/web-react';
+import { Avatar, List, Table, Tabs } from '@arco-design/web-react';
+import OrderTable from '@/components/OrderTable';
 
 // 全部
 // 待入库
@@ -54,7 +55,7 @@ const tabs = [
 export default () => {
   const [activeTab, setActiveTab] = useState(tabs[0].key);
   return (
-    <div className="bg-white pr-4">
+    <div className="bg-white p-4">
       <FilterForm
         size="small"
         formItemConfigList={OrderFilter}
@@ -71,34 +72,7 @@ export default () => {
           <Tabs.TabPane key={x.key} title={x.title}></Tabs.TabPane>
         ))}
       </Tabs>
-      <Table
-        columns={[
-          {
-            title: '商品信息',
-            key: 'goods',
-          },
-          {
-            title: '发货信息',
-            key: 'delivery',
-          },
-          {
-            title: '卖家信息',
-            key: 'seller',
-          },
-          {
-            title: '物流信息',
-            key: 'logistics',
-          },
-          {
-            title: '费用',
-            key: 'fee',
-          },
-          {
-            title: '操作',
-            key: 'action',
-          },
-        ]}
-      ></Table>
+      <OrderTable></OrderTable>
     </div>
   );
 };

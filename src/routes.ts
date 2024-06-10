@@ -29,10 +29,10 @@ export const routes: IRoute[] = [
         name: 'menu.business.signfor',
         key: 'business/signfor',
       },
-      {
-        name: 'menu.business.warehousingAndArchiving',
-        key: 'business/warehousingAndArchiving',
-      },
+      // {
+      //   name: 'menu.business.warehousingAndArchiving',
+      //   key: 'business/warehousingAndArchiving',
+      // },
       {
         name: 'menu.business.scanHistory',
         key: 'business/scanHistory',
@@ -91,10 +91,10 @@ export const routes: IRoute[] = [
         name: 'menu.account.users',
         key: 'account/users',
       },
-      {
-        name: 'menu.account.member',
-        key: 'account/member',
-      },
+      // {
+      //   name: 'menu.account.member',
+      //   key: 'account/member',
+      // },
       {
         name: 'menu.account.setting',
         key: 'account/setting',
