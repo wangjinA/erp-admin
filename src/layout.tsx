@@ -41,7 +41,7 @@ function getIconFromKey(key) {
       return <IconApps className={styles.icon} />;
     case 'order':
       return <IconFile className={styles.icon} />;
-    case 'stash':
+    case 'entrepot':
       return <IconArchive className={styles.icon} />;
     case 'account':
       return <IconUserGroup className={styles.icon} />;

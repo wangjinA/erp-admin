@@ -8,7 +8,6 @@ import {
 import React, { useEffect, useImperativeHandle, useRef } from 'react';
 import createFormItem, { CreateFormItemType } from '../CreateFormItem';
 import { isString, max } from 'lodash';
-import { login } from '@/api/user';
 
 const getFormItemConfigListDefaultValues = (list: CreateFormItemType[]) =>
   list.reduce((pre, cur) => {
@@ -23,6 +22,7 @@ type FilterFormProps = FormProps & {
   className?: string;
   gutter?: RowProps['gutter'];
   span?: number;
+  labelLength?: number;
 };
 const FilterForm = React.forwardRef(
   (
@@ -33,6 +33,7 @@ const FilterForm = React.forwardRef(
       onValuesChange,
       gutter = [0, 10],
       span = 8,
+      labelLength,
       initialValues,
       ...otherFormProps
     }: FilterFormProps,
@@ -56,6 +57,7 @@ const FilterForm = React.forwardRef(
     }, [formItemConfigList.map((item) => item.schema.field).toString()]);
 
     const maxLabelLength =
+      labelLength ||
       max(
         formItemConfigList.map((item) =>
           isString(item.schema.label) ? item.schema.label.length : 0

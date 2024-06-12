@@ -1,5 +1,6 @@
-import { APIResponse, LoginResponse } from '@/types/user';
+import {  LoginResponse } from '@/types/user';
 import baseAxios, { baseURL } from '.';
+import { APIResponse } from './type';
 
 export const login = (params) => {
   const { userLoginAccount, userLoginPassword, captcha } = params;

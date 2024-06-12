@@ -1,5 +1,5 @@
-import { Button, Radio } from '@arco-design/web-react';
 import React from 'react';
+import { Button, Radio } from '@arco-design/web-react';
 
 export default (props) => {
   const data = [

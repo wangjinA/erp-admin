@@ -18,7 +18,7 @@ export default () => {
         <FilterForm
           span={6}
           initialValues={{
-            stash: '0',
+            entrepot: '0',
           }}
           formItemConfigList={[
             {

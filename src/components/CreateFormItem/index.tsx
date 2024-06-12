@@ -4,11 +4,15 @@ import {
   Form,
   FormItemProps,
   Input,
+  InputNumber,
+  Modal,
   Radio,
   Select,
   Switch,
+  Upload,
 } from '@arco-design/web-react';
 import LabelWithTips, { LabelWithTipsProps } from '../LabelWithTips';
+import { IconPlus } from '@arco-design/web-react/icon';
 
 export interface FormSchema
   extends Partial<Pick<LabelWithTipsProps, 'position'>> {
@@ -16,13 +20,23 @@ export interface FormSchema
   label?: ReactNode | string;
   tips?: ReactNode | string;
   defaultValue?: any;
-  rules?: Array<any>;
+  rules?: FormItemProps['rules'];
   span?: number;
   key?: number | string;
+  required?: boolean;
 }
+
+type ControlType =
+  | 'input'
+  | 'upload'
+  | 'select'
+  | 'radio'
+  | 'checkbox'
+  | 'number';
+
 export interface CreateFormItemType {
   schema: FormSchema;
-  control?: string | ReactElement | ((schema: FormSchema) => ReactElement);
+  control?: ControlType | ReactElement | ((schema: FormSchema) => ReactElement);
   formItemProps?: FormItemProps;
   controlProps?: Partial<any>;
 }
@@ -50,18 +64,21 @@ const createFormItem: CreateFormItemParams = ({
   controlProps,
   ...otherProps
 }) => {
-  const { field, label, tips, position, rules, defaultValue } = schema;
+  const { field, label, tips, position, rules, defaultValue, required } =
+    schema;
   const getFormControl = (s: FormSchema) => {
-    if (!control || control === 'input') {
-      return (
-        <Input
-          placeholder={`请输入${label}`}
-          allowClear={true}
-          {...controlProps}
-        />
-      );
-    } else if (typeof control === 'string') {
+    if (typeof control === 'string') {
       switch (control.toLowerCase()) {
+        case undefined:
+        case 'input':
+          return (
+            <Input
+              placeholder={`请输入${label}`}
+              allowClear={true}
+              {...controlProps}
+            />
+          );
+        case 'upload':
         case 'radio':
           return <Radio.Group type="button" {...controlProps} />;
         case 'textarea':
@@ -74,6 +91,60 @@ const createFormItem: CreateFormItemParams = ({
           );
         case 'select':
           return <Select {...controlProps} />;
+        case 'upload':
+          return (
+            <Upload
+              action="/"
+              // fileList={file ? [file] : []}
+              showUploadList={false}
+              onChange={(_, currentFile) => {
+                // setFile({
+                //   ...currentFile,
+                //   url: URL.createObjectURL(currentFile.originFile),
+                // });
+              }}
+              // onProgress={(currentFile) => {
+              //   setFile(currentFile);
+              // }}
+            >
+              {/* <div className={`arco-upload-list-item${file && file.status === 'error' ? ' is-error' : ''}`}> */}
+              <div>
+                {/* {
+                file && file.url ? (
+                  <div className="arco-upload-list-item-picture custom-upload-avatar">
+                    <img src={file.url} />
+                    <div className="arco-upload-list-item-picture-mask">
+                      <IconEdit />
+                    </div>
+                    {file.status === 'uploading' && file.percent < 100 && (
+                      <Progress
+                        percent={file.percent}
+                        type="circle"
+                        size="mini"
+                        style={{
+                          position: 'absolute',
+                          left: '50%',
+                          top: '50%',
+                          transform: 'translateX(-50%) translateY(-50%)',
+                        }}
+                      />
+                    )}
+                  </div>
+                ) : ( */}
+                <div className="arco-upload-trigger-picture">
+                  <div className="arco-upload-trigger-picture-text">
+                    <IconPlus />
+                    <div className="mt-2">点击上传</div>
+                  </div>
+                </div>
+                {/* )} */}
+              </div>
+            </Upload>
+          );
+        case 'number':
+          return (
+            <InputNumber placeholder={`请输入${label}`} {...controlProps} />
+          );
         default:
           return <span>{control}</span>;
       }
@@ -92,7 +163,18 @@ const createFormItem: CreateFormItemParams = ({
       key={field}
       label={<LabelWithTips label={label} tips={tips} position={position} />}
       field={field}
-      rules={rules}
+      rules={
+        rules || required
+          ? [
+              {
+                required: true,
+                message: ['input', 'number'].includes(control as string)
+                  ? `请输入${label}`
+                  : `请完善${label}`,
+              },
+            ]
+          : []
+      }
       // labelCol={{
       //   style: {
       //     width: '8em',

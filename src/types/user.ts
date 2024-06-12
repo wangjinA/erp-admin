@@ -73,9 +73,3 @@ export interface LoginResponse {
   permissions: string[];
   logo: any; // Change this to a specific type if the structure of the logo object is known
 }
-
-export interface APIResponse<T> {
-  code: number;
-  msg: string;
-  data: T;
-}

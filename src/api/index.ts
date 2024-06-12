@@ -7,6 +7,13 @@ const baseAxios = axios.create({
   timeout: 10 * 1000,
 });
 
+export const TokenKey = 'erp-token';
+
+baseAxios.interceptors.request.use((config) => {
+  config.headers['token'] = localStorage.getItem(TokenKey);
+  return config;
+});
+
 export const SuccessCode = 200;
 
 export default baseAxios;

@@ -66,20 +66,20 @@ export const routes: IRoute[] = [
     ],
   },
   {
-    name: 'menu.stash',
-    key: 'stash',
+    name: 'menu.entrepot',
+    key: 'entrepot',
     children: [
       {
-        name: 'menu.stash.info',
-        key: 'stash/info',
+        name: 'menu.entrepot.info',
+        key: 'entrepot/info',
       },
       {
-        name: 'menu.stash.list',
-        key: 'stash/list',
+        name: 'menu.entrepot.list',
+        key: 'entrepot/list',
       },
       {
-        name: 'menu.stash.setting',
-        key: 'stash/setting',
+        name: 'menu.entrepot.setting',
+        key: 'entrepot/setting',
       },
     ],
   },

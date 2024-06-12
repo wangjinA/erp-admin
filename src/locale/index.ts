@@ -74,10 +74,10 @@ const i18n = {
     'menu.order.deliveryHistory': '订单出库记录',
 
 
-    'menu.stash': '仓库管理',
-    'menu.stash.info': '仓库信息',
-    'menu.stash.list': '仓库列表',
-    'menu.stash.setting': '仓库设置',
+    'menu.entrepot': '仓库管理',
+    'menu.entrepot.info': '仓库信息',
+    'menu.entrepot.list': '仓库列表',
+    'menu.entrepot.setting': '仓库设置',
     
     'menu.account': '账户管理',
     'menu.account.users': '用户管理',

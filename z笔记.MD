@@ -1,4 +1,8 @@
-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
+6.13
+1.storeType多选
+2.userequest 监听，不要其他手动调用
+
+
 
 6.7
 1.一个快递单号可以关联多个虾皮订单

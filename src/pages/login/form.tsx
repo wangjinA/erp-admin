@@ -16,16 +16,17 @@ import useStorage from '@/utils/useStorage';
 import useLocale from '@/utils/useLocale';
 import locale from './locale';
 import styles from './style/index.module.less';
-import { useRequest } from 'ahooks';
+import { useLocalStorageState, useRequest } from 'ahooks';
 import { getCaptcha, login } from '@/api/user';
 import { random } from 'lodash';
-import { SuccessCode } from '@/api';
+import { SuccessCode, TokenKey } from '@/api';
 
 export default function LoginForm() {
   const formRef = useRef<FormInstance>();
   const [errorMessage, setErrorMessage] = useState('');
   const [loginParams, setLoginParams, removeLoginParams] =
     useStorage('loginParams');
+  const [value, setValue] = useLocalStorageState('userInfo')
   const [randomStr, setRandomStr] = useState(null);
   const t = useLocale(locale);
 
@@ -35,19 +36,21 @@ export default function LoginForm() {
     run: loginHandler,
     loading,
     data,
-  } = useRequest(async (params) => {
-    try {
+  } = useRequest(
+    async (params) => {
       const res = await login(params);
-      console.log(res);
-
       if (res.data.code === SuccessCode) {
         afterLoginSuccess(params);
       } else {
         Message.error(res.data.msg || t['login.form.login.errMsg']);
       }
-    } catch (error) {}
-    afterLoginSuccess(params);
-  }, {});
+      setValue(res.data.data);
+      localStorage.setItem(TokenKey, res.data.data.token)
+    },
+    {
+      manual: true,
+    }
+  );
 
   function afterLoginSuccess(params) {
     // 记住密码
@@ -155,12 +158,12 @@ export default function LoginForm() {
           </div>
         </Form.Item>
         <Space size={16} direction="vertical">
-          <div className={styles['login-form-password-actions']}>
+          {/* <div className={styles['login-form-password-actions']}>
             <Checkbox checked={rememberPassword} onChange={setRememberPassword}>
               {t['login.form.rememberPassword']}
             </Checkbox>
             <Link>{t['login.form.forgetPassword']}</Link>
-          </div>
+          </div> */}
           <Button type="primary" long onClick={onSubmitClick} loading={loading}>
             {t['login.form.login']}
           </Button>

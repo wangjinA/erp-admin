@@ -1,6 +1,6 @@
 import React from 'react';
 import FilterForm from '@/components/FilterForm';
-import StashRadio from '@/components/StashRadio';
+import EntrepotRadio from '@/components/EntrepotRadio';
 import { DatePicker, Divider, Table } from '@arco-design/web-react';
 import { DividerSchema } from '@/constants/schema/common';
 export default () => {
@@ -11,16 +11,16 @@ export default () => {
           layout="inline"
           span={6}
           initialValues={{
-            stash: '0',
+            entrepot: '0',
           }}
           formItemConfigList={[
             {
               schema: {
-                field: 'stash',
+                field: 'entrepot',
                 label: '所属仓库',
                 span: 24,
               },
-              control: <StashRadio></StashRadio>,
+              control: <EntrepotRadio></EntrepotRadio>,
             },
             DividerSchema,
             {
@@ -58,7 +58,7 @@ export default () => {
           },
           {
             title: '仓库',
-            dataIndex: 'stash',
+            dataIndex: 'entrepot',
           },
           {
             title: '说明',
@@ -80,21 +80,21 @@ export default () => {
         data={[
           {
             deliveryNo: '1234567890',
-            stash: '仓库1',
+            entrepot: '仓库1',
             remark: '备注',
             scanTime: '2020-01-01 12:12:12',
             operatorName: '张三',
           },
           {
             deliveryNo: '1234567890',
-            stash: '仓库1',
+            entrepot: '仓库1',
             remark: '备注',
             scanTime: '2020-01-01 12:12:12',
             operatorName: '张三',
           },
           {
             deliveryNo: '1234567890',
-            stash: '仓库1',
+            entrepot: '仓库1',
             remark: '备注',
             scanTime: '2020-01-01 12:12:12',
             operatorName: '张三',
