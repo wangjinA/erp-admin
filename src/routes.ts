@@ -113,10 +113,10 @@ export const routes: IRoute[] = [
         name: 'menu.express.signforHistory',
         key: 'express/signforHistory',
       },
-      {
-        name: 'menu.express.abnormal',
-        key: 'express/abnormal',
-      },
+      // {
+      //   name: 'menu.express.abnormal',
+      //   key: 'express/abnormal',
+      // },
       {
         name: 'menu.express.rejection',
         key: 'express/rejection',

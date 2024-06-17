@@ -17,6 +17,7 @@ import { IconCheck, IconDelete, IconPlus } from '@arco-design/web-react/icon';
 import classNames from 'classnames';
 import useInfo from './hooks';
 import { CreateEntrepotSchema, CreateRacksSchema } from './schema';
+import PopconfirmDelete from '@/components/PopconfirmDelete';
 
 const createInitialValue = {
   entrepotName: '测试111',
@@ -63,12 +64,20 @@ export default () => {
     setActiveRacks,
     createRacksLoading,
     createRacksHandler,
+    removeRacks,
+    removeRacksLoading,
+    updateRacks,
+    updateRacksLoading,
+    updateEntrepot,
+    updateEntrepotLoading,
+    removeEntrepot,
+    removeEntrepotLoading,
   } = useInfo();
 
   return (
     <div className="bg-white p-4 pb-6">
       <Grid.Row gutter={[20, 0]}>
-        <Grid.Col span={5} className="border-r border-neutral-3 pr-4">
+        <Grid.Col span={6} className="border-r border-neutral-3 pr-4">
           <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">
             <Typography.Title heading={6} className="mb-0">
               仓库列表
@@ -109,12 +118,31 @@ export default () => {
                   title={item.entrepotName}
                   description={item.detailedAddress}
                 ></List.Item.Meta>
+                <div>
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      setShowTypeEntrepot(ShowFormType.edit);
+                      formEntrepotRef.setFieldsValue(item);
+                    }}
+                  >
+                    编辑
+                  </Button>
+                  <PopconfirmDelete
+                    onOk={() => {
+                      removeEntrepot(item.id);
+                    }}
+                    buttonProps={{
+                      loading: removeEntrepotLoading,
+                    }}
+                  ></PopconfirmDelete>
+                </div>
               </div>
             ))}
           </List>
         </Grid.Col>
 
-        <Grid.Col span={5} className="border-r border-neutral-3 pr-4">
+        <Grid.Col span={6} className="border-r border-neutral-3 pr-4">
           <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">
             <Typography.Title heading={6} className="mb-0">
               货架列表
@@ -127,7 +155,7 @@ export default () => {
               disabled={showTypeRacks === ShowFormType.create}
               onClick={() => {
                 formRacksRef.resetFields();
-                setShowTypeRacks(ShowFormType.create);
+                setActiveRacks(null);
               }}
             >
               新增
@@ -163,7 +191,7 @@ export default () => {
           </List>
         </Grid.Col>
         {showTypeRacks && (
-          <Grid.Col span={14} className="pr-6">
+          <Grid.Col span={12} className="pr-6">
             <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">
               <Typography.Title heading={6} className="mb-0">
                 {ShowFormTypeMap[showTypeRacks]}货架
@@ -179,6 +207,7 @@ export default () => {
                     onClick={async () => {
                       const formData = await formRacksRef.validate();
                       createRacksHandler(formData);
+                      setActiveRacks(null);
                     }}
                   >
                     新增
@@ -189,7 +218,6 @@ export default () => {
                     size="small"
                     onClick={() => {
                       formRacksRef.setFieldsValue(activeEntrepot);
-                      setShowTypeRacks(null);
                     }}
                   >
                     取消
@@ -202,21 +230,27 @@ export default () => {
                     icon={<IconCheck></IconCheck>}
                     type="primary"
                     size="small"
+                    loading={createRacksLoading}
+                    onClick={async () => {
+                      const formData = await formRacksRef.validate();
+                      await updateRacks({
+                        ...formData,
+                        id: activeRacks.id,
+                      });
+                    }}
                   >
                     保存
                   </Button>
-                  <Button
-                    icon={<IconDelete></IconDelete>}
-                    size="small"
-                    status="danger"
-                  >
-                    删除
-                  </Button>
+                  <PopconfirmDelete
+                    buttonProps={{ loading: removeRacksLoading }}
+                    onOk={() => {
+                      removeRacks(activeRacks.id);
+                    }}
+                  ></PopconfirmDelete>
                 </Space>
               )}
             </Typography.Paragraph>
             <FilterForm
-              initialValues={createRacksInitialValue}
               form={formRacksRef}
               labelLength={10}
               formItemConfigList={CreateRacksSchema}
@@ -226,11 +260,22 @@ export default () => {
       </Grid.Row>
       <Modal
         {...FormModalCommonProps}
-        confirmLoading={createEntrepotLoading}
-        onCancel={() => setShowTypeEntrepot(null)}
+        confirmLoading={createEntrepotLoading || updateEntrepotLoading}
+        onCancel={() => {
+          setShowTypeEntrepot(null);
+          formEntrepotRef.resetFields();
+        }}
         onOk={async () => {
           const formData = await formEntrepotRef.validate();
-          createEntrepotHandler(formData);
+          if (showTypeEntrepot === ShowFormType.create) {
+            await createEntrepotHandler(formData);
+          } else {
+            await updateEntrepot({
+              ...formData,
+              id: activeEntrepot.id,
+            });
+          }
+          setShowTypeEntrepot(null);
         }}
         visible={!!showTypeEntrepot}
         title={`${ShowFormTypeMap[showTypeEntrepot]}仓库`}

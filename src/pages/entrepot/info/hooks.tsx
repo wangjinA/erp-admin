@@ -8,7 +8,7 @@ import { ShowFormType } from '@/constants';
 import { showMessageStatus } from '@/utils';
 import useForm from '@arco-design/web-react/es/Form/useForm';
 import { useRequest } from 'ahooks';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const useInfo = () => {
   const [showTypeEntrepot, setShowTypeEntrepot] = useState<ShowFormType>();
@@ -25,15 +25,32 @@ const useInfo = () => {
     run: getRacksList,
   } = useRequest(
     async (params: Parameters<typeof racksAPI.getList>[0]) => {
-      const res = await racksAPI.getList({
+      formRacksRef.resetFields();
+      setActiveRacks(null);
+      const sendData = {
         pageNum: 1,
         pageSize: 100,
+        entrepotId: activeEntrepot?.id,
         ...params,
-      });
-      return res.data.data.list;
+      };
+
+      if (!sendData.entrepotId) {
+        return [];
+      }
+      const res = await racksAPI.getList(sendData);
+      const { list } = res.data.data;
+      if (list.length) {
+        const target =
+          list.find((racks) => racks.id === activeRacks?.id) || list[0];
+        setActiveRacks(target);
+        formRacksRef.setFieldsValue(target);
+      } else {
+      }
+      return list;
     },
     {
-      manual: true,
+      manual: false,
+      refreshDeps: [activeEntrepot],
     }
   );
 
@@ -49,13 +66,13 @@ const useInfo = () => {
     });
     const { list } = res.data.data;
     if (list.length) {
-      setActiveEntrepot(list[0]);
-      getRacksList({
-        entrepotId: list[0].id,
-      });
+      const target =
+        list.find((entrepot) => entrepot.id === activeEntrepot?.id) || list[0];
+      setActiveEntrepot(target);
     }
     return list;
   });
+
   const { run: createEntrepotHandler, loading: createEntrepotLoading } =
     useRequest(
       async (formData) => {
@@ -89,6 +106,69 @@ const useInfo = () => {
       manual: true,
     }
   );
+
+  const { run: removeRacks, loading: removeRacksLoading } = useRequest(
+    async (racksId) => {
+      const res = await racksAPI.remove(racksId);
+      await showMessageStatus(res.data);
+      setActiveRacks(null);
+      // setShowTypeRacks(null);
+      await getRacksList({
+        entrepotId: activeEntrepot.id,
+      });
+    },
+    {
+      manual: true,
+    }
+  );
+
+  const { run: removeEntrepot, loading: removeEntrepotLoading } = useRequest(
+    async (racksId) => {
+      const res = await entrepotAPI.remove(racksId);
+      await showMessageStatus(res.data);
+      setActiveEntrepot(null);
+      await getEntrepotList();
+    },
+    {
+      manual: true,
+    }
+  );
+
+  const { run: updateRacks, loading: updateRacksLoading } = useRequest(
+    async (params) => {
+      const res = await racksAPI.update(params);
+      await showMessageStatus(res.data);
+      await getRacksList({
+        entrepotId: activeEntrepot.id,
+      });
+    },
+    {
+      manual: true,
+    }
+  );
+
+  const { run: updateEntrepot, loading: updateEntrepotLoading } = useRequest(
+    async (params) => {
+      const res = await entrepotAPI.update({
+        ...params,
+        storeType: params.storeType[0],
+      });
+      await showMessageStatus(res.data);
+      await getEntrepotList();
+    },
+    {
+      manual: true,
+    }
+  );
+
+  useEffect(() => {
+    if (activeRacks) {
+      setShowTypeRacks(ShowFormType.edit);
+    } else {
+      setShowTypeRacks(ShowFormType.create);
+    }
+  }, [activeRacks]);
+
   return {
     showTypeEntrepot,
     setShowTypeEntrepot,
@@ -110,6 +190,14 @@ const useInfo = () => {
     setActiveRacks,
     createRacksLoading,
     createRacksHandler,
+    removeRacks,
+    removeRacksLoading,
+    updateRacks,
+    updateRacksLoading,
+    updateEntrepot,
+    updateEntrepotLoading,
+    removeEntrepot,
+    removeEntrepotLoading,
   };
 };
 

@@ -17,7 +17,7 @@ const getFormItemConfigListDefaultValues = (list: CreateFormItemType[]) =>
     return pre;
   }, {});
 
-type FilterFormProps = FormProps & {
+export type FilterFormProps = FormProps & {
   formItemConfigList: CreateFormItemType[];
   className?: string;
   gutter?: RowProps['gutter'];

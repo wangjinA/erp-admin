@@ -53,9 +53,7 @@ export const entrepotAPI = {
     return baseAxios.get(`/api/entrepot/remove/${id}`);
   },
   update(body: Partial<Entrepot>) {
-    return baseAxios.post('/api/entrepot/update', {
-      Entrepot: body,
-    });
+    return baseAxios.post('/api/entrepot/update', body);
   },
 };
 
@@ -70,11 +68,9 @@ export const racksAPI = {
     return baseAxios.post<APIResponse>('/api/racks/insert', body);
   },
   remove(id) {
-    return baseAxios.get(`/api/racks/remove/${id}`);
+    return baseAxios.get<APIResponse>(`/api/racks/remove/${id}`);
   },
   update(body: Partial<EntrepotStorageRacks>) {
-    return baseAxios.post('/api/racks/update', {
-      EntrepotStorageRacks: body,
-    });
+    return baseAxios.post<APIResponse>('/api/racks/update', body);
   },
 };

@@ -45,15 +45,15 @@ const auth = (params: Auth, userPermission: UserPermission) => {
 };
 
 export default (params: AuthParams, userPermission: UserPermission) => {
-  const { requiredPermissions, oneOfPerm } = params;
-  if (Array.isArray(requiredPermissions) && requiredPermissions.length) {
-    let count = 0;
-    for (const rp of requiredPermissions) {
-      if (auth(rp, userPermission)) {
-        count++;
-      }
-    }
-    return oneOfPerm ? count > 0 : count === requiredPermissions.length;
-  }
+  // const { requiredPermissions, oneOfPerm } = params;
+  // if (Array.isArray(requiredPermissions) && requiredPermissions.length) {
+  //   let count = 0;
+  //   for (const rp of requiredPermissions) {
+  //     if (auth(rp, userPermission)) {
+  //       count++;
+  //     }
+  //   }
+  //   return oneOfPerm ? count > 0 : count === requiredPermissions.length;
+  // }
   return true;
 };

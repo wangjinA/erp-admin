@@ -92,7 +92,13 @@ function Navbar({ show }: { show: boolean }) {
 
   const droplist = (
     <Menu onClickMenuItem={onMenuItemClick}>
-      <Menu.SubMenu
+      <Menu.Item onClick={handleChangeRole} key="switch role">
+        {/* <IconTag className={styles['dropdown-icon']} /> */}
+        <IconUser className={styles['dropdown-icon']} />
+        {/* {t['menu.user.switchRoles']} */}
+        {userInfo.userName}
+      </Menu.Item>
+      {/* <Menu.SubMenu
         key="role"
         title={
           <>
@@ -131,7 +137,7 @@ function Navbar({ show }: { show: boolean }) {
           <IconInteraction className={styles['dropdown-icon']} />
           {t['menu.list.cardList']}
         </Menu.Item>
-      </Menu.SubMenu>
+      </Menu.SubMenu> */}
 
       <Divider style={{ margin: '4px 0' }} />
       <Menu.Item key="logout">
@@ -206,7 +212,7 @@ function Navbar({ show }: { show: boolean }) {
                 {userLoading ? (
                   <IconLoading />
                 ) : (
-                  <img alt="avatar" src={userPng} />
+                  <img alt="avatar" src={userInfo.headImg} />
                 )}
               </Avatar>
             </Dropdown>

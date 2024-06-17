@@ -1,4 +1,5 @@
 import { CreateFormItemType } from '@/components/CreateFormItem';
+import RegionSelector from '@/components/RegionSelector';
 import { WhetherOptions } from '@/constants';
 import { Checkbox, Radio } from '@arco-design/web-react';
 
@@ -142,7 +143,7 @@ export const CreateEntrepotSchema: CreateFormItemType[] = [
       field: 'deliveryAddress',
       label: '收货地址',
     },
-    control: 'input',
+    control: <RegionSelector></RegionSelector>,
   },
   {
     formItemProps: {
@@ -173,6 +174,9 @@ export const CreateEntrepotSchema: CreateFormItemType[] = [
       label: '微信二维码',
     },
     control: 'upload',
+    controlProps: {
+      limit: 1,
+    },
   },
   // {
   //   schema: {
@@ -208,7 +212,7 @@ export const CreateRacksSchema: CreateFormItemType[] = [
       field: 'storageRacksName',
       label: '货架名称',
       required: true,
-      span: 24
+      span: 24,
     },
     control: 'input',
   },
@@ -216,7 +220,7 @@ export const CreateRacksSchema: CreateFormItemType[] = [
     schema: {
       field: 'available',
       label: '是否可用',
-      span: 24
+      span: 24,
     },
     control: <Radio.Group options={WhetherOptions} />,
   },
@@ -255,7 +259,7 @@ export const CreateRacksSchema: CreateFormItemType[] = [
       field: 'locationPrefix',
       label: '仓位前缀',
       required: true,
-      span: 9
+      span: 9,
     },
     control: 'input',
   },
@@ -264,14 +268,14 @@ export const CreateRacksSchema: CreateFormItemType[] = [
       field: 'numberFloors',
       label: '层',
       required: true,
-      span: 7
+      span: 7,
     },
-    formItemProps:{
+    formItemProps: {
       labelCol: {
         style: {
           flex: '0 0 4em',
-        }
-      }
+        },
+      },
     },
     control: 'number',
   },
@@ -280,14 +284,14 @@ export const CreateRacksSchema: CreateFormItemType[] = [
       field: 'numberColumns',
       label: '列',
       required: true,
-      span: 7
+      span: 7,
     },
-    formItemProps:{
+    formItemProps: {
       labelCol: {
         style: {
           flex: '0 0 4em',
-        }
-      }
+        },
+      },
     },
     control: 'number',
   },

@@ -18,6 +18,7 @@ import Mock from 'mockjs';
 // import './mock';
 import { generatePermission } from './routes';
 import userPNG from '@/assets/user.png';
+import { userAPI } from './api/user';
 
 const store = createStore(rootReducer);
 
@@ -36,33 +37,36 @@ function Index() {
     }
   }
 
-  function fetchUserInfo() {
+  async function fetchUserInfo() {
     const userRole = window.localStorage.getItem('userRole') || 'admin';
-    const userInfo = {
-      name: 'admin',
-      avatar: userPNG,
-      email: 'wangliqun@email.com',
-      job: 'frontend',
-      jobName: '前端开发工程师',
-      organization: 'Frontend',
-      organizationName: '前端',
-      location: 'beijing',
-      locationName: '北京',
-      introduction: '王力群并非是一个真实存在的人。',
-      personalWebsite: 'https://www.arco.design',
-      verified: true,
-      phoneNumber: 123123,
-      accountId: 123123,
-      registrationTime: Mock.Random.datetime('yyyy-MM-dd HH:mm:ss'),
-      permissions: generatePermission(userRole),
-    };
+    // const userInfo = {
+    // name: 'admin',
+    // avatar: userPNG,
+    // email: 'wangliqun@email.com',
+    // job: 'frontend',
+    // jobName: '前端开发工程师',
+    // organization: 'Frontend',
+    // organizationName: '前端',
+    // location: 'beijing',
+    // locationName: '北京',
+    // introduction: '王力群并非是一个真实存在的人。',
+    // personalWebsite: 'https://www.arco.design',
+    // verified: true,
+    // phoneNumber: 123123,
+    // accountId: 123123,
+    // registrationTime: Mock.Random.datetime('yyyy-MM-dd HH:mm:ss'),
+    // permissions: generatePermission(userRole),
+    // };
+
     store.dispatch({
       type: 'update-userInfo',
       payload: { userLoading: true },
     });
+    const res = await userAPI.personalCenter();
+
     store.dispatch({
       type: 'update-userInfo',
-      payload: { userInfo, userLoading: false },
+      payload: { userInfo: res.data.data, userLoading: false },
     });
   }
 

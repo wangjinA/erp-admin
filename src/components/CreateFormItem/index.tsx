@@ -9,10 +9,11 @@ import {
   Radio,
   Select,
   Switch,
-  Upload,
 } from '@arco-design/web-react';
 import LabelWithTips, { LabelWithTipsProps } from '../LabelWithTips';
 import { IconPlus } from '@arco-design/web-react/icon';
+import { baseURL } from '@/api';
+import Upload from '../Upload';
 
 export interface FormSchema
   extends Partial<Pick<LabelWithTipsProps, 'position'>> {
@@ -78,7 +79,6 @@ const createFormItem: CreateFormItemParams = ({
               {...controlProps}
             />
           );
-        case 'upload':
         case 'radio':
           return <Radio.Group type="button" {...controlProps} />;
         case 'textarea':
@@ -90,57 +90,15 @@ const createFormItem: CreateFormItemParams = ({
             <Switch checkedText="是" uncheckedText="否" {...controlProps} />
           );
         case 'select':
-          return <Select {...controlProps} />;
-        case 'upload':
           return (
-            <Upload
-              action="/"
-              // fileList={file ? [file] : []}
-              showUploadList={false}
-              onChange={(_, currentFile) => {
-                // setFile({
-                //   ...currentFile,
-                //   url: URL.createObjectURL(currentFile.originFile),
-                // });
-              }}
-              // onProgress={(currentFile) => {
-              //   setFile(currentFile);
-              // }}
-            >
-              {/* <div className={`arco-upload-list-item${file && file.status === 'error' ? ' is-error' : ''}`}> */}
-              <div>
-                {/* {
-                file && file.url ? (
-                  <div className="arco-upload-list-item-picture custom-upload-avatar">
-                    <img src={file.url} />
-                    <div className="arco-upload-list-item-picture-mask">
-                      <IconEdit />
-                    </div>
-                    {file.status === 'uploading' && file.percent < 100 && (
-                      <Progress
-                        percent={file.percent}
-                        type="circle"
-                        size="mini"
-                        style={{
-                          position: 'absolute',
-                          left: '50%',
-                          top: '50%',
-                          transform: 'translateX(-50%) translateY(-50%)',
-                        }}
-                      />
-                    )}
-                  </div>
-                ) : ( */}
-                <div className="arco-upload-trigger-picture">
-                  <div className="arco-upload-trigger-picture-text">
-                    <IconPlus />
-                    <div className="mt-2">点击上传</div>
-                  </div>
-                </div>
-                {/* )} */}
-              </div>
-            </Upload>
+            <Select
+              allowClear={true}
+              placeholder={`请选择${label}`}
+              {...controlProps}
+            />
           );
+        case 'upload':
+          return <Upload {...controlProps}></Upload>;
         case 'number':
           return (
             <InputNumber placeholder={`请输入${label}`} {...controlProps} />

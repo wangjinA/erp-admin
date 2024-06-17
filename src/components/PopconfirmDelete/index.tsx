@@ -7,8 +7,8 @@ export default (props: PopconfirmProps & { buttonProps?: ButtonProps }) => {
   return (
     <Popconfirm title="确认删除？" {...popconfirmProps}>
       <Button
-        status="warning"
         icon={<IconDelete></IconDelete>}
+        status="danger"
         size="small"
         {...buttonProps}
       >

@@ -1,15 +1,17 @@
+import { UserInfo } from '@/api/user';
 import defaultSettings from '../settings.json';
 export interface GlobalState {
   settings?: typeof defaultSettings;
-  userInfo?: {
-    name?: string;
-    avatar?: string;
-    job?: string;
-    organization?: string;
-    location?: string;
-    email?: string;
-    permissions: Record<string, string[]>;
-  };
+  userInfo?: Partial<UserInfo>;
+  // {
+  // name?: string;
+  // avatar?: string;
+  // job?: string;
+  // organization?: string;
+  // location?: string;
+  // email?: string;
+  // permissions: Record<string, string[]>;
+  // };
   userLoading?: boolean;
   editPassword: boolean;
 }
@@ -17,7 +19,7 @@ export interface GlobalState {
 const initialState: GlobalState = {
   settings: defaultSettings,
   userInfo: {
-    permissions: {},
+    // permissions: {},
   },
   editPassword: false,
 };

@@ -1,3 +1,4 @@
+import { Message } from '@arco-design/web-react';
 import axios from 'axios';
 
 export const baseURL = import.meta.env.DEV ? '' : 'http://121.37.10.68:8081';
