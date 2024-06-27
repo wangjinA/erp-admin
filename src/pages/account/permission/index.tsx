@@ -11,20 +11,15 @@ import useLocale from '@/utils/useLocale';
 import {
   Avatar,
   Button,
-  Divider,
-  Form,
   Grid,
-  Input,
   List,
   Modal,
-  Radio,
   Space,
-  Switch,
   Tree,
   Typography,
 } from '@arco-design/web-react';
 import useForm from '@arco-design/web-react/es/Form/useForm';
-import { IconCheck, IconDelete, IconPlus } from '@arco-design/web-react/icon';
+import { IconDelete, IconPlus } from '@arco-design/web-react/icon';
 import { useRequest } from 'ahooks';
 import { useState } from 'react';
 
@@ -36,10 +31,12 @@ const Permission = () => {
   const locale = useLocale();
   const [formRef] = useForm();
   const { data: roles, loading: rolesLoading } = useRequest(() => {
-    return roleAPI.get({
-      pageNum: 1,
-      pageSize: 10,
-    });
+    return roleAPI
+      .get({
+        pageNum: 1,
+        pageSize: 10,
+      })
+      .then((r) => r.data.data.list);
   });
   return (
     <CreateWrap formRef={formRef} createRequest={roleAPI.create}>
@@ -70,13 +67,13 @@ const Permission = () => {
               placeholder="请输入仓库名称"
             ></Input.Search> */}
                 <List>
-                  {[1, 2, 3, 4, 5, 6].map((item) => (
+                  {roles?.map((item) => (
                     <List.Item.Meta
                       style={{ height: 76 }}
                       className="hover:bg-gray-100 dark:hover:bg-zinc-500 cursor-pointer px-2 border-b border-neutral-3"
-                      key={item}
+                      key={item.id}
                       avatar={<Avatar>仓</Avatar>}
-                      title="管理员"
+                      title={item.roleName}
                       description="系统分组"
                     ></List.Item.Meta>
                   ))}

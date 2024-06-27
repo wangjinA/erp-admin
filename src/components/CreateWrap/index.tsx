@@ -28,7 +28,7 @@ const CreateWrap = React.forwardRef<any, CreateWrapProps>((props) => {
     async (params) => {
       tryFn(async () => {
         const res = await createRequest(params);
-        await showMessageStatus(res.data.data);
+        await showMessageStatus(res.data);
         formRef.resetFields();
         setShowType(null);
       });

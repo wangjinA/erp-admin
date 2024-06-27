@@ -1,13 +1,24 @@
-import { Alert, Form, Grid, Input, Select } from '@arco-design/web-react';
+import { Alert, Grid, Input, Select } from '@arco-design/web-react';
 import { IconScan } from '@arco-design/web-react/icon';
 import classNames from 'classnames';
 import styles from './index.module.less';
 import React from 'react';
 import OrderTable from '@/components/OrderTable';
-export default () => {
+import { useSessionStorageState } from 'ahooks';
+import { ScanParams } from '@/api/entrepot';
+
+interface ScanComponentProps {
+  className?: string;
+  style?: React.CSSProperties;
+  onScan?: (params: ScanParams) => void;
+}
+
+export default (props: ScanComponentProps) => {
+  const { className, style, onScan } = props;
+  const [entrepot, setEntrepot] = useSessionStorageState<any>('scan-entrepot');
   const height = 'h-20';
   return (
-    <div className="bg-white p-4">
+    <div className={classNames('bg-white p-4', className)} style={style}>
       <Grid.Row className="mx-auto w-1/2">
         <Grid.Col span={5}>
           <div
@@ -21,6 +32,8 @@ export default () => {
           >
             <div className="text-lg pl-5">当前仓库</div>
             <Select
+              value={entrepot}
+              onChange={setEntrepot}
               size="large"
               placeholder="请选择仓库"
               options={[
@@ -41,6 +54,12 @@ export default () => {
             size="large"
             className={classNames(height, styles['input-style'], 'text-3xl')}
             placeholder="扫描或者输入快递单号"
+            onPressEnter={(e) => {
+              onScan({
+                trackingNo: e.target.value,
+                sendWarehouse: 11111,
+              });
+            }}
             suffix={<IconScan />}
           ></Input>
         </Grid.Col>
@@ -50,29 +69,6 @@ export default () => {
           className="mt-4"
         />
       </Grid.Row>
-      <div>
-        <Alert
-          className="mt-4"
-          type="success"
-          title={<div>快递单号：【1212121】</div>}
-          content={
-            <div>
-              匹配1个订单，分配仓位为：405-08，签收时间：2024-06-0520：16：08
-            </div>
-          }
-        />
-        <Alert
-          className="mt-4"
-          type="success"
-          title={<div>快递单号：【1212121】</div>}
-          content={
-            <div>
-              匹配1个订单，分配仓位为：405-08，签收时间：2024-06-0520：16：08
-            </div>
-          }
-        />
-      </div>
-      <OrderTable className="mt-4"></OrderTable>
     </div>
   );
 };

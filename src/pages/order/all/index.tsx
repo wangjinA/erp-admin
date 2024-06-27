@@ -3,6 +3,8 @@ import FilterForm from '@/components/FilterForm';
 import { OrderFilter } from '@/constants/schema/order';
 import { Avatar, List, Table, Tabs } from '@arco-design/web-react';
 import OrderTable from '@/components/OrderTable';
+import { usePagination, useRequest } from 'ahooks';
+import { orderAPI } from '@/api/order';
 
 // 全部
 // 待入库
@@ -54,6 +56,13 @@ const tabs = [
 
 export default () => {
   const [activeTab, setActiveTab] = useState(tabs[0].key);
+  // const {} = usePagination(()=>{
+  //   return orderAPI.getList({
+
+  //   })
+  // }, {
+  //   manual: false,
+  // })
   return (
     <div className="bg-white p-4">
       <FilterForm

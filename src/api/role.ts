@@ -1,3 +1,4 @@
+import { random } from 'lodash';
 import baseAxios from '.';
 import { APIListResponse, APIResponse, IPageParams } from './type';
 interface Role {
@@ -20,6 +21,12 @@ export const roleAPI = {
     return baseAxios.post<APIListResponse<Role>>('/api/role/list', body);
   },
   create(body: Partial<Role>) {
-    return baseAxios.post<APIResponse>('/api/role/insert', body);
+    return baseAxios.post<APIResponse>('/api/role/insert', {
+      menuIds: [1],
+      roleCode: random(0, 1000).toString(),
+      systemAcquiesce: 0,
+      tenantryId: 0,
+      ...body,
+    });
   },
 };
