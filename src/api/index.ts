@@ -15,9 +15,9 @@ baseAxios.interceptors.request.use((config) => {
   config.headers = {
     ...config.headers,
     token: localStorage.getItem(TokenKey),
-    deptId: '0',
-    identification: '1',
-    tenantryId: '0',
+    // deptId: '0',
+    // identification: '1',
+    // tenantryId: '0',
   } as any;
   return config;
 });

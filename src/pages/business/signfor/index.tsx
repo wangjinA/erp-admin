@@ -29,25 +29,24 @@ const columns = [
 ];
 
 export default () => {
-  const { run } = useRequest(
-    async (data: ScanParams) => {
-      console.log(data);
-
-      const res = await scanAPI.scanSign(data);
+  const { run, data } = useRequest(
+    async (params: ScanParams) => {
+      const res = await scanAPI.scanSign(params);
       showMessageStatus(res.data);
+      return data;
     },
     {
       manual: true,
     }
   );
   return (
-    <div>
+    <div className="bg-white p-4">
       <ScanCommon
         onScan={(info) => {
           run(info);
         }}
       ></ScanCommon>
-      <Table data={[]} columns={columns}></Table>
+      {data && <Table data={data} columns={columns}></Table>}
     </div>
   );
 };

@@ -42,10 +42,10 @@ export interface EntrepotStorageRacks {
 // 仓库
 export const entrepotAPI = {
   getList(body: Partial<Entrepot & IPageParams>) {
-    return baseAxios.post<APIListResponse<Entrepot>>(
-      '/api/entrepot/list',
-      body
-    );
+    return baseAxios.post<APIListResponse<Entrepot>>('/api/entrepot/list', {
+      entrepotType: 1,
+      ...body,
+    });
   },
   insert(body: Partial<Entrepot>) {
     return baseAxios.post<APIResponse>('/api/entrepot/insert', body);
@@ -83,12 +83,12 @@ export const scanAPI = {
     return baseAxios.get('/api/scanning/record/list');
   },
   // 扫码入库
-  scanPut(ScanParams) {
-    return baseAxios.post('/api/business/operation/scan/put', ScanParams);
+  scanPut(params: ScanParams) {
+    return baseAxios.post('/api/business/operation/scan/put', params);
   },
   // 扫码签收
-  scanSign(ScanParams) {
-    return baseAxios.post('/api/business/operation/scan/sign', ScanParams);
+  scanSign(params: ScanParams) {
+    return baseAxios.post('/api/business/operation/scan/sign', params);
   },
 };
 

@@ -10,6 +10,9 @@ export const login = (params) => {
     userLoginPassword,
   });
 };
+export const loginExit = () => {
+  return baseAxios.post<APIResponse<LoginResponse>>('/api/system/exit');
+};
 
 export const getCaptcha = (randomVal?: any) => {
   const val = randomVal ? `?${randomVal}` : '';

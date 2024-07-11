@@ -11,7 +11,6 @@ import {
 import { FormInstance } from '@arco-design/web-react/es/Form';
 import { IconLock, IconSafe, IconUser } from '@arco-design/web-react/icon';
 import React, { useEffect, useRef, useState } from 'react';
-import axios from 'axios';
 import useStorage from '@/utils/useStorage';
 import useLocale from '@/utils/useLocale';
 import locale from './locale';
@@ -26,7 +25,7 @@ export default function LoginForm() {
   const [errorMessage, setErrorMessage] = useState('');
   const [loginParams, setLoginParams, removeLoginParams] =
     useStorage('loginParams');
-  const [value, setValue] = useLocalStorageState('userInfo')
+  const [value, setValue] = useLocalStorageState('userInfo');
   const [randomStr, setRandomStr] = useState(null);
   const t = useLocale(locale);
 
@@ -40,12 +39,13 @@ export default function LoginForm() {
     async (params) => {
       const res = await login(params);
       if (res.data.code === SuccessCode) {
+        setValue(res.data.data);
+        localStorage.setItem(TokenKey, res.data.data.token);
+        localStorage.removeItem('scan-entrepot');
         afterLoginSuccess(params);
       } else {
         Message.error(res.data.msg || t['login.form.login.errMsg']);
       }
-      setValue(res.data.data);
-      localStorage.setItem(TokenKey, res.data.data.token)
     },
     {
       manual: true,

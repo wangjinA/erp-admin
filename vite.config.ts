@@ -34,7 +34,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://121.37.10.68:8081',
+        target: 'https://logistics.drcstudio.cn',
         changeOrigin: true,
       },
     },

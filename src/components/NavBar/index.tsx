@@ -36,7 +36,8 @@ import styles from './style/index.module.less';
 import defaultLocale from '@/locale';
 import useStorage from '@/utils/useStorage';
 import { generatePermission } from '@/routes';
-import userPng from '@/assets/user.png';
+import { TokenKey } from '@/api';
+import { loginExit } from '@/api/user';
 
 function Navbar({ show }: { show: boolean }) {
   const t = useLocale();
@@ -50,11 +51,14 @@ function Navbar({ show }: { show: boolean }) {
 
   function logout() {
     setUserStatus('logout');
+    localStorage.removeItem('userInfo');
+    localStorage.removeItem(TokenKey);
     window.location.href = '/login';
   }
 
   function onMenuItemClick(key) {
     if (key === 'logout') {
+      loginExit();
       logout();
     } else {
       Message.info(`You clicked ${key}`);
