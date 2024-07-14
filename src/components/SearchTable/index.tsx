@@ -8,7 +8,7 @@ import {
   TableProps,
 } from '@arco-design/web-react';
 import { CreateFormItemType } from '../CreateFormItem';
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import FilterForm from '../FilterForm';
 import { ColumnProps } from '@arco-design/web-react/es/Table';
 import CreateWrap, { ActionsContext, CreateWrapProps } from '../CreateWrap';
@@ -38,10 +38,14 @@ import { omit } from 'lodash';
 const SearchTable: React.FC<SearchTableProps> = (props) => {
   const {
     name,
+    formItemConfigList,
+    isSearchParams = true,
+    className,
+    style,
     majorKey = 'id',
     tableProps,
     formProps,
-    formItemConfigList,
+    initialValues = {},
     onView,
     createRequest,
     getListRequest,
@@ -54,7 +58,10 @@ const SearchTable: React.FC<SearchTableProps> = (props) => {
     value: searchFromData,
     setValue: setSearchFromData,
     resetParams,
-  } = useSearchParam({});
+  } = useSearchParam({
+    initialValues,
+    isSearchParams,
+  });
 
   const [pageSize, setPageSize] = useLocalStorageState(`${name}-page-size`, {
     defaultValue: 10,
@@ -93,7 +100,7 @@ const SearchTable: React.FC<SearchTableProps> = (props) => {
     >
       <ActionsContext.Consumer>
         {({ showType, setShowType, createAction, updateAction }) => (
-          <div>
+          <div className={className} style={style}>
             <FilterForm
               {...formProps}
               form={searchFromRef}
@@ -106,7 +113,7 @@ const SearchTable: React.FC<SearchTableProps> = (props) => {
                 setSearchFromData(vals);
               }}
             ></FilterForm>
-            <div className="flex justify-between py-6 pr-4">
+            <div className="flex justify-between py-6 pr-2">
               <Button
                 type="primary"
                 onClick={() => setShowType(ShowFormType.create)}
@@ -114,14 +121,15 @@ const SearchTable: React.FC<SearchTableProps> = (props) => {
               >
                 新建
               </Button>
-              <Space size={30}>
+              <Space size={20}>
                 <Button
                   type="default"
                   loading={loading}
                   icon={<IconRefresh />}
                   onClick={() => {
-                    searchFromRef.resetFields();
-                    resetParams();
+                    searchFromRef.clearFields();
+                    searchFromRef.setFieldsValue(resetParams());
+
                     setTimeout(() => {
                       if (pageNum === 1) {
                         run();
@@ -191,7 +199,7 @@ const SearchTable: React.FC<SearchTableProps> = (props) => {
                       </Button>
                       <PopconfirmDelete
                         buttonProps={{
-                          type: 'text'
+                          type: 'text',
                         }}
                         onOk={() =>
                           removeRequest(record[majorKey]).then(() => {
@@ -272,11 +280,13 @@ function formItemConfigListStatusFilter(
 function createFormListToColumnList(
   formItemConfigList: SearchTableSchema[]
 ): SearchTableSchema & Required<ColumnProps>[] {
-  const res: any = formItemConfigList.map((item) => ({
-    ...item,
-    title: item.title || item.schema.label,
-    dataIndex: item.schema.field,
-  }));
+  const res: any = formItemConfigList
+    .filter((item) => !item.formItemProps?.hidden)
+    .map((item) => ({
+      ...item,
+      title: item.title || item.schema.label,
+      dataIndex: item.schema.field,
+    }));
   return res;
 }
 
@@ -285,9 +295,13 @@ export default SearchTable;
 interface SearchTableProps {
   name: string;
   formItemConfigList: SearchTableSchema[];
+  isSearchParams?: boolean;
+  className?: string;
+  style?: CSSProperties;
   majorKey?: string;
   tableProps?: TableProps;
   formProps?: FormProps;
+  initialValues?: any;
   createRequest?: CreateWrapProps['createRequest'];
   getListRequest?: (
     params: IPageParams

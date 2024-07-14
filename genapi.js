@@ -1,7 +1,7 @@
-const fs = require('fs');
+const fs = require('fs/promises');
 const templateInfo = {
-  name: 'test'
-}
+  name: 'test',
+};
 const templateStr = `
 import baseAxios from '.';
 import { APIListResponse, APIResponse, IPageParams } from './type';
@@ -36,6 +36,8 @@ export const dictAPI = {
   },
 };
 
-`
+`;
 
-fs.write(`./api/${templateInfo.name}.ts`, templateStr);
+fs.writeFile(`./src/api/${templateInfo.name}.ts`, templateStr, {
+  encoding: 'utf-8',
+});

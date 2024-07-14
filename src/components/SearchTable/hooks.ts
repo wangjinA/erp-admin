@@ -1,7 +1,7 @@
 import { useHistory } from 'react-router';
 import { useEffect, useState } from 'react';
 export function getQueryStr(data = {}) {
-  return Object.entries<any>((data)).reduce((pre, [key, value]) => {
+  return Object.entries<any>(data).reduce((pre, [key, value]) => {
     if (['', null, undefined].includes(value)) {
       return pre;
     }
@@ -10,7 +10,6 @@ export function getQueryStr(data = {}) {
       return `?${key}=${encodeURIComponent(encodeValue)}`;
     }
     return `${pre}&${key}=${encodeURIComponent(encodeValue)}`;
-
   }, '');
 }
 export function getQueryData(queryStr = location.search.slice(1)) {
@@ -31,24 +30,35 @@ export function getQueryData(queryStr = location.search.slice(1)) {
 }
 
 const cacheMap = new Map<string, any>();
-export function useSearchParam<T>(initValue: T, cacheId?: string) {
+export function useSearchParam<T>(params: {
+  initialValues: T;
+  cacheId?: string;
+  isSearchParams?: boolean;
+}) {
+  const { initialValues, cacheId, isSearchParams = true } = params;
   const history = useHistory();
   const [value, setValue] = useState<T>({
-    ...initValue,
-    ...cacheMap.get(cacheId),
-    ...getQueryData(),
+    ...initialValues,
+    ...(cacheId ? cacheMap.get(cacheId) : {}),
+    ...(isSearchParams ? getQueryData() : {}),
   });
 
   useEffect(() => {
-    const queryStr = getQueryStr(value);
-    history.replace({ search: queryStr });
-    cacheMap.set(cacheId, value);
-  }, [value]);
+    if (isSearchParams) {
+      const queryStr = getQueryStr(value);
+      history.replace({ search: queryStr });
+    }
+    if (cacheId) {
+      cacheMap.set(cacheId, value);
+    }
+  }, [value, isSearchParams, cacheId]);
 
   const resetParams = (val?: T) => {
-    const resetValue = val || initValue;
-    const search = getQueryStr(resetValue);
-    history.replace({ search });
+    const resetValue = val || initialValues;
+    if (isSearchParams) {
+      const search = getQueryStr(resetValue);
+      history.replace({ search });
+    }
     setValue(resetValue);
     return resetValue;
   };

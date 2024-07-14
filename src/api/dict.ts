@@ -1,6 +1,7 @@
 import baseAxios from '.';
 import { APIListResponse, APIResponse, IPageParams } from './type';
 export interface Dict {
+  id: number;
   createBy: string; // "创建人",
   createTime: string; // "创建时间",
   deleteStatus: number; // "删除状态：0.正常，1.删除",
@@ -28,5 +29,30 @@ export const dictAPI = {
   },
   remove(id: number) {
     return baseAxios.get<APIResponse>(`/api/dict/remove/${id}`);
+  },
+};
+
+type DictChild = Dict & {
+  dictId: number;
+};
+
+export const dictChildAPI = {
+  getList(body?: Partial<DictChild & IPageParams>) {
+    return baseAxios.post<APIListResponse<DictChild>>(
+      '/api/dict/child/list',
+      body
+    );
+  },
+  get(id: number) {
+    return baseAxios.get<APIResponse<DictChild>>(`/api/dict/child/info/${id}`);
+  },
+  create(body: Partial<DictChild>) {
+    return baseAxios.post<APIResponse>('/api/dict/child/insert', body);
+  },
+  update(body: Partial<DictChild>) {
+    return baseAxios.post<APIResponse>('/api/dict/child/update', body);
+  },
+  remove(id: number) {
+    return baseAxios.get<APIResponse>(`/api/dict/child/remove/${id}`);
   },
 };
