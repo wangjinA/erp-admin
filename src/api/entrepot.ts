@@ -47,6 +47,12 @@ export const entrepotAPI = {
       ...body,
     });
   },
+  getListAll(body: Partial<Entrepot & IPageParams>) {
+    return baseAxios.post<APIListResponse<Entrepot>>('/api/entrepot/list/all', {
+      entrepotType: 1,
+      ...body,
+    });
+  },
   insert(body: Partial<Entrepot>) {
     return baseAxios.post<APIResponse>('/api/entrepot/insert', body);
   },
@@ -56,6 +62,7 @@ export const entrepotAPI = {
   update(body: Partial<Entrepot>) {
     return baseAxios.post('/api/entrepot/update', body);
   },
+  
 };
 
 // 仓位

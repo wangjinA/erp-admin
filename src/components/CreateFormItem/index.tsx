@@ -5,14 +5,11 @@ import {
   FormItemProps,
   Input,
   InputNumber,
-  Modal,
   Radio,
   Select,
   Switch,
 } from '@arco-design/web-react';
 import LabelWithTips, { LabelWithTipsProps } from '../LabelWithTips';
-import { IconPlus } from '@arco-design/web-react/icon';
-import { baseURL } from '@/api';
 import Upload from '../Upload';
 
 export interface FormSchema
@@ -65,11 +62,22 @@ const createFormItem: CreateFormItemParams = ({
   controlProps,
   ...otherProps
 }) => {
-  const { field, label, tips, position, rules, defaultValue, required } =
-    schema;
+  const {
+    field,
+    label = '',
+    tips,
+    position,
+    rules,
+    defaultValue,
+    required,
+  } = schema;
   const getFormControl = (s: FormSchema) => {
-    if (typeof control === 'string') {
-      switch (control.toLowerCase()) {
+    if (typeof control === 'function') {
+      return control(s);
+    } else if (typeof control === 'object') {
+      return control;
+    } else {
+      switch (control?.toLowerCase()) {
         case undefined:
         case 'input':
           return (
@@ -106,10 +114,6 @@ const createFormItem: CreateFormItemParams = ({
         default:
           return <span>{control}</span>;
       }
-    } else if (typeof control === 'function') {
-      return control(s);
-    } else {
-      return control;
     }
   };
   const defaultValueObj =

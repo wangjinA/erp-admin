@@ -59,6 +59,9 @@ const i18n = {
     'navbar.search.placeholder': 'Please search',
   },
   'zh-CN': {
+
+    'menu.dict': '字典管理',
+
     'menu.business': '业务操作',
     'menu.business.deposit': '扫码入库',
     'menu.business.delivery': '扫码出库',
@@ -72,6 +75,12 @@ const i18n = {
     'menu.order.all': '全部订单',
     'menu.order.returnOrder': '海外仓退件订单',
     'menu.order.deliveryHistory': '订单出库记录',
+
+    'menu.client.order.create': '手动创建订单',
+    'menu.client.order': '订单管理',
+    'menu.client.order.all': '全部订单',
+    'menu.client.order.returnOrder': '海外仓退件订单',
+    'menu.client.order.deliveryHistory': '订单出库记录',
 
 
     'menu.entrepot': '仓库管理',

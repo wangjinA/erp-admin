@@ -34,3 +34,7 @@ export async function tryFn(
     Message.error(message + (error.message || ''));
   }
 }
+
+export function sleep(timeout){
+  return new Promise(resolve => setTimeout(resolve, timeout));
+}

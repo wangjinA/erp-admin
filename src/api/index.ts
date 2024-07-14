@@ -2,7 +2,7 @@ import { Modal } from '@arco-design/web-react';
 import axios from 'axios';
 import { debounce } from 'lodash';
 
-export const baseURL = import.meta.env.DEV ? '' : 'http://121.37.10.68:8081';
+export const baseURL = import.meta.env.DEV ? '' : 'https://logistics.drcstudio.cn';
 
 const baseAxios = axios.create({
   baseURL,

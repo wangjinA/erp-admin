@@ -100,9 +100,12 @@ function Index() {
           List: {
             bordered: false,
           },
-          Table: {
-            border: false,
-          },
+          // Table: {
+          //   border: false,
+          // },
+          Button: {
+            size: 'small'
+          }
         }}
       >
         <Provider store={store}>

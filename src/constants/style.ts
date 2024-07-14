@@ -1,0 +1,1 @@
+export const HideClass = 'pointer-events-none opacity-0 absolute'

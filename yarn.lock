@@ -270,10 +270,10 @@
   dependencies:
     color "^3.1.3"
 
-"@arco-design/web-react@^2.32.2":
-  version "2.62.1"
-  resolved "https://registry.npmmirror.com/@arco-design/web-react/-/web-react-2.62.1.tgz#5df478d15b7eb25404236dd07305271d474ce447"
-  integrity sha512-WOxgWF8XQHwx6pg7wo1U7Xbp4DnTO293/x1tR8KiA/TMhCC03zrabKqewJkJK1OqaShUGI8xapubDpz/rQ47Hg==
+"@arco-design/web-react@2.63.1":
+  version "2.63.1"
+  resolved "https://registry.npmmirror.com/@arco-design/web-react/-/web-react-2.63.1.tgz#48ea74d89be90d4e7e229259285e3e00b608454a"
+  integrity sha512-Ted5MY5iM7I4Cqf1QaHBZ55DZHO6oQQa8Oaazz0ku3f+pa/y8eEWM1le4rkXTvNdtDete6M2gFRS0OWguI6DEw==
   dependencies:
     "@arco-design/color" "^0.4.0"
     "@babel/runtime" "^7.5.5"
@@ -7365,6 +7365,11 @@ use-callback-ref@^1.3.2:
   integrity sha512-elOQwe6Q8gqZgDA8mrh44qRTQqpIHDcZ3hXTLjBe1i4ph8XpNJnO+aQf3NaG+lriLopI4HMx9VjQLfPQ6vhnoA==
   dependencies:
     tslib "^2.0.0"
+
+use-debounce@^10.0.1:
+  version "10.0.1"
+  resolved "https://registry.npmmirror.com/use-debounce/-/use-debounce-10.0.1.tgz#adc42e7f7b08a237f5bbf0ea6cadee5813863cdc"
+  integrity sha512-0uUXjOfm44e6z4LZ/woZvkM8FwV1wiuoB6xnrrOmeAEjRDDzTLQNRFtYHvqUsJdrz1X37j0rVGIVp144GLHGKg==
 
 use-sidecar@^1.1.2:
   version "1.1.2"

@@ -30,7 +30,7 @@ const i18n = {
       '得到包名后，您就可以通过如下命令安装该物料',
     'welcome.step.content.result': '这样您就能轻松获得一个 workplace 页面',
     'welcome.title.material': '更多物料请查看以下链接',
-    'welcome.link.material-pro': 'ERP Admin 物料合集',
+    'welcome.link.material-pro': '速运宝 - 新一代电商货代平台',
     'welcome.link.material-all': '所有物料',
   },
 };

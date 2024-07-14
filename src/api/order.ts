@@ -12,6 +12,9 @@ export const orderAPI = {
   getDetail(id: number) {
     return baseAxios.get(`/api/logistics/order/info/${id}`);
   },
+  insert(body) {
+    return baseAxios.post('/api/logistics/order/insert', body);
+  },
 };
 
 export interface SearchOrderParams extends IPageParams {

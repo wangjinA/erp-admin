@@ -8,7 +8,7 @@ function Footer(props: FooterProps = {}) {
   const { className, ...restProps } = props;
   return (
     <Layout.Footer className={cs(styles.footer, className)} {...restProps}>
-      ERP 系统
+      速运宝 - 新一代电商货代平台
     </Layout.Footer>
   );
 }

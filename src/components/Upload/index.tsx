@@ -7,11 +7,18 @@ import { UploadProps } from '@arco-design/web-react/lib';
 type Props = UploadProps & {
   value?: string | string[];
   fileSize?: number;
+  autoCard?: boolean;
   onChange?: (urls: string | string[]) => void;
 };
 
 export default (props: Props) => {
-  const { value, onChange, fileSize = 10, ...uploadProps } = props;
+  const {
+    value,
+    onChange,
+    autoCard = false,
+    fileSize = 10,
+    ...uploadProps
+  } = props;
   const urls = toArray(value).filter(Boolean);
   const [fileList, setFileList] = useState<UploadItem[]>(
     urls.map((v) => ({
@@ -39,7 +46,9 @@ export default (props: Props) => {
       onRemove={(e) => {
         setFileList(fileList.filter((item) => item.url !== e.url));
       }}
-      listType="picture-card"
+      listType={
+        autoCard ? (fileList.length ? 'picture-card' : 'text') : 'picture-card'
+      }
       onChange={(list) => {
         const ls = list.map((item) => ({
           ...item,

@@ -8,6 +8,8 @@ import {
 import React, { useEffect, useImperativeHandle, useRef } from 'react';
 import createFormItem, { CreateFormItemType } from '../CreateFormItem';
 import { isString, max } from 'lodash';
+import classNames from 'classnames';
+import { HideClass } from '@/constants/style';
 
 const getFormItemConfigListDefaultValues = (list: CreateFormItemType[]) =>
   list.reduce((pre, cur) => {
@@ -19,7 +21,7 @@ const getFormItemConfigListDefaultValues = (list: CreateFormItemType[]) =>
 
 export type FilterFormProps = FormProps & {
   formItemConfigList: CreateFormItemType[];
-  className?: string;
+  className?: string | string[];
   gutter?: RowProps['gutter'];
   span?: number;
   labelLength?: number;
@@ -86,24 +88,25 @@ const FilterForm = React.forwardRef(
         <Grid.Row gutter={gutter} className="w-full">
           {[...formItemConfigList]
             .filter((item) => item.schema.field || item.schema.key)
-            .map((item) =>
-              item.control ? (
-                <Grid.Col
-                  span={item.schema.span || span}
-                  key={item.schema.field || item.schema.key}
-                >
-                  {createFormItem({
-                    ...item,
-                    schema: {
-                      ...item.schema,
-                      defaultValue:
-                        initialValues?.[item.schema.field] ??
-                        item.schema.defaultValue,
-                    },
-                  })}
-                </Grid.Col>
-              ) : null
-            )}
+            .map((item) => (
+              <Grid.Col
+                className={classNames(
+                  item.formItemProps?.hidden ? HideClass : ''
+                )}
+                span={item.schema.span || span}
+                key={item.schema.field || item.schema.key}
+              >
+                {createFormItem({
+                  ...item,
+                  schema: {
+                    ...item.schema,
+                    defaultValue:
+                      initialValues?.[item.schema.field] ??
+                      item.schema.defaultValue,
+                  },
+                })}
+              </Grid.Col>
+            ))}
         </Grid.Row>
       </Form>
     );

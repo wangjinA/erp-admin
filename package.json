@@ -1,7 +1,7 @@
 {
-  "name": "erp-admin",
+  "name": "suyunbao",
   "version": "1.0.0",
-  "description": "erp admin",
+  "description": "速运宝 - 新一代电商货代平台",
   "scripts": {
     "start": "vite",
     "dev": "vite",
@@ -15,7 +15,7 @@
   "dependencies": {
     "@antv/data-set": "^0.11.8",
     "@arco-design/color": "^0.4.0",
-    "@arco-design/web-react": "^2.32.2",
+    "@arco-design/web-react": "2.63.1",
     "@arco-plugins/vite-react": "^1.0.5",
     "@arco-themes/react-arco-pro": "^0.0.7",
     "@loadable/component": "^5.13.2",
@@ -38,7 +38,8 @@
     "react-redux": "^7.2.6",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
-    "redux": "^4.1.2"
+    "redux": "^4.1.2",
+    "use-debounce": "^10.0.1"
   },
   "devDependencies": {
     "@arco-design/webpack-plugin": "^1.6.0",

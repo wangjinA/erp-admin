@@ -14,7 +14,7 @@ function Login() {
     <div className={styles.container}>
       <div className={styles.logo}>
         <Logo />
-        <div className={styles['logo-text']}>ERP Admin</div>
+        <div className={styles['logo-text']}>速运宝 - 新一代电商货代平台</div>
       </div>
       <div className={styles.banner}>
         <div className={styles['banner-inner']}>

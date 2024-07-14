@@ -11,38 +11,62 @@ interface ChildrenParams {
   showType?: ShowFormType;
   setShowType?: (type: ShowFormType) => void;
   createAction?: Result<any, any>;
+  updateAction?: Result<any, any>;
 }
 
-interface CreateWrapProps {
-  createRequest: (params) => Promise<AxiosResponse<APIResponse>>;
-  children: React.ReactNode;
-  formRef: FormInstance;
+export interface CreateWrapProps {
+  createRequest?: (params) => Promise<AxiosResponse<APIResponse>>;
+  updateRequest?: (id) => Promise<AxiosResponse<APIResponse>>;
+  refreshRequest?: () => void;
+  children?: React.ReactNode;
+  formRef?: FormInstance;
 }
 
 export const ActionsContext = React.createContext<Partial<ChildrenParams>>({});
 
-const CreateWrap = React.forwardRef<any, CreateWrapProps>((props) => {
-  const { createRequest, formRef, children } = props;
+const CreateWrap:React.FC<CreateWrapProps> = ((props) => {
+  const { formRef, children, createRequest, updateRequest, refreshRequest } = props;
   const [showType, setShowType] = useState<ShowFormType>(null);
   const createAction = useRequest(
     async (params) => {
-      tryFn(async () => {
-        const res = await createRequest(params);
-        await showMessageStatus(res.data);
-        formRef.resetFields();
-        setShowType(null);
+      return tryFn(async () => {
+        if (createRequest) {
+          const res = await createRequest(params);
+          await showMessageStatus(res.data);
+          formRef?.resetFields();
+          setShowType(null);
+          refreshRequest?.();
+        }
       });
     },
     {
       manual: true,
     }
   );
+  const updateAction = useRequest(
+    async (params) => {
+      return tryFn(async () => {
+        if (updateRequest) {
+          const res = await updateRequest(params);
+          await showMessageStatus(res.data);
+          formRef?.resetFields();
+          setShowType(null);
+          refreshRequest?.();
+        }
+      });
+    },
+    {
+      manual: true,
+    }
+  );
+
   return (
     <ActionsContext.Provider
       value={{
         showType,
         setShowType,
         createAction,
+        updateAction,
       }}
     >
       {children}
