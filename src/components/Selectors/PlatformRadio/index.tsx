@@ -1,5 +1,7 @@
 import React from 'react';
-import { Button, Radio } from '@arco-design/web-react';
+import { Button, Radio, Spin } from '@arco-design/web-react';
+import { useRequest } from 'ahooks';
+import { useDictOptions } from '../DictSelector';
 
 export default (props) => {
   const data = [
@@ -20,9 +22,15 @@ export default (props) => {
       value: '3',
     },
   ];
-  return (
+  const res = useDictOptions({
+    dictCode: 'platform_type',
+    displayName: '',
+  });
+  return res.loading ? (
+    <Spin></Spin>
+  ) : res.data ? (
     <Radio.Group {...props}>
-      {data.map((item) => {
+      {res.data?.map((item) => {
         return (
           <Radio key={item.value} value={item.value}>
             {({ checked }) => {
@@ -40,5 +48,7 @@ export default (props) => {
         );
       })}
     </Radio.Group>
+  ) : (
+    '-'
   );
 };

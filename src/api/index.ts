@@ -2,11 +2,13 @@ import { Modal } from '@arco-design/web-react';
 import axios from 'axios';
 import { debounce } from 'lodash';
 
-export const baseURL = import.meta.env.DEV ? '' : 'https://logistics.drcstudio.cn';
+export const baseURL = import.meta.env.DEV
+  ? ''
+  : 'https://logistics.drcstudio.cn';
 
 const baseAxios = axios.create({
   baseURL,
-  timeout: 10 * 1000,
+  timeout: 1 * 1000,
 });
 
 export const TokenKey = 'erp-token';
@@ -17,7 +19,7 @@ baseAxios.interceptors.request.use((config) => {
     token: localStorage.getItem(TokenKey),
     // deptId: '0',
     // identification: '1',
-    // tenantryId: '0',
+    // tenantryId: '38909991126000134',
   } as any;
   return config;
 });

@@ -24,17 +24,13 @@ export function toArray(value) {
   return isArray(value) ? value : [value];
 }
 
-export async function tryFn(
-  fn: () => Promise<any>,
-  message: string = '请求失败'
-) {
-  try {
-    await fn();
-  } catch (error) {
+export function tryFn<T>(fn: () => Promise<T>, message: string = '请求失败') {
+  return fn().catch((error) => {
     Message.error(message + (error.message || ''));
-  }
+    return error;
+  });
 }
 
-export function sleep(timeout){
-  return new Promise(resolve => setTimeout(resolve, timeout));
+export function sleep(timeout) {
+  return new Promise((resolve) => setTimeout(resolve, timeout));
 }

@@ -36,18 +36,18 @@ import {
 import { Order } from '@/types/order';
 import { useDebouncedCallback } from 'use-debounce';
 import PopconfirmDelete from '@/components/PopconfirmDelete';
+import { showMessageStatus, tryFn } from '@/utils';
 
 const { Title, Paragraph } = Typography;
 
-// export default StepForm;
 
 export default () => {
   const [formData, setFormData] = useLocalStorageState<Partial<Order>>(
     'create-order',
     {}
   );
-  const [current, setCurrent] = useState(2);
-  const [skuList, setSkuList] = useState([0, 1]);
+  const [current, setCurrent] = useState(3);
+  const [skuList, setSkuList] = useState([0]);
 
   const setFormDataDebounce = useDebouncedCallback((v: Partial<Order>) => {
     setFormData({
@@ -58,9 +58,18 @@ export default () => {
 
   const [form] = Form.useForm();
   const t = useLocale(locale);
-  const req = useRequest(async () => {
-    // orderAPI.insert()
-  });
+  const createHandler = useRequest(
+    () => {
+      console.log(formData);
+      return tryFn(async () => {
+        const res = await orderAPI.insert(formData);
+        await showMessageStatus(res.data);
+      });
+    },
+    {
+      manual: true,
+    }
+  );
   const reCreateForm = () => {
     form.resetFields();
     setCurrent(1);
@@ -230,21 +239,25 @@ export default () => {
               </Button>
             )}
             {current === 3 && (
-              <Button type="primary" size="large" onClick={toNext}>
+              <Button
+                type="primary"
+                size="large"
+                onClick={() => createHandler.run()}
+                loading={createHandler.loading}
+              >
                 创建
               </Button>
             )}
           </div>
         </div>
         <div className={styles['form-extra']}>
-          <Title heading={6}>{t['stepForm.created.extra.title']}</Title>
+          <Title heading={6}>手动创建订单说明</Title>
           <Paragraph type="secondary">
             {t['stepForm.created.extra.desc']}
             <Button type="text">{t['stepForm.created.extra.detail']}</Button>
           </Paragraph>
         </div>
       </Card>
-      <Button type="primary">确定</Button>
     </div>
   );
 };

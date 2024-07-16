@@ -1,4 +1,6 @@
 import { CreateFormItemType } from '@/components/CreateFormItem';
+import DictSelector from '@/components/Selectors/DictSelector';
+import EntrepotSelector from '@/components/Selectors/EntrepotSelector';
 import { TimeRangeDefaultProps } from '@/constants';
 import { DatePicker } from '@arco-design/web-react';
 import React from 'react';
@@ -104,14 +106,14 @@ export const OrderCreateSchema1: CreateFormItemType[] = [
       field: 'platformType',
       label: '平台类型',
     },
-    control: 'input',
+    control: <DictSelector dictCode="platform_type"></DictSelector>,
   },
   {
     schema: {
       field: 'orderType',
       label: '订单类型',
     },
-    control: 'input',
+    control: <DictSelector dictCode="order_type"></DictSelector>,
   },
   {
     schema: {
@@ -127,7 +129,6 @@ export const OrderCreateSchema1: CreateFormItemType[] = [
     },
     control: 'input',
   },
-
   {
     schema: {
       field: 'orderAmount',
@@ -140,36 +141,35 @@ export const OrderCreateSchema1: CreateFormItemType[] = [
       field: 'transportType',
       label: '运输类型',
     },
-    control: 'input',
+    control: <DictSelector dictCode="transport_type"></DictSelector>,
   },
   {
     schema: {
       field: 'shippingCarrier',
       label: '物流渠道',
     },
-    control: 'input',
+    control: <DictSelector dictCode="logistics_channel"></DictSelector>,
   },
   {
     schema: {
       field: 'shippingTime',
       label: '出货时间',
     },
-    control: 'input',
+    control: 'datePicker',
   },
-
   {
     schema: {
       field: 'cancellationTime',
       label: '取消时间',
     },
-    control: 'input',
+    control: 'datePicker',
   },
   {
     schema: {
       field: 'sendWarehouse',
       label: '送往仓库',
     },
-    control: 'input',
+    control: <EntrepotSelector />,
   },
   {
     schema: {
@@ -178,16 +178,16 @@ export const OrderCreateSchema1: CreateFormItemType[] = [
     },
     control: 'input',
   },
-  {
-    schema: {
-      field: 'timeType8',
-      label: '面单文件',
-    },
-    controlProps: {
-      autoCard: true,
-    },
-    control: 'upload',
-  },
+  // {
+  //   schema: {
+  //     field: 'timeType8',
+  //     label: '面单文件',
+  //   },
+  //   controlProps: {
+  //     autoCard: true,
+  //   },
+  //   control: 'upload',
+  // },
 ];
 
 export const OrderCreateSchema2: CreateFormItemType[] = [
@@ -234,7 +234,7 @@ export const OrderCreateSchema2: CreateFormItemType[] = [
       field: 'quantity',
       label: '数量',
     },
-    control: 'input',
+    control: 'number',
   },
   {
     schema: {
@@ -271,7 +271,7 @@ export const OrderCreateSchema3: CreateFormItemType[] = [
       field: 'region',
       label: '地区',
     },
-    control: 'input',
+    control: <DictSelector dictCode="region"></DictSelector>,
   },
   {
     schema: {

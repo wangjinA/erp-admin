@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import { ConfigProvider } from '@arco-design/web-react';
+import { ConfigProvider, Message } from '@arco-design/web-react';
 import zhCN from '@arco-design/web-react/es/locale/zh-CN';
 import enUS from '@arco-design/web-react/es/locale/en-US';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
@@ -39,35 +39,43 @@ function Index() {
 
   async function fetchUserInfo() {
     const userRole = window.localStorage.getItem('userRole') || 'admin';
-    // const userInfo = {
-    // name: 'admin',
-    // avatar: userPNG,
-    // email: 'wangliqun@email.com',
-    // job: 'frontend',
-    // jobName: '前端开发工程师',
-    // organization: 'Frontend',
-    // organizationName: '前端',
-    // location: 'beijing',
-    // locationName: '北京',
-    // introduction: '王力群并非是一个真实存在的人。',
-    // personalWebsite: 'https://www.arco.design',
-    // verified: true,
-    // phoneNumber: 123123,
-    // accountId: 123123,
-    // registrationTime: Mock.Random.datetime('yyyy-MM-dd HH:mm:ss'),
-    // permissions: generatePermission(userRole),
-    // };
+    const userInfo = {
+      name: 'admin',
+      avatar: userPNG,
+      email: 'wangliqun@email.com',
+      job: 'frontend',
+      jobName: '前端开发工程师',
+      organization: 'Frontend',
+      organizationName: '前端',
+      location: 'beijing',
+      locationName: '北京',
+      introduction: '王力群并非是一个真实存在的人。',
+      personalWebsite: 'https://www.arco.design',
+      verified: true,
+      phoneNumber: 123123,
+      accountId: 123123,
+      registrationTime: Mock.Random.datetime('yyyy-MM-dd HH:mm:ss'),
+      permissions: generatePermission(userRole),
+    };
 
     store.dispatch({
       type: 'update-userInfo',
       payload: { userLoading: true },
     });
-    const res = await userAPI.personalCenter();
-
-    store.dispatch({
-      type: 'update-userInfo',
-      payload: { userInfo: res.data.data, userLoading: false },
-    });
+    try {
+      const res = await userAPI.personalCenter();
+      console.log(res);
+      store.dispatch({
+        type: 'update-userInfo',
+        payload: { userInfo: res.data.data, userLoading: false },
+      });
+    } catch (error) {
+      Message.error('登录失败');
+      store.dispatch({
+        type: 'update-userInfo',
+        payload: { userInfo, userLoading: false },
+      });
+    }
   }
 
   useEffect(() => {
@@ -104,8 +112,8 @@ function Index() {
           //   border: false,
           // },
           Button: {
-            size: 'small'
-          }
+            size: 'small',
+          },
         }}
       >
         <Provider store={store}>

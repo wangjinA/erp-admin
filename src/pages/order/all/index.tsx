@@ -56,13 +56,18 @@ const tabs = [
 
 export default () => {
   const [activeTab, setActiveTab] = useState(tabs[0].key);
-  // const {} = usePagination(()=>{
-  //   return orderAPI.getList({
-
-  //   })
-  // }, {
-  //   manual: false,
-  // })
+  const res = usePagination(
+    async () => {
+      const res = await orderAPI.getList({
+        pageNum: 1,
+        pageSize: 10,
+      });
+      return res.data.data
+    },
+    {
+      manual: false,
+    }
+  );
   return (
     <div className="bg-white p-4">
       <FilterForm

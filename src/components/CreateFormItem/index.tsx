@@ -1,6 +1,7 @@
 import React, { ReactNode, ReactElement } from 'react';
 import {
   ColProps,
+  DatePicker,
   Form,
   FormItemProps,
   Input,
@@ -11,6 +12,8 @@ import {
 } from '@arco-design/web-react';
 import LabelWithTips, { LabelWithTipsProps } from '../LabelWithTips';
 import Upload from '../Upload';
+import { TimeDefaultProps, TimeRangeDefaultProps } from '@/constants';
+import EntrepotRadio from '../Selectors/EntrepotRadio';
 
 export interface FormSchema
   extends Partial<Pick<LabelWithTipsProps, 'position'>> {
@@ -26,11 +29,16 @@ export interface FormSchema
 
 type ControlType =
   | 'input'
+  | 'textarea'
+  | 'switch'
   | 'upload'
   | 'select'
   | 'radio'
   | 'checkbox'
-  | 'number';
+  | 'number'
+  | 'datePicker'
+  | 'datePickerRange'
+  | 'entrepotRadio';
 
 export interface CreateFormItemType {
   schema: FormSchema;
@@ -77,7 +85,7 @@ const createFormItem: CreateFormItemParams = ({
     } else if (typeof control === 'object') {
       return control;
     } else {
-      switch (control?.toLowerCase()) {
+      switch (control) {
         case undefined:
         case 'input':
           return (
@@ -110,6 +118,21 @@ const createFormItem: CreateFormItemParams = ({
         case 'number':
           return (
             <InputNumber placeholder={`请输入${label}`} {...controlProps} />
+          );
+        case 'datePicker':
+          return <DatePicker {...TimeDefaultProps} {...controlProps} />;
+        case 'datePickerRange':
+          return (
+            <DatePicker.RangePicker
+              {...TimeRangeDefaultProps}
+              {...controlProps}
+            />
+          );
+        case 'entrepotRadio':
+          return (
+            <>
+              <EntrepotRadio />
+            </>
           );
         default:
           return <span>{control}</span>;

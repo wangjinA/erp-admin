@@ -5,6 +5,7 @@ import styles from './index.module.less';
 import React from 'react';
 import { useRequest, useLocalStorageState } from 'ahooks';
 import { ScanParams, entrepotAPI } from '@/api/entrepot';
+import { useEntrepotOptions } from '@/components/Selectors/EntrepotSelector';
 
 interface ScanComponentProps {
   className?: string;
@@ -14,15 +15,7 @@ interface ScanComponentProps {
 
 export default (props: ScanComponentProps) => {
   const { className, style, onScan } = props;
-  const { data, loading } = useRequest(() => {
-    return entrepotAPI
-      .getList({
-        pageNum: 1,
-        pageSize: 100,
-        entrepotType: 1,
-      })
-      .then((res) => res.data.data.list);
-  });
+  const { data, loading } = useEntrepotOptions()
   const [entrepot, setEntrepot] = useLocalStorageState<any>('scan-entrepot');
   const height = 'h-20';
   return (
@@ -47,10 +40,8 @@ export default (props: ScanComponentProps) => {
               onChange={setEntrepot}
               size="large"
               placeholder="请选择仓库"
-              options={data?.map((item) => ({
-                label: item.entrepotName,
-                value: item.id,
-              }))}
+              options={data}
+              loading={loading}
             ></Select>
           </div>
         </Grid.Col>

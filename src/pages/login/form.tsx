@@ -171,6 +171,12 @@ export default function LoginForm() {
             type="text"
             long
             className={styles['login-form-register-btn']}
+            onClick={() => {
+              setValue(null);
+              localStorage.setItem(TokenKey, null);
+              localStorage.removeItem('scan-entrepot');
+              afterLoginSuccess(null);
+            }}
           >
             {t['login.form.register']}
           </Button>

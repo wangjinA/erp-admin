@@ -81,6 +81,9 @@ const i18n = {
     'menu.client.order.all': '全部订单',
     'menu.client.order.returnOrder': '海外仓退件订单',
     'menu.client.order.deliveryHistory': '订单出库记录',
+    
+    "menu.client.store": "店铺管理",
+    "menu.client.store.list": "店铺授权",
 
 
     'menu.entrepot': '仓库管理',

@@ -1,3 +1,4 @@
+import { AxiosResponse } from 'axios';
 import baseAxios from '.';
 import { APIListResponse, APIResponse, IPageParams } from './type';
 export interface Dict {
@@ -32,9 +33,27 @@ export const dictAPI = {
   },
 };
 
-type DictChild = Dict & {
-  dictId: number;
+export type DictChild = {
+  id: number; //	主键
+  createBy: number; //	创建人
+  createTime: string; //	创建时间
+  deleteStatus: number; //	删除状态：0.正常，1.删除
+  dictChildDesc: string; //	字典值描述
+  dictChildStatus: number; //	字典值状态：0.正常，1.禁用
+  dictCode: string; //	字典标识
+  dictId: number; //	所属字典id
+  dictValue: string; //	字典值
+  displayName: string; //	字典名称
+  sequenceNo: number; //	序号
+  updateBy: number; //	更新人
+  updateTime: string; //	更新时间
 };
+
+//! cache记得补一下
+const cacheMap = new Map<
+  string,
+  Promise<AxiosResponse<APIResponse<DictChild>>>
+>();
 
 export const dictChildAPI = {
   getList(body?: Partial<DictChild & IPageParams>) {
@@ -44,7 +63,11 @@ export const dictChildAPI = {
     );
   },
   get(id: number) {
-    return baseAxios.get<APIResponse<DictChild>>(`/api/dict/child/info/${id}`);
+    // const target =
+    const pm = baseAxios.get<APIResponse<DictChild>>(
+      `/api/dict/child/info/${id}`
+    );
+    return pm;
   },
   create(body: Partial<DictChild>) {
     return baseAxios.post<APIResponse>('/api/dict/child/insert', body);

@@ -1,12 +1,13 @@
+import React from 'react';
 import { CreateFormItemType } from '@/components/CreateFormItem';
 import { DatePicker, Input } from '@arco-design/web-react';
-import React from 'react';
 import { TimeRangeDefaultProps } from '..';
+import DictSelector from '@/components/Selectors/DictSelector';
 
 export const OrderFilter: CreateFormItemType[] = [
   {
     schema: {
-      field: 'timeType123',
+      field: 'shrimpWaybillNo',
       label: '订单编号',
     },
     controlProps: {
@@ -16,21 +17,21 @@ export const OrderFilter: CreateFormItemType[] = [
   },
   {
     schema: {
-      field: 'timeType',
+      field: 'orderType',
       label: '订单类型',
     },
-    control: 'input',
+    control: <DictSelector dictCode="order_type"></DictSelector>,
   },
   {
     schema: {
-      field: 'timeType1',
+      field: 'selectOrderProductVO.trackingNo',
       label: '物流单号',
     },
     control: 'input',
   },
   {
     schema: {
-      field: 'timeType2',
+      field: 'selectOrderProductVO.trackingNo',
       label: '快递单号',
     },
     control: 'input',
@@ -61,7 +62,7 @@ export const OrderFilter: CreateFormItemType[] = [
       field: 'timeType6',
       label: '订单状态',
     },
-    control: 'input',
+    control: <DictSelector dictCode='order_status'></DictSelector>
   },
   {
     schema: {

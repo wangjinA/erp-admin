@@ -31,7 +31,10 @@ export default () => {
           }}
           isSearchParams={false}
           formItemConfigList={dictChildFormItemConfigList}
-          createRequest={dictChildAPI.create}
+          createRequest={(data)=>dictChildAPI.create({
+            ...data,
+            dictId: record?.id,
+          })}
           getListRequest={dictChildAPI.getList}
           removeRequest={dictChildAPI.remove}
           updateRequest={dictChildAPI.update}

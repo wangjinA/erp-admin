@@ -1,7 +1,6 @@
 import { SearchTableSchema } from '@/components/SearchTable';
 import StatusTag from '@/components/StatusTag';
 import { usableTagInfoMap } from '@/constants/statusTag';
-import { Tag } from '@arco-design/web-react';
 
 export const dictFormItemConfigList: SearchTableSchema[] = [
   {

@@ -1,6 +1,6 @@
 import React from 'react';
 import FilterForm from '@/components/FilterForm';
-import EntrepotRadio from '@/components/EntrepotRadio';
+import EntrepotRadio from '@/components/Selectors/EntrepotRadio';
 import { DatePicker, Divider, Table } from '@arco-design/web-react';
 import { DividerSchema } from '@/constants/schema/common';
 export default () => {

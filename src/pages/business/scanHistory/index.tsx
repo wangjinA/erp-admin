@@ -1,6 +1,5 @@
 import React from 'react';
 import FilterForm from '@/components/FilterForm';
-import EntrepotRadio from '@/components/EntrepotRadio';
 import { DividerSchema } from '@/constants/schema/common';
 import { DatePicker, Table } from '@arco-design/web-react';
 export default () => {
@@ -19,7 +18,7 @@ export default () => {
                 label: '所属仓库',
                 span: 24,
               },
-              control: <EntrepotRadio></EntrepotRadio>,
+              control: 'entrepotRadio',
             },
             DividerSchema,
             {

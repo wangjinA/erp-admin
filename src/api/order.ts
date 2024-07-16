@@ -3,7 +3,7 @@ import { APIListResponse, IPageParams } from './type';
 
 export const orderAPI = {
   // 获取订单列表
-  getList() {
+  getList(body: Partial<SearchOrderParams & IPageParams>) {
     return baseAxios.get<APIListResponse<SearchOrderParams>>(
       '/api/logistics/order/list'
     );

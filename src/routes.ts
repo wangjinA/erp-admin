@@ -21,20 +21,43 @@ export const routes: IRoute[] = [
         name: 'menu.client.order.create',
         key: 'client/order/create',
       },
-      {
-        name: 'menu.client.order.all',
-        key: 'client/order/all',
-      },
-      {
-        name: 'menu.client.order.returnOrder',
-        key: 'client/order/returnOrder',
-      },
-      {
-        name: 'menu.client.order.deliveryHistory',
-        key: 'client/order/deliveryHistory',
-      },
+      // {
+      //   name: 'menu.client.order.all',
+      //   key: 'client/order/all',
+      // },
+      // {
+      //   name: 'menu.client.order.returnOrder',
+      //   key: 'client/order/returnOrder',
+      // },
+      // {
+      //   name: 'menu.client.order.deliveryHistory',
+      //   key: 'client/order/deliveryHistory',
+      // },
     ],
-  },{
+  },
+  {
+    name: 'menu.client.store',
+    key: 'client.store',
+    children: [
+      {
+        name: 'menu.client.store.list',
+        key: 'client/store/list',
+      },
+      // {
+      //   name: 'menu.client.order.all',
+      //   key: 'client/order/all',
+      // },
+      // {
+      //   name: 'menu.client.order.returnOrder',
+      //   key: 'client/order/returnOrder',
+      // },
+      // {
+      //   name: 'menu.client.order.deliveryHistory',
+      //   key: 'client/order/deliveryHistory',
+      // },
+    ],
+  },
+  {
     name: 'menu.dict',
     key: 'dict/list',
     // children: [
