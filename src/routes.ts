@@ -14,46 +14,46 @@ export type IRoute = AuthParams & {
 
 export const routes: IRoute[] = [
   {
-    name: 'menu.client.order',
-    key: 'client.order',
+    name: 'prod-user.order',
+    key: 'prod-user.order',
     children: [
       {
-        name: 'menu.client.order.create',
-        key: 'client/order/create',
+        name: 'prod-user.order.create',
+        key: 'prod-user/order/create',
       },
       // {
-      //   name: 'menu.client.order.all',
-      //   key: 'client/order/all',
+      //   name: 'prod-user.order.all',
+      //   key: 'prod-user/order/all',
       // },
       // {
-      //   name: 'menu.client.order.returnOrder',
-      //   key: 'client/order/returnOrder',
+      //   name: 'prod-user.order.returnOrder',
+      //   key: 'prod-user/order/returnOrder',
       // },
       // {
-      //   name: 'menu.client.order.deliveryHistory',
-      //   key: 'client/order/deliveryHistory',
+      //   name: 'prod-user.order.deliveryHistory',
+      //   key: 'prod-user/order/deliveryHistory',
       // },
     ],
   },
   {
-    name: 'menu.client.store',
-    key: 'client.store',
+    name: 'prod-user.store',
+    key: 'prod-user.store',
     children: [
       {
-        name: 'menu.client.store.list',
-        key: 'client/store/list',
+        name: 'prod-user.store.list',
+        key: 'prod-user/store/list',
       },
       // {
-      //   name: 'menu.client.order.all',
-      //   key: 'client/order/all',
+      //   name: 'prod-user.order.all',
+      //   key: 'prod-user/order/all',
       // },
       // {
-      //   name: 'menu.client.order.returnOrder',
-      //   key: 'client/order/returnOrder',
+      //   name: 'prod-user.order.returnOrder',
+      //   key: 'prod-user/order/returnOrder',
       // },
       // {
-      //   name: 'menu.client.order.deliveryHistory',
-      //   key: 'client/order/deliveryHistory',
+      //   name: 'prod-user.order.deliveryHistory',
+      //   key: 'prod-user/order/deliveryHistory',
       // },
     ],
   },

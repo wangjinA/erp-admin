@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import adminAxios from '.';
+import baseAxios from '.';
 import { APIListResponse, APIResponse, IPageParams } from './type';
 export interface Dict {
   id: number;
@@ -17,19 +17,19 @@ export interface Dict {
 
 export const dictAPI = {
   getList(body?: Partial<Dict & IPageParams>) {
-    return adminAxios.post<APIListResponse<Dict>>('/api/dict/list', body);
+    return baseAxios.post<APIListResponse<Dict>>('/api/dict/list', body);
   },
   get(id: number) {
-    return adminAxios.get<APIResponse<Dict>>(`/api/dict/info/${id}`);
+    return baseAxios.get<APIResponse<Dict>>(`/api/dict/info/${id}`);
   },
   create(body: Partial<Dict>) {
-    return adminAxios.post<APIResponse>('/api/dict/insert', body);
+    return baseAxios.post<APIResponse>('/api/dict/insert', body);
   },
   update(body: Partial<Dict>) {
-    return adminAxios.post<APIResponse>('/api/dict/update', body);
+    return baseAxios.post<APIResponse>('/api/dict/update', body);
   },
   remove(id: number) {
-    return adminAxios.get<APIResponse>(`/api/dict/remove/${id}`);
+    return baseAxios.get<APIResponse>(`/api/dict/remove/${id}`);
   },
 };
 
@@ -57,25 +57,25 @@ const cacheMap = new Map<
 
 export const dictChildAPI = {
   getList(body?: Partial<DictChild & IPageParams>) {
-    return adminAxios.post<APIListResponse<DictChild>>(
+    return baseAxios.post<APIListResponse<DictChild>>(
       '/api/dict/child/list',
       body
     );
   },
   get(id: number) {
     // const target =
-    const pm = adminAxios.get<APIResponse<DictChild>>(
+    const pm = baseAxios.get<APIResponse<DictChild>>(
       `/api/dict/child/info/${id}`
     );
     return pm;
   },
   create(body: Partial<DictChild>) {
-    return adminAxios.post<APIResponse>('/api/dict/child/insert', body);
+    return baseAxios.post<APIResponse>('/api/dict/child/insert', body);
   },
   update(body: Partial<DictChild>) {
-    return adminAxios.post<APIResponse>('/api/dict/child/update', body);
+    return baseAxios.post<APIResponse>('/api/dict/child/update', body);
   },
   remove(id: number) {
-    return adminAxios.get<APIResponse>(`/api/dict/child/remove/${id}`);
+    return baseAxios.get<APIResponse>(`/api/dict/child/remove/${id}`);
   },
 };

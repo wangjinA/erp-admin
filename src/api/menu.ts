@@ -1,7 +1,7 @@
-import adminAxios from '.';
+import baseAxios from '.';
 
 export const menuAPI = {
   get() {
-    return adminAxios.get('/api/menu/insert');
+    return baseAxios.get('/api/menu/insert');
   },
 };

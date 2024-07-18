@@ -1,19 +1,19 @@
-import adminAxios from '.';
+import baseAxios from '.';
 import { APIListResponse, IPageParams } from './type';
 
 export const orderAPI = {
   // 获取订单列表
   getList(body: Partial<SearchOrderParams & IPageParams>) {
-    return adminAxios.get<APIListResponse<SearchOrderParams>>(
+    return baseAxios.get<APIListResponse<SearchOrderParams>>(
       '/api/logistics/order/list'
     );
   },
   // 获取订单详情
   getDetail(id: number) {
-    return adminAxios.get(`/api/logistics/order/info/${id}`);
+    return baseAxios.get(`/api/logistics/order/info/${id}`);
   },
   insert(body) {
-    return adminAxios.post('/api/logistics/order/insert', body);
+    return baseAxios.post('/api/logistics/order/insert', body);
   },
 };
 

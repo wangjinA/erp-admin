@@ -3,7 +3,7 @@ const templateInfo = {
   name: 'test',
 };
 const templateStr = `
-import adminAxios from '.';
+import baseAxios from '.';
 import { APIListResponse, APIResponse, IPageParams } from './type';
 export interface Dict {
   createBy: string; // "创建人",
@@ -20,19 +20,19 @@ export interface Dict {
 
 export const dictAPI = {
   getList(body?: Partial<Dict & IPageParams>) {
-    return adminAxios.post<APIListResponse<Dict>>('/api/dict/list', body);
+    return baseAxios.post<APIListResponse<Dict>>('/api/dict/list', body);
   },
   get(id: number) {
-    return adminAxios.get<APIResponse<Dict>>(\`/api/dict/info/\${id}\`);
+    return baseAxios.get<APIResponse<Dict>>(\`/api/dict/info/\${id}\`);
   },
   create(body: Partial<Dict>) {
-    return adminAxios.post<APIResponse>('/api/dict/insert', body);
+    return baseAxios.post<APIResponse>('/api/dict/insert', body);
   },
   update(body: Partial<Dict>) {
-    return adminAxios.post<APIResponse>('/api/dict/update', body);
+    return baseAxios.post<APIResponse>('/api/dict/update', body);
   },
   remove(id: number) {
-    return adminAxios.get<APIResponse>(\`/api/dict/remove/\${id}\`);
+    return baseAxios.get<APIResponse>(\`/api/dict/remove/\${id}\`);
   },
 };
 

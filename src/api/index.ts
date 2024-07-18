@@ -7,34 +7,33 @@ interface RequestEndTypeInfo {
   tokenKey: string;
 }
 
-//! 通过url path 判断 return reuqestendinfo
-
-export const adminRequestEndInfo: RequestEndTypeInfo = {
+const adminRequestEndInfo: RequestEndTypeInfo = {
   baseUrl: import.meta.env.DEV
-    ? '/admin'
+    ? '/prod-admin'
     : 'https://logistics.drcstudio.cn/prod-admin',
   tokenKey: 'erp-admin-token',
 };
 
-export const userRequestEndInfo: RequestEndTypeInfo = {
+const userRequestEndInfo: RequestEndTypeInfo = {
   baseUrl: import.meta.env.DEV
-    ? '/user'
+    ? '/prod-user'
     : 'https://logistics.drcstudio.cn/prod-user',
   tokenKey: 'erp-user-token',
 };
 
+export const requestEndInfo = location.pathname.startsWith('/prod-admin') ? adminRequestEndInfo : userRequestEndInfo;
+
 const timeout = 5 * 1000;
 
-const adminAxios = axios.create({
-  baseURL: adminRequestEndInfo.baseUrl,
+const baseAxios = axios.create({
+  baseURL: requestEndInfo.baseUrl,
   timeout,
 });
-// export const TokenKey = 'erp-token';
 
-adminAxios.interceptors.request.use((config) => {
+baseAxios.interceptors.request.use((config) => {
   config.headers = {
     ...config.headers,
-    token: localStorage.getItem(adminRequestEndInfo.tokenKey),
+    token: localStorage.getItem(requestEndInfo.tokenKey),
     // deptId: '0',
     // identification: '1',
     // tenantryId: '38909991126000134',
@@ -42,21 +41,6 @@ adminAxios.interceptors.request.use((config) => {
   return config;
 });
 
-const userAxios = axios.create({
-  baseURL: userRequestEndInfo.baseUrl,
-  timeout,
-});
-
-userAxios.interceptors.request.use((config) => {
-  config.headers = {
-    ...config.headers,
-    token: localStorage.getItem(userRequestEndInfo.tokenKey),
-    // deptId: '0',
-    // identification: '1',
-    // tenantryId: '38909991126000134',
-  } as any;
-  return config;
-});
 
 const loginModal = debounce((msg) => {
   Modal.confirm({
@@ -69,7 +53,7 @@ const loginModal = debounce((msg) => {
   });
 }, 300);
 
-adminAxios.interceptors.response.use((res) => {
+baseAxios.interceptors.response.use((res) => {
   if (res.data.code === 30010) {
     loginModal(res.data.msg);
   }
@@ -78,4 +62,4 @@ adminAxios.interceptors.response.use((res) => {
 
 export const SuccessCode = 200;
 
-export default adminAxios;
+export default baseAxios;

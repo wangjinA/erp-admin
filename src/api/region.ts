@@ -1,8 +1,8 @@
-import adminAxios from '.';
+import baseAxios from '.';
 
 // 省市区选择
 export const regionAPI = {
   get() {
-    return adminAxios.get('/api/region/list/1');
+    return baseAxios.get('/api/region/list/1');
   },
 };

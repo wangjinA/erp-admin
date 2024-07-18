@@ -76,14 +76,14 @@ const i18n = {
     'menu.order.returnOrder': '海外仓退件订单',
     'menu.order.deliveryHistory': '订单出库记录',
 
-    'menu.client.order.create': '手动创建订单',
-    'menu.client.order': '订单管理',
-    'menu.client.order.all': '全部订单',
-    'menu.client.order.returnOrder': '海外仓退件订单',
-    'menu.client.order.deliveryHistory': '订单出库记录',
+    'prod-user.order.create': '手动创建订单',
+    'prod-user.order': '订单管理',
+    'prod-user.order.all': '全部订单',
+    'prod-user.order.returnOrder': '海外仓退件订单',
+    'prod-user.order.deliveryHistory': '订单出库记录',
     
-    "menu.client.store": "店铺管理",
-    "menu.client.store.list": "店铺授权",
+    "prod-user.store": "店铺管理",
+    "prod-user.store.list": "店铺授权",
 
 
     'menu.entrepot': '仓库管理',

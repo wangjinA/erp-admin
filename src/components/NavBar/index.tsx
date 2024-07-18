@@ -37,7 +37,7 @@ import defaultLocale from '@/locale';
 import useStorage from '@/utils/useStorage';
 import { generatePermission } from '@/routes';
 import { loginExit } from '@/api/user';
-import { adminRequestEndInfo, userRequestEndInfo } from '@/api';
+import { requestEndInfo } from '@/api';
 
 function Navbar({ show }: { show: boolean }) {
   const t = useLocale();
@@ -52,8 +52,7 @@ function Navbar({ show }: { show: boolean }) {
   function logout() {
     setUserStatus('logout');
     localStorage.removeItem('userInfo');
-    localStorage.removeItem(adminRequestEndInfo.tokenKey);
-    localStorage.removeItem(userRequestEndInfo.tokenKey);
+    localStorage.removeItem(requestEndInfo.tokenKey);
     window.location.href = '/login';
   }
 

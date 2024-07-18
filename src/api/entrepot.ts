@@ -1,4 +1,4 @@
-import adminAxios from '.';
+import baseAxios from '.';
 import { APIListResponse, APIResponse, IPageParams } from './type';
 
 export interface Entrepot {
@@ -42,25 +42,25 @@ export interface EntrepotStorageRacks {
 // 仓库
 export const entrepotAPI = {
   getList(body: Partial<Entrepot & IPageParams>) {
-    return adminAxios.post<APIListResponse<Entrepot>>('/api/entrepot/list', {
+    return baseAxios.post<APIListResponse<Entrepot>>('/api/entrepot/list', {
       entrepotType: 1,
       ...body,
     });
   },
   getListAll(body: Partial<Entrepot & IPageParams>) {
-    return adminAxios.post<APIListResponse<Entrepot>>('/api/entrepot/list/all', {
+    return baseAxios.post<APIListResponse<Entrepot>>('/api/entrepot/list/all', {
       entrepotType: 1,
       ...body,
     });
   },
   insert(body: Partial<Entrepot>) {
-    return adminAxios.post<APIResponse>('/api/entrepot/insert', body);
+    return baseAxios.post<APIResponse>('/api/entrepot/insert', body);
   },
   remove(id) {
-    return adminAxios.get(`/api/entrepot/remove/${id}`);
+    return baseAxios.get(`/api/entrepot/remove/${id}`);
   },
   update(body: Partial<Entrepot>) {
-    return adminAxios.post('/api/entrepot/update', body);
+    return baseAxios.post('/api/entrepot/update', body);
   },
   
 };
@@ -68,34 +68,34 @@ export const entrepotAPI = {
 // 仓位
 export const racksAPI = {
   getList(body: Partial<EntrepotStorageRacks & IPageParams>) {
-    return adminAxios.post<APIListResponse<EntrepotStorageRacks>>(
+    return baseAxios.post<APIListResponse<EntrepotStorageRacks>>(
       '/api/racks/list',
       body
     );
   },
   insert(body: Partial<EntrepotStorageRacks>) {
-    return adminAxios.post<APIResponse>('/api/racks/insert', body);
+    return baseAxios.post<APIResponse>('/api/racks/insert', body);
   },
   remove(id) {
-    return adminAxios.get<APIResponse>(`/api/racks/remove/${id}`);
+    return baseAxios.get<APIResponse>(`/api/racks/remove/${id}`);
   },
   update(body: Partial<EntrepotStorageRacks>) {
-    return adminAxios.post<APIResponse>('/api/racks/update', body);
+    return baseAxios.post<APIResponse>('/api/racks/update', body);
   },
 };
 
 export const scanAPI = {
   // 获取扫码记录
   getRecord() {
-    return adminAxios.get('/api/scanning/record/list');
+    return baseAxios.get('/api/scanning/record/list');
   },
   // 扫码入库
   scanPut(params: ScanParams) {
-    return adminAxios.post('/api/business/operation/scan/put', params);
+    return baseAxios.post('/api/business/operation/scan/put', params);
   },
   // 扫码签收
   scanSign(params: ScanParams) {
-    return adminAxios.post('/api/business/operation/scan/sign', params);
+    return baseAxios.post('/api/business/operation/scan/sign', params);
   },
 };
 

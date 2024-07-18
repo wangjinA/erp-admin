@@ -1,22 +1,22 @@
 import { LoginResponse } from '@/types/user';
-import adminAxios,{ adminRequestEndInfo }  from '.';
+import baseAxios,{ requestEndInfo }  from '.';
 import { APIListResponse, APIResponse } from './type';
 
 export const login = (params) => {
   const { userLoginAccount, userLoginPassword, captcha } = params;
-  return adminAxios.post<APIResponse<LoginResponse>>('/api/system/login', {
+  return baseAxios.post<APIResponse<LoginResponse>>('/api/system/login', {
     captcha,
     userLoginAccount,
     userLoginPassword,
   });
 };
 export const loginExit = () => {
-  return adminAxios.post<APIResponse<LoginResponse>>('/api/system/exit');
+  return baseAxios.post<APIResponse<LoginResponse>>('/api/system/exit');
 };
 
 export const getCaptcha = (randomVal?: any) => {
   const val = randomVal ? `?${randomVal}` : '';
-  return adminRequestEndInfo.baseUrl + '/api/code/captcha.jpg' + val; //! todo 确定一下
+  return requestEndInfo.baseUrl + '/api/code/captcha.jpg' + val; //! todo 确定一下
 };
 
 export interface UserInfo {
@@ -44,9 +44,9 @@ export interface UserInfo {
 
 export const userAPI = {
   personalCenter() {
-    return adminAxios.get<APIListResponse<UserInfo>>('/api/user/personalCenter');
+    return baseAxios.get<APIListResponse<UserInfo>>('/api/user/personalCenter');
   },
   updateSelf(body: Partial<UserInfo>) {
-    return adminAxios.post<APIResponse>('/api/user/updateSelf', body);
+    return baseAxios.post<APIResponse>('/api/user/updateSelf', body);
   },
 };
