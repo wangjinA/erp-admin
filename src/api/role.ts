@@ -1,5 +1,5 @@
 import { random } from 'lodash';
-import baseAxios from '.';
+import adminAxios from '.';
 import { APIListResponse, APIResponse, IPageParams } from './type';
 interface Role {
   createBy: number;
@@ -18,10 +18,10 @@ interface Role {
 
 export const roleAPI = {
   get(body?: Partial<Role & IPageParams>) {
-    return baseAxios.post<APIListResponse<Role>>('/api/role/list', body);
+    return adminAxios.post<APIListResponse<Role>>('/api/role/list', body);
   },
   create(body: Partial<Role>) {
-    return baseAxios.post<APIResponse>('/api/role/insert', {
+    return adminAxios.post<APIResponse>('/api/role/insert', {
       menuIds: [1],
       roleCode: random(0, 1000).toString(),
       systemAcquiesce: 0,

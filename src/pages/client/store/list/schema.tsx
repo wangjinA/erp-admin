@@ -7,6 +7,7 @@ const StoreListSchema: CreateFormItemType[] = [
     schema: {
       label: '电商平台',
       field: 'platform_type',
+      span: 18
     },
     control: <PlatformRadio></PlatformRadio>
   },
@@ -14,6 +15,7 @@ const StoreListSchema: CreateFormItemType[] = [
     schema: {
       label: '',
       field: 'auth',
+      span: 6
     },
     control: (
       <>
@@ -22,6 +24,7 @@ const StoreListSchema: CreateFormItemType[] = [
       </>
     ),
   },
+  
 ];
 
 export default StoreListSchema;

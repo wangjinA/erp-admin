@@ -1,5 +1,5 @@
 import { CreateFormItemType } from '@/components/CreateFormItem';
-import RegionSelector from '@/components/RegionSelector';
+import RegionSelector from '@/components/Selectors/RegionSelector';
 import { WhetherOptions } from '@/constants';
 import { Checkbox, Radio } from '@arco-design/web-react';
 

@@ -1,22 +1,22 @@
 import { LoginResponse } from '@/types/user';
-import baseAxios, { baseURL } from '.';
+import adminAxios,{ adminRequestEndInfo }  from '.';
 import { APIListResponse, APIResponse } from './type';
 
 export const login = (params) => {
   const { userLoginAccount, userLoginPassword, captcha } = params;
-  return baseAxios.post<APIResponse<LoginResponse>>('/api/system/login', {
+  return adminAxios.post<APIResponse<LoginResponse>>('/api/system/login', {
     captcha,
     userLoginAccount,
     userLoginPassword,
   });
 };
 export const loginExit = () => {
-  return baseAxios.post<APIResponse<LoginResponse>>('/api/system/exit');
+  return adminAxios.post<APIResponse<LoginResponse>>('/api/system/exit');
 };
 
 export const getCaptcha = (randomVal?: any) => {
   const val = randomVal ? `?${randomVal}` : '';
-  return baseURL + '/api/code/captcha.jpg' + val;
+  return adminRequestEndInfo.baseUrl + '/api/code/captcha.jpg' + val; //! todo 确定一下
 };
 
 export interface UserInfo {
@@ -44,9 +44,9 @@ export interface UserInfo {
 
 export const userAPI = {
   personalCenter() {
-    return baseAxios.get<APIListResponse<UserInfo>>('/api/user/personalCenter');
+    return adminAxios.get<APIListResponse<UserInfo>>('/api/user/personalCenter');
   },
   updateSelf(body: Partial<UserInfo>) {
-    return baseAxios.post<APIResponse>('/api/user/updateSelf', body);
+    return adminAxios.post<APIResponse>('/api/user/updateSelf', body);
   },
 };

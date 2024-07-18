@@ -18,7 +18,7 @@ import styles from './style/index.module.less';
 import { useLocalStorageState, useRequest } from 'ahooks';
 import { getCaptcha, login } from '@/api/user';
 import { random } from 'lodash';
-import { SuccessCode, TokenKey } from '@/api';
+import { adminRequestEndInfo, SuccessCode } from '@/api';
 
 export default function LoginForm() {
   const formRef = useRef<FormInstance>();
@@ -40,7 +40,7 @@ export default function LoginForm() {
       const res = await login(params);
       if (res.data.code === SuccessCode) {
         setValue(res.data.data);
-        localStorage.setItem(TokenKey, res.data.data.token);
+        localStorage.setItem(adminRequestEndInfo.tokenKey, res.data.data.token);
         localStorage.removeItem('scan-entrepot');
         afterLoginSuccess(params);
       } else {
@@ -173,7 +173,7 @@ export default function LoginForm() {
             className={styles['login-form-register-btn']}
             onClick={() => {
               setValue(null);
-              localStorage.setItem(TokenKey, null);
+              localStorage.setItem(adminRequestEndInfo.tokenKey, null);
               localStorage.removeItem('scan-entrepot');
               afterLoginSuccess(null);
             }}

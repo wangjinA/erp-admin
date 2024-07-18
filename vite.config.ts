@@ -33,9 +33,15 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': {
-        target: 'https://logistics.drcstudio.cn',
+      '/admin': {
+        target: 'https://logistics.drcstudio.cn/prod-admin',
         changeOrigin: true,
+        rewrite: path => path.replace(/^\/admin/, '')
+      },
+      '/user': {
+        target: 'https://logistics.drcstudio.cn/prod-user',
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/user/, '')
       },
     },
   },
