@@ -14,184 +14,184 @@ export type IRoute = AuthParams & {
 
 export const routes: IRoute[] = [
   {
-    name: 'prod-user.order',
-    key: 'prod-user.order',
-    children: [
-      {
-        name: 'prod-user.order.create',
-        key: 'prod-user/order/create',
-      },
-      // {
-      //   name: 'prod-user.order.all',
-      //   key: 'prod-user/order/all',
-      // },
-      // {
-      //   name: 'prod-user.order.returnOrder',
-      //   key: 'prod-user/order/returnOrder',
-      // },
-      // {
-      //   name: 'prod-user.order.deliveryHistory',
-      //   key: 'prod-user/order/deliveryHistory',
-      // },
-    ],
-  },
-  {
-    name: 'prod-user.store',
-    key: 'prod-user.store',
-    children: [
-      {
-        name: 'prod-user.store.list',
-        key: 'prod-user/store/list',
-      },
-      // {
-      //   name: 'prod-user.order.all',
-      //   key: 'prod-user/order/all',
-      // },
-      // {
-      //   name: 'prod-user.order.returnOrder',
-      //   key: 'prod-user/order/returnOrder',
-      // },
-      // {
-      //   name: 'prod-user.order.deliveryHistory',
-      //   key: 'prod-user/order/deliveryHistory',
-      // },
-    ],
-  },
-  {
-    name: 'menu.dict',
-    key: 'dict/list',
+    name: 'admin.dict',
+    key: 'admin/dict/list',
     // children: [
     //   {
-    //     name: 'menu.dict.list',
-    //     key: 'dict/list',
+    //     name: 'admin.dict.list',
+    //     key: 'admin/dict/list',
     //   },
     // ]
   },
   {
-    name: 'menu.business',
-    key: 'business',
+    name: 'client.order',
+    key: 'client.order',
     children: [
       {
-        name: 'menu.business.deposit',
-        key: 'business/deposit',
-      },
-      {
-        name: 'menu.business.delivery',
-        key: 'business/delivery',
-      },
-      {
-        name: 'menu.business.signfor',
-        key: 'business/signfor',
+        name: 'client.order.create',
+        key: 'client/order/create',
       },
       // {
-      //   name: 'menu.business.warehousingAndArchiving',
-      //   key: 'business/warehousingAndArchiving',
+      //   name: 'client.order.all',
+      //   key: 'client/order/all',
       // },
-      {
-        name: 'menu.business.scanHistory',
-        key: 'business/scanHistory',
-      },
-      {
-        name: 'menu.business.returnToShelves',
-        key: 'business/returnToShelves',
-      },
-      {
-        name: 'menu.business.retention',
-        key: 'business/retention',
-      },
+      // {
+      //   name: 'client.order.returnOrder',
+      //   key: 'client/order/returnOrder',
+      // },
+      // {
+      //   name: 'client.order.deliveryHistory',
+      //   key: 'client/order/deliveryHistory',
+      // },
     ],
   },
   {
-    name: 'menu.order',
-    key: 'order',
+    name: 'client.store',
+    key: 'client.store',
     children: [
       {
-        name: 'menu.order.all',
-        key: 'order/all',
-      },
-      {
-        name: 'menu.order.returnOrder',
-        key: 'order/returnOrder',
-      },
-      {
-        name: 'menu.order.deliveryHistory',
-        key: 'order/deliveryHistory',
-      },
-    ],
-  },
-  {
-    name: 'menu.entrepot',
-    key: 'entrepot',
-    children: [
-      {
-        name: 'menu.entrepot.info',
-        key: 'entrepot/info',
-      },
-      {
-        name: 'menu.entrepot.list',
-        key: 'entrepot/list',
-      },
-      {
-        name: 'menu.entrepot.setting',
-        key: 'entrepot/setting',
-      },
-    ],
-  },
-  {
-    name: 'menu.account',
-    key: 'account',
-    children: [
-      {
-        name: 'menu.account.users',
-        key: 'account/users',
+        name: 'client.store.list',
+        key: 'client/store/list',
       },
       // {
-      //   name: 'menu.account.member',
-      //   key: 'account/member',
+      //   name: 'client.order.all',
+      //   key: 'client/order/all',
       // },
-      {
-        name: 'menu.account.setting',
-        key: 'account/setting',
-      },
-      {
-        name: 'menu.account.permission',
-        key: 'account/permission',
-      },
+      // {
+      //   name: 'client.order.returnOrder',
+      //   key: 'client/order/returnOrder',
+      // },
+      // {
+      //   name: 'client.order.deliveryHistory',
+      //   key: 'client/order/deliveryHistory',
+      // },
     ],
   },
   {
-    name: 'menu.express',
-    key: 'express',
+    name: 'admin.business',
+    key: 'admin/business',
     children: [
       {
-        name: 'menu.express.signforHistory',
-        key: 'express/signforHistory',
+        name: 'admin.business.deposit',
+        key: 'admin/business/deposit',
+      },
+      {
+        name: 'admin.business.delivery',
+        key: 'admin/business/delivery',
+      },
+      {
+        name: 'admin.business.signfor',
+        key: 'admin/business/signfor',
       },
       // {
-      //   name: 'menu.express.abnormal',
-      //   key: 'express/abnormal',
+      //   name: 'admin.business.warehousingAndArchiving',
+      //   key: 'admin/business/warehousingAndArchiving',
       // },
       {
-        name: 'menu.express.rejection',
-        key: 'express/rejection',
+        name: 'admin.business.scanHistory',
+        key: 'admin/business/scanHistory',
       },
       {
-        name: 'menu.express.returnManage',
-        key: 'express/returnManage',
+        name: 'admin.business.returnToShelves',
+        key: 'admin/business/returnToShelves',
+      },
+      {
+        name: 'admin.business.retention',
+        key: 'admin/business/retention',
       },
     ],
   },
   {
-    name: 'menu.dashboard',
-    key: 'dashboard',
+    name: 'admin.order',
+    key: 'admin/order',
     children: [
       {
-        name: 'menu.dashboard.workplace',
-        key: 'dashboard/workplace',
+        name: 'admin.order.all',
+        key: 'admin/order/all',
       },
       {
-        name: 'menu.dashboard.monitor',
-        key: 'dashboard/monitor',
+        name: 'admin.order.returnOrder',
+        key: 'admin/order/returnOrder',
+      },
+      {
+        name: 'admin.order.deliveryHistory',
+        key: 'admin/order/deliveryHistory',
+      },
+    ],
+  },
+  {
+    name: 'admin.entrepot',
+    key: 'admin/entrepot',
+    children: [
+      {
+        name: 'admin.entrepot.info',
+        key: 'admin/entrepot/info',
+      },
+      {
+        name: 'admin.entrepot.list',
+        key: 'admin/entrepot/list',
+      },
+      {
+        name: 'admin.entrepot.setting',
+        key: 'admin/entrepot/setting',
+      },
+    ],
+  },
+  {
+    name: 'admin.account',
+    key: 'admin/account',
+    children: [
+      {
+        name: 'admin.account.users',
+        key: 'admin/account/users',
+      },
+      // {
+      //   name: 'admin.account.member',
+      //   key: 'admin/account/member',
+      // },
+      {
+        name: 'admin.account.setting',
+        key: 'admin/account/setting',
+      },
+      {
+        name: 'admin.account.permission',
+        key: 'admin/account/permission',
+      },
+    ],
+  },
+  {
+    name: 'admin.express',
+    key: 'admin/express',
+    children: [
+      {
+        name: 'admin.express.signforHistory',
+        key: 'admin/express/signforHistory',
+      },
+      // {
+      //   name: 'admin.express.abnormal',
+      //   key: 'admin/express/abnormal',
+      // },
+      {
+        name: 'admin.express.rejection',
+        key: 'admin/express/rejection',
+      },
+      {
+        name: 'admin.express.returnManage',
+        key: 'admin/express/returnManage',
+      },
+    ],
+  },
+  {
+    name: 'admin.dashboard',
+    key: 'admin/dashboard',
+    children: [
+      {
+        name: 'admin.dashboard.workplace',
+        key: 'admin/dashboard/workplace',
+      },
+      {
+        name: 'admin.dashboard.monitor',
+        key: 'admin/dashboard/monitor',
         requiredPermissions: [
           { resource: 'menu.dashboard.monitor', actions: ['write'] },
         ],
@@ -199,19 +199,19 @@ export const routes: IRoute[] = [
     ],
   },
   {
-    name: 'menu.visualization',
-    key: 'visualization',
+    name: 'admin.visualization',
+    key: 'admin/visualization',
     children: [
       {
-        name: 'menu.visualization.dataAnalysis',
-        key: 'visualization/data-analysis',
+        name: 'admin.visualization.dataAnalysis',
+        key: 'admin/visualization/data-analysis',
         requiredPermissions: [
           { resource: 'menu.visualization.dataAnalysis', actions: ['read'] },
         ],
       },
       {
-        name: 'menu.visualization.multiDimensionDataAnalysis',
-        key: 'visualization/multi-dimension-data-analysis',
+        name: 'admin.visualization.multiDimensionDataAnalysis',
+        key: 'admin/visualization/multi-dimension-data-analysis',
         requiredPermissions: [
           {
             resource: 'menu.visualization.dataAnalysis',
@@ -227,33 +227,33 @@ export const routes: IRoute[] = [
     ],
   },
   {
-    name: 'menu.list',
-    key: 'list',
+    name: 'admin.list',
+    key: 'admin/list',
     children: [
       {
-        name: 'menu.list.searchTable',
-        key: 'list/search-table',
+        name: 'admin.list.searchTable',
+        key: 'admin/list/search-table',
       },
       {
-        name: 'menu.list.cardList',
-        key: 'list/card',
+        name: 'admin.list.cardList',
+        key: 'admin/list/card',
       },
     ],
   },
   {
-    name: 'menu.form',
-    key: 'form',
+    name: 'admin.form',
+    key: 'admin/form',
     children: [
       {
-        name: 'menu.form.group',
-        key: 'form/group',
+        name: 'admin.form.group',
+        key: 'admin/form/group',
         requiredPermissions: [
           { resource: 'menu.form.group', actions: ['read', 'write'] },
         ],
       },
       {
-        name: 'menu.form.step',
-        key: 'form/step',
+        name: 'admin.form.step',
+        key: 'admin/form/step',
         requiredPermissions: [
           { resource: 'menu.form.step', actions: ['read'] },
         ],
@@ -261,61 +261,61 @@ export const routes: IRoute[] = [
     ],
   },
   {
-    name: 'menu.profile',
-    key: 'profile',
+    name: 'admin.profile',
+    key: 'admin/profile',
     children: [
       {
-        name: 'menu.profile.basic',
-        key: 'profile/basic',
+        name: 'admin.profile.basic',
+        key: 'admin/profile/basic',
       },
     ],
   },
 
   {
-    name: 'menu.result',
-    key: 'result',
+    name: 'admin.result',
+    key: 'admin/result',
     children: [
       {
-        name: 'menu.result.success',
-        key: 'result/success',
+        name: 'admin.result.success',
+        key: 'admin/result/success',
         breadcrumb: false,
       },
       {
-        name: 'menu.result.error',
-        key: 'result/error',
+        name: 'admin.result.error',
+        key: 'admin/result/error',
         breadcrumb: false,
       },
     ],
   },
   {
-    name: 'menu.exception',
-    key: 'exception',
+    name: 'admin.exception',
+    key: 'admin/exception',
     children: [
       {
-        name: 'menu.exception.403',
-        key: 'exception/403',
+        name: 'admin.exception.403',
+        key: 'admin/exception/403',
       },
       {
-        name: 'menu.exception.404',
-        key: 'exception/404',
+        name: 'admin.exception.404',
+        key: 'admin/exception/404',
       },
       {
-        name: 'menu.exception.500',
-        key: 'exception/500',
+        name: 'admin.exception.500',
+        key: 'admin/exception/500',
       },
     ],
   },
   {
-    name: 'menu.user',
-    key: 'user',
+    name: 'admin.user',
+    key: 'admin/user',
     children: [
       {
-        name: 'menu.user.info',
-        key: 'user/info',
+        name: 'admin.user.info',
+        key: 'admin/user/info',
       },
       {
-        name: 'menu.user.setting',
-        key: 'user/setting',
+        name: 'admin.user.setting',
+        key: 'admin/user/setting',
       },
     ],
   },
@@ -343,6 +343,49 @@ export const generatePermission = (role: string) => {
     }
   });
   return result;
+};
+
+export enum EndType {
+  /**
+   * 管理端
+   */
+  ADMIN = 'admin',
+  /**
+   * 用户端
+   */
+  CLIENT = 'client',
+}
+
+export const LoginPathMap = {
+  [EndType.ADMIN]: '/admin/login',
+  [EndType.CLIENT]: '/client/login',
+};
+
+export const EndTypeTextMap = {
+  [EndType.ADMIN]: '物流端',
+  [EndType.CLIENT]: '商家端',
+};
+
+export const getLoginPagePath = () => {
+  return LoginPathMap[getEndType()] || LoginPathMap[EndType.ADMIN];
+};
+
+/**
+ * 判断当前端类型
+ */
+export function getEndType(): EndType {
+  return location.pathname.startsWith('/admin') ? EndType.ADMIN : EndType.CLIENT;
+}
+
+export function getEndTypeName() {
+  return EndTypeTextMap[getEndType()];
+}
+
+export const toLoginPage = () => {
+  const loginPagePath = getLoginPagePath();
+  if (!location.pathname.endsWith(loginPagePath)) {
+    window.location.href = loginPagePath;
+  }
 };
 
 const useRoute = (userPermission): [IRoute[], string] => {

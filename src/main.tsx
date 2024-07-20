@@ -10,15 +10,17 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import rootReducer from './store';
 import PageLayout from './layout';
 import { GlobalContext } from './context';
-import Login from './pages/login';
+// import Login from './components/Login';
 import checkLogin from './utils/checkLogin';
 import changeTheme from './utils/changeTheme';
 import useStorage from './utils/useStorage';
 import Mock from 'mockjs';
 // import './mock';
-import { generatePermission } from './routes';
+import { generatePermission, getLoginPagePath, toLoginPage } from './routes';
 import userPNG from '@/assets/user.png';
 import { userAPI } from './api/user';
+import AdminLogin from './pages/admin/login';
+import ClientLogin from './pages/client/login';
 
 const store = createStore(rootReducer);
 
@@ -71,18 +73,19 @@ function Index() {
       });
     } catch (error) {
       Message.error('登录失败');
-      store.dispatch({
-        type: 'update-userInfo',
-        payload: { userInfo, userLoading: false },
-      });
+      toLoginPage();
+      // store.dispatch({
+      //   type: 'update-userInfo',
+      //   payload: { userInfo, userLoading: false },
+      // });
     }
   }
 
   useEffect(() => {
     if (checkLogin()) {
       fetchUserInfo();
-    } else if (window.location.pathname.replace(/\//g, '') !== 'login') {
-      window.location.pathname = '/login';
+    } else {
+      toLoginPage();
     }
   }, []);
 
@@ -119,7 +122,8 @@ function Index() {
         <Provider store={store}>
           <GlobalContext.Provider value={contextValue}>
             <Switch>
-              <Route path="/login" component={Login} />
+              <Route path="/admin/login" component={AdminLogin} />
+              <Route path="/client/login" component={ClientLogin} />
               <Route path="/" component={PageLayout} />
             </Switch>
           </GlobalContext.Provider>

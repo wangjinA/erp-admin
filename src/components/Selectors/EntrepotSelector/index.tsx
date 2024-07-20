@@ -15,7 +15,7 @@ export function useEntrepotOptions() {
         entrepotType: 1,
       })
       .then((res) =>
-        res.data.data.list.map((item) => ({
+        res.data.data?.list.map((item) => ({
           label: item.entrepotName,
           value: item.id,
         }))

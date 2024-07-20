@@ -40,11 +40,12 @@ import { showMessageStatus, tryFn } from '@/utils';
 
 const { Title, Paragraph } = Typography;
 
-
 export default () => {
   const [formData, setFormData] = useLocalStorageState<Partial<Order>>(
     'create-order',
-    {}
+    {
+      defaultValue: {},
+    }
   );
   const [current, setCurrent] = useState(3);
   const [skuList, setSkuList] = useState([0]);

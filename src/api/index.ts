@@ -1,3 +1,4 @@
+import { EndType, getEndType, toLoginPage } from '@/routes';
 import { Modal } from '@arco-design/web-react';
 import axios from 'axios';
 import { debounce } from 'lodash';
@@ -21,7 +22,8 @@ const userRequestEndInfo: RequestEndTypeInfo = {
   tokenKey: 'erp-user-token',
 };
 
-export const requestEndInfo = location.pathname.startsWith('/prod-admin') ? adminRequestEndInfo : userRequestEndInfo;
+export const requestEndInfo =
+  getEndType() === EndType.ADMIN ? adminRequestEndInfo : userRequestEndInfo;
 
 const timeout = 5 * 1000;
 
@@ -41,20 +43,21 @@ baseAxios.interceptors.request.use((config) => {
   return config;
 });
 
-
 const loginModal = debounce((msg) => {
   Modal.confirm({
     title: '温馨提示',
     content: msg || '登录失效！',
     okText: '前往登陆',
     onOk() {
-      window.location.href = '/login';
+      toLoginPage();
     },
   });
 }, 300);
 
 baseAxios.interceptors.response.use((res) => {
-  if (res.data.code === 30010) {
+  console.log(res);
+
+  if ([30010].includes(res.data.code)) {
     loginModal(res.data.msg);
   }
   return res;

@@ -19,6 +19,7 @@ import { useLocalStorageState, useRequest } from 'ahooks';
 import { getCaptcha, login } from '@/api/user';
 import { random } from 'lodash';
 import { requestEndInfo, SuccessCode } from '@/api';
+import { EndType, getEndType, getEndTypeName, LoginPathMap, toLoginPage } from '@/routes';
 
 export default function LoginForm() {
   const formRef = useRef<FormInstance>();
@@ -103,7 +104,7 @@ export default function LoginForm() {
     <div className={styles['login-form-wrapper']}>
       <div className={styles['login-form-title']}>{t['login.form.title']}</div>
       <div className={styles['login-form-sub-title']}>
-        {t['login.form.title']}
+        {getEndTypeName()}
       </div>
       <div className={styles['login-form-error-msg']}>{errorMessage}</div>
       <Form
@@ -172,13 +173,15 @@ export default function LoginForm() {
             long
             className={styles['login-form-register-btn']}
             onClick={() => {
-              setValue(null);
-              localStorage.setItem(requestEndInfo.tokenKey, null);
-              localStorage.removeItem('scan-entrepot');
-              afterLoginSuccess(null);
+              if (getEndType() === EndType.ADMIN) {
+                window.location.href = LoginPathMap.client;
+              } else {
+                window.location.href = LoginPathMap.admin;
+              }
             }}
           >
-            {t['login.form.register']}
+            {/* {t['login.form.register']} */}
+            切换{getEndType() === EndType.ADMIN ? getEndTypeName[EndType.CLIENT] : getEndTypeName[EndType.ADMIN]}
           </Button>
         </Space>
       </Form>

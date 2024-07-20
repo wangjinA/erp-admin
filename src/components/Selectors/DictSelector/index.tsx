@@ -26,10 +26,10 @@ export function useDictOptions(
         params.displayName = displayName;
       }
       const res = await dictChildAPI.getList(params);
-      return res.data.data.list.map((item) => ({
+      return res.data.data?.list.map((item) => ({
         label: item.displayName,
         value: item.id,
-      }));
+      })) || [];
     },
     {
       refreshDeps: [dictCode],

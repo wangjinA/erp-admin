@@ -34,14 +34,14 @@ export default defineConfig({
   server: {
     proxy: {
       '/prod-admin': {
-        target: 'https://logistics.drcstudio.cn/prod-admin',
+        target: 'https://logistics.drcstudio.cn',
         changeOrigin: true,
-        // rewrite: path => path.replace(/^\/admin/, '')
+        // rewrite: path => path.replace(/^\/prod-admin/, '')
       },
       '/prod-user': {
-        target: 'https://logistics.drcstudio.cn/prod-user',
+        target: 'https://logistics.drcstudio.cn',
         changeOrigin: true,
-        // rewrite: path => path.replace(/^\/user/, '')
+        // rewrite: path => path.replace(/^\/client/, '')
       },
     },
   },
