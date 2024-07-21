@@ -144,7 +144,7 @@ const createFormItem: CreateFormItemParams = ({
 
   return (
     <Form.Item
-      colon=":"
+      colon={label ? ":" : ''}
       key={field}
       label={<LabelWithTips label={label} tips={tips} position={position} />}
       field={field}

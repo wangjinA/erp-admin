@@ -22,24 +22,27 @@ const userRequestEndInfo: RequestEndTypeInfo = {
   tokenKey: 'erp-user-token',
 };
 
-export const requestEndInfo =
+export const getRequestEndInfo =
   getEndType() === EndType.ADMIN ? adminRequestEndInfo : userRequestEndInfo;
 
 const timeout = 5 * 1000;
 
 const baseAxios = axios.create({
-  baseURL: requestEndInfo.baseUrl,
+  baseURL: getRequestEndInfo.baseUrl,
   timeout,
 });
 
 baseAxios.interceptors.request.use((config) => {
-  config.headers = {
-    ...config.headers,
-    token: localStorage.getItem(requestEndInfo.tokenKey),
-    // deptId: '0',
-    // identification: '1',
-    // tenantryId: '38909991126000134',
-  } as any;
+  const token = localStorage.getItem(getRequestEndInfo.tokenKey);
+  if(token){
+    config.headers.token = token;
+  }
+  // config.headers = {
+  //   ...config.headers,
+  //   // deptId: '0',
+  //   // identification: '1',
+  //   // tenantryId: '38909991126000134',
+  // } as any;
   return config;
 });
 

@@ -46,6 +46,9 @@ const SearchTable: React.FC<SearchTableProps> = (props) => {
     tableProps,
     formProps,
     initialValues = {},
+    showCreate = true,
+    showEdit = true,
+    leftTool,
     onView,
     createRequest,
     getListRequest,
@@ -114,13 +117,21 @@ const SearchTable: React.FC<SearchTableProps> = (props) => {
               }}
             ></FilterForm>
             <div className="flex justify-between py-6 pr-2">
-              <Button
-                type="primary"
-                onClick={() => setShowType(ShowFormType.create)}
-                icon={<IconPlus></IconPlus>}
-              >
-                新建
-              </Button>
+              <Space size={20}>
+                {createRequest && (
+                  <Button
+                    type="primary"
+                    onClick={() => setShowType(ShowFormType.create)}
+                    icon={<IconPlus></IconPlus>}
+                  >
+                    新建
+                  </Button>
+                )}
+                {
+                  leftTool?.()
+                }
+              </Space>
+
               <Space size={20}>
                 <Button
                   type="default"
@@ -168,12 +179,16 @@ const SearchTable: React.FC<SearchTableProps> = (props) => {
               loading={loading}
               {...tableProps}
               columns={[
-                ...createFormListToColumnList(formItemConfigList),
+                ...createFormListToColumnList(
+                  formItemConfigList.filter(
+                    (item) => !item.hideTable && item.schema.field !== 'actions'
+                  )
+                ),
                 {
                   title: '操作',
-                  key: 'action',
+                  key: 'actions',
                   width: 315,
-                  render: (_, record) => (
+                  render: (_, record, index) => (
                     <Space size={0}>
                       {onView && (
                         <Button
@@ -186,27 +201,34 @@ const SearchTable: React.FC<SearchTableProps> = (props) => {
                           查看
                         </Button>
                       )}
-                      <Button
-                        type="text"
-                        status="warning"
-                        icon={<IconEdit />}
-                        onClick={() => {
-                          setShowType(ShowFormType.edit);
-                          formRef.setFieldsValue(record);
-                        }}
-                      >
-                        编辑
-                      </Button>
-                      <PopconfirmDelete
-                        buttonProps={{
-                          type: 'text',
-                        }}
-                        onOk={() =>
-                          removeRequest(record[majorKey]).then(() => {
-                            run();
-                          })
-                        }
-                      ></PopconfirmDelete>
+                      {formItemConfigList
+                        .find((oitem) => oitem.schema.field === 'actions')
+                        ?.render?.(_, record, index)}
+                      {updateRequest && (
+                        <Button
+                          type="text"
+                          status="warning"
+                          icon={<IconEdit />}
+                          onClick={() => {
+                            setShowType(ShowFormType.edit);
+                            formRef.setFieldsValue(record);
+                          }}
+                        >
+                          编辑
+                        </Button>
+                      )}
+                      {removeRequest && (
+                        <PopconfirmDelete
+                          buttonProps={{
+                            type: 'text',
+                          }}
+                          onOk={() =>
+                            removeRequest(record[majorKey]).then(() => {
+                              run();
+                            })
+                          }
+                        ></PopconfirmDelete>
+                      )}
                     </Space>
                   ),
                 },
@@ -302,9 +324,12 @@ interface SearchTableProps {
   tableProps?: TableProps;
   formProps?: FormProps;
   initialValues?: any;
+  showCreate?: boolean;
+  showEdit?: boolean;
+  leftTool?: ()=>React.ReactNode;
   createRequest?: CreateWrapProps['createRequest'];
   getListRequest?: (
-    params: IPageParams
+    params: IPageParams & Record<string, any>
   ) => Promise<AxiosResponse<APIListResponse<any>>>;
   removeRequest?: (id) => Promise<AxiosResponse<APIResponse>>;
   updateRequest?: (id) => Promise<AxiosResponse<APIResponse>>;
@@ -315,4 +340,5 @@ export type SearchTableSchema = CreateFormItemType &
   Partial<ColumnProps> & {
     isSearch?: boolean;
     isCreate?: boolean;
+    hideTable?: boolean;
   };

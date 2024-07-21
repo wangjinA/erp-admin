@@ -21,7 +21,7 @@ import qs from 'query-string';
 import NProgress from 'nprogress';
 import Navbar from './components/NavBar';
 import Footer from './components/Footer';
-import useRoute, { IRoute } from '@/routes';
+import useRoute, { EndType, getPathEndKey, IRoute } from '@/routes';
 import { isArray } from './utils/is';
 import useLocale from './utils/useLocale';
 import getUrlParams from './utils/getUrlParams';
@@ -97,15 +97,22 @@ function PageLayout() {
   const urlParams = getUrlParams();
   const history = useHistory();
   const pathname = history.location.pathname;
-  const currentComponent = qs.parseUrl(pathname).url.slice(1);
+  console.log(pathname);
+
   const locale = useLocale();
   const { settings, userLoading, userInfo } = useSelector(
     (state: GlobalState) => state
   );
 
-  const [routes, defaultRoute] = useRoute(userInfo?.permissions);
-  const defaultSelectedKeys = [currentComponent || defaultRoute];
-  const paths = (currentComponent || defaultRoute).split('/');
+  const [routes, defaultRouteKeyMap] = useRoute(userInfo?.permissions);
+  const defaultRoute = defaultRouteKeyMap[getPathEndKey()];
+  const currentComponent = qs.parseUrl(pathname).url.slice(1) || defaultRoute;
+  if(!currentComponent){
+    location.href = `${EndType.CLIENT}`
+    return null;
+  }
+  const defaultSelectedKeys = [currentComponent];
+  const paths = currentComponent?.split('/');
   const defaultOpenKeys = paths.slice(0, paths.length - 1);
 
   const [breadcrumb, setBreadCrumb] = useState([]);
@@ -147,6 +154,7 @@ function PageLayout() {
   const paddingTop = showNavbar ? { paddingTop: navbarHeight } : {};
   const paddingStyle = { ...paddingLeft, ...paddingTop };
 
+  // 渲染menu菜单组件
   function renderRoutes(locale) {
     routeMap.current.clear();
     return function travel(_routes: IRoute[], level, parentNode = []) {
@@ -286,12 +294,16 @@ function PageLayout() {
                       />
                     );
                   })}
-                  <Route exact path="/">
-                    <Redirect to={`/${defaultRoute}`} />
-                  </Route>
+                  {Object.values(EndType).map((endKey) => (
+                    <Route exact path={`/${endKey}`} key={endKey}>
+                      <Redirect to={`/${defaultRoute}`} />
+                    </Route>
+                  ))}
                   <Route
                     path="*"
-                    component={lazyload(() => import('./pages/common/exception/403'))}
+                    component={lazyload(
+                      () => import('./pages/common/exception/403')
+                    )}
                   />
                 </Switch>
               </Content>

@@ -3,7 +3,7 @@ import { Upload, Message } from '@arco-design/web-react';
 import { UploadItem } from '@arco-design/web-react/es/Upload';
 import { toArray } from '@/utils';
 import { UploadProps } from '@arco-design/web-react/lib';
-import { requestEndInfo } from '@/api';
+import { getRequestEndInfo } from '@/api';
 type Props = UploadProps & {
   value?: string | string[];
   fileSize?: number;
@@ -27,7 +27,7 @@ export default (props: Props) => {
     }))
   );
 
-  const action = `${requestEndInfo.baseUrl}/api/file/upload`;
+  const action = `${getRequestEndInfo.baseUrl}/api/file/upload`;
   return (
     <Upload
       multiple={false}

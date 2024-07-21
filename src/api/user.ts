@@ -1,6 +1,7 @@
 import { LoginResponse } from '@/types/user';
-import baseAxios,{ requestEndInfo }  from '.';
+import baseAxios,{ getRequestEndInfo }  from '.';
 import { APIListResponse, APIResponse } from './type';
+import { EndType, getEndType } from '@/routes';
 
 export const login = (params) => {
   const { userLoginAccount, userLoginPassword, captcha } = params;
@@ -16,7 +17,7 @@ export const loginExit = () => {
 
 export const getCaptcha = (randomVal?: any) => {
   const val = randomVal ? `?${randomVal}` : '';
-  return requestEndInfo.baseUrl + '/api/code/captcha.jpg' + val; //! todo 确定一下
+  return getRequestEndInfo.baseUrl + '/api/code/captcha.jpg' + val; //! todo 确定一下
 };
 
 export interface UserInfo {
@@ -44,6 +45,9 @@ export interface UserInfo {
 
 export const userAPI = {
   personalCenter() {
+    if(getEndType() === EndType.CLIENT){
+      return baseAxios.get<APIListResponse<UserInfo>>('/api/tenantry/user/personalCenter');
+    }
     return baseAxios.get<APIListResponse<UserInfo>>('/api/user/personalCenter');
   },
   updateSelf(body: Partial<UserInfo>) {

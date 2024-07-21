@@ -37,7 +37,7 @@ import defaultLocale from '@/locale';
 import useStorage from '@/utils/useStorage';
 import { generatePermission, toLoginPage } from '@/routes';
 import { loginExit } from '@/api/user';
-import { requestEndInfo } from '@/api';
+import { getRequestEndInfo } from '@/api';
 
 function Navbar({ show }: { show: boolean }) {
   const t = useLocale();
@@ -52,7 +52,7 @@ function Navbar({ show }: { show: boolean }) {
   function logout() {
     setUserStatus('logout');
     localStorage.removeItem('userInfo');
-    localStorage.removeItem(requestEndInfo.tokenKey);
+    localStorage.removeItem(getRequestEndInfo.tokenKey);
     toLoginPage();
   }
 

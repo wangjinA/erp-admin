@@ -14,6 +14,24 @@ export type IRoute = AuthParams & {
 
 export const routes: IRoute[] = [
   {
+    name: 'admin.financial',
+    key: 'admin/financial',
+    children: [
+      {
+        name: 'admin.financial.statement', // 账单
+        key: 'admin/financial/statement',
+      },
+      {
+        name: 'admin.financial.expense', // 账单
+        key: 'admin/financial/expense',
+      },
+      {
+        name: 'admin.financial.businessMap', // 快递映射
+        key: 'admin/financial/businessMap',
+      },
+    ]
+  },
+  {
     name: 'admin.dict',
     key: 'admin/dict/list',
     // children: [
@@ -374,7 +392,13 @@ export const getLoginPagePath = () => {
  * 判断当前端类型
  */
 export function getEndType(): EndType {
-  return location.pathname.startsWith('/admin') ? EndType.ADMIN : EndType.CLIENT;
+  return location.pathname.startsWith('/admin')
+    ? EndType.ADMIN
+    : EndType.CLIENT;
+}
+
+export function getPathEndKey(): EndType {
+ return (location.pathname.split('/').filter(Boolean)[0]) as EndType;
 }
 
 export function getEndTypeName() {
@@ -388,7 +412,9 @@ export const toLoginPage = () => {
   }
 };
 
-const useRoute = (userPermission): [IRoute[], string] => {
+type DefaultRouteMap = Partial<Record<EndType, string>>;
+
+const useRoute = (userPermission): [IRoute[], DefaultRouteMap] => {
   const filterRoute = (routes: IRoute[], arr = []): IRoute[] => {
     if (!routes.length) {
       return [];
@@ -424,16 +450,18 @@ const useRoute = (userPermission): [IRoute[], string] => {
     setPermissionRoute(newRoutes);
   }, [JSON.stringify(userPermission)]);
 
-  const defaultRoute = useMemo(() => {
-    const first = permissionRoute[0];
-    if (first) {
-      const firstRoute = first?.children?.[0]?.key || first.key;
-      return firstRoute;
-    }
-    return '';
+  const defaultRouteMap = useMemo(() => {
+    return Object.values(EndType).reduce<DefaultRouteMap>((pre, endKey) => {
+      const first = permissionRoute.find((item) => item.key.startsWith(endKey));
+      if (first) {
+        const firstRoute = first?.children?.[0]?.key || first.key;
+        pre[endKey] = firstRoute;
+      }
+      return pre;
+    }, {})
   }, [permissionRoute]);
 
-  return [permissionRoute, defaultRoute];
+  return [permissionRoute, defaultRouteMap];
 };
 
 export default useRoute;

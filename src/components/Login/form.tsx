@@ -18,8 +18,14 @@ import styles from './style/index.module.less';
 import { useLocalStorageState, useRequest } from 'ahooks';
 import { getCaptcha, login } from '@/api/user';
 import { random } from 'lodash';
-import { requestEndInfo, SuccessCode } from '@/api';
-import { EndType, getEndType, getEndTypeName, LoginPathMap, toLoginPage } from '@/routes';
+import { getRequestEndInfo, SuccessCode } from '@/api';
+import {
+  EndType,
+  getEndType,
+  getEndTypeName,
+  LoginPathMap,
+  toLoginPage,
+} from '@/routes';
 
 export default function LoginForm() {
   const formRef = useRef<FormInstance>();
@@ -41,7 +47,7 @@ export default function LoginForm() {
       const res = await login(params);
       if (res.data.code === SuccessCode) {
         setValue(res.data.data);
-        localStorage.setItem(requestEndInfo.tokenKey, res.data.data.token);
+        localStorage.setItem(getRequestEndInfo.tokenKey, res.data.data.token);
         localStorage.removeItem('scan-entrepot');
         afterLoginSuccess(params);
       } else {
@@ -103,18 +109,23 @@ export default function LoginForm() {
   return (
     <div className={styles['login-form-wrapper']}>
       <div className={styles['login-form-title']}>{t['login.form.title']}</div>
-      <div className={styles['login-form-sub-title']}>
-        {getEndTypeName()}
-      </div>
+      <div className={styles['login-form-sub-title']}>{getEndTypeName()}</div>
       <div className={styles['login-form-error-msg']}>{errorMessage}</div>
       <Form
         className={styles['login-form']}
         layout="vertical"
         ref={formRef}
-        initialValues={{
-          userLoginAccount: 'admin',
-          userLoginPassword: '123456',
-        }}
+        initialValues={
+          getEndType() === EndType.ADMIN
+            ? {
+                userLoginAccount: 'admin',
+                userLoginPassword: '123456',
+              }
+            : {
+                userLoginAccount: '15279298921',
+                userLoginPassword: '123456',
+              }
+        }
       >
         <Form.Item
           field="userLoginAccount"
@@ -180,8 +191,9 @@ export default function LoginForm() {
               }
             }}
           >
+            {console.log(EndType)}
             {/* {t['login.form.register']} */}
-            切换{getEndType() === EndType.ADMIN ? getEndTypeName[EndType.CLIENT] : getEndTypeName[EndType.ADMIN]}
+            切换{getEndTypeName()}
           </Button>
         </Space>
       </Form>

@@ -2,6 +2,7 @@ import { SuccessCode } from '@/api';
 import { APIResponse } from '@/api/type';
 import { Message } from '@arco-design/web-react';
 import { isArray } from 'lodash';
+import * as XLSX from "xlsx";
 
 export function showMessageStatus(resp: APIResponse) {
   if (resp.code === SuccessCode) {
@@ -33,4 +34,48 @@ export function tryFn<T>(fn: () => Promise<T>, message: string = '请求失败')
 
 export function sleep(timeout) {
   return new Promise((resolve) => setTimeout(resolve, timeout));
+}
+
+export function getFile() {
+  return new Promise<File[]>((resolve, reject) => {
+    const id = 'import-none-file';
+
+    let fileInput = document.querySelector<HTMLInputElement>(`#${id}`);
+    if (!fileInput) {
+      fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.style.display = 'none';
+      fileInput.id = id;
+      document.body.appendChild(fileInput);
+      // fileInput.accept = acceptTypes;
+    }else {
+      fileInput.files = null;
+    }
+    fileInput.onchange = (e: any) => {
+      if (e.target.files.length) {
+        resolve([...e.target.files]);
+      } else {
+        reject();
+      }
+    };
+    fileInput.click();
+  });
+}
+
+/**
+ * 获取Excel数组
+ */
+export function getExcleData(file: File): Promise<any[][]> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = async function (e) {
+      const data = new Uint8Array(e.target.result as any);
+      const workbook = XLSX.read(data, { type: "array" });
+      console.log(workbook);
+      
+      resolve(workbook.SheetNames.map((item) => XLSX.utils.sheet_to_json(workbook.Sheets[item], { header: 1 })).flat(1) as any);
+    };
+    reader.onerror = reject;
+    reader.readAsArrayBuffer(file);
+  });
 }

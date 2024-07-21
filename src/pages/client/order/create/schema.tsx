@@ -117,7 +117,7 @@ export const OrderCreateSchema1: CreateFormItemType[] = [
   },
   {
     schema: {
-      field: 'shrimpStatus',
+      field: 'shrimpOrderNo',
       label: '订单编号',
     },
     control: 'input',
