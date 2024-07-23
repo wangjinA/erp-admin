@@ -36,7 +36,7 @@ import styles from './style/index.module.less';
 import defaultLocale from '@/locale';
 import useStorage from '@/utils/useStorage';
 import { generatePermission, toLoginPage } from '@/routes';
-import { loginExit } from '@/api/user';
+import { loginExit } from '@/api/admin/user';
 import { getRequestEndInfo } from '@/api';
 
 function Navbar({ show }: { show: boolean }) {

@@ -1,11 +1,12 @@
-import baseAxios from '.';
-import { APIListResponse, IPageParams } from './type';
+import baseAxios from '..';
+import { APIListResponse, IPageParams } from '../type';
 
 export const orderAPI = {
   // 获取订单列表
   getList(body: Partial<SearchOrderParams & IPageParams>) {
-    return baseAxios.get<APIListResponse<SearchOrderParams>>(
-      '/api/logistics/order/list'
+    return baseAxios.post<APIListResponse<SearchOrderParams>>(
+      '/api/logistics/order/list',
+      body
     );
   },
   // 获取订单详情

@@ -2,7 +2,7 @@ import FilterForm from '@/components/FilterForm';
 import React, { useEffect } from 'react';
 import SearchTable from '@/components/SearchTable';
 import { useRequest } from 'ahooks';
-import { shopStoreAPI } from '@/api/shopStore';
+import { shopStoreAPI } from '@/api/admin/shopStore';
 import { Button } from '@arco-design/web-react';
 import { BusinessmapSchema } from './shcema';
 import { IconExport, IconImport } from '@arco-design/web-react/icon';

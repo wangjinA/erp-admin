@@ -1,6 +1,6 @@
 import { LoginResponse } from '@/types/user';
-import baseAxios,{ getRequestEndInfo }  from '.';
-import { APIListResponse, APIResponse } from './type';
+import baseAxios,{ getRequestEndInfo }  from '..';
+import { APIListResponse, APIResponse } from '../type';
 import { EndType, getEndType } from '@/routes';
 
 export const login = (params) => {

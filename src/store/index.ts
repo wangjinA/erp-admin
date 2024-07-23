@@ -1,5 +1,6 @@
-import { UserInfo } from '@/api/user';
+import { UserInfo } from '@/api/admin/user';
 import defaultSettings from '../settings.json';
+import { getEndType } from '@/routes';
 export interface GlobalState {
   settings?: typeof defaultSettings;
   userInfo?: Partial<UserInfo>;
@@ -18,9 +19,7 @@ export interface GlobalState {
 
 const initialState: GlobalState = {
   settings: defaultSettings,
-  userInfo: {
-    // permissions: {},
-  },
+  userInfo: JSON.parse(localStorage.getItem(`${getEndType()}-userInfo`) || '{}'),
   editPassword: false,
 };
 

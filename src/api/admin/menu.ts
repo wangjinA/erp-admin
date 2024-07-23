@@ -1,4 +1,4 @@
-import baseAxios from '.';
+import baseAxios from '..';
 
 export const menuAPI = {
   get() {

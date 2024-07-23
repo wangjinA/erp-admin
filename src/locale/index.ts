@@ -25,6 +25,11 @@ const i18n = {
     'client.order.create': '手动创建订单',
     'client.order': '订单管理',
     'client.order.all': '全部订单',
+    'client.order.toBeprocessed': '待处理订单',
+    'client.order.alreadyPacked': '已打包订单',
+    // 'client.order.all': '全部订单',
+    // 'client.order.all': '全部订单',
+    // 'client.order.all': '全部订单',
     'client.order.returnOrder': '海外仓退件订单',
     'client.order.deliveryHistory': '订单出库记录',
 

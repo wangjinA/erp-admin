@@ -1,7 +1,7 @@
 import React from 'react';
 import ScanCommon from '../ScanCommon';
 import { useRequest } from 'ahooks';
-import { ScanParams, scanAPI } from '@/api/entrepot';
+import { ScanParams, scanAPI } from '@/api/admin/entrepot';
 import { showMessageStatus } from '@/utils';
 import { Table } from '@arco-design/web-react';
 

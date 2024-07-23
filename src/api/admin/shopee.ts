@@ -1,6 +1,6 @@
 
-import baseAxios from '.';
-import { APIResponse } from './type';
+import baseAxios from '..';
+import { APIResponse } from '../type';
 
 export const shopeeAPI = {
   // 获取订单列表

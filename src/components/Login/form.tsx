@@ -7,6 +7,7 @@ import {
   Space,
   Message,
   Image,
+  Spin,
 } from '@arco-design/web-react';
 import { FormInstance } from '@arco-design/web-react/es/Form';
 import { IconLock, IconSafe, IconUser } from '@arco-design/web-react/icon';
@@ -16,11 +17,12 @@ import useLocale from '@/utils/useLocale';
 import locale from './locale';
 import styles from './style/index.module.less';
 import { useLocalStorageState, useRequest } from 'ahooks';
-import { getCaptcha, login } from '@/api/user';
+import { getCaptcha, login } from '@/api/admin/user';
 import { random } from 'lodash';
 import { getRequestEndInfo, SuccessCode } from '@/api';
 import {
   EndType,
+  EndTypeTextMap,
   getEndType,
   getEndTypeName,
   LoginPathMap,
@@ -163,6 +165,12 @@ export default function LoginForm() {
               />
             </Form.Item>
             <Image
+              width={220}
+              loader={
+                <div className='flex justify-center'>
+                  <Spin size={4} dot></Spin>
+                </div>
+              }
               preview={false}
               src={getCaptcha(randomStr)}
               onClick={() => setRandomStr(random(1, 99999))}
@@ -193,7 +201,7 @@ export default function LoginForm() {
           >
             {console.log(EndType)}
             {/* {t['login.form.register']} */}
-            切换{getEndTypeName()}
+            切换{getEndType() === EndType.ADMIN ? EndTypeTextMap[EndType.CLIENT] : EndTypeTextMap[EndType.ADMIN]}
           </Button>
         </Space>
       </Form>

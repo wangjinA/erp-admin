@@ -2,7 +2,7 @@ import { SuccessCode } from '@/api';
 import { APIResponse } from '@/api/type';
 import { Message } from '@arco-design/web-react';
 import { isArray } from 'lodash';
-import * as XLSX from "xlsx";
+import * as XLSX from 'xlsx';
 
 export function showMessageStatus(resp: APIResponse) {
   if (resp.code === SuccessCode) {
@@ -48,7 +48,7 @@ export function getFile() {
       fileInput.id = id;
       document.body.appendChild(fileInput);
       // fileInput.accept = acceptTypes;
-    }else {
+    } else {
       fileInput.files = null;
     }
     fileInput.onchange = (e: any) => {
@@ -70,12 +70,26 @@ export function getExcleData(file: File): Promise<any[][]> {
     const reader = new FileReader();
     reader.onload = async function (e) {
       const data = new Uint8Array(e.target.result as any);
-      const workbook = XLSX.read(data, { type: "array" });
+      const workbook = XLSX.read(data, { type: 'array' });
       console.log(workbook);
-      
-      resolve(workbook.SheetNames.map((item) => XLSX.utils.sheet_to_json(workbook.Sheets[item], { header: 1 })).flat(1) as any);
+
+      resolve(
+        workbook.SheetNames.map((item) =>
+          XLSX.utils.sheet_to_json(workbook.Sheets[item], { header: 1 })
+        ).flat(1) as any
+      );
     };
     reader.onerror = reject;
     reader.readAsArrayBuffer(file);
   });
+}
+
+export function timeArrToObject(arr: string[], key1: string, key2: string) {
+  if (arr?.length) {
+    return {
+      key1: arr[0],
+      key2: arr[1],
+    };
+  }
+  return {};
 }

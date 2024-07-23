@@ -1,6 +1,16 @@
 import auth, { AuthParams } from '@/utils/authentication';
 import { useEffect, useMemo, useState } from 'react';
 import i18n from './locale';
+export enum EndType {
+  /**
+   * 管理端
+   */
+  ADMIN = 'admin',
+  /**
+   * 用户端
+   */
+  CLIENT = 'client',
+}
 
 export type IRoute = AuthParams & {
   name: keyof typeof i18n['zh-CN'];
@@ -13,24 +23,24 @@ export type IRoute = AuthParams & {
 };
 
 export const routes: IRoute[] = [
-  {
-    name: 'admin.financial',
-    key: 'admin/financial',
-    children: [
-      {
-        name: 'admin.financial.statement', // 账单
-        key: 'admin/financial/statement',
-      },
-      {
-        name: 'admin.financial.expense', // 账单
-        key: 'admin/financial/expense',
-      },
-      {
-        name: 'admin.financial.businessMap', // 快递映射
-        key: 'admin/financial/businessMap',
-      },
-    ]
-  },
+  // {
+  //   name: 'admin.financial',
+  //   key: 'admin/financial',
+  //   children: [
+  //     {
+  //       name: 'admin.financial.statement', // 账单
+  //       key: 'admin/financial/statement',
+  //     },
+  //     {
+  //       name: 'admin.financial.expense', // 账单
+  //       key: 'admin/financial/expense',
+  //     },
+  //     {
+  //       name: 'admin.financial.businessMap', // 快递映射
+  //       key: 'admin/financial/businessMap',
+  //     },
+  //   ]
+  // },
   {
     name: 'admin.dict',
     key: 'admin/dict/list',
@@ -49,14 +59,14 @@ export const routes: IRoute[] = [
         name: 'client.order.create',
         key: 'client/order/create',
       },
-      // {
-      //   name: 'client.order.all',
-      //   key: 'client/order/all',
-      // },
-      // {
-      //   name: 'client.order.returnOrder',
-      //   key: 'client/order/returnOrder',
-      // },
+      {
+        name: 'client.order.all',
+        key: 'client/order/all',
+      },
+      {
+        name: 'client.order.toBeprocessed',
+        key: 'client/order/toBeprocessed',
+      },
       // {
       //   name: 'client.order.deliveryHistory',
       //   key: 'client/order/deliveryHistory',
@@ -337,7 +347,7 @@ export const routes: IRoute[] = [
       },
     ],
   },
-];
+].filter((item: any) => item.name.startsWith(getEndType())) as any;
 
 export const getName = (path: string, routes) => {
   return routes.find((item) => {
@@ -363,16 +373,6 @@ export const generatePermission = (role: string) => {
   return result;
 };
 
-export enum EndType {
-  /**
-   * 管理端
-   */
-  ADMIN = 'admin',
-  /**
-   * 用户端
-   */
-  CLIENT = 'client',
-}
 
 export const LoginPathMap = {
   [EndType.ADMIN]: '/admin/login',

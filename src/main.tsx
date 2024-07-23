@@ -1,4 +1,5 @@
 import './style/global.less';
+import './utils/index';
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { createStore } from 'redux';
@@ -18,13 +19,14 @@ import Mock from 'mockjs';
 // import './mock';
 import { generatePermission, getLoginPagePath, toLoginPage } from './routes';
 import userPNG from '@/assets/user.png';
-import { userAPI } from './api/user';
+import { userAPI } from './api/admin/user';
 import AdminLogin from './pages/admin/login';
 import ClientLogin from './pages/client/login';
-import { AccessDB, IndexedDB, initDB } from 'react-indexed-db-hook';
-import { DBConfig } from './db';
+import { isEmpty } from 'lodash';
+// import { AccessDB, IndexedDB, initDB } from 'react-indexed-db-hook';
+// import { DBConfig } from './db';
 const store = createStore(rootReducer);
-initDB(DBConfig)
+// initDB(DBConfig);
 function Index() {
   const [lang, setLang] = useStorage('arco-lang', 'zh-CN');
   const [theme, setTheme] = useStorage('arco-theme', 'light');
@@ -60,7 +62,10 @@ function Index() {
       registrationTime: Mock.Random.datetime('yyyy-MM-dd HH:mm:ss'),
       permissions: generatePermission(userRole),
     };
-
+    
+    if (!isEmpty(store.getState().userInfo)) {
+      return;
+    }
     store.dispatch({
       type: 'update-userInfo',
       payload: { userLoading: true },
@@ -97,7 +102,7 @@ function Index() {
       //   },
       // });
     } catch (error) {
-      Message.error('登录失败');
+      Message.error('登录失效');
       toLoginPage();
       // store.dispatch({
       //   type: 'update-userInfo',

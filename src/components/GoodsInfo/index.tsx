@@ -2,7 +2,14 @@ import React from 'react';
 import { List, Image, Descriptions } from '@arco-design/web-react';
 import styles from './index.module.less';
 import classNames from 'classnames';
-export default () => {
+import { Order } from '@/types/order';
+
+interface GoodsInfoProps {
+  data: Order['orderProductList'];
+}
+
+export default (props: GoodsInfoProps) => {
+  const { data } = props;
   return (
     <div
       style={{ height: 'max-content', overflow: 'hidden' }}
@@ -10,56 +17,48 @@ export default () => {
     >
       <List
         className={classNames(styles['goods-info'])}
-        dataSource={new Array(4).fill({
-          title: 'Beijing Bytedance Technology Co., Ltd.',
-          description:
-            'Beijing ByteDance Technology Co., Ltd. is an enterprise located in China.',
-        })}
+        dataSource={data}
         render={(item, index) => (
-          <List.Item key={index}>
-            <List.Item.Meta
-              avatar={
-                <Image
-                  width={80}
-                  height={80}
-                  src="https://img.alicdn.com/bao/uploaded/i1/2200798012881/O1CN01pZ7wCC1X9XeviUTY2_!!0-item_pic.jpg"
-                />
-              }
-              title={
-                '遮陽網 防曬網 隔熱網 加密 加厚 隔熱 降溫 黑色大棚樓頂太陽網遮陽 防曬網佈'
-              }
-              description={
-                <Descriptions
-                  size="mini"
-                  column={2}
-                  colon=" :"
-                  data={[
-                    {
-                      label: '单  价',
-                      value: '729',
-                    },
-                    {
-                      label: '数  量',
-                      value: '12',
-                    },
-                    {
-                      label: '规格名称',
-                      value: '全新料30針[店長推薦款],3米寬30米長整捲',
-                      span: 24,
-                    },
-                    {
-                      label: '规格SKU',
-                      value:
-                        '456767407574_全新料30針[店長推薦款]_3米寬30米長整捲',
-                      span: 24,
-                    },
-                  ]}
-                  labelStyle={{ textAlign: 'right' }}
-                  style={{ marginBottom: 20 }}
-                />
-              }
-            />
-          </List.Item>
+          <List.Item.Meta
+            className={classNames(['h-28 !items-center', index > 0 ? 'border-t' : ''])}
+            key={index}
+            avatar={
+              <Image
+                className="size-24"
+                src="https://img.alicdn.com/bao/uploaded/i1/2200798012881/O1CN01pZ7wCC1X9XeviUTY2_!!0-item_pic.jpg"
+              />
+            }
+            title={item.productName}
+            description={
+              <Descriptions
+                size="mini"
+                column={2}
+                colon=" :"
+                data={[
+                  {
+                    label: '单  价',
+                    value: item.unitPrice,
+                  },
+                  {
+                    label: '数  量',
+                    value: item.quantity,
+                  },
+                  {
+                    label: '规格名称',
+                    value: item.specificationName,
+                    span: 24,
+                  },
+                  {
+                    label: '规格SKU',
+                    value: item.sku,
+                    span: 24,
+                  },
+                ]}
+                labelStyle={{ textAlign: 'right' }}
+                style={{ marginBottom: 20 }}
+              />
+            }
+          />
         )}
       />
     </div>

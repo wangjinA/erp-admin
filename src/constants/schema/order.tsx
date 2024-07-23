@@ -39,7 +39,7 @@ export const OrderFilter: CreateFormItemType[] = [
   {
     schema: {
       field: 'timeType3',
-      label: '屋程物流',
+      label: '尾程物流',
     },
     control: 'input',
   },

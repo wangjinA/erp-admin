@@ -4,7 +4,7 @@ import { OrderFilter } from '@/constants/schema/order';
 import { Avatar, List, Table, Tabs } from '@arco-design/web-react';
 import OrderTable from '@/components/OrderTable';
 import { usePagination, useRequest } from 'ahooks';
-import { orderAPI } from '@/api/order';
+import { orderAPI } from '@/api/admin/order';
 
 // 全部
 // 待入库

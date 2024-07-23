@@ -1,5 +1,5 @@
 import SearchTable, { SearchTableSchema } from '@/components/SearchTable';
-import { Dict, dictAPI, dictChildAPI } from '@/api/dict';
+import { Dict, dictAPI, dictChildAPI } from '@/api/admin/dict';
 import { Button, Drawer } from '@arco-design/web-react';
 import { useState } from 'react';
 import { dictChildFormItemConfigList, dictFormItemConfigList } from './schema';

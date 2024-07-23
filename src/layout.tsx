@@ -79,7 +79,6 @@ function getFlattenRoutes(routes) {
           route.component = lazyload(mod[`./pages/${route.key}/index.tsx`]);
           res.push(route);
         } catch (e) {
-          console.log(route.key);
           console.error(e);
         }
       }
@@ -97,8 +96,6 @@ function PageLayout() {
   const urlParams = getUrlParams();
   const history = useHistory();
   const pathname = history.location.pathname;
-  console.log(pathname);
-
   const locale = useLocale();
   const { settings, userLoading, userInfo } = useSelector(
     (state: GlobalState) => state

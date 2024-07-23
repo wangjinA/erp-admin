@@ -1,6 +1,6 @@
 import { random } from 'lodash';
-import baseAxios from '.';
-import { APIListResponse, APIResponse, IPageParams } from './type';
+import baseAxios from '..';
+import { APIListResponse, APIResponse, IPageParams } from '../type';
 interface Role {
   createBy: number;
   createTime: string;

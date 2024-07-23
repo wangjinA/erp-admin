@@ -1,4 +1,4 @@
-import baseAxios from '.';
+import baseAxios from '..';
 
 // 省市区选择
 export const regionAPI = {

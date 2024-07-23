@@ -3,7 +3,7 @@ import {
   EntrepotStorageRacks,
   entrepotAPI,
   racksAPI,
-} from '@/api/entrepot';
+} from '@/api/admin/entrepot';
 import { ShowFormType } from '@/constants';
 import { showMessageStatus } from '@/utils';
 import useForm from '@arco-design/web-react/es/Form/useForm';

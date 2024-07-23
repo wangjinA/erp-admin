@@ -1,4 +1,4 @@
-import { entrepotAPI } from '@/api/entrepot';
+import { entrepotAPI } from '@/api/admin/entrepot';
 import { Select } from '@arco-design/web-react';
 import { SelectProps } from '@arco-design/web-react/lib';
 import { useRequest } from 'ahooks';

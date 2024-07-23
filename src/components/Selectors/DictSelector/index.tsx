@@ -1,4 +1,4 @@
-import { DictChild, dictChildAPI } from '@/api/dict';
+import { DictChild, dictChildAPI } from '@/api/admin/dict';
 import { Select } from '@arco-design/web-react';
 import { SelectProps } from '@arco-design/web-react/lib';
 import { useRequest } from 'ahooks';
@@ -28,7 +28,7 @@ export function useDictOptions(
       const res = await dictChildAPI.getList(params);
       return res.data.data?.list.map((item) => ({
         label: item.displayName,
-        value: item.id,
+        value: item.dictValue,
       })) || [];
     },
     {

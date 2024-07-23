@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import styles from './index.module.less';
 import React from 'react';
 import { useRequest, useLocalStorageState } from 'ahooks';
-import { ScanParams, entrepotAPI } from '@/api/entrepot';
+import { ScanParams, entrepotAPI } from '@/api/admin/entrepot';
 import { useEntrepotOptions } from '@/components/Selectors/EntrepotSelector';
 
 interface ScanComponentProps {

@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
-import baseAxios from '.';
-import { APIListResponse, APIResponse, IPageParams } from './type';
+import baseAxios from '..';
+import { APIListResponse, APIResponse, IPageParams } from '../type';
 export interface Dict {
   id: number;
   createBy: string; // "创建人",

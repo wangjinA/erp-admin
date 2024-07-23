@@ -25,7 +25,7 @@ const userRequestEndInfo: RequestEndTypeInfo = {
 export const getRequestEndInfo =
   getEndType() === EndType.ADMIN ? adminRequestEndInfo : userRequestEndInfo;
 
-const timeout = 5 * 1000;
+const timeout = 20 * 1000;
 
 const baseAxios = axios.create({
   baseURL: getRequestEndInfo.baseUrl,

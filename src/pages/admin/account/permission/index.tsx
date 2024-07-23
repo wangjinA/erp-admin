@@ -1,4 +1,4 @@
-import { roleAPI } from '@/api/role';
+import { roleAPI } from '@/api/admin/role';
 import CreateWrap, { ActionsContext } from '@/components/CreateWrap';
 import FilterForm from '@/components/FilterForm';
 import {

@@ -1,5 +1,5 @@
-import baseAxios from ".";
-import { APIListResponse, IPageParams } from "./type";
+import baseAxios from "..";
+import { APIListResponse, IPageParams } from "../type";
 
 export const shopStoreAPI = {
   // 获取店铺列表

@@ -3,7 +3,7 @@ import ScanCommon from '../ScanCommon';
 import { Alert } from '@arco-design/web-react';
 import OrderTable from '@/components/OrderTable';
 import { useRequest } from 'ahooks';
-import { ScanParams, scanAPI } from '@/api/entrepot';
+import { ScanParams, scanAPI } from '@/api/admin/entrepot';
 import { showMessageStatus } from '@/utils';
 export default () => {
   const { run, data } = useRequest(

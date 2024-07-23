@@ -3,7 +3,7 @@ import React from 'react';
 import StoreListSchema from './schema';
 import SearchTable from '@/components/SearchTable';
 import { useRequest } from 'ahooks';
-import { shopStoreAPI } from '@/api/shopStore';
+import { shopStoreAPI } from '@/api/admin/shopStore';
 import { Button } from '@arco-design/web-react';
 import { IconEdit } from '@arco-design/web-react/icon';
 

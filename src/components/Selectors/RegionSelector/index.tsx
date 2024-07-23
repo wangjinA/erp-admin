@@ -1,7 +1,7 @@
 import React from 'react';
 import { Cascader } from '@arco-design/web-react';
 import { useRequest } from 'ahooks';
-import { regionAPI } from '@/api/region';
+import { regionAPI } from '@/api/admin/region';
 let cache: any;
 export default () => {
   const { data, loading } = useRequest<any[], []>(() => {
