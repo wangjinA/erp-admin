@@ -2,8 +2,10 @@ import React from 'react';
 import {
   Button,
   Descriptions,
+  Empty,
   Link,
   List,
+  Pagination,
   Table,
   TableProps,
 } from '@arco-design/web-react';
@@ -14,13 +16,22 @@ import { IconFile } from '@arco-design/web-react/icon';
 import { StyleProps } from '@/types';
 import GoodsInfo from '@/components/GoodsInfo';
 import { useDictOptions } from '@/components/Selectors/DictSelector';
+import { APIListResponse } from '@/api/type';
+import { Order } from '@/types/order';
+import { PaginationResult } from 'ahooks/lib/usePagination/types';
 
 interface OrderTablePorps extends StyleProps {
-  tableProps: TableProps;
+  // tableProps: TableProps;
+  data?: APIListResponse<Order>['data'];
+  loading: boolean;
+  pagination: PaginationResult<
+    APIListResponse<Order>['data'],
+    any
+  >['pagination'];
 }
 
 const OrderTable: React.FC<OrderTablePorps> = (props) => {
-  const { className, style, tableProps } = props;
+  const { className, style, data, pagination } = props;
   const { data: shopeeStatus } = useDictOptions({
     dictCode: 'shopee_status',
     displayName: '',
@@ -209,8 +220,8 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
           ))}
         </header>
         <main className="flex flex-col gap-4">
-          {tableProps.data?.map((item) => (
-            <div className="border">
+          {data?.list?.map((item) => (
+            <div className="border" key={item.id}>
               <header className="flex items-center p-2 border-b">
                 <Button.Group>
                   <Button>编辑打包</Button>
@@ -255,7 +266,9 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                   </span>
                 </div>
                 <div>
-                  <span className="arco-descriptions-item-label w-auto pb-0">店铺：</span>
+                  <span className="arco-descriptions-item-label w-auto pb-0">
+                    店铺：
+                  </span>
                   <span className="arco-descriptions-item-value pb-0">
                     本土 台湾/萬福堂佛緣旗艦店 本命佛 化太歲 藏式手繩水晶手串
                     吊墜 開運吉祥
@@ -296,17 +309,17 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
             </div>
           ))}
         </main>
-      </div>
-      {/* <Table
-        {...tableProps}
-        className={classNames(
-          styles['order-table'],
-          'arco-list-style',
-          className
+        {data?.list.length && (
+          <Pagination
+            total={data?.total}
+            onChange={(pageNumber: number, pageSize: number) => {
+              pagination.changePageSize(pageSize);
+              pagination.changeCurrent(pageNumber);
+            }}
+          ></Pagination>
         )}
-        columns={cols}
-        style={style}
-      ></Table> */}
+        {!data?.list.length && <Empty className="py-28"></Empty>}
+      </div>
     </div>
   );
 };

@@ -58,8 +58,6 @@ const loginModal = debounce((msg) => {
 }, 300);
 
 baseAxios.interceptors.response.use((res) => {
-  console.log(res);
-
   if ([30010].includes(res.data.code)) {
     loginModal(res.data.msg);
   }

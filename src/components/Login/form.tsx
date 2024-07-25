@@ -71,7 +71,7 @@ export default function LoginForm() {
     // 记录登录状态
     localStorage.setItem('userStatus', 'login');
     // 跳转首页
-    window.location.href = '/';
+    window.location.href = '/' + getEndType();
   }
 
   // function loginHandler(params) {
@@ -167,7 +167,7 @@ export default function LoginForm() {
             <Image
               width={220}
               loader={
-                <div className='flex justify-center'>
+                <div className="flex justify-center">
                   <Spin size={4} dot></Spin>
                 </div>
               }
@@ -201,7 +201,10 @@ export default function LoginForm() {
           >
             {console.log(EndType)}
             {/* {t['login.form.register']} */}
-            切换{getEndType() === EndType.ADMIN ? EndTypeTextMap[EndType.CLIENT] : EndTypeTextMap[EndType.ADMIN]}
+            切换
+            {getEndType() === EndType.ADMIN
+              ? EndTypeTextMap[EndType.CLIENT]
+              : EndTypeTextMap[EndType.ADMIN]}
           </Button>
         </Space>
       </Form>

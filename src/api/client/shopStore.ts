@@ -1,10 +1,13 @@
 import baseAxios from "..";
-import { APIListResponse, IPageParams } from "../type";
+import { APIListResponse, APIResponse, IPageParams } from "../type";
 
 export const shopStoreAPI = {
   // 获取店铺列表
   getList(body: Partial<ShopStore> & IPageParams) {
     return baseAxios.post<APIListResponse<ShopStore>>('/api/tenantry/store/list', body);
+  },
+  getAuthLink() {
+    return baseAxios.post<APIResponse<string>>('/api/tenantry/store/create/accredit/url');
   },
 };
 

@@ -8,6 +8,11 @@ type DictSelectorProps = SelectProps & {
   dictCode: string;
 };
 
+export interface DictOptions {
+  label: string;
+  value: string;
+}
+
 export function useDictOptions(
   params: Pick<DictChild, 'dictCode' | 'displayName'>
 ) {
@@ -26,10 +31,12 @@ export function useDictOptions(
         params.displayName = displayName;
       }
       const res = await dictChildAPI.getList(params);
-      return res.data.data?.list.map((item) => ({
-        label: item.displayName,
-        value: item.dictValue,
-      })) || [];
+      return (
+        res.data.data?.list.map((item) => ({
+          label: item.displayName,
+          value: item.dictValue,
+        })) || []
+      );
     },
     {
       refreshDeps: [dictCode],
