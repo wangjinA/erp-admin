@@ -373,7 +373,6 @@ export const generatePermission = (role: string) => {
   return result;
 };
 
-
 export const LoginPathMap = {
   [EndType.ADMIN]: '/admin/login',
   [EndType.CLIENT]: '/client/login',
@@ -397,8 +396,16 @@ export function getEndType(): EndType {
     : EndType.CLIENT;
 }
 
+export function isAdmin() {
+  return getEndType() === EndType.ADMIN;
+}
+
+export function isClient() {
+  return getEndType() === EndType.CLIENT;
+}
+
 export function getPathEndKey(): EndType {
- return (location.pathname.split('/').filter(Boolean)[0]) as EndType;
+  return location.pathname.split('/').filter(Boolean)[0] as EndType;
 }
 
 export function getEndTypeName() {
@@ -458,7 +465,7 @@ const useRoute = (userPermission): [IRoute[], DefaultRouteMap] => {
         pre[endKey] = firstRoute;
       }
       return pre;
-    }, {})
+    }, {});
   }, [permissionRoute]);
 
   return [permissionRoute, defaultRouteMap];

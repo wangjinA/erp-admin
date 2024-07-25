@@ -19,10 +19,14 @@ import { useDictOptions } from '@/components/Selectors/DictSelector';
 import { APIListResponse } from '@/api/type';
 import { Order } from '@/types/order';
 import { PaginationResult } from 'ahooks/lib/usePagination/types';
+import { OrderPageProps } from '../../order/orderPage';
+import OrderHeaderStatusInfo from './OrderHeaderStatusInfo';
+import { EndType, getEndType, isAdmin } from '@/routes';
 
 interface OrderTablePorps extends StyleProps {
   // tableProps: TableProps;
   data?: APIListResponse<Order>['data'];
+  dictCode: OrderPageProps['dictCode'];
   loading: boolean;
   pagination: PaginationResult<
     APIListResponse<Order>['data'],
@@ -30,8 +34,11 @@ interface OrderTablePorps extends StyleProps {
   >['pagination'];
 }
 
+export const labelClass = 'arco-descriptions-item-label w-auto pb-0';
+export const valueClass = 'arco-descriptions-item-label w-auto pb-0';
+
 const OrderTable: React.FC<OrderTablePorps> = (props) => {
-  const { className, style, data, pagination } = props;
+  const { className, style, dictCode, data, pagination } = props;
   const { data: shopeeStatus } = useDictOptions({
     dictCode: 'shopee_status',
     displayName: '',
@@ -179,7 +186,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
         return (
           <Descriptions
             size="small"
-            className="h-full px-2"
+            className="border-r h-full px-2"
             column={1}
             colon=" :"
             data={[
@@ -201,6 +208,49 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
         );
       },
     },
+    ...(dictCode === 'order_status'
+      ? [
+          {
+            title: isAdmin() ? '费用' : '货代费用',
+            dataIndex: 'hd',
+            width: 180,
+            render(c, row) {
+              return (
+                <Descriptions
+                  size="small"
+                  className="h-full px-2"
+                  column={1}
+                  colon=" :"
+                  data={[
+                    {
+                      label: '总费用',
+                      value: 1.5,
+                    },
+                    {
+                      label: '打包费用',
+                      value: 1.5,
+                    },
+                    ...(isAdmin()
+                      ? [
+                          {
+                            label: '打包附加费用',
+                            value: <Button>添加</Button>,
+                          },
+                          {
+                            label: '增值费用',
+                            value: <Button>添加</Button>,
+                          },
+                        ]
+                      : []),
+                  ]}
+                  labelStyle={{ textAlign: 'right' }}
+                  style={{ marginBottom: 20 }}
+                />
+              );
+            },
+          },
+        ]
+      : []),
   ];
   return (
     <div>
@@ -235,12 +285,8 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                   <Button>打印出货单</Button>
                 </Button.Group>
                 <div className="flex items-center ml-auto">
-                  <span className="arco-descriptions-item-label w-auto pb-0">
-                    订单编号：
-                  </span>
-                  <span className="arco-descriptions-item-value pb-0">
-                    {item.shrimpOrderNo}
-                  </span>
+                  <span className={labelClass}>订单编号：</span>
+                  <span className={valueClass}>{item.shrimpOrderNo}</span>
                   <Button size="mini" type="text">
                     查看详情
                   </Button>
@@ -248,32 +294,10 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
               </header>
               <header className="gap-12 px-4 py-2 border-b grid grid-cols-[240px_240px_600px]">
                 <div>
-                  <span className="arco-descriptions-item-label w-auto pb-0">
-                    订单编号：
-                  </span>
-                  <span className="arco-descriptions-item-value pb-0">
-                    {item.shrimpOrderNo}
-                  </span>
+                  <span className={labelClass}>订单编号：</span>
+                  <span className={valueClass}>{item.shrimpOrderNo}</span>
                 </div>
-                <div>
-                  <span className="arco-descriptions-item-label w-auto pb-0">
-                    Shopee状态：
-                  </span>
-                  <span className="arco-descriptions-item-value pb-0">
-                    {shopeeStatus?.find(
-                      (oitem) => oitem.value === item.shrimpStatus
-                    )?.label || '-'}
-                  </span>
-                </div>
-                <div>
-                  <span className="arco-descriptions-item-label w-auto pb-0">
-                    店铺：
-                  </span>
-                  <span className="arco-descriptions-item-value pb-0">
-                    本土 台湾/萬福堂佛緣旗艦店 本命佛 化太歲 藏式手繩水晶手串
-                    吊墜 開運吉祥
-                  </span>
-                </div>
+                <OrderHeaderStatusInfo data={item}></OrderHeaderStatusInfo>
               </header>
               <main className="flex p-4">
                 {cols.map((oitem) => (
@@ -290,20 +314,12 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
               </main>
               <footer className="gap-12 px-4 py-2 border-t grid grid-cols-[240px_280px]">
                 <div>
-                  <span className="arco-descriptions-item-label w-auto pb-0">
-                    创建时间：
-                  </span>
-                  <span className="arco-descriptions-item-value pb-0">
-                    {item.createTime || '-'}
-                  </span>
+                  <span className={labelClass}>创建时间：</span>
+                  <span className={valueClass}>{item.createTime || '-'}</span>
                 </div>
                 <div>
-                  <span className="arco-descriptions-item-label w-auto pb-0">
-                    最后发货时间：
-                  </span>
-                  <span className="arco-descriptions-item-value pb-0">
-                    {item.createTime || '-'}
-                  </span>
+                  <span className={labelClass}>最后发货时间：</span>
+                  <span className={valueClass}>{item.createTime || '-'}</span>
                 </div>
               </footer>
             </div>

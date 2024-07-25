@@ -53,3 +53,19 @@ xx费计算有误，正确总和为xx
 
 https://p6-bot-sign.byteimg.com/tos-cn-i-v4nquku3lp/d924cdb61f5c42f482377ea09bb6c4b2.xlsx~tplv-v4nquku3lp-image.image?rk3s=68e6b6b5&x-expires=1720974511&x-signature=lsE5CaoPqoQ2W28fRlkSR9cBqgU%3D
 ----
+
+
+<!-- 创建订单 -->
+fetch("http://xc.huodai365.com/api/erp/place-order/manual-creation", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "authorization": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIxODkyODIzNzc1MCIsInVzZXJEZXRhaWwiOm51bGwsImxvZ2luX3RpbWUiOjE3MjE5MTgwNDExMjksInNjb3BlIjpbImFsbCJdLCJleHAiOjE3MjIwMDQ0NDEsInVzZXJJZCI6Ijc3MTQxNjc4Mjk3NTE0MzkzNiIsImF1dGhvcml0aWVzIjpbImFkbWluIl0sImp0aSI6IjE0NWNiNzI4LWY3NmQtNDNhMi1hYzE4LWM1MmQ0Y2UyOTZiOCIsImNsaWVudF9pZCI6IndlYiJ9.VUBaOsH4LMJcQwOoYAVQmuHm89uZT_HSEX_bYihGzXs",
+    "content-type": "application/json;charset=UTF-8"
+  },
+  "referrer": "",
+  "referrerPolicy": "no-referrer",
+  "body": "{\"totalAmount\":15270,\"compensateWay\":\"\",\"platform\":\"0\",\"trackingNumber\":\"15270\",\"orderSn\":\"3315270\",\"fileIds\":\"847993636229615616\",\"documentUrl\":\"https://ymkj-erp-prod.obs.cn-south-1.myhuaweicloud.com:443/common/847993636229615616.png?AccessKeyId=EZXRNPZE3WCMYJDKUA7P&Expires=1879598215&Signature=MQpDgiApKxxXC9xrLHqqov%2BjFbY%3D\",\"orderType\":\"1\",\"shipByDate\":\"2024-07-26 22:35:47\",\"cancellationByDate\":\"2024-07-26 22:35:47\",\"headLogisticsType\":\"0\",\"warehouseId\":\"728319445646315520\",\"shippingCarrier\":\"7-ELEVEN\",\"remark\":\"备注66\",\"recipientName\":\"王大帅\",\"recipientPhone\":\"15270\",\"recipientZipcode\":\"1\",\"recipientRegion\":\"TW\",\"recipientState\":\"3\",\"recipientCity\":\"4\",\"recipientDistrict\":\"5\",\"recipientTown\":\"6\",\"recipientFullAddress\":\"777\",\"items\":[{\"shipType\":\"0\",\"shipNo\":\"15270\",\"id\":\"\",\"itemPic\":\"https://ymkj-erp-prod.obs.cn-south-1.myhuaweicloud.com:443/common/847993653828915200.png?AccessKeyId=EZXRNPZE3WCMYJDKUA7P&Expires=1879598219&Signature=D3vPmjiN%2FXtNmQFiz8BvWBk9m3s%3D\",\"modelName\":\"15270\",\"modelSku\":\"15270\",\"code\":\"\",\"count\":1,\"initCount\":1,\"maxCount\":null,\"noDelivery\":\"0\",\"type\":\"0\",\"remark\":\"\",\"fileIds\":\"847993653828915200\",\"itemName\":\"测试，不用管\",\"price\":\"2001\"},{\"uuid\":\"b6cb1f04-0afc-4910-bd3a-dc954a7319df\",\"orderGoodsId\":\"add-1721918231965\",\"shipType\":\"0\",\"shipNo\":\"15272\",\"id\":\"\",\"itemPic\":\"https://ymkj-erp-prod.obs.cn-south-1.myhuaweicloud.com:443/common/847993857697255424.jpg?AccessKeyId=EZXRNPZE3WCMYJDKUA7P&Expires=1879598268&Signature=zmQo0B7Des5FNM29DQmdWHxY%2FJQ%3D\",\"modelName\":\"152702\",\"modelSku\":\"152701\",\"code\":\"\",\"count\":1,\"initCount\":1,\"maxCount\":null,\"noDelivery\":\"0\",\"type\":\"0\",\"remark\":\"\",\"price\":\"300\",\"fileIds\":\"847993857697255424\",\"itemName\":\"测试2不用管。\"}],\"createTime\":\"2024-07-25 22:38:25\",\"timestamp\":\"2024-07-25T14:38:25.487Z\",\"region\":\"TW\"}",
+  "method": "POST",
+  "mode": "cors",
+  "credentials": "include"
+});

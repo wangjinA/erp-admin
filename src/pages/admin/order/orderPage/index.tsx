@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
 import FilterForm from '@/components/FilterForm';
 import {
-  Avatar,
   Button,
-  List,
   Space,
-  Table,
   Tabs,
 } from '@arco-design/web-react';
 import { usePagination } from 'ahooks';
@@ -19,11 +16,6 @@ import { IconRefresh, IconSearch } from '@arco-design/web-react/icon';
 export interface OrderPageProps {
   dictCode: 'shopee_status' | 'order_status';
 }
-
-const searchStatusMap = {
-  shopee_status: 'shrimpStatus',
-  order_status: '',
-};
 
 export default (props: OrderPageProps) => {
   const { dictCode } = props;
@@ -155,10 +147,10 @@ export default (props: OrderPageProps) => {
         ))}
       </Tabs>
       <OrderTable
-        dictCode={dictCode}
         data={data}
         loading={loading}
         pagination={pagination}
+        dictCode={dictCode}
       ></OrderTable>
     </div>
   );
