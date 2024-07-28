@@ -27,13 +27,15 @@ export default () => {
           className="p-4 bg-white"
           name={record?.dictName}
           initialValues={{
-            dictId: record?.id,
+            // dictId: record?.id,
+            dictCode: record?.dictCode,
           }}
           isSearchParams={false}
           formItemConfigList={dictChildFormItemConfigList}
           createRequest={(data)=>dictChildAPI.create({
             ...data,
-            dictId: record?.id,
+            // dictId: record?.id,
+            dictCode: record?.dictCode,
           })}
           getListRequest={dictChildAPI.getList}
           removeRequest={dictChildAPI.remove}

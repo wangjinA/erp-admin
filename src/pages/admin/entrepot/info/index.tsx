@@ -142,54 +142,56 @@ export default () => {
           </List>
         </Grid.Col>
 
-        <Grid.Col span={6} className="border-r border-neutral-3 pr-4">
-          <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">
-            <Typography.Title heading={6} className="mb-0">
-              货架列表
-            </Typography.Title>
-            <Button
-              icon={<IconPlus></IconPlus>}
-              type="primary"
-              size="small"
-              className="ml-auto"
-              disabled={showTypeRacks === ShowFormType.create}
-              onClick={() => {
-                formRacksRef.resetFields();
-                setActiveRacks(null);
-              }}
-            >
-              新增
-            </Button>
-          </Typography.Paragraph>
-          {/* <Input.Search
+        {showTypeRacks === ShowFormType.create && !racksList?.length ? null : (
+          <Grid.Col span={6} className="border-r border-neutral-3 pr-4">
+            <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">
+              <Typography.Title heading={6} className="mb-0">
+                货架列表
+              </Typography.Title>
+              <Button
+                icon={<IconPlus></IconPlus>}
+                type="primary"
+                size="small"
+                className="ml-auto"
+                disabled={showTypeRacks === ShowFormType.create}
+                onClick={() => {
+                  formRacksRef.resetFields();
+                  setActiveRacks(null);
+                }}
+              >
+                新增
+              </Button>
+            </Typography.Paragraph>
+            {/* <Input.Search
             className="mb-4"
             placeholder="请输入仓位名称"
           ></Input.Search> */}
-          <List size="small">
-            {racksList?.map((item) => (
-              <div
-                key={item.id}
-                onClick={() => {
-                  setActiveRacks(item);
-                  formRacksRef.setFieldsValue(item);
-                }}
-              >
-                <List.Item.Meta
-                  style={{ height: 76 }}
-                  className={classNames(
-                    activeRacks?.id === item.id
-                      ? 'bg-gray-100 dark:bg-zinc-500'
-                      : '',
-                    'hover:bg-gray-100 dark:hover:bg-zinc-500 cursor-pointer px-2 border-b border-neutral-3'
-                  )}
-                  avatar={<Avatar>{item.locationPrefix}</Avatar>}
-                  title={item.storageRacksName}
-                  description={item.storageRacksCode}
-                ></List.Item.Meta>
-              </div>
-            ))}
-          </List>
-        </Grid.Col>
+            <List size="small">
+              {racksList?.map((item) => (
+                <div
+                  key={item.id}
+                  onClick={() => {
+                    setActiveRacks(item);
+                    formRacksRef.setFieldsValue(item);
+                  }}
+                >
+                  <List.Item.Meta
+                    style={{ height: 76 }}
+                    className={classNames(
+                      activeRacks?.id === item.id
+                        ? 'bg-gray-100 dark:bg-zinc-500'
+                        : '',
+                      'hover:bg-gray-100 dark:hover:bg-zinc-500 cursor-pointer px-2 border-b border-neutral-3'
+                    )}
+                    avatar={<Avatar>{item.locationPrefix}</Avatar>}
+                    title={item.storageRacksName}
+                    description={item.storageRacksCode}
+                  ></List.Item.Meta>
+                </div>
+              ))}
+            </List>
+          </Grid.Col>
+        )}
         {showTypeRacks && (
           <Grid.Col span={12} className="pr-6">
             <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">

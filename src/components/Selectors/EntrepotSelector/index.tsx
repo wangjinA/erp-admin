@@ -3,12 +3,16 @@ import { Select } from '@arco-design/web-react';
 import { SelectProps } from '@arco-design/web-react/lib';
 import { useRequest } from 'ahooks';
 import React from 'react';
+import { DictOptions } from '../DictSelector';
 
 type EntrepotSelectorProps = SelectProps;
 
-export function useEntrepotOptions() {
-  const res = useRequest(() => {
-    return entrepotAPI
+let cache: Promise<DictOptions[]>;
+
+export function getEntrepotOptions() {
+  cache =
+    cache ||
+    entrepotAPI
       .getList({
         pageNum: 1,
         pageSize: 100,
@@ -20,6 +24,12 @@ export function useEntrepotOptions() {
           value: item.id,
         }))
       );
+  return cache;
+}
+
+export function useEntrepotOptions() {
+  const res = useRequest(() => {
+    return getEntrepotOptions();
   });
   return res;
 }

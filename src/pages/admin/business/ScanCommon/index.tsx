@@ -1,4 +1,11 @@
-import { Alert, Grid, Input, Select, Typography } from '@arco-design/web-react';
+import {
+  Alert,
+  Grid,
+  Input,
+  Message,
+  Select,
+  Typography,
+} from '@arco-design/web-react';
 import { IconScan } from '@arco-design/web-react/icon';
 import classNames from 'classnames';
 import styles from './index.module.less';
@@ -15,7 +22,7 @@ interface ScanComponentProps {
 
 export default (props: ScanComponentProps) => {
   const { className, style, onScan } = props;
-  const { data, loading } = useEntrepotOptions()
+  const { data, loading } = useEntrepotOptions();
   const [entrepot, setEntrepot] = useLocalStorageState<any>('scan-entrepot');
   const height = 'h-20';
   return (
@@ -51,9 +58,15 @@ export default (props: ScanComponentProps) => {
             className={classNames(height, styles['input-style'], 'text-3xl')}
             placeholder="扫描或者输入快递单号"
             onPressEnter={(e) => {
+              if (entrepot === undefined) {
+                return Message.error('请选择仓库');
+              }else if(!e.target.value){
+                return Message.error('请输入信息');
+              }
+
               onScan({
                 trackingNo: e.target.value,
-                sendWarehouse: 11111,
+                sendWarehouse: entrepot,
               });
             }}
             suffix={<IconScan />}

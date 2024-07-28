@@ -15,6 +15,7 @@ import OrderTable from '@/pages/admin/components/OrderTable';
 import { useDictOptions } from '@/components/Selectors/DictSelector';
 import { timeArrToObject } from '@/utils';
 import { IconRefresh, IconSearch } from '@arco-design/web-react/icon';
+import { getEntrepotOptions } from '@/components/Selectors/EntrepotSelector';
 
 export interface OrderPageProps {
   dictCode: 'shopee_status' | 'order_status';
@@ -25,6 +26,16 @@ const searchStatusMap = {
   order_status: '',
 };
 
+// const shrimpStatus = [
+//   { label: '尚未付款', value: 'UNPAID' },
+//   { label: '待出库', value: 'READY_TO_SHIP' },
+//   { label: '处理中', value: 'PROCESSED' },
+//   { label: '已装船', value: 'SHIPPED' },
+//   { label: '已完成', value: 'COMPLETED' },
+//   { label: '取消中', value: 'IN_CANCEL' },
+//   { label: '已取消', value: 'CANCELLED' },
+//   { label: '开票', value: 'INVOICE_PENDING' },
+// ];
 export default (props: OrderPageProps) => {
   const { dictCode } = props;
   const [activeTab, setActiveTab] = useState<string>();
@@ -53,6 +64,7 @@ export default (props: OrderPageProps) => {
   if (activeTab === undefined && shrimpStatus?.length) {
     setActiveTab(shrimpStatus[0]?.value);
   }
+
   const { data, run, pagination, loading } = usePagination(
     async (params) => {
       if (!shrimpStatus?.length) {
@@ -71,13 +83,22 @@ export default (props: OrderPageProps) => {
                 shrimpStatus: activeTab,
                 storeFlag: true,
               }
-            : {}),
+            : {
+                whetherPack: true,
+              }),
         },
         pageNum: params.current,
         pageSize: params.pageSize,
       });
-      console.log(res.data.data);
-
+      res.data.data.list = await Promise.all(
+        res.data.data.list.map(async (item) => {
+          item.sendWarehouse =
+            (await getEntrepotOptions()).find(
+              (oitem) => oitem.value === item.sendWarehouse
+            )?.label || item.sendWarehouse;
+          return item;
+        })
+      );
       return res.data.data;
     },
     {

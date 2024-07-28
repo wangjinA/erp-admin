@@ -153,7 +153,7 @@ export const dictChildFormItemConfigList: SearchTableSchema[] = [
   },
   {
     schema: {
-      field: 'dictId',
+      field: 'dictCode',
       label: '字典ID',
     },
     formItemProps: {

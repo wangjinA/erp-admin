@@ -15,13 +15,18 @@ import classNames from 'classnames';
 import { IconFile } from '@arco-design/web-react/icon';
 import { StyleProps } from '@/types';
 import GoodsInfo from '@/components/GoodsInfo';
-import { useDictOptions } from '@/components/Selectors/DictSelector';
+import {
+  getDictName,
+  useDictName,
+  useDictOptions,
+} from '@/components/Selectors/DictSelector';
 import { APIListResponse } from '@/api/type';
 import { Order } from '@/types/order';
 import { PaginationResult } from 'ahooks/lib/usePagination/types';
-import { OrderPageProps } from '../../order/orderPage';
 import OrderHeaderStatusInfo from './OrderHeaderStatusInfo';
 import { EndType, getEndType, isAdmin } from '@/routes';
+import { useRequest } from 'ahooks';
+import { OrderPageProps } from '@/pages/client/order/orderPage';
 
 interface OrderTablePorps extends StyleProps {
   // tableProps: TableProps;
@@ -39,10 +44,10 @@ export const valueClass = 'arco-descriptions-item-label w-auto pb-0';
 
 const OrderTable: React.FC<OrderTablePorps> = (props) => {
   const { className, style, dictCode, data, pagination } = props;
-  const { data: shopeeStatus } = useDictOptions({
-    dictCode: 'shopee_status',
-    displayName: '',
-  });
+  // const { data: shopeeStatus } = useDictOptions({
+  //   dictCode: 'shopee_status',
+  //   displayName: '',
+  // });
   const cols = [
     {
       title: '商品信息',
@@ -170,6 +175,68 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
               {
                 label: '收货地址',
                 value: row.detailedAddress || '-',
+              },
+            ]}
+            labelStyle={{ textAlign: 'right' }}
+            style={{ marginBottom: 20 }}
+          />
+        );
+      },
+    },
+    {
+      title: '打包信息',
+      dataIndex: 'db',
+      width: 150,
+      render(c, row) {
+        return (
+          <Descriptions
+            size="small"
+            className="border-r h-full px-2"
+            column={1}
+            colon=" :"
+            data={[
+              {
+                label: '打包仓库',
+                value: row.sendWarehouse || '-',
+              },
+              {
+                label: '备注',
+                value: row.remark || '-',
+              },
+            ]}
+            labelStyle={{ textAlign: 'right' }}
+            style={{ marginBottom: 20 }}
+          />
+        );
+      },
+    },
+    {
+      title: '卖家信息',
+      dataIndex: '卖家信息',
+      width: 180,
+      render(c, row) {
+        return (
+          <Descriptions
+            size="small"
+            className="border-r h-full px-2"
+            column={1}
+            colon=" :"
+            data={[
+              {
+                label: '打包仓库',
+                value: 'row.' || '-',
+              },
+              {
+                label: '卖家标识',
+                value: 'row.' || '-',
+              },
+              {
+                label: '卖家备注',
+                value: 'row.' || '-',
+              },
+              {
+                label: '仓库备注',
+                value: 'row.' || '-',
               },
             ]}
             labelStyle={{ textAlign: 'right' }}
@@ -325,15 +392,16 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
             </div>
           ))}
         </main>
-        {data?.list.length && (
+        {data?.list.length ? (
           <Pagination
+            className="mt-4 flex justify-end"
             total={data?.total}
             onChange={(pageNumber: number, pageSize: number) => {
               pagination.changePageSize(pageSize);
               pagination.changeCurrent(pageNumber);
             }}
           ></Pagination>
-        )}
+        ) : null}
         {!data?.list.length && <Empty className="py-28"></Empty>}
       </div>
     </div>

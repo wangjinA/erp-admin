@@ -1,6 +1,7 @@
 import { CreateFormItemType } from '@/components/CreateFormItem';
+import DictSelector from '@/components/Selectors/DictSelector';
 import RegionSelector from '@/components/Selectors/RegionSelector';
-import { WhetherOptions } from '@/constants';
+import { WhetherBooleanOptions, WhetherOptions } from '@/constants';
 import { Checkbox, Radio } from '@arco-design/web-react';
 
 export const CreateEntrepotSchema: CreateFormItemType[] = [
@@ -221,37 +222,19 @@ export const CreateRacksSchema: CreateFormItemType[] = [
       field: 'available',
       label: '是否可用',
       span: 24,
+      required: true,
     },
-    control: <Radio.Group options={WhetherOptions} />,
+    control: <Radio.Group options={WhetherBooleanOptions} />,
   },
   {
     schema: {
-      field: 'entrepotName',
+      field: 'storageRacksType',
       label: '货架类型',
       span: 24,
       required: true,
     },
     control: (
-      <Radio.Group
-        options={[
-          {
-            label: '库存架',
-            value: '库存架',
-          },
-          {
-            label: '快递架',
-            value: '快递架',
-          },
-          {
-            label: '问题架',
-            value: '问题架',
-          },
-          {
-            label: '退件架',
-            value: '退件架',
-          },
-        ]}
-      />
+      <DictSelector type="radio" dictCode="storage_racks_type"></DictSelector>
     ),
   },
   {

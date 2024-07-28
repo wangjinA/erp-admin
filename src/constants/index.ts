@@ -40,6 +40,16 @@ export const WhetherOptions = [
     value: 0,
   },
 ];
+export const WhetherBooleanOptions = [
+  {
+    label: '是',
+    value: true,
+  },
+  {
+    label: '否',
+    value: false,
+  },
+];
 
 export const FormModalCommonProps: ModalProps = {
   style: {

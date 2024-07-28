@@ -60,6 +60,9 @@ export default function LoginForm() {
       manual: true,
     }
   );
+  useEffect(() => {
+    localStorage.removeItem(getRequestEndInfo.tokenKey);
+  }, []);
 
   function afterLoginSuccess(params) {
     // 记住密码
@@ -199,7 +202,6 @@ export default function LoginForm() {
               }
             }}
           >
-            {console.log(EndType)}
             {/* {t['login.form.register']} */}
             切换
             {getEndType() === EndType.ADMIN
