@@ -87,8 +87,8 @@ export default (props: OrderPageProps) => {
                 whetherPack: true,
               }),
         },
-        pageNum: params.current,
-        pageSize: params.pageSize,
+        pageNum: params?.current || pagination.current,
+        pageSize: params?.pageSize || pagination.pageSize,
       });
       res.data.data.list = await Promise.all(
         res.data.data.list.map(async (item) => {
@@ -176,6 +176,7 @@ export default (props: OrderPageProps) => {
         ))}
       </Tabs>
       <OrderTable
+        run={run}
         dictCode={dictCode}
         data={data}
         loading={loading}

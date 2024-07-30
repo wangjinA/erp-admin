@@ -144,7 +144,7 @@ const createFormItem: CreateFormItemParams = ({
 
   return (
     <Form.Item
-      colon={label ? ":" : ''}
+      colon={label ? ':' : ''}
       key={field}
       label={<LabelWithTips label={label} tips={tips} position={position} />}
       field={field}
@@ -166,6 +166,11 @@ const createFormItem: CreateFormItemParams = ({
       //     paddingLeft: 2,
       //   },
       // }}
+      labelCol={{
+        style: {
+          ...(!label ? { display: 'none' } : {}),
+        },
+      }}
       wrapperCol={wrapperCol}
       // wrapperCol={{ style: { flex: 1, width: 0 } }}
       {...defaultValueObj}

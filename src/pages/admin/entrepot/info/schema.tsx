@@ -233,9 +233,15 @@ export const CreateRacksSchema: CreateFormItemType[] = [
       span: 24,
       required: true,
     },
-    control: (
-      <DictSelector type="radio" dictCode="storage_racks_type"></DictSelector>
-    ),
+    control(props) {
+      return (
+        <DictSelector
+          {...props}
+          type="radio"
+          dictCode="storage_racks_type"
+        ></DictSelector>
+      );
+    },
   },
   {
     schema: {

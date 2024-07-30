@@ -105,7 +105,13 @@ const DictSelector: React.FC<DictSelectorProps> = (props) => {
   });
   switch (type) {
     case 'radio':
-      return <Radio.Group options={data} onChange={selectProps.onChange as any}></Radio.Group>;
+      return (
+        <Radio.Group
+          {...selectProps as any}
+          options={data}
+          onChange={selectProps.onChange as any}
+        ></Radio.Group>
+      );
     case 'select':
 
     default:

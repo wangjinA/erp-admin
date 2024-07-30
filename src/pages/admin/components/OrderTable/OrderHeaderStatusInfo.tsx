@@ -1,8 +1,8 @@
 import { useDictOptions } from '@/components/Selectors/DictSelector';
-import { Order } from '@/types/order';
+import { OrderResponseItem } from '@/types/order';
 import { labelClass, valueClass } from '.';
 
-export default ({ data }: { data: Order }) => {
+export default ({ data }: { data: OrderResponseItem }) => {
   const { data: shopeeStatus } = useDictOptions({
     dictCode: 'shopee_status',
     displayName: '',

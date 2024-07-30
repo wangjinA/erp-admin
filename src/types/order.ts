@@ -1,3 +1,33 @@
+interface OrderProductList {
+  actualQuantity: number; // 实际收货数量
+  checkStatus: boolean; // 核对状态
+  createBy: number; // 创建人
+  createTime: string; // 创建时间
+  customStatus: boolean; // 是否为自定义订单：默认为空
+  deleteStatus: number; // 状态：默认为0；删除为1
+  deliveryMethod: string; // 发货方式
+  globalArticleNo: string; // 全球货号
+  holdStock: boolean; // 是否保留库存：默认为
+  id: number; // 主键
+  itemId: number; // 虾皮平台商品id
+  orderId: number; // 订单id
+  orderItemId: number; // 虾皮平台订单商品id
+  problemStatus: boolean; // 是否为问题订单：默认为空
+  productImg: string; // 商品图片
+  productName: string; // 商品名称
+  purchaseStatus: boolean; // 是否采购：默认为
+  quantity: number; // 数量
+  remark: string; // 备注
+  sku: string; // SKU
+  specificationName: string; // 规格名称
+  stockOutStatus: boolean; // 是否缺货打包：默认为
+  tenantryId: number; // 租户id
+  trackingNo: string; // 快递单号
+  trackingStatus: string; // 快递状态
+  unitPrice: number; // 单价
+  updateBy: number; // 更新人
+  updateTime: ''; // 更新时间
+}
 export interface Order {
   actualShippingFee: number; // 实际运费
   addedCost: number; // 增值费用
@@ -21,36 +51,7 @@ export interface Order {
   label: string; // 标签
   mobilenumber: string; // 手机号码
   orderAmount: number; // 订单金额
-  orderProductList: {
-    actualQuantity: number; // 实际收货数量
-    checkStatus: boolean; // 核对状态
-    createBy: number; // 创建人
-    createTime: string; // 创建时间
-    customStatus: boolean; // 是否为自定义订单：默认为空
-    deleteStatus: number; // 状态：默认为0；删除为1
-    deliveryMethod: string; // 发货方式
-    globalArticleNo: string; // 全球货号
-    holdStock: boolean; // 是否保留库存：默认为
-    id: number; // 主键
-    itemId: number; // 虾皮平台商品id
-    orderId: number; // 订单id
-    orderItemId: number; // 虾皮平台订单商品id
-    problemStatus: boolean; // 是否为问题订单：默认为空
-    productImg: string; // 商品图片
-    productName: string; // 商品名称
-    purchaseStatus: boolean; // 是否采购：默认为
-    quantity: number; // 数量
-    remark: string; // 备注
-    sku: string; // SKU
-    specificationName: string; // 规格名称
-    stockOutStatus: boolean; // 是否缺货打包：默认为
-    tenantryId: number; // 租户id
-    trackingNo: string; // 快递单号
-    trackingStatus: string; // 快递状态
-    unitPrice: number; // 单价
-    updateBy: number; // 更新人
-    updateTime: ''; // 更新时间
-  }[];
+  orderProductList: OrderProductList[];
   orderStatus: string; // 订单状态 字典值
   orderTime: string; // 订单时间
   orderType: string; // 订单类型 字典值
@@ -89,4 +90,34 @@ export interface Order {
   updateTime: string; // 更新时间
   urgentStatus: boolean; // 是否加急 false 否 true 是
   whetherPack: boolean; // 是否打包 false 否（待处理） true 已打包
+}
+
+export interface OrderResponseItem extends Omit<Order, 'orderProductList'> {
+  orderProductVOList: (Omit<OrderProductList, 'productImg'> & {
+    productImg: string[];
+  })[];
+  orderPackageList: {
+    createBy: string;
+    createTime: string;
+    updateBy: string;
+    updateTime: string;
+    id: string;
+    tenantryId: string;
+    orderId: number;
+    shrimpOrderNo: string;
+    packageNumber: string;
+    logisticsStatus: string;
+    shippingCarrier: string;
+    noPlasticPacking: number;
+    parcelChargeableWeight: number;
+    groupShipmentId: number;
+    virtualContactNumber: string;
+    packageQueryNumber: string;
+    goodsJson: string;
+    documentImgUrl: null;
+    documentUrl: null;
+    applyTime: null;
+    trackingNumber: null;
+    deleteStatus: number;
+  }[];
 }

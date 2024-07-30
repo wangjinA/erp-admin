@@ -97,10 +97,14 @@ export function timeArrToObject(arr: string[], key1: string, key2: string) {
 
 export function showModal(params: Partial<ConfirmProps>) {
   return new Promise((resolve, reject) => {
-    Modal.warning({
+    Modal.confirm({
       cancelText: '关闭',
       title: '温馨提示',
+      content: '确认操作？',
       closable: true,
+      okButtonProps: {
+        status: 'danger',
+      },
       onOk: resolve,
       onCancel: reject,
       ...params,
