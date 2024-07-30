@@ -1,21 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   Descriptions,
   Empty,
   Link,
   List,
+  Message,
+  Modal,
   Pagination,
   Table,
   TableProps,
+  Timeline,
 } from '@arco-design/web-react';
 import styles from './index.module.less';
 import classNames from 'classnames';
 
-import { IconFile } from '@arco-design/web-react/icon';
+import { IconEdit, IconFile } from '@arco-design/web-react/icon';
 import { StyleProps } from '@/types';
 import GoodsInfo from '@/components/GoodsInfo';
-import {
+import DictSelector, {
   getDictName,
   useDictName,
   useDictOptions,
@@ -27,6 +30,11 @@ import OrderHeaderStatusInfo from './OrderHeaderStatusInfo';
 import { EndType, getEndType, isAdmin } from '@/routes';
 import { useRequest } from 'ahooks';
 import { OrderPageProps } from '@/pages/client/order/orderPage';
+import { showModal } from '@/utils';
+import FilterForm from '@/components/FilterForm';
+import { OrderCreateSchema2 } from '@/pages/client/order/create/schema';
+import useForm from '@arco-design/web-react/es/Form/useForm';
+import EntrepotSelector from '@/components/Selectors/EntrepotSelector';
 
 interface OrderTablePorps extends StyleProps {
   // tableProps: TableProps;
@@ -44,6 +52,12 @@ export const valueClass = 'arco-descriptions-item-label w-auto pb-0';
 
 const OrderTable: React.FC<OrderTablePorps> = (props) => {
   const { className, style, dictCode, data, pagination } = props;
+  const [addVisiable, setAddVisiable] = useState(false);
+  const [record, setRecord] = useState(false);
+  const [edit, setEdit] = useState(false);
+  const [sheet, setSheet] = useState<any>();
+
+  const [form] = useForm();
   // const { data: shopeeStatus } = useDictOptions({
   //   dictCode: 'shopee_status',
   //   displayName: '',
@@ -341,15 +355,60 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
             <div className="border" key={item.id}>
               <header className="flex items-center p-2 border-b">
                 <Button.Group>
-                  <Button>编辑打包</Button>
-                  <Button>取消打包</Button>
-                  <Button>查看面单</Button>
-                  <Button>更新订单</Button>
-                  <Button>发货预报</Button>
-                  <Button>订单收入</Button>
+                  <Button
+                    onClick={() => {
+                      setEdit(true);
+                    }}
+                  >
+                    编辑打包
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      showModal({
+                        content: '确定要取消打包吗？',
+                      }).then((res) => {
+                        Message.success('取消成功！');
+                      });
+                    }}
+                  >
+                    取消打包
+                  </Button>
+                  <Button icon={<IconFile />} onClick={() => setSheet(1)}>
+                    查看面单
+                  </Button>
+                  <Button
+                    loading={false}
+                    onClick={() => {
+                      Message.success('更新成功！');
+                    }}
+                  >
+                    更新订单
+                  </Button>
+                  {/* <Button>发货预报</Button> */}
+                  {/* <Button>订单收入</Button> */}
                   <Button>隔离订单</Button>
-                  <Button>添加商品</Button>
-                  <Button>打印出货单</Button>
+                  <Button
+                    onClick={() => {
+                      setAddVisiable(true);
+                    }}
+                  >
+                    添加商品
+                  </Button>
+                  {/* <Button>打印出货单</Button> */}
+                  <Button
+                    onClick={() => {
+                      showModal({
+                        content: '确定要申请预刷吗?',
+                      }).then(() => {
+                        Message.success('预刷成功！');
+                      });
+                    }}
+                  >
+                    申请预刷
+                  </Button>
+                  <Button icon={<IconFile />} onClick={() => setRecord(true)}>
+                    操作记录
+                  </Button>
                 </Button.Group>
                 <div className="flex items-center ml-auto">
                   <span className={labelClass}>订单编号：</span>
@@ -379,14 +438,23 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                   </div>
                 ))}
               </main>
-              <footer className="gap-12 px-4 py-2 border-t grid grid-cols-[240px_280px]">
-                <div>
-                  <span className={labelClass}>创建时间：</span>
-                  <span className={valueClass}>{item.createTime || '-'}</span>
+              <footer className="flex border-t py-2 px-4">
+                <div className="gap-12 grid grid-cols-[240px_280px]">
+                  <div>
+                    <span className={labelClass}>创建时间：</span>
+                    <span className={valueClass}>{item.createTime || '-'}</span>
+                  </div>
+                  <div>
+                    <span className={labelClass}>最后发货时间：</span>
+                    <span className={valueClass}>{item.createTime || '-'}</span>
+                  </div>
                 </div>
-                <div>
-                  <span className={labelClass}>最后发货时间：</span>
-                  <span className={valueClass}>{item.createTime || '-'}</span>
+                <div className="ml-auto">
+                  <span className={labelClass}>备注：</span>
+                  <span className={valueClass}>暂无</span>
+                  <Button type="text">
+                    <IconEdit />
+                  </Button>
                 </div>
               </footer>
             </div>
@@ -404,6 +472,93 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
         ) : null}
         {!data?.list.length && <Empty className="py-28"></Empty>}
       </div>
+      <Modal
+        title="添加商品"
+        visible={addVisiable}
+        onCancel={() => setAddVisiable(false)}
+        onOk={async () => {
+          const formData = await form.validate();
+          console.log(formData);
+          Message.success('添加成功');
+          setAddVisiable(false);
+        }}
+      >
+        <FilterForm
+          span={24}
+          form={form}
+          formItemConfigList={OrderCreateSchema2}
+        ></FilterForm>
+      </Modal>
+      <Modal
+        title="查看面单"
+        visible={sheet}
+        onCancel={() => setSheet(null)}
+        onOk={async () => {
+          setSheet(null);
+        }}
+      >
+        面单信息，开发中...
+      </Modal>
+      <Modal
+        title="操作记录"
+        visible={record}
+        onCancel={() => setRecord(false)}
+        onOk={async () => {
+          setRecord(false);
+        }}
+      >
+        <Timeline>
+          {[1, 2, 3, 4].map((item) => (
+            <Timeline.Item key={item} label="2017-03-10">
+              The first milestone
+            </Timeline.Item>
+          ))}
+        </Timeline>
+      </Modal>
+      <Modal
+        title="编辑订单"
+        visible={edit}
+        onCancel={() => setEdit(false)}
+        onOk={async () => {
+          setEdit(false);
+        }}
+      >
+        <FilterForm
+          span={24}
+          form={form}
+          formItemConfigList={[
+            {
+              schema: {
+                field: 'test',
+                label: '打包仓库',
+              },
+              formItemProps: {
+                disabled: true,
+              },
+              control: <EntrepotSelector></EntrepotSelector>,
+            },
+            {
+              schema: {
+                field: 'transportType',
+                label: '运输类型',
+              },
+              control: (
+                <DictSelector
+                  type="radio"
+                  dictCode="transport_type"
+                ></DictSelector>
+              ),
+            },
+            {
+              schema: {
+                field: 'aaaaa',
+                label: '备注',
+              },
+              control: 'textarea',
+            },
+          ]}
+        ></FilterForm>
+      </Modal>
     </div>
   );
 };

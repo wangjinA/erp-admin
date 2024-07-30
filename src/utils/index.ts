@@ -1,6 +1,7 @@
 import { SuccessCode } from '@/api';
 import { APIResponse } from '@/api/type';
-import { Message } from '@arco-design/web-react';
+import { Message, Modal } from '@arco-design/web-react';
+import { ConfirmProps } from '@arco-design/web-react/es/Modal/confirm';
 import { isArray } from 'lodash';
 import * as XLSX from 'xlsx';
 
@@ -92,4 +93,17 @@ export function timeArrToObject(arr: string[], key1: string, key2: string) {
     };
   }
   return {};
+}
+
+export function showModal(params: Partial<ConfirmProps>) {
+  return new Promise((resolve, reject) => {
+    Modal.warning({
+      cancelText: '关闭',
+      title: '温馨提示',
+      closable: true,
+      onOk: resolve,
+      onCancel: reject,
+      ...params,
+    });
+  });
 }
