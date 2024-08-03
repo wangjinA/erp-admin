@@ -5,7 +5,7 @@ import { ConfirmProps } from '@arco-design/web-react/es/Modal/confirm';
 import { isArray } from 'lodash';
 import * as XLSX from 'xlsx';
 
-export function showMessageStatus(resp: APIResponse) {
+export function showMessageStatus(resp: APIResponse<any>) {
   if (resp.code === SuccessCode) {
     Message.success({
       content: '操作成功',

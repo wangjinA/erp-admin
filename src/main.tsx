@@ -17,7 +17,7 @@ import changeTheme from './utils/changeTheme';
 import useStorage from './utils/useStorage';
 import Mock from 'mockjs';
 // import './mock';
-import { generatePermission, getLoginPagePath, toLoginPage } from './routes';
+import { generatePermission, toLoginPage } from './routes';
 import userPNG from '@/assets/user.png';
 import { userAPI } from './api/admin/user';
 import AdminLogin from './pages/admin/login';

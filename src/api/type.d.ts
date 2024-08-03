@@ -9,14 +9,10 @@ export interface APIResponse<T = null> {
   data: T;
 }
 
-export interface APIListResponse<T = null> extends APIResponse<> {
-  code: number;
-  msg: string;
-  data: {
+export interface APIListResponse<T = null>
+  extends APIResponse<{
     list: T[];
     pageNum: number;
     pageSize: number;
-    pages: APIListResponse;
     total: number;
-  };
-}
+  }> {}

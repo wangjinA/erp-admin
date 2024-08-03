@@ -27,6 +27,7 @@ import { orderAPI } from '@/api/client/order';
 import PopconfirmDelete from '@/components/PopconfirmDelete';
 import { SuccessCode } from '@/api';
 import { useColumns } from './hooks';
+import { omit } from 'lodash';
 
 export interface OrderTablePorps extends StyleProps {
   // tableProps: TableProps;
@@ -47,8 +48,10 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
   const { className, style, run, dictCode, data, pagination } = props;
   const [addVisiable, setAddVisiable] = useState(false);
   const [record, setRecord] = useState(false);
-  const [edit, setEdit] = useState<OrderResponseItem>();
+  const [edit, setEdit] = useState<any>();
   const [sheet, setSheet] = useState<any>();
+  // const [editProductList, setEditProductList] = useState<any>();
+
   const columns = useColumns(props);
   const refreshHandler = useRequest(
     async (id) => {
@@ -69,69 +72,11 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
   );
   const updateHandler = useRequest(
     async () => {
-      const formData = await form.validate();
-      return orderAPI
-        .update({
-          actualShippingFee: 0,
-          addedCost: 0,
-          appendCost: 0,
-          cancellationTime: '',
-          city: '',
-          cod: true,
-          consignmentTime: '',
-          createBy: 0,
-          createTime: '',
-          createType: '',
-          currency: '',
-          deleteStatus: 0,
-          detailedAddress: '',
-          entrepotRemark: '',
-          estimatedShippingFee: 0,
-          fillShipInfo: true,
-          firstLegCost: 0,
-          id: 0,
-          label: '',
-          logisticsOrderProductList: [
-            {
-              actualQuantity: 0,
-              checkStatus: true,
-              createBy: 0,
-              createTime: '',
-              customStatus: true,
-              deleteStatus: 0,
-              deliveryMethod: '',
-              freightSpaceName: '',
-              globalArticleNo: '',
-              holdStock: true,
-              id: 0,
-              itemId: 0,
-              orderId: 0,
-              orderItemId: 0,
-              problemStatus: true,
-              productImg: '',
-              productName: '',
-              purchaseStatus: true,
-              quantity: 0,
-              remark: '',
-              sku: '',
-              specificationName: '',
-              stockOutStatus: true,
-              tenantryId: 0,
-              trackingNo: '',
-              trackingStatus: '',
-              unitPrice: 0,
-              updateBy: 0,
-              updateTime: '',
-            },
-          ],
-          sendWarehouse: '',
-          remark: '',
-          transportType: '',
-        })
-        .then((r) => {
-          setEdit(null);
-          return r;
-        });
+      const res = await orderAPI.update(
+        omit(edit, ['orderProductVOList', 'orderPackageList'])
+      );
+      await showMessageStatus(res.data);
+      setEdit(null);
     },
     {
       manual: true,
@@ -145,7 +90,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
   // });
 
   return (
-    <div>
+    <div className={className}>
       <div>
         <header className="flex">
           {columns.map((item) => (
@@ -161,14 +106,18 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
             </div>
           ))}
         </header>
-        <main className="flex flex-col gap-4">
+        <main className="flex flex-col gap-4 bg-white">
           {data?.list?.map((item) => (
             <div className="border" key={item.id}>
               <header className="flex items-center p-2 border-b">
                 <Button.Group>
                   <Button
                     onClick={() => {
-                      setEdit(item);
+                      console.log(item);
+                      setEdit({
+                        ...item,
+                        logisticsOrderProductList: item.orderProductVOList,
+                      });
                     }}
                   >
                     编辑打包
@@ -220,9 +169,9 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                     onClick={() => {
                       showModal({
                         content: '确定要申请预刷吗?',
-                        okButtonProps:{
+                        okButtonProps: {
                           status: 'default',
-                        }
+                        },
                       }).then(() => {
                         Message.success('预刷成功！');
                       });
@@ -300,7 +249,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
             </div>
           ))}
         </main>
-        {data?.list.length ? (
+        {data?.list?.length ? (
           <Pagination
             className="mt-4 flex justify-end"
             total={data?.total}
@@ -310,7 +259,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
             }}
           ></Pagination>
         ) : null}
-        {!data?.list.length && <Empty className="py-28"></Empty>}
+        {!data?.list?.length && <Empty className="py-28"></Empty>}
       </div>
       <Modal
         title="添加商品"
@@ -370,17 +319,17 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
         onCancel={() => setEdit(null)}
         confirmLoading={updateHandler.loading}
         onOk={async () => {
-          const formData = await form.validate();
-          // updateHandler.run({});
+          updateHandler.run();
         }}
       >
         <FilterForm
           span={24}
           form={form}
+          initialValues={edit}
           formItemConfigList={[
             {
               schema: {
-                field: 'test',
+                field: 'sendWarehouse',
                 label: '打包仓库',
               },
               formItemProps: {
@@ -402,14 +351,29 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
             },
             {
               schema: {
-                field: 'aaaaa',
+                field: 'remark',
                 label: '备注',
               },
               control: 'textarea',
             },
           ]}
+          onChange={(_, v) => {
+            setEdit({
+              ...edit,
+              ...v,
+            });
+          }}
         ></FilterForm>
-        <GoodsInfo data={edit?.orderProductVOList}></GoodsInfo>
+        <GoodsInfo
+          data={edit?.orderProductVOList}
+          isEdit={true}
+          onChange={(e) => {
+            setEdit({
+              ...edit,
+              logisticsOrderProductList: e,
+            });
+          }}
+        ></GoodsInfo>
         <Button
           className="mt-4"
           type="outline"

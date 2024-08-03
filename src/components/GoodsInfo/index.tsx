@@ -1,18 +1,24 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { List, Image, Descriptions, Switch } from '@arco-design/web-react';
 import styles from './index.module.less';
 import classNames from 'classnames';
 import { OrderResponseItem } from '@/types/order';
 import FilterForm from '../FilterForm';
 import DictSelector from '../Selectors/DictSelector';
+import { cloneDeep } from 'lodash';
 
 interface GoodsInfoProps {
   data: OrderResponseItem['orderProductVOList'];
+  isEdit?: boolean;
+  onChange?: (data) => void;
 }
 
 export default (props: GoodsInfoProps) => {
-  const { data } = props;
+  const { data, isEdit, onChange } = props;
+  // const [privateData, setPrivateData] = useState(cloneDeep(data));
+  const dataRef = useRef(data);
   console.log(data);
+  console.log(dataRef.current);
 
   return (
     <div
@@ -21,13 +27,13 @@ export default (props: GoodsInfoProps) => {
     >
       <List
         className={classNames(styles['goods-info'])}
-        dataSource={data}
-        bordered={true}
+        dataSource={data || []}
+        bordered={isEdit}
         render={(item, index) => (
           <div
             key={item.id}
             className={classNames([
-              'h-28 grid grid-cols-2',
+              'grid grid-cols-2',
               index > 0 ? 'border-t' : '',
             ])}
           >
@@ -65,45 +71,55 @@ export default (props: GoodsInfoProps) => {
                 />
               }
             />
-            <div className="border-l pl-2">
-              <FilterForm
-                formItemConfigList={[
-                  {
-                    schema: {
-                      label: '发货方式',
-                      field: 'deliveryMethod',
-                      span: 15,
+            {isEdit ? (
+              <div className="border-l pl-2">
+                <FilterForm
+                  initialValues={item}
+                  onChange={(_, v: any) => {
+                    dataRef.current[index] = v;
+                    onChange?.(dataRef.current);
+                  }}
+                  formItemConfigList={[
+                    {
+                      schema: {
+                        label: '发货方式',
+                        field: 'deliveryMethod',
+                        span: 15,
+                      },
+                      control: (
+                        <DictSelector
+                          dictCode="transport_type"
+                          type="radio"
+                        ></DictSelector>
+                      ),
                     },
-                    control: (
-                      <DictSelector
-                        dictCode="transport_type"
-                        type="radio"
-                      ></DictSelector>
-                    ),
-                  },
-                  {
-                    schema: {
-                      label: '',
-                      field: 'deliveryMethod',
-                      span: 9,
+                    {
+                      schema: {
+                        label: '',
+                        field: 'stockOutStatus',
+                        span: 9,
+                      },
+                      formItemProps: {
+                        triggerPropName: 'checked',
+                      },
+                      control: (
+                        <Switch
+                          checkedText="缺货打包"
+                          uncheckedText="缺货打包"
+                        ></Switch>
+                      ),
                     },
-                    control: (
-                      <Switch
-                        checkedText="缺货打包"
-                        uncheckedText="缺货打包"
-                      ></Switch>
-                    ),
-                  },
-                  {
-                    schema: {
-                      label: '快递单号',
-                      field: 'trackingNo',
-                      span: 24,
+                    {
+                      schema: {
+                        label: '快递单号',
+                        field: 'trackingNo',
+                        span: 24,
+                      },
                     },
-                  },
-                ]}
-              ></FilterForm>
-            </div>
+                  ]}
+                ></FilterForm>
+              </div>
+            ) : null}
           </div>
         )}
       />

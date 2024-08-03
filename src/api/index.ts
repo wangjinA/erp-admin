@@ -34,7 +34,7 @@ const baseAxios = axios.create({
 
 baseAxios.interceptors.request.use((config) => {
   const token = localStorage.getItem(getRequestEndInfo.tokenKey);
-  if(token){
+  if (token) {
     config.headers.token = token;
   }
   // config.headers = {
@@ -58,7 +58,7 @@ const loginModal = debounce((msg) => {
 }, 300);
 
 baseAxios.interceptors.response.use((res) => {
-  if ([30010].includes(res.data.code)) {
+  if ([30010, 20].includes(res.data.code)) {
     loginModal(res.data.msg);
   }
   return res;

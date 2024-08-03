@@ -17,14 +17,14 @@ export default {
         'neutral-8': 'var(--color-neutral-8)',
         'neutral-9': 'var(--color-neutral-9)',
         'neutral-10': 'var(--color-neutral-10)',
-        // bg: {
-        //   1: 'var(--color-bg-1)',
-        //   2: 'var(--color-bg-2)',
-        //   3: 'var(--color-bg-3)',
-        //   4: 'var(--color-bg-4)',
-        //   5: 'var(--color-bg-5)',
-        //   white: 'var(--color-bg-1)',
-        // },
+        bg: {
+          // 1: 'var(--color-bg-1)',
+          // 2: 'var(--color-bg-2)',
+          // 3: 'var(--color-bg-3)',
+          // 4: 'var(--color-bg-4)',
+          // 5: 'var(--color-bg-5)',
+          white: 'var(--color-bg-2)',
+        },
         // // 文字颜色
         // text: {
         //   1: 'var(--color-text-1)',

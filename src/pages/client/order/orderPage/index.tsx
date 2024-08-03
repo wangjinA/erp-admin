@@ -8,7 +8,7 @@ import {
   Table,
   Tabs,
 } from '@arco-design/web-react';
-import { usePagination } from 'ahooks';
+import { useLocalStorageState, usePagination } from 'ahooks';
 import { orderAPI } from '@/api/client/order';
 import { OrderFilter } from './schema';
 import OrderTable from '@/pages/admin/components/OrderTable';
@@ -38,7 +38,7 @@ const searchStatusMap = {
 // ];
 export default (props: OrderPageProps) => {
   const { dictCode } = props;
-  const [activeTab, setActiveTab] = useState<string>();
+  const [activeTab, setActiveTab] = useLocalStorageState<string>(location.pathname);
   const [formData, _setFormData] = useState<any>({
     selectLogisticsOrderVO: {},
     selectOrderProductVO: {},

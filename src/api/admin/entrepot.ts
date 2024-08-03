@@ -1,3 +1,4 @@
+import { Order } from '@/types/order';
 import baseAxios from '..';
 import { APIListResponse, APIResponse, IPageParams } from '../type';
 
@@ -62,7 +63,6 @@ export const entrepotAPI = {
   update(body: Partial<Entrepot>) {
     return baseAxios.post('/api/entrepot/update', body);
   },
-  
 };
 
 // 仓位
@@ -91,14 +91,236 @@ export const scanAPI = {
   },
   // 扫码入库
   scanPut(params: ScanParams) {
-    return baseAxios.post('/api/business/operation/scan/put', params);
+    return baseAxios.post<APIResponse<ScanResponse>>(
+      '/api/business/operation/scan/put',
+      params
+    );
   },
   // 扫码签收
   scanSign(params: ScanParams) {
-    return baseAxios.post('/api/business/operation/scan/sign', params);
+    return baseAxios.post<APIResponse<ScanSignResponse>>('/api/business/operation/scan/sign', params);
+  },
+  ScanOut(params: ScanParams) {
+    return baseAxios.post('/api/business/operation/scan/out/storage', params);
   },
 };
 
+export interface ScanSignResponse {
+  createBy: string;
+  createTime: string;
+  updateBy: string;
+  updateTime: string;
+  id: string;
+  trackingNumber: string;
+  sendWarehouse: number;
+  sendWarehouseName: string;
+  instructions: string;
+  problemStatus: false;
+  operator: string;
+  deleteStatus: number;
+}
+
+export interface ScanResponse {
+  orderType: string;
+  orderCount: number;
+  freightSpaceName: string;
+  signingTime: string;
+  orderItemInfoBgResultList: Omit<Order, 'orderProductList'> &
+    {
+      logisticsOrderProductList: logisticsOrderProduct[];
+    }[];
+  logisticsEntrepot: Entrepot;
+}
+
+interface logisticsOrderProduct {
+  createBy: string;
+  createTime: string;
+  updateBy: string;
+  updateTime: string;
+  id: string;
+  tenantryId: string;
+  orderId: string;
+  freightSpaceName: string;
+  itemId: any;
+  orderItemId: any;
+  productImg: string[];
+  productName: string;
+  sku: string;
+  globalArticleNo: string;
+  specificationName: string;
+  quantity: number;
+  unitPrice: number;
+  trackingNo: string;
+  actualQuantity: any;
+  holdStock: boolean;
+  trackingStatus: string;
+  deliveryMethod: string;
+  stockOutStatus: boolean;
+  purchaseStatus: boolean;
+  problemStatus: boolean;
+  customStatus: boolean;
+  checkStatus: any;
+  extraStatus: boolean;
+  remark: string;
+  deleteStatus: number;
+  signingTime: string;
+}
+
+// const data = {
+//   orderItemInfoBgResultList: [
+//     {
+//       createBy: '38803390127000130',
+//       createTime: '2024-08-02 20:33:10',
+//       updateBy: '0',
+//       updateTime: '2024-08-02 20:33:10',
+//       id: '42190330306000102',
+//       tenantryId: '38803385032000196',
+//       tenantryNo: '441114',
+//       platformType: '0',
+//       orderType: '0',
+//       createType: '1',
+//       platformShopId: null,
+//       shrimpOrderNo: '0002',
+//       shopeeStatus: null,
+//       cod: false,
+//       orderAmount: 888,
+//       currency: null,
+//       whetherPack: true,
+//       transportType: '0',
+//       sheetNumber: null,
+//       sheetStatus: false,
+//       shippingTime: '2024-07-20',
+//       cancellationTime: '2024-07-31',
+//       sendWarehouse: '38308930279000160',
+//       orderTime: null,
+//       packTime: null,
+//       stockRemovalTime: null,
+//       consignmentTime: null,
+//       estimatedShippingFee: null,
+//       actualShippingFee: null,
+//       shipByDate: null,
+//       buyerUsername: null,
+//       recipients: '汪锦',
+//       mobileNumber: '',
+//       postcode: '00000',
+//       region: 'TW',
+//       province: '台湾省',
+//       city: '宝莲',
+//       area: '莲花湾',
+//       town: '常平镇',
+//       detailedAddress: '常平阳光大道666',
+//       orderStatus: '0',
+//       totalCost: 0,
+//       packCost: 0,
+//       firstLegCost: 0,
+//       addedCost: 0,
+//       appendCost: 0,
+//       fillShipInfo: true,
+//       urgentStatus: false,
+//       problemStatus: false,
+//       parcelType: null,
+//       parcelWeight: 0,
+//       parcelLength: 0,
+//       parcelWide: 0,
+//       parcelHigh: 0,
+//       panelBarCode: null,
+//       remark: '汪锦测试',
+//       entrepotRemark: null,
+//       label: null,
+//       deleteStatus: 0,
+//       logisticsOrderProductList: [
+//         {
+//           createBy: '38803390127000130',
+//           createTime: '2024-08-02 20:33:10',
+//           updateBy: '0',
+//           updateTime: '2024-08-02 20:33:10',
+//           id: '42190330454000104',
+//           tenantryId: '38803385032000196',
+//           orderId: '42190330306000102',
+//           freightSpaceName: '汪04-03',
+//           itemId: null,
+//           orderItemId: null,
+//           productImg: [''],
+//           productName: '保时捷',
+//           sku: 'A6',
+//           globalArticleNo: '',
+//           specificationName: '最新款',
+//           quantity: 1,
+//           unitPrice: 1200000,
+//           trackingNo: '00100000',
+//           actualQuantity: null,
+//           holdStock: false,
+//           trackingStatus: '1',
+//           deliveryMethod: '',
+//           stockOutStatus: false,
+//           purchaseStatus: false,
+//           problemStatus: false,
+//           customStatus: false,
+//           checkStatus: null,
+//           extraStatus: false,
+//           remark: null,
+//           deleteStatus: 0,
+//           signingTime: '2024-08-02 22:02:53',
+//         },
+//         {
+//           createBy: '38803390127000130',
+//           createTime: '2024-08-02 20:33:10',
+//           updateBy: '0',
+//           updateTime: '2024-08-02 20:33:10',
+//           id: '42190330465000151',
+//           tenantryId: '38803385032000196',
+//           orderId: '42190330306000102',
+//           freightSpaceName: null,
+//           itemId: null,
+//           orderItemId: null,
+//           productImg: [''],
+//           productName: '奥迪',
+//           sku: 'A6',
+//           globalArticleNo: '',
+//           specificationName: '最新款',
+//           quantity: 1,
+//           unitPrice: 400000,
+//           trackingNo: '00100002',
+//           actualQuantity: null,
+//           holdStock: false,
+//           trackingStatus: '0',
+//           deliveryMethod: '',
+//           stockOutStatus: false,
+//           purchaseStatus: false,
+//           problemStatus: false,
+//           customStatus: false,
+//           checkStatus: null,
+//           extraStatus: false,
+//           remark: null,
+//           deleteStatus: 0,
+//           signingTime: null,
+//         },
+//       ],
+//     },
+//   ],
+//   logisticsEntrepot: {
+//     createBy: '1',
+//     createTime: '2024-06-12 22:47:43',
+//     updateBy: '1',
+//     updateTime: '2024-06-12 22:47:43',
+//     id: '37792003361000106',
+//     entrepotName: '7666',
+//     inventorySupported: 0,
+//     inventoryStatus: 1,
+//     entrepotType: 0,
+//     storeType: '0',
+//     supportArea: '',
+//     consignee: '老吴头',
+//     telephone: '',
+//     deliveryAddress: '省市区',
+//     detailedAddress: '详细地址哈哈哈',
+//     qrCode:
+//       'https://g-search3.alicdn.com/img/bao/uploaded/i4/i2/2206469993218/O1CN01GgZIv21ZdtGVU5hF1_!!0-item_pic.jpg_.webp',
+//     openUser: 1,
+//     remark: '',
+//     deleteStatus: 0,
+//   },
+// };
 export interface ScanParams {
   sendWarehouse: number; // 送往仓库
   trackingNo: string; // 快递单号
