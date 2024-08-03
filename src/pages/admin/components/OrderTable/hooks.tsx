@@ -121,7 +121,7 @@ export function useColumns(props: OrderTablePorps) {
             data={[
               {
                 label: '打包仓库',
-                value: row.sendWarehouse || '-',
+                value: row.sendWarehouseText || '-',
               },
               {
                 label: '备注',

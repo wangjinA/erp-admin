@@ -24,20 +24,21 @@ export interface CreateWrapProps {
 
 export const ActionsContext = React.createContext<Partial<ChildrenParams>>({});
 
-const CreateWrap:React.FC<CreateWrapProps> = ((props) => {
-  const { formRef, children, createRequest, updateRequest, refreshRequest } = props;
+const CreateWrap: React.FC<CreateWrapProps> = (props) => {
+  const { formRef, children, createRequest, updateRequest, refreshRequest } =
+    props;
   const [showType, setShowType] = useState<ShowFormType>(null);
   const createAction = useRequest(
     async (params) => {
-      return tryFn(async () => {
-        if (createRequest) {
-          const res = await createRequest(params);
-          await showMessageStatus(res.data);
-          formRef?.resetFields();
-          setShowType(null);
-          refreshRequest?.();
-        }
-      });
+      // return tryFn(async () => {
+      if (createRequest) {
+        const res = await createRequest(params);
+        await showMessageStatus(res.data);
+        formRef?.resetFields();
+        setShowType(null);
+        refreshRequest?.();
+      }
+      // });
     },
     {
       manual: true,
@@ -45,15 +46,15 @@ const CreateWrap:React.FC<CreateWrapProps> = ((props) => {
   );
   const updateAction = useRequest(
     async (params) => {
-      return tryFn(async () => {
-        if (updateRequest) {
-          const res = await updateRequest(params);
-          await showMessageStatus(res.data);
-          formRef?.resetFields();
-          setShowType(null);
-          refreshRequest?.();
-        }
-      });
+      // return tryFn(async () => {
+      if (updateRequest) {
+        const res = await updateRequest(params);
+        await showMessageStatus(res.data);
+        formRef?.resetFields();
+        setShowType(null);
+        refreshRequest?.();
+      }
+      // });
     },
     {
       manual: true,
@@ -72,6 +73,6 @@ const CreateWrap:React.FC<CreateWrapProps> = ((props) => {
       {children}
     </ActionsContext.Provider>
   );
-});
+};
 
 export default CreateWrap;

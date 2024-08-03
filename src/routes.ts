@@ -96,6 +96,28 @@ export const routes: IRoute[] = [
     ],
   },
   {
+    name: 'client.express',
+    key: 'client/express',
+    children: [
+      {
+        name: 'client.express.abnormal',
+        key: 'client/express/abnormal',
+      },
+      {
+        name: 'client.express.claim',
+        key: 'client/express/claim',
+      },
+      {
+        name: 'client.express.rejection',
+        key: 'client/express/rejection',
+      },
+      {
+        name: 'client.express.returnManage',
+        key: 'client/express/returnManage',
+      },
+    ],
+  },
+  {
     name: 'admin.business',
     key: 'admin/business',
     children: [

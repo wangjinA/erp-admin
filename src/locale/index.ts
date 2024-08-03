@@ -10,7 +10,7 @@ const i18n = {
 
     'admin.business': '业务操作',
     'admin.business.deposit': '扫码入库',
-    'admin.business.delivery': '扫码出库',
+    'admin.business.delivery': '打包出库',
     'admin.business.signfor': '扫码签收',
     'admin.business.warehousingAndArchiving': '出库存档',
     'admin.business.scanHistory': '扫码记录',
@@ -32,6 +32,12 @@ const i18n = {
     // 'client.order.all': '全部订单',
     'client.order.returnOrder': '海外仓退件订单',
     'client.order.deliveryHistory': '订单出库记录',
+
+    'client.express': '快递管理',
+    'client.express.abnormal': '问题包裹',
+    'client.express.claim': '包裹认领',
+    'client.express.rejection': '拒收管理',
+    'client.express.returnManage': '退件管理',
 
     'client.store': '店铺管理',
     'client.store.list': '店铺授权',

@@ -46,8 +46,7 @@ const SearchTable: React.FC<SearchTableProps> = (props) => {
     tableProps,
     formProps,
     initialValues = {},
-    showCreate = true,
-    showEdit = true,
+    showActions = true,
     leftTool,
     onView,
     createRequest,
@@ -127,9 +126,7 @@ const SearchTable: React.FC<SearchTableProps> = (props) => {
                     新建
                   </Button>
                 )}
-                {
-                  leftTool?.()
-                }
+                {leftTool?.()}
               </Space>
 
               <Space size={20}>
@@ -184,54 +181,58 @@ const SearchTable: React.FC<SearchTableProps> = (props) => {
                     (item) => !item.hideTable && item.schema.field !== 'actions'
                   )
                 ),
-                {
-                  title: '操作',
-                  key: 'actions',
-                  width: 315,
-                  render: (_, record, index) => (
-                    <Space size={0}>
-                      {onView && (
-                        <Button
-                          type="text"
-                          icon={<IconEye />}
-                          onClick={() => {
-                            onView(record);
-                          }}
-                        >
-                          查看
-                        </Button>
-                      )}
-                      {formItemConfigList
-                        .find((oitem) => oitem.schema.field === 'actions')
-                        ?.render?.(_, record, index)}
-                      {updateRequest && (
-                        <Button
-                          type="text"
-                          status="warning"
-                          icon={<IconEdit />}
-                          onClick={() => {
-                            setShowType(ShowFormType.edit);
-                            formRef.setFieldsValue(record);
-                          }}
-                        >
-                          编辑
-                        </Button>
-                      )}
-                      {removeRequest && (
-                        <PopconfirmDelete
-                          buttonProps={{
-                            type: 'text',
-                          }}
-                          onOk={() =>
-                            removeRequest(record[majorKey]).then(() => {
-                              run();
-                            })
-                          }
-                        ></PopconfirmDelete>
-                      )}
-                    </Space>
-                  ),
-                },
+                ...(showActions
+                  ? [
+                      {
+                        title: '操作',
+                        key: 'actions',
+                        width: 315,
+                        render: (_, record, index) => (
+                          <Space size={0}>
+                            {onView && (
+                              <Button
+                                type="text"
+                                icon={<IconEye />}
+                                onClick={() => {
+                                  onView(record);
+                                }}
+                              >
+                                查看
+                              </Button>
+                            )}
+                            {formItemConfigList
+                              .find((oitem) => oitem.schema.field === 'actions')
+                              ?.render?.(_, record, index)}
+                            {updateRequest && (
+                              <Button
+                                type="text"
+                                status="warning"
+                                icon={<IconEdit />}
+                                onClick={() => {
+                                  setShowType(ShowFormType.edit);
+                                  formRef.setFieldsValue(record);
+                                }}
+                              >
+                                编辑
+                              </Button>
+                            )}
+                            {removeRequest && (
+                              <PopconfirmDelete
+                                buttonProps={{
+                                  type: 'text',
+                                }}
+                                onOk={() =>
+                                  removeRequest(record[majorKey]).then(() => {
+                                    run();
+                                  })
+                                }
+                              ></PopconfirmDelete>
+                            )}
+                          </Space>
+                        ),
+                      },
+                    ]
+                  : []),
               ]}
             ></Table>
 
@@ -324,9 +325,8 @@ interface SearchTableProps {
   tableProps?: TableProps;
   formProps?: FormProps;
   initialValues?: any;
-  showCreate?: boolean;
-  showEdit?: boolean;
-  leftTool?: ()=>React.ReactNode;
+  showActions?: boolean;
+  leftTool?: () => React.ReactNode;
   createRequest?: CreateWrapProps['createRequest'];
   getListRequest?: (
     params: IPageParams & Record<string, any>

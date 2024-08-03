@@ -16,6 +16,7 @@ import { useDictOptions } from '@/components/Selectors/DictSelector';
 import { timeArrToObject } from '@/utils';
 import { IconRefresh, IconSearch } from '@arco-design/web-react/icon';
 import { getEntrepotOptions } from '@/components/Selectors/EntrepotSelector';
+import { useEventBus } from '@/hooks/useEventBus';
 
 export interface OrderPageProps {
   dictCode: 'shopee_status' | 'order_status';
@@ -65,7 +66,7 @@ export default (props: OrderPageProps) => {
     setActiveTab(shrimpStatus[0]?.value);
   }
 
-  const { data, run, pagination, loading } = usePagination(
+  const { data, run, pagination, loading, refresh } = usePagination(
     async (params) => {
       if (!shrimpStatus?.length) {
         return null;
@@ -92,7 +93,7 @@ export default (props: OrderPageProps) => {
       });
       res.data.data.list = await Promise.all(
         res.data.data.list.map(async (item) => {
-          item.sendWarehouse =
+          item.sendWarehouseText =
             (await getEntrepotOptions()).find(
               (oitem) => oitem.value === item.sendWarehouse
             )?.label || item.sendWarehouse;
@@ -108,7 +109,9 @@ export default (props: OrderPageProps) => {
       refreshDeps: [activeTab, shrimpStatus],
     }
   );
-
+  useEventBus('refresh-order-page', ()=>{
+    refresh();
+  })
   return (
     <div className="bg-white p-4">
       <FilterForm

@@ -1,55 +1,73 @@
 import React, { useState } from 'react';
 import ScanCommon from '../ScanCommon';
 import { useRequest } from 'ahooks';
-import { ScanParams, scanAPI } from '@/api/admin/entrepot';
+import { ScanParams, ScanSignResponse, scanAPI } from '@/api/admin/entrepot';
 import { showMessageStatus } from '@/utils';
-import { Alert, Spin, Table } from '@arco-design/web-react';
+import {
+  Alert,
+  Message,
+  Spin,
+  Table,
+  TableColumnProps,
+} from '@arco-design/web-react';
 import dayjs from 'dayjs';
 
-const columns = [
+const columns: TableColumnProps[] = [
   {
     title: '快递单号',
-    field: '快递单号',
+    dataIndex: 'trackingNumber',
   },
   {
     title: '仓库',
-    field: '仓库',
+    dataIndex: 'sendWarehouseName',
   },
   {
     title: '说明',
-    field: '说明',
+    dataIndex: 'instructions',
   },
   {
     title: '扫码时间',
-    field: '扫码时间',
+    dataIndex: 'createTime',
+    render(c) {
+      return c || dayjs().format('YYYY-MM-DD HH:mm:ss');
+    },
   },
   {
     title: '操作人',
-    field: '操作人',
+    dataIndex: 'operator',
   },
 ];
 
 export default () => {
   const [trackingNo, setTrackingNo] = useState<string>();
+  const [list, setList] = useState<ScanSignResponse[]>([]);
   const { run, data, loading } = useRequest(
     async (params: ScanParams) => {
+      if (list.some((item) => item.trackingNumber === trackingNo)) {
+        Message.error('该快递单号已扫码，请勿重复扫码');
+        return;
+      }
       const res = await scanAPI.scanSign(params);
       showMessageStatus(res.data);
-      return res.data.data;
+      setList([res.data.data, ...list]);
     },
     {
       manual: true,
     }
   );
+  console.log(list);
   return (
     <div className="bg-white p-4">
       <ScanCommon
         onScan={(info) => {
+          console.log(info.trackingNo);
           setTrackingNo(info.trackingNo);
-          run(info);
+          setTimeout(() => {
+            run(info);
+          });
         }}
       ></ScanCommon>
-      {trackingNo ? (
+      {/* {trackingNo ? (
         <Spin loading={loading} className='block'>
           <Alert
             className="mt-4"
@@ -62,8 +80,10 @@ export default () => {
             }
           />
         </Spin>
+      ) : null} */}
+      {list?.length ? (
+        <Table loading={loading} data={list} columns={columns}></Table>
       ) : null}
-      {/* {data && <Table data={data} columns={columns}></Table>} */}
     </div>
   );
 };
