@@ -23,12 +23,12 @@ interface SendCargoInfoProps {
 }
 
 const TagColors = [
-  'red',
+  '',
+  'green',
   'orangered',
   'orange',
   'gold',
   'lime',
-  'green',
   'cyan',
   'blue',
   'arcoblue',
@@ -44,7 +44,11 @@ function ExpressStatus(item: OrderResponseItem['orderProductVOList'][0]) {
 
   return (
     <div>
-      <Tag bordered size="small" color="green">
+      <Tag
+        bordered
+        size="small"
+        color={TagColors[Number(item.trackingStatus)]}
+      >
         {
           trackingStatus?.find((oitem) => oitem.value === item.trackingStatus)
             ?.label
@@ -81,17 +85,12 @@ function ExpressStatusActions(props: {
       const formData = await formRef.validate();
       const res = await orderAPI.returnOperation(formData);
       await showMessageStatus(res.data);
-      updateStatusHandle.run('4');
       setIsReturnGoods(false);
     },
     {
       manual: true,
     }
   );
-
-  const { data: trackingStatus } = useDictOptions({
-    dictCode: 'tracking_status',
-  });
 
   switch (item.trackingStatus) {
     case '0':

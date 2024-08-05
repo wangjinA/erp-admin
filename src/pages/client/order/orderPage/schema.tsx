@@ -58,18 +58,14 @@ export const OrderFilter: CreateFormItemType[] = [
       field: 'selectLogisticsOrderVO.packTimes',
       label: '打包时间',
     },
-    control: (props: any) => (
-      <DatePicker.RangePicker {...TimeRangeDefaultProps} {...props} />
-    ),
+    control: 'datePickerRange'
   },
   {
     schema: {
       field: 'selectLogisticsOrderVO.stockRemovalTimes',
       label: '出库时间',
     },
-    control: (props: any) => (
-      <DatePicker.RangePicker {...TimeRangeDefaultProps} {...props} />
-    ),
+    control: 'datePickerRange'
   },
 
 

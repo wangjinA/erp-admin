@@ -15,13 +15,14 @@ import { ScanParams, entrepotAPI } from '@/api/admin/entrepot';
 import { useEntrepotOptions } from '@/components/Selectors/EntrepotSelector';
 
 interface ScanComponentProps {
+  placeholder?: string;
   className?: string;
   style?: React.CSSProperties;
   onScan?: (params: ScanParams) => void;
 }
 
 export default (props: ScanComponentProps) => {
-  const { className, style, onScan } = props;
+  const { placeholder, className, style, onScan } = props;
   const { data, loading } = useEntrepotOptions();
   const [value, setValue] = useState<string>();
   const [entrepot, setEntrepot] = useLocalStorageState<any>('scan-entrepot');
@@ -61,7 +62,7 @@ export default (props: ScanComponentProps) => {
             }}
             size="large"
             className={classNames(height, styles['input-style'], 'text-3xl')}
-            placeholder="扫描或者输入快递单号"
+            placeholder={placeholder || "扫描或者输入快递单号"}
             onPressEnter={(e) => {
               if (entrepot === undefined) {
                 return Message.error('请选择仓库');

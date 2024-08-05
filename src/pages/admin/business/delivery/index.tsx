@@ -21,20 +21,24 @@ export default () => {
   console.log(data);
 
   const [trackingNo, setTrackingNo] = useState<string>();
-  const list = useMemo(() => {
-    return (
-      data?.orderItemInfoBgResultList.flatMap((item) =>
-        item.logisticsOrderProductList.filter(
-          (oitem) => oitem.trackingNo === trackingNo
-        )
-      ) || []
-    );
-  }, [data]);
+  // const list = useMemo(() => {
+  //   return (
+  //     data?.orderItemInfoBgResultList.flatMap((item) =>
+  //       item.logisticsOrderProductList.filter(
+  //         (oitem) => oitem.trackingNo === trackingNo
+  //       )
+  //     ) || []
+  //   );
+  // }, [data]);
   return (
     <div>
       <ScanCommon
+        placeholder="扫描或输入订单号"
         onScan={(info) => {
-          run(info);
+          run({
+            shrimpOrderNo: info.trackingNo,
+            sendWarehouse: info.sendWarehouse,
+          });
           setTrackingNo(info.trackingNo);
         }}
       ></ScanCommon>

@@ -1,39 +1,35 @@
-// fillShipInfo	存在未填发货信息 默认null true 是		false	
+// fillShipInfo	存在未填发货信息 默认null true 是		false
 // boolean
-// label	标签		false	
+// label	标签		false
 // string
-// orderStatus	订单状态 字典值		false	
+// orderStatus	订单状态 字典值		false
 // string
 // string
-// platformShopId	店铺id		false	
+// platformShopId	店铺id		false
 // string
-// problemStatus	是否问题订单 null 全部 false 否 true 是		false	
+// problemStatus	是否问题订单 null 全部 false 否 true 是		false
 // boolean
-// remark	备注		false	
+// remark	备注		false
 // string
 // string
-// sortType	查询排序 0 按打包时间排序 1 按紧急程度排序		false	
+// sortType	查询排序 0 按打包时间排序 1 按紧急程度排序		false
 // integer
 // string
-// whetherPack	是否打包 false 标识是待处理的订单 true 标识已经打包在自己平台的数据		false	
+// whetherPack	是否打包 false 标识是待处理的订单 true 标识已经打包在自己平台的数据		false
 // boolean
 
-
 // string
 // string
-// purchaseStatus	是否采购 null 全部 false 否 true 是		false	
+// purchaseStatus	是否采购 null 全部 false 否 true 是		false
 // boolean
-// sku	SKU		false	
+// sku	SKU		false
 // string
-// stockOutStatus	存在缺货打包 默认null true 是		false	
+// stockOutStatus	存在缺货打包 默认null true 是		false
 // boolean
 // trackingNo	快递单号
 
 import React from 'react';
 import { CreateFormItemType } from '@/components/CreateFormItem';
-import { DatePicker, Input } from '@arco-design/web-react';
-import DictSelector from '@/components/Selectors/DictSelector';
-import { TimeRangeDefaultProps } from '@/constants';
 
 export const OrderFilter: CreateFormItemType[] = [
   {
@@ -58,20 +54,18 @@ export const OrderFilter: CreateFormItemType[] = [
       field: 'selectLogisticsOrderVO.packTimes',
       label: '打包时间',
     },
-    control: (props: any) => (
-      <DatePicker.RangePicker {...TimeRangeDefaultProps} {...props} />
-    ),
+    control: 'datePickerRange',
   },
   {
     schema: {
       field: 'selectLogisticsOrderVO.stockRemovalTimes',
       label: '出库时间',
     },
-    control: (props: any) => (
-      <DatePicker.RangePicker {...TimeRangeDefaultProps} {...props} />
-    ),
+    control: 'datePickerRange',
+    // (props: any) => (
+    //   <DatePicker.RangePicker {...TimeRangeDefaultProps} {...props} />
+    // ),
   },
-
 
   {
     schema: {
@@ -143,7 +137,7 @@ export const OrderFilter: CreateFormItemType[] = [
   //   },
   //   control: 'input',
   // },
-  
+
   // {
   //   schema: {
   //     field: 'timeType12',

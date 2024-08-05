@@ -342,7 +342,8 @@ interface logisticsOrderProduct {
 // };
 export interface ScanParams {
   sendWarehouse: number; // 送往仓库
-  trackingNo: string; // 快递单号
+  trackingNo?: string; // 快递单号
+  shrimpOrderNo?: string; // 订单号
 }
 
 // export interface OrderInfo {

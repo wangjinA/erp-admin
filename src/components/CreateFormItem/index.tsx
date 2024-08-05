@@ -124,6 +124,7 @@ const createFormItem: CreateFormItemParams = ({
         case 'datePickerRange':
           return (
             <DatePicker.RangePicker
+              className="w-full"
               {...TimeRangeDefaultProps}
               {...controlProps}
             />

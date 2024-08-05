@@ -42,9 +42,10 @@ export const orderAPI = {
     orderProductId: number;
     trackingStatus: string;
   }) {
-    return baseAxios.get('/api/logistics/order/update/order/product/status', {
-      params,
-    });
+    return baseAxios.post(
+      '/api/logistics/order/update/order/product/status',
+      params
+    );
   },
   // 退件操作
   returnOperation(body: Partial<ReturnOperationInfo>) {
