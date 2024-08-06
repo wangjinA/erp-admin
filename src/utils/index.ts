@@ -111,3 +111,11 @@ export function showModal(params: Partial<ConfirmProps>) {
     });
   });
 }
+
+export function showObj(value, obj): any[] {
+  if (value) {
+    return [obj];
+  } else {
+    return [];
+  }
+}

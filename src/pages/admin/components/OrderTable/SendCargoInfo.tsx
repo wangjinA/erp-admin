@@ -10,7 +10,7 @@ import {
   Tag,
 } from '@arco-design/web-react';
 import { OrderResponseItem } from '@/types/order';
-import { showMessageStatus, showModal } from '@/utils';
+import { showMessageStatus, showModal, showObj } from '@/utils';
 import { isClient } from '@/routes';
 import { useRequest } from 'ahooks';
 import { orderAPI } from '@/api/client/order';
@@ -45,11 +45,7 @@ function ExpressStatus(item: OrderResponseItem['orderProductVOList'][0]) {
 
   return (
     <div>
-      <Tag
-        bordered
-        size="small"
-        color={TagColors[Number(item.trackingStatus)]}
-      >
+      <Tag bordered size="small" color={TagColors[Number(item.trackingStatus)]}>
         {
           trackingStatus?.find((oitem) => oitem.value === item.trackingStatus)
             ?.label
@@ -75,7 +71,7 @@ function ExpressStatusActions(props: {
         trackingStatus,
       });
       await showMessageStatus(res.data);
-      bus.emit(EmitTypes.refreshOrderPage)
+      bus.emit(EmitTypes.refreshOrderPage);
     },
     {
       manual: true,
@@ -254,10 +250,10 @@ const SkuList: React.FC<SendCargoInfoProps> = (props) => {
                   />
                 ),
               },
-              {
+              ...showObj(item.freightSpaceName, {
                 label: '仓位',
                 value: item.freightSpaceName || '-',
-              },
+              }),
             ]}
             labelStyle={{ textAlign: 'right' }}
             style={{ marginBottom: 20 }}

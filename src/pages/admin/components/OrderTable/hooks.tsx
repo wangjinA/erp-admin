@@ -6,6 +6,7 @@ import { OrderTablePorps } from '.';
 import styles from './index.module.less';
 import { IconFile } from '@arco-design/web-react/icon';
 import SendCargoInfo from './SendCargoInfo';
+import { Order } from '@/types/order';
 
 export function useColumns(props: OrderTablePorps) {
   const { dictCode } = props;
@@ -138,7 +139,7 @@ export function useColumns(props: OrderTablePorps) {
       title: '卖家信息',
       dataIndex: '卖家信息',
       width: 180,
-      render(c, row) {
+      render(c, row: Order) {
         return (
           <Descriptions
             size="small"
@@ -148,7 +149,7 @@ export function useColumns(props: OrderTablePorps) {
             data={[
               {
                 label: '打包仓库',
-                value: 'row.' || '-',
+                value: row.sendWarehouseText || '-',
               },
               {
                 label: '卖家标识',
@@ -156,11 +157,11 @@ export function useColumns(props: OrderTablePorps) {
               },
               {
                 label: '卖家备注',
-                value: 'row.' || '-',
+                value: row.remark || '-',
               },
               {
                 label: '仓库备注',
-                value: 'row.' || '-',
+                value: row.entrepotRemark || '-',
               },
             ]}
             labelStyle={{ textAlign: 'right' }}

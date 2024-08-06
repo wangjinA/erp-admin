@@ -1,93 +1,86 @@
-import { orderAPI } from '@/api/admin/order';
-import FilterForm from '@/components/FilterForm';
-import { useLocalStorageState, useRequest } from 'ahooks';
-import { useEffect, useState } from 'react';
 import {
-  Steps,
-  Form,
-  Input,
-  Select,
-  DatePicker,
-  InputTag,
   Button,
-  Typography,
-  Space,
   Card,
-  Switch,
+  Form,
   Result,
-  Link,
-} from '@arco-design/web-react';
-import useLocale from '@/utils/useLocale';
-import locale from './locale';
-import styles from './index.module.less';
+  Space,
+  Steps,
+  Typography,
+} from '@arco-design/web-react'
+import { IconDelete, IconPlus } from '@arco-design/web-react/icon'
+
+import { useLocalStorageState, useRequest } from 'ahooks'
+import classNames from 'classnames'
+import { useEffect, useState } from 'react'
+import { useDebouncedCallback } from 'use-debounce'
+
+import styles from './index.module.less'
+import locale from './locale'
 import {
   OrderCreateSchema1,
   OrderCreateSchema2,
   OrderCreateSchema3,
-} from './schema';
-import classNames from 'classnames';
-import { HideClass } from '@/constants/style';
-import {
-  IconArrowFall,
-  IconArrowRise,
-  IconDelete,
-  IconPlus,
-} from '@arco-design/web-react/icon';
-import { Order } from '@/types/order';
-import { useDebouncedCallback } from 'use-debounce';
-import PopconfirmDelete from '@/components/PopconfirmDelete';
-import { showMessageStatus, tryFn } from '@/utils';
+} from './schema'
 
-const { Title, Paragraph } = Typography;
+import { orderAPI } from '@/api/admin/order'
+import FilterForm from '@/components/FilterForm'
+import PopconfirmDelete from '@/components/PopconfirmDelete'
+import { HideClass } from '@/constants/style'
+import { Order } from '@/types/order'
+import { showMessageStatus, tryFn } from '@/utils'
+import useLocale from '@/utils/useLocale'
+
+const { Title, Paragraph } = Typography
 
 export default () => {
   const [formData, setFormData] = useLocalStorageState<Partial<Order>>(
     'create-order',
     {
       defaultValue: {},
-    }
-  );
-  const [current, setCurrent] = useState(3);
-  const [skuList, setSkuList] = useState([0]);
+    },
+  )
+  const [current, setCurrent] = useState(3)
+  const [skuList, setSkuList] = useState([0])
 
   const setFormDataDebounce = useDebouncedCallback((v: Partial<Order>) => {
     setFormData({
       ...formData,
       ...v,
-    });
-  }, 300);
+    })
+  }, 300)
 
-  const [form] = Form.useForm();
-  const t = useLocale(locale);
+  const [form] = Form.useForm()
+  const t = useLocale(locale)
   const createHandler = useRequest(
     () => {
-      console.log(formData);
+      console.log(formData)
       return tryFn(async () => {
-        const res = await orderAPI.insert(formData);
-        await showMessageStatus(res.data);
-      });
+        const res = await orderAPI.insert(formData)
+        await showMessageStatus(res.data)
+      })
     },
     {
       manual: true,
-    }
-  );
+    },
+  )
   const reCreateForm = () => {
-    form.resetFields();
-    setCurrent(1);
-  };
+    form.resetFields()
+    setCurrent(1)
+  }
 
   const toNext = async () => {
     try {
-      await form.validate();
-      setCurrent(current + 1);
-    } catch (_) {}
-  };
+      await form.validate()
+      setCurrent(current + 1)
+    }
+    catch (_) {}
+  }
 
   useEffect(() => {
-    console.log(formData);
-  }, []);
+    console.log(formData)
+  }, [])
 
-  console.log(formData);
+  console.log(formData)
   return (
     <div className="bg-white p-4">
       <Card>
@@ -109,18 +102,19 @@ export default () => {
             size="small"
             formItemConfigList={OrderCreateSchema1}
             onValuesChange={(val, vals) => {
-              setFormDataDebounce(vals);
+              setFormDataDebounce(vals)
             }}
-          ></FilterForm>
+          >
+          </FilterForm>
           <div className={classNames(current !== 2 ? HideClass : '')}>
             <Form.Provider
               onFormValuesChange={async (name, changedValues, info) => {
                 const orderProductList = await Promise.all(
                   skuList.map((sku, index) =>
-                    info.forms[`orderProductList[${index}]`].validate()
-                  )
-                );
-                setFormDataDebounce({ orderProductList });
+                    info.forms[`orderProductList[${index}]`].validate(),
+                  ),
+                )
+                setFormDataDebounce({ orderProductList })
               }}
             >
               <div className="flex flex-col gap-4">
@@ -135,8 +129,8 @@ export default () => {
                         <Space>
                           <PopconfirmDelete
                             onOk={() => {
-                              skuList.splice(index, 1);
-                              setSkuList([...skuList]);
+                              skuList.splice(index, 1)
+                              setSkuList([...skuList])
                             }}
                           >
                             <Button
@@ -148,7 +142,8 @@ export default () => {
                                 margin: '0 20px',
                               }}
                               // onClick={() => remove(index)}
-                            ></Button>
+                            >
+                            </Button>
                           </PopconfirmDelete>
                           {/* <Button
                             size="mini"
@@ -177,9 +172,10 @@ export default () => {
                       //   }
                       // }))}
                       onValuesChange={(val, vals) => {
-                        setFormDataDebounce(vals);
+                        setFormDataDebounce(vals)
                       }}
-                    ></FilterForm>
+                    >
+                    </FilterForm>
                   </Card>
                 ))}
                 <Button
@@ -188,8 +184,8 @@ export default () => {
                   className="mt-4"
                   icon={<IconPlus />}
                   onClick={() => {
-                    skuList.push(skuList.length);
-                    setSkuList([...skuList]);
+                    skuList.push(skuList.length)
+                    setSkuList([...skuList])
                   }}
                 >
                   添加
@@ -207,7 +203,7 @@ export default () => {
                   key="reset"
                   style={{ marginRight: 16 }}
                   onClick={() => {
-                    setCurrent(1);
+                    setCurrent(1)
                   }}
                 >
                   继续创建
@@ -225,9 +221,10 @@ export default () => {
             size="small"
             formItemConfigList={OrderCreateSchema3}
             onValuesChange={(val, vals) => {
-              setFormDataDebounce(vals);
+              setFormDataDebounce(vals)
             }}
-          ></FilterForm>
+          >
+          </FilterForm>
           <div className="flex justify-center gap-4 mt-12">
             {current > 1 && current < 4 && (
               <Button size="large" onClick={() => setCurrent(current - 1)}>
@@ -251,14 +248,14 @@ export default () => {
             )}
           </div>
         </div>
-        <div className={styles['form-extra']}>
+        {/* <div className={styles['form-extra']}>
           <Title heading={6}>手动创建订单说明</Title>
           <Paragraph type="secondary">
             {t['stepForm.created.extra.desc']}
             <Button type="text">{t['stepForm.created.extra.detail']}</Button>
           </Paragraph>
-        </div>
+        </div> */}
       </Card>
     </div>
-  );
-};
+  )
+}

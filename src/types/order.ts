@@ -20,6 +20,7 @@ interface OrderProductList {
   remark: string; // 备注
   sku: string; // SKU
   specificationName: string; // 规格名称
+  freightSpaceName: string; // 仓位
   stockOutStatus: boolean; // 是否缺货打包：默认为
   tenantryId: number; // 租户id
   trackingNo: string; // 快递单号

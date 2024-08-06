@@ -29,6 +29,7 @@ import { SuccessCode } from '@/api';
 import { useColumns } from './hooks';
 import { omit } from 'lodash';
 import { bus, EmitTypes } from '@/hooks/useEventBus';
+import { isClient } from '@/routes';
 
 export interface OrderTablePorps extends StyleProps {
   // tableProps: TableProps;
@@ -78,7 +79,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
       );
       await showMessageStatus(res.data);
       setEdit(null);
-      bus.emit(EmitTypes.refreshOrderPage)
+      bus.emit(EmitTypes.refreshOrderPage);
     },
     {
       manual: true,
@@ -242,8 +243,18 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                 </div>
                 <div className="ml-auto">
                   <span className={labelClass}>备注：</span>
-                  <span className={valueClass}>暂无</span>
-                  <Button type="text">
+                  <span className={valueClass}>
+                    {(isClient() ? item.remark : item.entrepotRemark) || '暂无'}
+                  </span>
+                  <Button
+                    type="text"
+                    onClick={() => {
+                      setEdit({
+                        ...item,
+                        logisticsOrderProductList: item.orderProductVOList,
+                      });
+                    }}
+                  >
                     <IconEdit />
                   </Button>
                 </div>
