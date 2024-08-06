@@ -16,7 +16,7 @@ import { useDictOptions } from '@/components/Selectors/DictSelector';
 import { timeArrToObject } from '@/utils';
 import { IconRefresh, IconSearch } from '@arco-design/web-react/icon';
 import { getEntrepotOptions } from '@/components/Selectors/EntrepotSelector';
-import { useEventBus } from '@/hooks/useEventBus';
+import { EmitTypes, useEventBus } from '@/hooks/useEventBus';
 
 export interface OrderPageProps {
   dictCode: 'shopee_status' | 'order_status';
@@ -109,7 +109,7 @@ export default (props: OrderPageProps) => {
       refreshDeps: [activeTab, shrimpStatus],
     }
   );
-  useEventBus('refresh-order-page', ()=>{
+  useEventBus(EmitTypes.refreshOrderPage, ()=>{
     refresh();
   })
   return (

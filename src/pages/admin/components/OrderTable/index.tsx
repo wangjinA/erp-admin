@@ -28,7 +28,7 @@ import PopconfirmDelete from '@/components/PopconfirmDelete';
 import { SuccessCode } from '@/api';
 import { useColumns } from './hooks';
 import { omit } from 'lodash';
-import { bus } from '@/hooks/useEventBus';
+import { bus, EmitTypes } from '@/hooks/useEventBus';
 
 export interface OrderTablePorps extends StyleProps {
   // tableProps: TableProps;
@@ -78,7 +78,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
       );
       await showMessageStatus(res.data);
       setEdit(null);
-      bus.emit('refresh-order-page')
+      bus.emit(EmitTypes.refreshOrderPage)
     },
     {
       manual: true,

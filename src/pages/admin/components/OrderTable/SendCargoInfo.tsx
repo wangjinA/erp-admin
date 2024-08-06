@@ -17,6 +17,7 @@ import { orderAPI } from '@/api/client/order';
 import { useDictOptions } from '@/components/Selectors/DictSelector';
 import FilterForm from '@/components/FilterForm';
 import EntrepotSelector from '@/components/Selectors/EntrepotSelector';
+import { bus, EmitTypes } from '@/hooks/useEventBus';
 
 interface SendCargoInfoProps {
   data: OrderResponseItem;
@@ -74,6 +75,7 @@ function ExpressStatusActions(props: {
         trackingStatus,
       });
       await showMessageStatus(res.data);
+      bus.emit(EmitTypes.refreshOrderPage)
     },
     {
       manual: true,
