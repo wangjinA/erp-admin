@@ -1,6 +1,6 @@
-import { SearchTableSchema } from '@/components/SearchTable';
-import StatusTag from '@/components/StatusTag';
-import { usableTagInfoMap } from '@/constants/statusTag';
+import { SearchTableSchema } from '@/components/SearchTable'
+import StatusTag from '@/components/StatusTag'
+import { usableTagInfoMap } from '@/constants/statusTag'
 
 export const dictFormItemConfigList: SearchTableSchema[] = [
   {
@@ -39,7 +39,7 @@ export const dictFormItemConfigList: SearchTableSchema[] = [
       label: '字典状态', // ：0.正常，1.异常
     },
     render(col) {
-      return <StatusTag tagInfos={usableTagInfoMap} value={col}></StatusTag>;
+      return <StatusTag tagInfos={usableTagInfoMap} value={col}></StatusTag>
     },
     // isSearch: true,
   },
@@ -50,6 +50,9 @@ export const dictFormItemConfigList: SearchTableSchema[] = [
     },
     isSearch: true,
     isCreate: true,
+    render(r) {
+      return r || '无'
+    },
   },
   // {
   //   schema: {
@@ -69,6 +72,9 @@ export const dictFormItemConfigList: SearchTableSchema[] = [
       field: 'updateTime',
       label: '更新时间',
     },
+    render(r) {
+      return r || '-'
+    },
   },
   // {
   //   schema: {
@@ -81,7 +87,7 @@ export const dictFormItemConfigList: SearchTableSchema[] = [
   //     </Button>
   //   }
   // },
-];
+]
 
 export const dictChildFormItemConfigList: SearchTableSchema[] = [
   {
@@ -120,7 +126,7 @@ export const dictChildFormItemConfigList: SearchTableSchema[] = [
       label: '字典状态', // ：0.正常，1.异常
     },
     render(col) {
-      return <StatusTag tagInfos={usableTagInfoMap} value={col}></StatusTag>;
+      return <StatusTag tagInfos={usableTagInfoMap} value={col}></StatusTag>
     },
     // isSearch: true,
   },
@@ -162,4 +168,4 @@ export const dictChildFormItemConfigList: SearchTableSchema[] = [
     isSearch: true,
     isCreate: true,
   },
-];
+]

@@ -1,6 +1,9 @@
-import auth, { AuthParams } from '@/utils/authentication';
-import { useEffect, useMemo, useState } from 'react';
-import i18n from './locale';
+import { useEffect, useMemo, useState } from 'react'
+
+import i18n from './locale'
+
+import auth, { AuthParams } from '@/utils/authentication'
+
 export enum EndType {
   /**
    * 管理端
@@ -13,14 +16,14 @@ export enum EndType {
 }
 
 export type IRoute = AuthParams & {
-  name: keyof typeof i18n['zh-CN'];
-  key: string;
+  name: keyof typeof i18n['zh-CN']
+  key: string
   // 当前页是否展示面包屑
-  breadcrumb?: boolean;
-  children?: IRoute[];
+  breadcrumb?: boolean
+  children?: IRoute[]
   // 当前路由是否渲染菜单项，为 true 的话不会在菜单中显示，但可通过路由地址访问。
-  ignore?: boolean;
-};
+  ignore?: boolean
+}
 
 export const routes: IRoute[] = [
   // {
@@ -141,10 +144,10 @@ export const routes: IRoute[] = [
         name: 'admin.business.scanHistory',
         key: 'admin/business/scanHistory',
       },
-      {
-        name: 'admin.business.returnToShelves',
-        key: 'admin/business/returnToShelves',
-      },
+      // {
+      //   name: 'admin.business.returnToShelves',
+      //   key: 'admin/business/returnToShelves',
+      // },
       {
         name: 'admin.business.retention',
         key: 'admin/business/retention',
@@ -369,45 +372,46 @@ export const routes: IRoute[] = [
       },
     ],
   },
-].filter((item: any) => item.name.startsWith(getEndType())) as any;
+].filter((item: any) => item.name.startsWith(getEndType())) as any
 
-export const getName = (path: string, routes) => {
+export function getName(path: string, routes) {
   return routes.find((item) => {
-    const itemPath = `/${item.key}`;
+    const itemPath = `/${item.key}`
     if (path === itemPath) {
-      return item.name;
-    } else if (item.children) {
-      return getName(path, item.children);
+      return item.name
     }
-  });
-};
+    else if (item.children) {
+      return getName(path, item.children)
+    }
+  })
+}
 
-export const generatePermission = (role: string) => {
-  const actions = role === 'admin' ? ['*'] : ['read'];
-  const result = {};
+export function generatePermission(role: string) {
+  const actions = role === 'admin' ? ['*'] : ['read']
+  const result = {}
   routes.forEach((item) => {
     if (item.children) {
       item.children.forEach((child) => {
-        result[child.name] = actions;
-      });
+        result[child.name] = actions
+      })
     }
-  });
-  return result;
-};
+  })
+  return result
+}
 
 export const LoginPathMap = {
   [EndType.ADMIN]: '/admin/login',
   [EndType.CLIENT]: '/client/login',
-};
+}
 
 export const EndTypeTextMap = {
   [EndType.ADMIN]: '物流端',
   [EndType.CLIENT]: '商家端',
-};
+}
 
-export const getLoginPagePath = () => {
-  return LoginPathMap[getEndType()] || LoginPathMap[EndType.ADMIN];
-};
+export function getLoginPagePath() {
+  return LoginPathMap[getEndType()] || LoginPathMap[EndType.ADMIN]
+}
 
 /**
  * 判断当前端类型
@@ -415,82 +419,83 @@ export const getLoginPagePath = () => {
 export function getEndType(): EndType {
   return location.pathname.startsWith('/admin')
     ? EndType.ADMIN
-    : EndType.CLIENT;
+    : EndType.CLIENT
 }
 
 export function isAdmin() {
-  return getEndType() === EndType.ADMIN;
+  return getEndType() === EndType.ADMIN
 }
 
 export function isClient() {
-  return getEndType() === EndType.CLIENT;
+  return getEndType() === EndType.CLIENT
 }
 
 export function getPathEndKey(): EndType {
-  return location.pathname.split('/').filter(Boolean)[0] as EndType;
+  return location.pathname.split('/').filter(Boolean)[0] as EndType
 }
 
 export function getEndTypeName() {
-  return EndTypeTextMap[getEndType()];
+  return EndTypeTextMap[getEndType()]
 }
 
-export const toLoginPage = () => {
-  const loginPagePath = getLoginPagePath();
+export function toLoginPage() {
+  const loginPagePath = getLoginPagePath()
   if (!location.pathname.endsWith(loginPagePath)) {
-    window.location.href = loginPagePath;
+    window.location.href = loginPagePath
   }
-};
+}
 
-type DefaultRouteMap = Partial<Record<EndType, string>>;
+type DefaultRouteMap = Partial<Record<EndType, string>>
 
-const useRoute = (userPermission): [IRoute[], DefaultRouteMap] => {
+function useRoute(userPermission): [IRoute[], DefaultRouteMap] {
   const filterRoute = (routes: IRoute[], arr = []): IRoute[] => {
     if (!routes.length) {
-      return [];
+      return []
     }
     for (const route of routes) {
-      const { requiredPermissions, oneOfPerm } = route;
-      let visible = true;
+      const { requiredPermissions, oneOfPerm } = route
+      let visible = true
       if (requiredPermissions) {
-        visible = auth({ requiredPermissions, oneOfPerm }, userPermission);
+        visible = auth({ requiredPermissions, oneOfPerm }, userPermission)
       }
 
       if (!visible) {
-        continue;
+        continue
       }
       if (route.children && route.children.length) {
-        const newRoute = { ...route, children: [] };
-        filterRoute(route.children, newRoute.children);
+        const newRoute = { ...route, children: [] }
+        filterRoute(route.children, newRoute.children)
         if (newRoute.children.length) {
-          arr.push(newRoute);
+          arr.push(newRoute)
         }
-      } else {
-        arr.push({ ...route });
+      }
+      else {
+        arr.push({ ...route })
       }
     }
 
-    return arr;
-  };
+    return arr
+  }
 
-  const [permissionRoute, setPermissionRoute] = useState(routes);
+  const [permissionRoute, setPermissionRoute] = useState(routes)
 
   useEffect(() => {
-    const newRoutes = filterRoute(routes);
-    setPermissionRoute(newRoutes);
-  }, [JSON.stringify(userPermission)]);
+    const newRoutes = filterRoute(routes)
+    setPermissionRoute(newRoutes)
+  }, [JSON.stringify(userPermission)])
 
   const defaultRouteMap = useMemo(() => {
     return Object.values(EndType).reduce<DefaultRouteMap>((pre, endKey) => {
-      const first = permissionRoute.find((item) => item.key.startsWith(endKey));
+      const first = permissionRoute.find(item => item.key.startsWith(endKey))
       if (first) {
-        const firstRoute = first?.children?.[0]?.key || first.key;
-        pre[endKey] = firstRoute;
+        const firstRoute = first?.children?.[0]?.key || first.key
+        pre[endKey] = firstRoute
       }
-      return pre;
-    }, {});
-  }, [permissionRoute]);
+      return pre
+    }, {})
+  }, [permissionRoute])
 
-  return [permissionRoute, defaultRouteMap];
-};
+  return [permissionRoute, defaultRouteMap]
+}
 
-export default useRoute;
+export default useRoute

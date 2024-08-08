@@ -1,29 +1,30 @@
-import classNames from 'classnames';
-import React, { useState } from 'react';
-import styles from './index.module.less';
 import {
   Descriptions,
   Form,
   Link,
-  Message,
   Modal,
   Tag,
-} from '@arco-design/web-react';
-import { OrderResponseItem } from '@/types/order';
-import { showMessageStatus, showModal, showObj } from '@/utils';
-import { isClient } from '@/routes';
-import { useRequest } from 'ahooks';
-import { orderAPI } from '@/api/client/order';
-import { useDictOptions } from '@/components/Selectors/DictSelector';
-import FilterForm from '@/components/FilterForm';
-import EntrepotSelector from '@/components/Selectors/EntrepotSelector';
-import { bus, EmitTypes } from '@/hooks/useEventBus';
+} from '@arco-design/web-react'
+
+import { useRequest } from 'ahooks'
+import classNames from 'classnames'
+import React, { useState } from 'react'
+
+import styles from './index.module.less'
+
+import { orderAPI } from '@/api/client/order'
+import FilterForm from '@/components/FilterForm'
+import { useDictOptions } from '@/components/Selectors/DictSelector'
+import EntrepotSelector from '@/components/Selectors/EntrepotSelector'
+import { EmitTypes, bus } from '@/hooks/useEventBus'
+import { OrderResponseItem } from '@/types/order'
+import { showMessageStatus, showModal, showObj } from '@/utils'
 
 interface SendCargoInfoProps {
-  data: OrderResponseItem;
+  data: OrderResponseItem
 }
 
-const TagColors = [
+export const TagColors = [
   '',
   'green',
   'orangered',
@@ -37,58 +38,58 @@ const TagColors = [
   'pinkpurple',
   'magenta',
   'gray',
-];
+]
 function ExpressStatus(item: OrderResponseItem['orderProductVOList'][0]) {
   const { data: trackingStatus } = useDictOptions({
     dictCode: 'tracking_status',
-  });
+  })
 
   return (
     <div>
       <Tag bordered size="small" color={TagColors[Number(item.trackingStatus)]}>
         {
-          trackingStatus?.find((oitem) => oitem.value === item.trackingStatus)
+          trackingStatus?.find(oitem => oitem.value === item.trackingStatus)
             ?.label
         }
       </Tag>
     </div>
-  );
+  )
 }
 
 function ExpressStatusActions(props: {
-  item: OrderResponseItem['orderProductVOList'][0];
-  sendWarehouse: string;
+  item: OrderResponseItem['orderProductVOList'][0]
+  sendWarehouse: string
 }) {
-  const { item, sendWarehouse } = props;
+  const { item, sendWarehouse } = props
 
-  const [isReturnGoods, setIsReturnGoods] = useState<boolean>(false);
-  const [formRef] = Form.useForm();
+  const [isReturnGoods, setIsReturnGoods] = useState<boolean>(false)
+  const [formRef] = Form.useForm()
   // 设置快递状态
   const updateStatusHandle = useRequest(
     async (trackingStatus) => {
       const res = await orderAPI.updateExpressStatus({
         orderProductId: item.id,
         trackingStatus,
-      });
-      await showMessageStatus(res.data);
-      bus.emit(EmitTypes.refreshOrderPage);
+      })
+      await showMessageStatus(res.data)
+      bus.emit(EmitTypes.refreshOrderPage)
     },
     {
       manual: true,
-    }
-  );
+    },
+  )
   // 退件
   const returnHandle = useRequest(
     async () => {
-      const formData = await formRef.validate();
-      const res = await orderAPI.returnOperation(formData);
-      await showMessageStatus(res.data);
-      setIsReturnGoods(false);
+      const formData = await formRef.validate()
+      const res = await orderAPI.returnOperation(formData)
+      await showMessageStatus(res.data)
+      setIsReturnGoods(false)
     },
     {
       manual: true,
-    }
-  );
+    },
+  )
 
   switch (item.trackingStatus) {
     case '0':
@@ -104,14 +105,14 @@ function ExpressStatusActions(props: {
               await showModal({
                 confirmLoading: updateStatusHandle.loading,
                 content: `所有跟快递单号"${item.trackingNo}"有关联的订单都会拒收，确定要继续吗？`,
-              });
-              updateStatusHandle.run('2');
+              })
+              updateStatusHandle.run('2')
             }}
           >
             拒收
           </Tag>
         </div>
-      );
+      )
     case '1':
       return (
         <div>
@@ -122,7 +123,7 @@ function ExpressStatusActions(props: {
             color="orange"
             checked={true}
             onClick={async () => {
-              setIsReturnGoods(true);
+              setIsReturnGoods(true)
             }}
           >
             退件
@@ -132,10 +133,10 @@ function ExpressStatusActions(props: {
             visible={isReturnGoods}
             confirmLoading={returnHandle.loading}
             onCancel={() => {
-              setIsReturnGoods(false);
+              setIsReturnGoods(false)
             }}
             onOk={() => {
-              returnHandle.run();
+              returnHandle.run()
             }}
           >
             <FilterForm
@@ -187,10 +188,11 @@ function ExpressStatusActions(props: {
                   control: 'textarea',
                 },
               ]}
-            ></FilterForm>
+            >
+            </FilterForm>
           </Modal>
         </div>
-      );
+      )
     // case '2':
     //   return (
     //     <div>
@@ -209,11 +211,11 @@ function ExpressStatusActions(props: {
     //     </div>
     //   );
   }
-  return <div>-</div>;
+  return <div>-</div>
 }
 
 const SkuList: React.FC<SendCargoInfoProps> = (props) => {
-  const { data } = props;
+  const { data } = props
   return (
     <div className={classNames(styles['goods-info'], 'pr-2')}>
       {data.orderProductVOList?.map((item, i) => (
@@ -261,7 +263,7 @@ const SkuList: React.FC<SendCargoInfoProps> = (props) => {
         </div>
       ))}
     </div>
-  );
-};
+  )
+}
 
-export default SkuList;
+export default SkuList
