@@ -1,9 +1,11 @@
-import { entrepotAPI } from '@/api/admin/entrepot';
 import { Select } from '@arco-design/web-react';
 import { SelectProps } from '@arco-design/web-react/lib';
 import { useRequest } from 'ahooks';
 import React from 'react';
+
 import { DictOptions } from '../DictSelector';
+
+import { entrepotAPI } from '@/api/admin/entrepot';
 
 type EntrepotSelectorProps = SelectProps;
 
@@ -32,6 +34,12 @@ export function useEntrepotOptions() {
     return getEntrepotOptions();
   });
   return res;
+}
+
+export function EntrepotNameFC(props: { value: string }) {
+  const { value } = props;
+  const { data: options } = useEntrepotOptions();
+  return <>{options?.find((item) => item.value === value)?.label}</>;
 }
 
 const EntrepotSelector: React.FC<EntrepotSelectorProps> = (props) => {

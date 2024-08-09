@@ -1,20 +1,46 @@
-import React from 'react';
-import EntrepotRadio from '@/components/Selectors/EntrepotRadio';
-import { DividerSchema } from '@/constants/schema/common';
-import SearchTable from '@/components/SearchTable';
+import { Alert, Button, Tag } from '@arco-design/web-react';
+import { useRequest } from 'ahooks';
+import React, { useState } from 'react';
+
 import { expressAPI } from '@/api/client/express';
-import { Alert, List } from '@arco-design/web-react';
-import {
-  getDictName,
-  useDictOptions,
-} from '@/components/Selectors/DictSelector';
-import { useEntrepotOptions } from '@/components/Selectors/EntrepotSelector';
+import ReturnParcel from '@/components/ReturnParcel';
+import SearchTable, { SearchTableRef } from '@/components/SearchTable';
+
+import { DictNameFC } from '@/components/Selectors/DictSelector';
+import EntrepotRadio from '@/components/Selectors/EntrepotRadio';
+import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector';
+import { DividerSchema } from '@/constants/schema/common';
+import { TagColors } from '@/pages/admin/components/OrderTable/SendCargoInfo';
+import { showMessageStatus, showModal, tryFn } from '@/utils';
 
 export default () => {
-  // const returnStatus = useDictOptions({
-  //   dictCode: '',
-  // });
-  const { data: entrepotList } = useEntrepotOptions();
+  const [current, setCurrent] = useState();
+  const [visible, setVisible] = React.useState<boolean>(false);
+  const ref = React.useRef<SearchTableRef>();
+
+  const { run, loading } = useRequest(
+    async (row) => {
+      await showModal({
+        content: '确定取消？',
+        okButtonProps: {
+          status: 'warning',
+        },
+      });
+      setCurrent(row);
+      const res = await tryFn(() =>
+        expressAPI.updateExpressStatus({
+          orderProductId: 111111,
+          trackingStatus: '1', // 改回已收状态
+        })
+      );
+      await showMessageStatus(res.data);
+      ref.current.refreshSearchTable();
+    },
+    {
+      manual: true,
+    }
+  );
+
   return (
     <div className="p-4 bg-white">
       <Alert
@@ -30,9 +56,12 @@ export default () => {
         ))}
       />
       <SearchTable
+        ref={ref}
         name="包裹认领"
-        showActions={false}
         getListRequest={expressAPI.getReturnList}
+        createHandle={() => {
+          setVisible(true);
+        }}
         formItemConfigList={[
           {
             schema: {
@@ -43,11 +72,7 @@ export default () => {
             control: <EntrepotRadio></EntrepotRadio>,
             isSearch: true,
             render(col) {
-              console.log(entrepotList);
-              const target = entrepotList?.find(
-                (oitem) => String(oitem.value) === String(col)
-              );
-              return target?.label || col;
+              return <EntrepotNameFC value={String(col)} />;
             },
           },
           {
@@ -73,15 +98,15 @@ export default () => {
           //     field: 'status',
           //   },
           // },
-          {
-            schema: {
-              label: '状态',
-              field: 'returnStatus',
-            },
-            render(col) {
-              return col || '-';
-            },
-          },
+          // {
+          //   schema: {
+          //     label: '状态',
+          //     field: 'returnStatus',
+          //   },
+          //   render(col) {
+          //     return col || '-'
+          //   },
+          // },
           {
             schema: {
               label: '备注',
@@ -96,8 +121,40 @@ export default () => {
             control: 'datePickerRange',
             isSearch: true,
           },
+          {
+            schema: {
+              label: '状态',
+              field: 'returnStatus',
+            },
+            render(c) {
+              return (
+                <Tag color={TagColors[Number(c)]}>
+                  <DictNameFC dictCode="tracking_status" value={c} />
+                </Tag>
+              );
+            },
+          },
+          {
+            schema: {
+              field: 'actions',
+            },
+            render(c, row) {
+              return (
+                <Button
+                  type="text"
+                  loading={row === current && loading}
+                  onClick={async () => {
+                    run(row);
+                  }}
+                >
+                  取消退件
+                </Button>
+              );
+            },
+          },
         ]}
       ></SearchTable>
+      <ReturnParcel visible={visible} setVisible={setVisible}></ReturnParcel>
     </div>
   );
 };

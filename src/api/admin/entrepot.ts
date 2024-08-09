@@ -1,6 +1,7 @@
-import { Order } from '@/types/order';
 import baseAxios from '..';
 import { APIListResponse, APIResponse, IPageParams } from '../type';
+
+import { Order } from '@/types/order';
 
 export interface Entrepot {
   consignee: string;
@@ -87,7 +88,10 @@ export const racksAPI = {
 export const scanAPI = {
   // 获取扫码记录
   getRecord(body: Partial<ScanRecord> & IPageParams) {
-    return baseAxios.post<APIListResponse<ScanRecord>>('/api/scanning/record/log/list', body);
+    return baseAxios.post<APIListResponse<ScanRecord>>(
+      '/api/scanning/record/log/list',
+      body
+    );
   },
   // 扫码入库
   scanPut(params: ScanParams) {
@@ -146,12 +150,12 @@ export interface ScanResponse {
   signingTime: string;
   orderItemInfoBgResultList: Omit<Order, 'orderProductList'> &
     {
-      logisticsOrderProductList: logisticsOrderProduct[];
+      logisticsOrderProductList: LogisticsOrderProduct[];
     }[];
   logisticsEntrepot: Entrepot;
 }
 
-interface logisticsOrderProduct {
+export interface LogisticsOrderProduct {
   createBy: string;
   createTime: string;
   updateBy: string;

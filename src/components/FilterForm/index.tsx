@@ -5,19 +5,22 @@ import {
   Grid,
   RowProps,
 } from '@arco-design/web-react';
-import React, { useEffect, useImperativeHandle, useRef } from 'react';
-import createFormItem, { CreateFormItemType } from '../CreateFormItem';
-import { isString, max } from 'lodash';
 import classNames from 'classnames';
+import { isString, max } from 'lodash';
+import React, { useEffect, useImperativeHandle, useRef } from 'react';
+
+import createFormItem, { CreateFormItemType } from '../CreateFormItem';
+
 import { HideClass } from '@/constants/style';
 
-const getFormItemConfigListDefaultValues = (list: CreateFormItemType[]) =>
-  list.reduce((pre, cur) => {
+function getFormItemConfigListDefaultValues(list: CreateFormItemType[]) {
+  return list.reduce((pre, cur) => {
     if (cur.schema.defaultValue !== undefined) {
       pre[cur.schema.field] = cur.schema.defaultValue;
     }
     return pre;
   }, {});
+}
 
 export type FilterFormProps = FormProps & {
   formItemConfigList: CreateFormItemType[];
@@ -55,7 +58,6 @@ const FilterForm = React.forwardRef(
       setTimeout(() => {
         formRef.current?.setFieldsValue(initValues);
       });
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [formItemConfigList.map((item) => item.schema.field).toString()]);
 
     const maxLabelLength =

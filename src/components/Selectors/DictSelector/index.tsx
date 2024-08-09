@@ -1,10 +1,11 @@
-import { DictChild, dictChildAPI } from '@/api/admin/dict';
-import { APIListResponse } from '@/api/type';
 import { Radio, Select } from '@arco-design/web-react';
 import { SelectProps } from '@arco-design/web-react/lib';
 import { useRequest } from 'ahooks';
 import { AxiosResponse } from 'axios';
 import React, { useState } from 'react';
+
+import { DictChild, dictChildAPI } from '@/api/admin/dict';
+import { APIListResponse } from '@/api/type';
 
 type DictSelectorProps = SelectProps & {
   dictCode: string;
@@ -59,7 +60,7 @@ export function useDictOptions(params: {
   return res;
 }
 
-export async function getDictName({
+async function getDictName({
   dictCode,
   value,
 }: {
@@ -79,11 +80,11 @@ export function useDictName({
   dictCode: string;
   value: any;
 }) {
-  if (!dictCode || !value) {
-    return '';
-  }
   const res = useRequest(
     async () => {
+      if (!dictCode || !value) {
+        return '';
+      }
       return getDictName({
         dictCode,
         value,
@@ -94,6 +95,20 @@ export function useDictName({
     }
   );
   return res;
+}
+
+export function DictNameFC({
+  dictCode,
+  value,
+}: {
+  dictCode: string;
+  value: any;
+}) {
+  const { data: name } = useDictName({
+    dictCode,
+    value,
+  });
+  return <>{name}</>;
 }
 
 const DictSelector: React.FC<DictSelectorProps> = (props) => {
@@ -107,13 +122,12 @@ const DictSelector: React.FC<DictSelectorProps> = (props) => {
     case 'radio':
       return (
         <Radio.Group
-          {...selectProps as any}
+          {...(selectProps as any)}
           options={data}
           onChange={selectProps.onChange as any}
         ></Radio.Group>
       );
     case 'select':
-
     default:
       return (
         <Select

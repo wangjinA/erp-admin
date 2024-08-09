@@ -1,4 +1,4 @@
-const antfu = require('@antfu/eslint-config').default
+const antfu = require('@antfu/eslint-config').default;
 
 module.exports = antfu(
   {
@@ -13,7 +13,6 @@ module.exports = antfu(
       'no-console': 'off',
       'unused-imports/no-unused-vars': 'off',
       'unused-imports/no-unused-imports': 2,
-
       'ts/consistent-type-imports': 'off',
       'node/prefer-global/process': 'off',
       'node/prefer-global/buffer': 'off',
@@ -21,18 +20,18 @@ module.exports = antfu(
       'import/order': [
         2,
         {
-          'pathGroups': [
+          pathGroups: [
             {
               pattern: '~/**',
               group: 'external',
               position: 'after',
             },
           ],
-          'alphabetize': { order: 'asc', caseInsensitive: false },
+          alphabetize: { order: 'asc', caseInsensitive: false },
           'newlines-between': 'always-and-inside-groups',
-          'warnOnUnassignedImports': true,
+          warnOnUnassignedImports: true,
         },
       ],
     },
-  },
-)
+  }
+);

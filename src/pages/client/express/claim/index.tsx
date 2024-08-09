@@ -1,11 +1,33 @@
-import React from 'react';
+import { Alert, Button } from '@arco-design/web-react';
+import { useRequest } from 'ahooks';
+import React, { useState } from 'react';
+
+import { expressAPI } from '@/api/client/express';
+import SearchTable from '@/components/SearchTable';
 import EntrepotRadio from '@/components/Selectors/EntrepotRadio';
 import { DividerSchema } from '@/constants/schema/common';
-import SearchTable from '@/components/SearchTable';
-import { expressAPI } from '@/api/client/express';
-import { Alert, List } from '@arco-design/web-react';
+import { showMessageStatus, showModal, tryFn } from '@/utils';
 
 export default () => {
+  const [current, setCurrent] = useState();
+
+  const { run, loading } = useRequest(
+    async (row) => {
+      await showModal({
+        content: '确定认领？',
+        okButtonProps: {
+          status: 'warning',
+        },
+      });
+      setCurrent(row);
+      const res = await tryFn(() => expressAPI.claimHandle(row));
+      await showMessageStatus(res.data);
+    },
+    {
+      manual: true,
+    }
+  );
+
   return (
     <div className="p-4 bg-white">
       <Alert
@@ -22,8 +44,7 @@ export default () => {
       />
       <SearchTable
         name="包裹认领"
-        showActions={false}
-        getListRequest={expressAPI.getClaimList}
+        // getListRequest={expressAPI.getClaimList}
         formItemConfigList={[
           {
             schema: {
@@ -57,7 +78,25 @@ export default () => {
               field: 'createTime',
             },
             control: 'datePickerRange',
-            isSearch:true,
+            isSearch: true,
+          },
+          {
+            schema: {
+              field: 'actions',
+            },
+            render(c, row) {
+              return (
+                <Button
+                  type="text"
+                  loading={row === current && loading} // ! 判断一下id row === current
+                  onClick={async () => {
+                    run(row);
+                  }}
+                >
+                  认领
+                </Button>
+              );
+            },
           },
           // {
           //   schema: {

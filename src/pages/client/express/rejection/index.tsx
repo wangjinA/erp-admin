@@ -1,11 +1,46 @@
-import React from 'react';
+import { Alert, Button, Tag } from '@arco-design/web-react';
+import { useRequest } from 'ahooks';
+import React, { useState } from 'react';
+
+import { expressAPI } from '@/api/client/express';
+import SearchTable, { SearchTableRef } from '@/components/SearchTable';
+import { useDictOptions } from '@/components/Selectors/DictSelector';
 import EntrepotRadio from '@/components/Selectors/EntrepotRadio';
 import { DividerSchema } from '@/constants/schema/common';
-import SearchTable from '@/components/SearchTable';
-import { expressAPI } from '@/api/client/express';
-import { Alert } from '@arco-design/web-react';
+import { TagColors } from '@/pages/admin/components/OrderTable/SendCargoInfo';
+import { showMessageStatus, showModal, tryFn } from '@/utils';
 
 export default () => {
+  const [current, setCurrent] = useState();
+  const ref = React.useRef<SearchTableRef>();
+
+  const { run, loading } = useRequest(
+    async (row) => {
+      await showModal({
+        content: '确定取消？',
+        okButtonProps: {
+          status: 'warning',
+        },
+      });
+      setCurrent(row);
+      const res = await tryFn(() =>
+        expressAPI.updateExpressStatus({
+          orderProductId: 111111,
+          trackingStatus: '填充填充填充！！！',
+        })
+      );
+      await showMessageStatus(res.data);
+      ref.current.refreshSearchTable();
+    },
+    {
+      manual: true,
+    }
+  );
+
+  const { data: dictData, loading: dictLoading } = useDictOptions({
+    dictCode: 'tracking_status',
+  });
+
   return (
     <div className="p-4 bg-white">
       <Alert
@@ -20,10 +55,17 @@ export default () => {
         ))}
       />
       <SearchTable
+        ref={ref}
         name="包裹拒收"
-        showActions={false}
         getListRequest={expressAPI.getRejectList}
         createRequest={expressAPI.addReject}
+        tableProps={{
+          data: [
+            {
+              status: '1',
+            },
+          ],
+        }}
         formItemConfigList={[
           {
             schema: {
@@ -52,14 +94,47 @@ export default () => {
               label: '状态',
               field: 'status',
             },
+            render(c) {
+              return (
+                <Tag color={TagColors[Number(c)]}>
+                  {dictData?.find(({ value }) => value === c)?.label}
+                </Tag>
+              );
+            },
           },
           {
             schema: {
-              label: '签收时间',
-              field: 'createTime',
+              label: '拒收时间',
+              field: '填充11111',
             },
             control: 'datePickerRange',
             isSearch: true,
+          },
+          {
+            schema: {
+              label: '申请时间',
+              field: '填充22222',
+            },
+            control: 'datePickerRange',
+            isSearch: true,
+          },
+          {
+            schema: {
+              field: 'actions',
+            },
+            render(c, row) {
+              return (
+                <Button
+                  type="text"
+                  loading={row === current && loading} // ! 判断一下id row === current
+                  onClick={async () => {
+                    run(row);
+                  }}
+                >
+                  取消拒收
+                </Button>
+              );
+            },
           },
           // {
           //   schema: {
