@@ -1,66 +1,70 @@
-import { SuccessCode } from '@/api';
-import { APIResponse } from '@/api/type';
-import { Message, Modal } from '@arco-design/web-react';
-import { ConfirmProps } from '@arco-design/web-react/es/Modal/confirm';
-import { isArray } from 'lodash';
-import * as XLSX from 'xlsx';
+import { Message, Modal } from '@arco-design/web-react'
+import { ConfirmProps } from '@arco-design/web-react/es/Modal/confirm'
+import { isArray } from 'lodash'
+import * as XLSX from 'xlsx'
 
-export function showMessageStatus(resp: APIResponse<any>) {
+import { SuccessCode } from '@/api'
+import { APIResponse } from '@/api/type'
+
+export function showMessageStatus(resp: APIResponse<any>, message = '操作') {
   if (resp.code === SuccessCode) {
     Message.success({
-      content: '操作成功',
+      content: `${message}成功`,
       duration: 3000,
-    });
-    return Promise.resolve();
-  } else {
-    const errMsg = resp.msg || '操作失败';
+    })
+    return Promise.resolve()
+  }
+  else {
+    const errMsg = resp.msg || `${message}失败`
     Message.error({
       content: errMsg,
       duration: 3000,
-    });
-    return Promise.reject(errMsg);
+    })
+    return Promise.reject(errMsg)
   }
 }
 
 export function toArray(value) {
-  return isArray(value) ? value : [value];
+  return isArray(value) ? value : [value]
 }
 
 export function tryFn<T>(fn: () => Promise<T>, message: string = '请求失败') {
   return fn().catch((error) => {
-    Message.error(message + (error.message || ''));
-    return error;
-  });
+    Message.error(message + (error.message || ''))
+    return error
+  })
 }
 
 export function sleep(timeout) {
-  return new Promise((resolve) => setTimeout(resolve, timeout));
+  return new Promise(resolve => setTimeout(resolve, timeout))
 }
 
 export function getFile() {
   return new Promise<File[]>((resolve, reject) => {
-    const id = 'import-none-file';
+    const id = 'import-none-file'
 
-    let fileInput = document.querySelector<HTMLInputElement>(`#${id}`);
+    let fileInput = document.querySelector<HTMLInputElement>(`#${id}`)
     if (!fileInput) {
-      fileInput = document.createElement('input');
-      fileInput.type = 'file';
-      fileInput.style.display = 'none';
-      fileInput.id = id;
-      document.body.appendChild(fileInput);
+      fileInput = document.createElement('input')
+      fileInput.type = 'file'
+      fileInput.style.display = 'none'
+      fileInput.id = id
+      document.body.appendChild(fileInput)
       // fileInput.accept = acceptTypes;
-    } else {
-      fileInput.files = null;
+    }
+    else {
+      fileInput.files = null
     }
     fileInput.onchange = (e: any) => {
       if (e.target.files.length) {
-        resolve([...e.target.files]);
-      } else {
-        reject();
+        resolve([...e.target.files])
       }
-    };
-    fileInput.click();
-  });
+      else {
+        reject(new Error('文件选择取消'))
+      }
+    }
+    fileInput.click()
+  })
 }
 
 /**
@@ -68,21 +72,21 @@ export function getFile() {
  */
 export function getExcleData(file: File): Promise<any[][]> {
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
+    const reader = new FileReader()
     reader.onload = async function (e) {
-      const data = new Uint8Array(e.target.result as any);
-      const workbook = XLSX.read(data, { type: 'array' });
-      console.log(workbook);
+      const data = new Uint8Array(e.target.result as any)
+      const workbook = XLSX.read(data, { type: 'array' })
+      console.log(workbook)
 
       resolve(
-        workbook.SheetNames.map((item) =>
-          XLSX.utils.sheet_to_json(workbook.Sheets[item], { header: 1 })
-        ).flat(1) as any
-      );
-    };
-    reader.onerror = reject;
-    reader.readAsArrayBuffer(file);
-  });
+        workbook.SheetNames.map(item =>
+          XLSX.utils.sheet_to_json(workbook.Sheets[item], { header: 1 }),
+        ).flat(1) as any,
+      )
+    }
+    reader.onerror = reject
+    reader.readAsArrayBuffer(file)
+  })
 }
 
 export function timeArrToObject(arr: string[], key1: string, key2: string) {
@@ -90,9 +94,9 @@ export function timeArrToObject(arr: string[], key1: string, key2: string) {
     return {
       key1: arr[0],
       key2: arr[1],
-    };
+    }
   }
-  return {};
+  return {}
 }
 
 export function showModal(params: Partial<ConfirmProps>) {
@@ -108,14 +112,15 @@ export function showModal(params: Partial<ConfirmProps>) {
       onOk: resolve,
       onCancel: reject,
       ...params,
-    });
-  });
+    })
+  })
 }
 
 export function showObj(value, obj): any[] {
   if (value) {
-    return [obj];
-  } else {
-    return [];
+    return [obj]
+  }
+  else {
+    return []
   }
 }

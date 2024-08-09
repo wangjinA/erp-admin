@@ -35,7 +35,7 @@ import { OrderPageProps } from '@/pages/client/order/orderPage'
 import { isClient } from '@/routes'
 import { StyleProps } from '@/types'
 import { Order, OrderResponseItem } from '@/types/order'
-import { showMessageStatus, showModal } from '@/utils'
+import { showMessageStatus, showModal, tryFn } from '@/utils'
 
 export interface OrderTablePorps extends StyleProps {
   // tableProps: TableProps;
@@ -136,12 +136,13 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                     编辑打包
                   </Button>
                   <Button
-                    onClick={() => {
-                      showModal({
+                    onClick={async () => {
+                      await showModal({
                         content: '确定要取消打包吗？',
-                      }).then((res) => {
-                        Message.success('取消成功！')
                       })
+                      const res = await tryFn(() => orderAPI.cancelPack(item.id))
+                      await showMessageStatus(res.data, '取消打包')
+                      bus.emit(EmitTypes.refreshOrderPage)
                     }}
                   >
                     取消打包
