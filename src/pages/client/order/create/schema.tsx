@@ -1,7 +1,8 @@
-import { CreateFormItemType } from '@/components/CreateFormItem';
-import DictSelector from '@/components/Selectors/DictSelector';
-import EntrepotSelector from '@/components/Selectors/EntrepotSelector';
-import React from 'react';
+import React from 'react'
+
+import { CreateFormItemType } from '@/components/CreateFormItem'
+import DictSelector from '@/components/Selectors/DictSelector'
+import EntrepotSelector from '@/components/Selectors/EntrepotSelector'
 
 export const OrderCreateSchema1: CreateFormItemType[] = [
   {
@@ -22,6 +23,7 @@ export const OrderCreateSchema1: CreateFormItemType[] = [
     schema: {
       field: 'shrimpOrderNo',
       label: '订单编号',
+      required: true,
     },
     control: 'input',
   },
@@ -91,7 +93,7 @@ export const OrderCreateSchema1: CreateFormItemType[] = [
   //   },
   //   control: 'upload',
   // },
-];
+]
 
 export const OrderCreateSchema2: CreateFormItemType[] = [
   {
@@ -106,6 +108,7 @@ export const OrderCreateSchema2: CreateFormItemType[] = [
   },
   {
     schema: {
+      required: true,
       field: 'productName',
       label: '商品名称',
     },
@@ -146,7 +149,7 @@ export const OrderCreateSchema2: CreateFormItemType[] = [
     },
     control: 'number',
   },
-];
+]
 export const OrderCreateSchema3: CreateFormItemType[] = [
   {
     schema: {
@@ -211,4 +214,4 @@ export const OrderCreateSchema3: CreateFormItemType[] = [
     },
     control: 'input',
   },
-];
+]

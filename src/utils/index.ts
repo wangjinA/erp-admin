@@ -35,6 +35,16 @@ export function tryFn<T>(fn: () => Promise<T>, message: string = '请求失败')
   })
 }
 
+export function showMessage<T>(fn: () => Promise<T>, message: string = '操作'): Promise<T> {
+  return fn().then((r: T) => {
+    Message.success(`${message}成功`)
+    return r
+  }).catch((error) => {
+    Message.error(`${message}失败 ${error.message || ''}`)
+    return error
+  })
+}
+
 export function sleep(timeout) {
   return new Promise(resolve => setTimeout(resolve, timeout))
 }

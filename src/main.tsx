@@ -1,49 +1,54 @@
-import './style/global.less';
-import './utils/index';
-import React, { useEffect } from 'react';
-import ReactDOM from 'react-dom';
-import { createStore } from 'redux';
-import { Provider } from 'react-redux';
-import { ConfigProvider, Message } from '@arco-design/web-react';
-import zhCN from '@arco-design/web-react/es/locale/zh-CN';
-import enUS from '@arco-design/web-react/es/locale/en-US';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import rootReducer from './store';
-import PageLayout from './layout';
-import { GlobalContext } from './context';
+import { ConfigProvider, Message } from '@arco-design/web-react'
+import enUS from '@arco-design/web-react/es/locale/en-US'
+import zhCN from '@arco-design/web-react/es/locale/zh-CN'
+import { isEmpty } from 'lodash'
+import Mock from 'mockjs'
+import React, { useEffect } from 'react'
+
+import ReactDOM from 'react-dom'
+import { Provider } from 'react-redux'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { createStore } from 'redux'
+
+import { userAPI } from './api/admin/user'
+import { GlobalContext } from './context'
+import PageLayout from './layout'
+import AdminLogin from './pages/admin/login'
+import ClientLogin from './pages/client/login'
+import { generatePermission, toLoginPage } from './routes'
+import rootReducer from './store'
+import './style/global.less'
 // import Login from './components/Login';
-import checkLogin from './utils/checkLogin';
-import changeTheme from './utils/changeTheme';
-import useStorage from './utils/useStorage';
-import Mock from 'mockjs';
+import changeTheme from './utils/changeTheme'
+import checkLogin from './utils/checkLogin'
+import './utils/index'
+import useStorage from './utils/useStorage'
+
 // import './mock';
-import { generatePermission, toLoginPage } from './routes';
-import userPNG from '@/assets/user.png';
-import { userAPI } from './api/admin/user';
-import AdminLogin from './pages/admin/login';
-import ClientLogin from './pages/client/login';
-import { isEmpty } from 'lodash';
+
+import userPNG from '@/assets/user.png'
+
 // import { AccessDB, IndexedDB, initDB } from 'react-indexed-db-hook';
 // import { DBConfig } from './db';
-const store = createStore(rootReducer);
+const store = createStore(rootReducer)
 // initDB(DBConfig);
 function Index() {
-  const [lang, setLang] = useStorage('arco-lang', 'zh-CN');
-  const [theme, setTheme] = useStorage('arco-theme', 'light');
+  const [lang, setLang] = useStorage('arco-lang', 'zh-CN')
+  const [theme, setTheme] = useStorage('arco-theme', 'light')
 
   function getArcoLocale() {
     switch (lang) {
       case 'zh-CN':
-        return zhCN;
+        return zhCN
       case 'en-US':
-        return enUS;
+        return enUS
       default:
-        return zhCN;
+        return zhCN
     }
   }
 
   async function fetchUserInfo() {
-    const userRole = window.localStorage.getItem('userRole') || 'admin';
+    const userRole = window.localStorage.getItem('userRole') || 'admin'
     const userInfo = {
       name: 'admin',
       avatar: userPNG,
@@ -61,22 +66,22 @@ function Index() {
       accountId: 123123,
       registrationTime: Mock.Random.datetime('yyyy-MM-dd HH:mm:ss'),
       permissions: generatePermission(userRole),
-    };
-    
+    }
+
     if (!isEmpty(store.getState().userInfo)) {
-      return;
+      return
     }
     store.dispatch({
       type: 'update-userInfo',
       payload: { userLoading: true },
-    });
+    })
     try {
-      const res = await userAPI.personalCenter();
-      console.log(res);
+      const res = await userAPI.personalCenter()
+      console.log(res)
       store.dispatch({
         type: 'update-userInfo',
         payload: { userInfo: res.data.data, userLoading: false },
-      });
+      })
       // const res = await userAPI.personalCenter();
       // console.log(res);
       // store.dispatch({
@@ -101,9 +106,10 @@ function Index() {
       //     userLoading: false,
       //   },
       // });
-    } catch (error) {
-      Message.error('登录失效');
-      toLoginPage();
+    }
+    catch (error) {
+      Message.error('登录失效')
+      toLoginPage()
       // store.dispatch({
       //   type: 'update-userInfo',
       //   payload: { userInfo, userLoading: false },
@@ -113,22 +119,23 @@ function Index() {
 
   useEffect(() => {
     if (checkLogin()) {
-      fetchUserInfo();
-    } else {
-      toLoginPage();
+      fetchUserInfo()
     }
-  }, []);
+    else {
+      toLoginPage()
+    }
+  }, [])
 
   useEffect(() => {
-    changeTheme(theme);
-  }, [theme]);
+    changeTheme(theme)
+  }, [theme])
 
   const contextValue = {
     lang,
     setLang,
     theme,
     setTheme,
-  };
+  }
 
   return (
     <BrowserRouter>
@@ -160,7 +167,7 @@ function Index() {
         </Provider>
       </ConfigProvider>
     </BrowserRouter>
-  );
+  )
 }
 
-ReactDOM.render(<Index />, document.getElementById('root'));
+ReactDOM.render(<Index />, document.getElementById('root'))

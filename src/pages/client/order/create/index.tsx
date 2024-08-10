@@ -2,6 +2,7 @@ import {
   Button,
   Card,
   Form,
+  FormInstance,
   Result,
   Space,
   Steps,
@@ -11,7 +12,9 @@ import { IconDelete, IconPlus } from '@arco-design/web-react/icon'
 
 import { useLocalStorageState, useRequest } from 'ahooks'
 import classNames from 'classnames'
-import { useEffect, useState } from 'react'
+import { random } from 'lodash'
+import { useEffect, useRef, useState } from 'react'
+import { useHistory } from 'react-router'
 import { useDebouncedCallback } from 'use-debounce'
 
 import styles from './index.module.less'
@@ -26,8 +29,8 @@ import { orderAPI } from '@/api/admin/order'
 import FilterForm from '@/components/FilterForm'
 import PopconfirmDelete from '@/components/PopconfirmDelete'
 import { HideClass } from '@/constants/style'
-import { Order } from '@/types/order'
-import { showMessageStatus, tryFn } from '@/utils'
+import { Order, OrderProductList } from '@/types/order'
+import { showMessage } from '@/utils'
 import useLocale from '@/utils/useLocale'
 
 const { Title, Paragraph } = Typography
@@ -40,7 +43,15 @@ export default () => {
     },
   )
   const [current, setCurrent] = useState(3)
-  const [skuList, setSkuList] = useState([0])
+  const [skuList, setSkuList] = useState<(Partial<OrderProductList & { _id: number }>)[]>((formData.orderProductList || [{}]).map(item => ({
+    ...item,
+    _id: random(0, 999999),
+  })))
+  const history = useHistory()
+
+  const skuRefs = useRef<FormInstance<any>[]>([])
+  const [ref1] = Form.useForm()
+  const [ref3] = Form.useForm()
 
   const setFormDataDebounce = useDebouncedCallback((v: Partial<Order>) => {
     setFormData({
@@ -49,31 +60,35 @@ export default () => {
     })
   }, 300)
 
-  const [form] = Form.useForm()
   const t = useLocale(locale)
   const createHandler = useRequest(
-    () => {
+    async () => {
       console.log(formData)
-      return tryFn(async () => {
-        const res = await orderAPI.insert(formData)
-        await showMessageStatus(res.data)
-      })
+      await showMessage(() => orderAPI.insert(formData))
+      setCurrent(current + 1)
     },
     {
       manual: true,
     },
   )
-  const reCreateForm = () => {
-    form.resetFields()
-    setCurrent(1)
-  }
+  // const reCreateForm = () => {
+  //   form.resetFields()
+  //   setCurrent(1)
+  // }
 
   const toNext = async () => {
-    try {
-      await form.validate()
-      setCurrent(current + 1)
+    if (current === 1) {
+      await ref1.validate()
     }
-    catch (_) {}
+    else if (current === 2) {
+      console.log(skuRefs.current)
+
+      await Promise.all(skuRefs.current?.map(item => item.validate()))
+    }
+    else if (current === 3) {
+      await ref3.validate()
+    }
+    setCurrent(current + 1)
   }
 
   useEffect(() => {
@@ -96,6 +111,7 @@ export default () => {
             <Steps.Step title="完成创建" description="创建成功" />
           </Steps>
           <FilterForm
+            form={ref1}
             initialValues={formData}
             className={classNames(current !== 1 ? HideClass : '')}
             span={12}
@@ -120,16 +136,17 @@ export default () => {
               <div className="flex flex-col gap-4">
                 {skuList.map((item, index) => (
                   <Card
-                    key={item}
+                    key={item._id}
                     bordered={true}
                     title={`SKU - ${index + 1}`}
-                    hoverable
+                    hoverable={true}
                     extra={
                       skuList.length > 1 && (
                         <Space>
                           <PopconfirmDelete
                             onOk={() => {
                               skuList.splice(index, 1)
+                              setFormDataDebounce({ orderProductList: formData.orderProductList.filter((_, i) => i !== index) })
                               setSkuList([...skuList])
                             }}
                           >
@@ -164,6 +181,15 @@ export default () => {
                       span={12}
                       size="small"
                       formItemConfigList={OrderCreateSchema2}
+
+                      ref={(el: FormInstance) => {
+                        if (!el) {
+                          skuRefs.current.splice(index, 1)
+                        }
+                        else {
+                          skuRefs.current[index] = el
+                        }
+                      }}
                       // formItemConfigList={OrderCreateSchema2.map(oitem => ({
                       //   ...oitem,
                       //   schema: {
@@ -184,7 +210,9 @@ export default () => {
                   className="mt-4"
                   icon={<IconPlus />}
                   onClick={() => {
-                    skuList.push(skuList.length)
+                    skuList.push({
+                      _id: random(0, 999999),
+                    })
                     setSkuList([...skuList])
                   }}
                 >
@@ -193,28 +221,8 @@ export default () => {
               </div>
             </Form.Provider>
           </div>
-          {current === 4 && (
-            <Result
-              status="success"
-              title={t['stepForm.created.success.title']}
-              subTitle={t['stepForm.created.success.desc']}
-              extra={[
-                <Button
-                  key="reset"
-                  style={{ marginRight: 16 }}
-                  onClick={() => {
-                    setCurrent(1)
-                  }}
-                >
-                  继续创建
-                </Button>,
-                <Button key="again" type="primary" onClick={reCreateForm}>
-                  查看订单
-                </Button>,
-              ]}
-            />
-          )}
           <FilterForm
+            form={ref3}
             initialValues={formData}
             className={classNames(current !== 3 ? HideClass : '')}
             span={12}
@@ -225,6 +233,36 @@ export default () => {
             }}
           >
           </FilterForm>
+          {current === 4 && (
+            <Result
+              status="success"
+              title={t['stepForm.created.success.title']}
+              subTitle={t['stepForm.created.success.desc']}
+              extra={[
+                <Button
+                  key="reset"
+                  style={{ marginRight: 16 }}
+                  onClick={() => {
+                    // reCreateForm()
+                    setCurrent(1)
+                  }}
+                >
+                  继续创建
+                </Button>,
+                <Button
+                  key="again"
+                  type="primary"
+                  onClick={
+                    () => {
+                      history.push('/client/order/alreadyPacked')
+                    }
+                  }
+                >
+                  查看订单
+                </Button>,
+              ]}
+            />
+          )}
           <div className="flex justify-center gap-4 mt-12">
             {current > 1 && current < 4 && (
               <Button size="large" onClick={() => setCurrent(current - 1)}>
@@ -240,7 +278,9 @@ export default () => {
               <Button
                 type="primary"
                 size="large"
-                onClick={() => createHandler.run()}
+                onClick={() => {
+                  createHandler.run()
+                }}
                 loading={createHandler.loading}
               >
                 创建

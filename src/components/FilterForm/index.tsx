@@ -4,31 +4,31 @@ import {
   FormProps,
   Grid,
   RowProps,
-} from '@arco-design/web-react';
-import classNames from 'classnames';
-import { isString, max } from 'lodash';
-import React, { useEffect, useImperativeHandle, useRef } from 'react';
+} from '@arco-design/web-react'
+import classNames from 'classnames'
+import { isString, max } from 'lodash'
+import React, { useEffect, useImperativeHandle, useRef } from 'react'
 
-import createFormItem, { CreateFormItemType } from '../CreateFormItem';
+import createFormItem, { CreateFormItemType } from '../CreateFormItem'
 
-import { HideClass } from '@/constants/style';
+import { HideClass } from '@/constants/style'
 
 function getFormItemConfigListDefaultValues(list: CreateFormItemType[]) {
   return list.reduce((pre, cur) => {
     if (cur.schema.defaultValue !== undefined) {
-      pre[cur.schema.field] = cur.schema.defaultValue;
+      pre[cur.schema.field] = cur.schema.defaultValue
     }
-    return pre;
-  }, {});
+    return pre
+  }, {})
 }
 
 export type FilterFormProps = FormProps & {
-  formItemConfigList: CreateFormItemType[];
-  className?: string | string[];
-  gutter?: RowProps['gutter'];
-  span?: number;
-  labelLength?: number;
-};
+  formItemConfigList: CreateFormItemType[]
+  className?: string | string[]
+  gutter?: RowProps['gutter']
+  span?: number
+  labelLength?: number
+}
 const FilterForm = React.forwardRef(
   (
     {
@@ -42,10 +42,10 @@ const FilterForm = React.forwardRef(
       initialValues,
       ...otherFormProps
     }: FilterFormProps,
-    ref
+    ref,
   ) => {
-    const formRef = useRef<FormInstance>();
-    useImperativeHandle(ref, () => formRef.current);
+    const formRef = useRef<FormInstance>()
+    useImperativeHandle(ref, () => formRef.current)
 
     // 设置一下初始值
     useEffect(() => {
@@ -53,20 +53,20 @@ const FilterForm = React.forwardRef(
         ...initialValues,
         ...formRef.current.getFieldsValue(),
         ...getFormItemConfigListDefaultValues(formItemConfigList),
-      };
+      }
 
       setTimeout(() => {
-        formRef.current?.setFieldsValue(initValues);
-      });
-    }, [formItemConfigList.map((item) => item.schema.field).toString()]);
+        formRef.current?.setFieldsValue(initValues)
+      })
+    }, [formItemConfigList.map(item => item.schema.field).toString()])
 
-    const maxLabelLength =
-      labelLength ||
-      max(
-        formItemConfigList.map((item) =>
-          isString(item.schema.label) ? item.schema.label.length : 0
-        )
-      ) + 2;
+    const maxLabelLength
+      = labelLength
+      || max(
+        formItemConfigList.map(item =>
+          isString(item.schema.label) ? item.schema.label.length : 0,
+        ),
+      ) + 3
 
     return (
       <Form
@@ -81,7 +81,7 @@ const FilterForm = React.forwardRef(
         }}
         onValuesChange={(value) => {
           // 因为去除筛选条件后，少了一个formItem，此时需要再获取一遍最新数据
-          onValuesChange?.(value, formRef.current.getFieldsValue());
+          onValuesChange?.(value, formRef.current.getFieldsValue())
         }}
         initialValues={initialValues}
         {...otherFormProps}
@@ -89,29 +89,37 @@ const FilterForm = React.forwardRef(
       >
         <Grid.Row gutter={gutter} className="w-full">
           {[...formItemConfigList]
-            .filter((item) => item.schema.field || item.schema.key)
-            .map((item) => (
+            .filter(item => item.schema.field || item.schema.key)
+            .map(item => (
               <Grid.Col
                 className={classNames(
-                  item.formItemProps?.hidden ? HideClass : ''
+                  item.formItemProps?.hidden ? HideClass : '',
                 )}
                 span={item.schema.span || span}
                 key={item.schema.field || item.schema.key}
               >
                 {createFormItem({
                   ...item,
+                  formItemProps: {
+                    ...item.formItemProps,
+                    labelCol: {
+                      ...labelCol,
+                      ...item.formItemProps?.labelCol,
+                      style: { flex: `0 0 ${maxLabelLength}em`, ...labelCol?.style },
+                    },
+                  },
                   schema: {
                     ...item.schema,
                     defaultValue:
-                      initialValues?.[item.schema.field] ??
-                      item.schema.defaultValue,
+                      initialValues?.[item.schema.field]
+                      ?? item.schema.defaultValue,
                   },
                 })}
               </Grid.Col>
             ))}
         </Grid.Row>
       </Form>
-    );
-  }
-);
-export default FilterForm;
+    )
+  },
+)
+export default FilterForm
