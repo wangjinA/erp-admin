@@ -1,5 +1,6 @@
 import { Message, Modal } from '@arco-design/web-react'
 import { ConfirmProps } from '@arco-design/web-react/es/Modal/confirm'
+import { AxiosResponse } from 'axios'
 import { isArray } from 'lodash'
 import * as XLSX from 'xlsx'
 
@@ -35,13 +36,25 @@ export function tryFn<T>(fn: () => Promise<T>, message: string = '请求失败')
   })
 }
 
-export function showMessage<T>(fn: () => Promise<T>, message: string = '操作'): Promise<T> {
-  return fn().then((r: T) => {
-    Message.success(`${message}成功`)
-    return r
+export function showMessage<T>(fn: () => Promise<AxiosResponse<APIResponse<T>>>, message: string = '操作'): Promise<AxiosResponse<APIResponse<T>>> {
+  return fn().then((resp: AxiosResponse<APIResponse<T>>) => {
+    if (resp.data.code === SuccessCode) {
+      Message.success({
+        content: `${message}成功`,
+        duration: 3000,
+      })
+      return resp
+    }
+    else {
+      const errMsg = resp.data.msg || `${message}失败`
+      throw new Error(errMsg)
+    }
   }).catch((error) => {
-    Message.error(`${message}失败 ${error.message || ''}`)
-    return error
+    Message.error({
+      content: `${message}失败 ${error.message ? `,${error.message}` : ''}`,
+      duration: 3000,
+    })
+    throw error
   })
 }
 
