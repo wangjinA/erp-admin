@@ -148,10 +148,10 @@ export const routes: IRoute[] = [
       //   name: 'admin.business.returnToShelves',
       //   key: 'admin/business/returnToShelves',
       // },
-      {
-        name: 'admin.business.retention',
-        key: 'admin/business/retention',
-      },
+      // {
+      //   name: 'admin.business.retention',
+      //   key: 'admin/business/retention',
+      // },
     ],
   },
   {

@@ -66,7 +66,7 @@ const FilterForm = React.forwardRef(
         formItemConfigList.map(item =>
           isString(item.schema.label) ? item.schema.label.length : 0,
         ),
-      ) + 3
+      ) + 2 + (formItemConfigList.some(oitem => oitem.schema.required || oitem.formItemProps?.rules?.some(jitem => jitem.required)) ? 0.6 : 0)
 
     return (
       <Form

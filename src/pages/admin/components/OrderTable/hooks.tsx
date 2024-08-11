@@ -1,23 +1,25 @@
-import GoodsInfo from '@/components/GoodsInfo';
-import { isAdmin } from '@/routes';
-import { Button, Descriptions, Link } from '@arco-design/web-react';
-import classNames from 'classnames';
-import { OrderTablePorps } from '.';
-import styles from './index.module.less';
-import { IconFile } from '@arco-design/web-react/icon';
-import SendCargoInfo from './SendCargoInfo';
-import { Order } from '@/types/order';
+import { Button, Descriptions } from '@arco-design/web-react'
+
+import { IconFile } from '@arco-design/web-react/icon'
+
+import SendCargoInfo from './SendCargoInfo'
+
+import { OrderTablePorps } from '.'
+
+import GoodsInfo from '@/components/GoodsInfo'
+import { isAdmin } from '@/routes'
+import { Order } from '@/types/order'
 
 export function useColumns(props: OrderTablePorps) {
-  const { dictCode } = props;
+  const { dictCode } = props
   return [
     {
       title: '商品信息',
       dataIndex: 'orderProductVOList',
       width: 550,
       render(col) {
-        console.log(col);
-        return <GoodsInfo data={col}></GoodsInfo>;
+        console.log(col)
+        return <GoodsInfo data={col}></GoodsInfo>
       },
       fixed: 'left',
     },
@@ -26,7 +28,7 @@ export function useColumns(props: OrderTablePorps) {
       dataIndex: 'orderProductVOList_1',
       width: 210,
       render(col, row) {
-        return <SendCargoInfo data={row}></SendCargoInfo>;
+        return <SendCargoInfo data={row}></SendCargoInfo>
       },
     },
     {
@@ -70,7 +72,7 @@ export function useColumns(props: OrderTablePorps) {
             labelStyle={{ textAlign: 'right' }}
             style={{ marginBottom: 20 }}
           />
-        );
+        )
       },
     },
     {
@@ -105,7 +107,7 @@ export function useColumns(props: OrderTablePorps) {
             labelStyle={{ textAlign: 'right' }}
             style={{ marginBottom: 20 }}
           />
-        );
+        )
       },
     },
     {
@@ -132,7 +134,7 @@ export function useColumns(props: OrderTablePorps) {
             labelStyle={{ textAlign: 'right' }}
             style={{ marginBottom: 20 }}
           />
-        );
+        )
       },
     },
     {
@@ -167,7 +169,7 @@ export function useColumns(props: OrderTablePorps) {
             labelStyle={{ textAlign: 'right' }}
             style={{ marginBottom: 20 }}
           />
-        );
+        )
       },
     },
     {
@@ -197,7 +199,7 @@ export function useColumns(props: OrderTablePorps) {
             ]}
             style={{ marginBottom: 20 }}
           />
-        );
+        )
       },
     },
     ...(dictCode === 'order_status'
@@ -238,10 +240,10 @@ export function useColumns(props: OrderTablePorps) {
                   labelStyle={{ textAlign: 'right' }}
                   style={{ marginBottom: 20 }}
                 />
-              );
+              )
             },
           },
         ]
       : []),
-  ];
+  ]
 }

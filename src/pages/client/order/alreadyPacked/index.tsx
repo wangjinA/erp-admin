@@ -1,6 +1,7 @@
-import React from 'react';
-import OrderPage from '../orderPage';
+import React from 'react'
 
-export default (props: {}) => {
-  return <OrderPage dictCode="order_status"></OrderPage>;
-};
+import OrderPage from '../orderPage'
+
+export default (props) => {
+  return <OrderPage dictCode="order_status"></OrderPage>
+}

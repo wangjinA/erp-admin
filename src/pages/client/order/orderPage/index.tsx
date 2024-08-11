@@ -1,10 +1,12 @@
 import {
+  Badge,
   Button,
   Space,
   Tabs,
 } from '@arco-design/web-react'
 import { IconRefresh, IconSearch } from '@arco-design/web-react/icon'
 import { useLocalStorageState, usePagination } from 'ahooks'
+import { omit } from 'lodash'
 import React, { useState } from 'react'
 
 import { OrderFilter } from './schema'
@@ -40,6 +42,7 @@ const searchStatusMap = {
 export default (props: OrderPageProps) => {
   const { dictCode } = props
   const [activeTab, setActiveTab] = useLocalStorageState<string>(location.pathname)
+  const [countMap, setCountMap] = useState<Record<string, number>>()
   const [formData, _setFormData] = useState<any>({
     selectLogisticsOrderVO: {},
     selectOrderProductVO: {},
@@ -71,7 +74,7 @@ export default (props: OrderPageProps) => {
       if (!shrimpStatus?.length) {
         return null
       }
-      const res = await orderAPI.getList({
+      const body = {
         ...formData,
         selectOrderProductVO: {
           ...formData.selectOrderProductVO,
@@ -90,7 +93,17 @@ export default (props: OrderPageProps) => {
         },
         pageNum: params?.current || pagination.current,
         pageSize: params?.pageSize || pagination.pageSize,
+      }
+      const res = await orderAPI.getList(body)
+      orderAPI.getPackCount({
+        ...body,
+        selectLogisticsOrderVO: {
+          ...omit(body.selectLogisticsOrderVO, ['orderStatus']),
+        },
+      }).then((res) => {
+        setCountMap(res.data.data)
       })
+
       res.data.data.list = await Promise.all(
         res.data.data.list.map(async (item) => {
           item.sendWarehouseText
@@ -109,6 +122,7 @@ export default (props: OrderPageProps) => {
       refreshDeps: [activeTab, shrimpStatus],
     },
   )
+
   useEventBus(EmitTypes.refreshOrderPage, () => {
     refresh()
   })
@@ -175,7 +189,13 @@ export default (props: OrderPageProps) => {
         onChange={v => setActiveTab(v)}
       >
         {shrimpStatus?.map((x, i) => (
-          <Tabs.TabPane key={x.value} title={x.label}></Tabs.TabPane>
+          <Tabs.TabPane
+            key={x.value}
+            title={
+              <Badge offset={[13, -5]} count={countMap?.[x.value]}><span>{x.label}</span></Badge>
+            }
+          >
+          </Tabs.TabPane>
         ))}
       </Tabs>
       <OrderTable

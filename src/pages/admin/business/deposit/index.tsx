@@ -67,6 +67,20 @@ function ShowAlert(props: {
           )}
         />
       )
+    case '4':
+      return (
+        <Alert
+          className="mt-4"
+          type="error"
+          title={(
+            <div>
+              快递单号：【
+              {trackingNo}
+              】已拒收
+            </div>
+          )}
+        />
+      )
     default:
       return (
         <Alert
@@ -111,7 +125,7 @@ export default () => {
   const [trackingNo, setTrackingNo] = useState<string>()
 
   return (
-    <div>
+    <div className="bg-white py-6 px-4">
       <ScanCommon
         onScan={(info) => {
           run(info)

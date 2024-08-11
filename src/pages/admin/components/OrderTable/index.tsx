@@ -7,98 +7,98 @@ import {
   Spin,
   Tag,
   Timeline,
-} from '@arco-design/web-react';
+} from '@arco-design/web-react'
 
-import useForm from '@arco-design/web-react/es/Form/useForm';
-import { IconEdit, IconFile, IconPlus } from '@arco-design/web-react/icon';
-import { useRequest } from 'ahooks';
-import { PaginationResult } from 'ahooks/lib/usePagination/types';
+import useForm from '@arco-design/web-react/es/Form/useForm'
+import { IconEdit, IconFile, IconPlus } from '@arco-design/web-react/icon'
+import { useRequest } from 'ahooks'
+import { PaginationResult } from 'ahooks/lib/usePagination/types'
 
-import { omit } from 'lodash';
-import React, { useState } from 'react';
+import { omit } from 'lodash'
+import React, { useState } from 'react'
 
-import OrderHeaderStatusInfo from './OrderHeaderStatusInfo';
-import { TagColors } from './SendCargoInfo';
-import { useColumns } from './hooks';
+import OrderHeaderStatusInfo from './OrderHeaderStatusInfo'
+import { TagColors } from './SendCargoInfo'
+import { useColumns } from './hooks'
 
-import { SuccessCode } from '@/api';
-import { orderAPI } from '@/api/client/order';
-import { APIListResponse } from '@/api/type';
-import FilterForm from '@/components/FilterForm';
-import GoodsInfo from '@/components/GoodsInfo';
-import PopconfirmDelete from '@/components/PopconfirmDelete';
+import { SuccessCode } from '@/api'
+import { orderAPI } from '@/api/client/order'
+import { APIListResponse } from '@/api/type'
+import FilterForm from '@/components/FilterForm'
+import GoodsInfo from '@/components/GoodsInfo'
+import PopconfirmDelete from '@/components/PopconfirmDelete'
 import DictSelector, {
   useDictOptions,
-} from '@/components/Selectors/DictSelector';
-import EntrepotSelector from '@/components/Selectors/EntrepotSelector';
-import { EmitTypes, bus } from '@/hooks/useEventBus';
-import { OrderCreateSchema2 } from '@/pages/client/order/create/schema';
-import { OrderPageProps } from '@/pages/client/order/orderPage';
-import { isClient } from '@/routes';
-import { StyleProps } from '@/types';
-import { Order, OrderResponseItem } from '@/types/order';
-import { showMessageStatus, showModal, tryFn } from '@/utils';
+} from '@/components/Selectors/DictSelector'
+import EntrepotSelector from '@/components/Selectors/EntrepotSelector'
+import { EmitTypes, bus } from '@/hooks/useEventBus'
+import { OrderCreateSchema2 } from '@/pages/client/order/create/schema'
+import { OrderPageProps } from '@/pages/client/order/orderPage'
+import { isClient } from '@/routes'
+import { StyleProps } from '@/types'
+import { Order, OrderResponseItem } from '@/types/order'
+import { showMessageStatus, showModal, tryFn } from '@/utils'
 
 export interface OrderTablePorps extends StyleProps {
   // tableProps: TableProps;
-  data?: APIListResponse<OrderResponseItem>['data'];
-  dictCode: OrderPageProps['dictCode'];
-  loading: boolean;
-  run: any;
+  data?: APIListResponse<OrderResponseItem>['data']
+  dictCode: OrderPageProps['dictCode']
+  loading: boolean
+  run: any
   pagination: PaginationResult<
     APIListResponse<Order>['data'],
     any
-  >['pagination'];
+  >['pagination']
 }
 
-export const labelClass = 'arco-descriptions-item-label w-auto pb-0';
-export const valueClass = 'arco-descriptions-item-label w-auto pb-0';
+export const labelClass = 'arco-descriptions-item-label w-auto pb-0'
+export const valueClass = 'arco-descriptions-item-label w-auto pb-0'
 
 const OrderTable: React.FC<OrderTablePorps> = (props) => {
-  const { className, style, run, dictCode, data, pagination } = props;
-  const [addVisiable, setAddVisiable] = useState(false);
-  const [record, setRecord] = useState(false);
-  const [edit, setEdit] = useState<any>();
-  const [sheet, setSheet] = useState<any>();
+  const { className, style, run, dictCode, data, pagination } = props
+  const [addVisiable, setAddVisiable] = useState(false)
+  const [record, setRecord] = useState(false)
+  const [edit, setEdit] = useState<any>()
+  const [sheet, setSheet] = useState<any>()
   // const [editProductList, setEditProductList] = useState<any>();
 
-  const columns = useColumns(props);
+  const columns = useColumns(props)
   const refreshHandler = useRequest(
     async (id) => {
-      const res = await orderAPI.refresh(id);
-      await showMessageStatus(res.data);
+      const res = await orderAPI.refresh(id)
+      await showMessageStatus(res.data)
     },
     {
       manual: true,
-    }
-  );
+    },
+  )
   const logHandler = useRequest(
     async (id) => {
-      return orderAPI.getLog(id).then((r) => r.data);
+      return orderAPI.getLog(id).then(r => r.data)
     },
     {
       manual: true,
-    }
-  );
+    },
+  )
   const updateHandler = useRequest(
     async () => {
       const res = await orderAPI.update(
-        omit(edit, ['orderProductVOList', 'orderPackageList'])
-      );
-      await showMessageStatus(res.data);
-      setEdit(null);
-      bus.emit(EmitTypes.refreshOrderPage);
+        omit(edit, ['orderProductVOList', 'orderPackageList']),
+      )
+      await showMessageStatus(res.data)
+      setEdit(null)
+      bus.emit(EmitTypes.refreshOrderPage)
     },
     {
       manual: true,
-    }
-  );
+    },
+  )
 
   const { data: orderStatusOptions } = useDictOptions({
     dictCode: 'order_status',
-  });
+  })
 
-  const [form] = useForm();
+  const [form] = useForm()
   // const { data: shopeeStatus } = useDictOptions({
   //   dictCode: 'shopee_status',
   //   displayName: '',
@@ -108,7 +108,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
     <div className={className}>
       <div>
         <header className="flex">
-          {columns.map((item) => (
+          {columns.map(item => (
             <div
               className="font-medium px-4 py-2"
               style={{
@@ -122,17 +122,17 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
           ))}
         </header>
         <main className="flex flex-col gap-4 bg-white">
-          {data?.list?.map((item) => (
+          {data?.list?.map(item => (
             <div className="border" key={item.id}>
               <header className="flex items-center p-2 border-b">
                 <Button.Group>
                   <Button
                     onClick={() => {
-                      console.log(item);
+                      console.log(item)
                       setEdit({
                         ...item,
                         logisticsOrderProductList: item.orderProductVOList,
-                      });
+                      })
                     }}
                   >
                     编辑打包
@@ -141,12 +141,12 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                     onClick={async () => {
                       await showModal({
                         content: '确定要取消打包吗？',
-                      });
+                      })
                       const res = await tryFn(() =>
-                        orderAPI.cancelPack(item.id)
-                      );
-                      await showMessageStatus(res.data, '取消打包');
-                      bus.emit(EmitTypes.refreshOrderPage);
+                        orderAPI.cancelPack(item.id),
+                      )
+                      await showMessageStatus(res.data, '取消打包')
+                      bus.emit(EmitTypes.refreshOrderPage)
                     }}
                   >
                     取消打包
@@ -155,11 +155,11 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                     icon={<IconFile />}
                     onClick={async () => {
                       // `${getRequestEndInfo.baseUrl}/`
-                      const res = await orderAPI.getSheet(item.id);
+                      const res = await orderAPI.getSheet(item.id)
                       if (res.data.code !== SuccessCode) {
-                        return Message.error(res.data.msg);
+                        return Message.error(res.data.msg)
                       }
-                      setSheet(res.data.data);
+                      setSheet(res.data.data)
                     }}
                   >
                     查看面单
@@ -167,7 +167,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                   <Button
                     loading={refreshHandler.loading}
                     onClick={() => {
-                      refreshHandler.run(item.id);
+                      refreshHandler.run(item.id)
                     }}
                   >
                     更新订单
@@ -177,7 +177,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                   {/* <Button>隔离订单</Button> */}
                   <Button
                     onClick={() => {
-                      setAddVisiable(true);
+                      setAddVisiable(true)
                     }}
                   >
                     添加商品
@@ -191,8 +191,8 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                           status: 'default',
                         },
                       }).then(() => {
-                        Message.success('预刷成功！');
-                      });
+                        Message.success('预刷成功！')
+                      })
                     }}
                   >
                     申请预刷
@@ -200,8 +200,8 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                   <Button
                     icon={<IconFile />}
                     onClick={() => {
-                      logHandler.run(item.id);
-                      setRecord(true);
+                      logHandler.run(item.id)
+                      setRecord(true)
                     }}
                   >
                     操作记录
@@ -211,11 +211,12 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                     content="确认删除订单？操作不可逆！"
                     isModal={true}
                     onOk={async () => {
-                      const res = await orderAPI.remove(item.id);
-                      await showMessageStatus(res.data);
-                      run();
+                      const res = await orderAPI.remove(item.id)
+                      await showMessageStatus(res.data)
+                      run()
                     }}
-                  ></PopconfirmDelete>
+                  >
+                  </PopconfirmDelete>
                 </Button.Group>
                 <div className="flex items-center ml-auto">
                   <span className={labelClass}>订单编号：</span>
@@ -235,7 +236,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                   >
                     {
                       orderStatusOptions?.find(
-                        (oitem) => oitem.value === item.orderStatus
+                        oitem => oitem.value === item.orderStatus,
                       )?.label
                     }
                   </Tag>
@@ -245,7 +246,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                 <OrderHeaderStatusInfo data={item}></OrderHeaderStatusInfo>
               </header>
               <main className="flex p-4">
-                {columns.map((oitem) => (
+                {columns.map(oitem => (
                   <div
                     style={{
                       width: oitem.width,
@@ -279,7 +280,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                       setEdit({
                         ...item,
                         logisticsOrderProductList: item.orderProductVOList,
-                      });
+                      })
                     }}
                   >
                     <IconEdit />
@@ -289,16 +290,19 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
             </div>
           ))}
         </main>
-        {data?.list?.length ? (
-          <Pagination
-            className="mt-4 flex justify-end"
-            total={data?.total}
-            onChange={(pageNumber: number, pageSize: number) => {
-              pagination.changePageSize(pageSize);
-              pagination.changeCurrent(pageNumber);
-            }}
-          ></Pagination>
-        ) : null}
+        {data?.list?.length
+          ? (
+              <Pagination
+                className="mt-4 flex justify-end"
+                total={data?.total}
+                onChange={(pageNumber: number, pageSize: number) => {
+                  pagination.changePageSize(pageSize)
+                  pagination.changeCurrent(pageNumber)
+                }}
+              >
+              </Pagination>
+            )
+          : null}
         {!data?.list?.length && <Empty className="py-28"></Empty>}
       </div>
       <Modal
@@ -306,24 +310,25 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
         visible={addVisiable}
         onCancel={() => setAddVisiable(false)}
         onOk={async () => {
-          const formData = await form.validate();
-          console.log(formData);
-          Message.success('添加成功');
-          setAddVisiable(false);
+          const formData = await form.validate()
+          console.log(formData)
+          Message.success('添加成功')
+          setAddVisiable(false)
         }}
       >
         <FilterForm
           span={24}
           form={form}
           formItemConfigList={OrderCreateSchema2}
-        ></FilterForm>
+        >
+        </FilterForm>
       </Modal>
       <Modal
         title="查看面单"
         visible={sheet}
         onCancel={() => setSheet(null)}
         onOk={async () => {
-          setSheet(null);
+          setSheet(null)
         }}
       >
         面单信息，开发中...
@@ -333,21 +338,23 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
         visible={record}
         onCancel={() => setRecord(false)}
         onOk={async () => {
-          setRecord(false);
+          setRecord(false)
         }}
       >
         <Spin loading={logHandler.loading} className="mx-auto block">
-          {!logHandler.loading && logHandler.data?.list?.length ? (
-            <Timeline>
-              {logHandler.data.list.map((item) => (
-                <Timeline.Item key={item} label="2017-03-10">
-                  The first milestone
-                </Timeline.Item>
-              ))}
-            </Timeline>
-          ) : (
-            <Empty description="暂无记录"></Empty>
-          )}
+          {!logHandler.loading && logHandler.data?.list?.length
+            ? (
+                <Timeline>
+                  {logHandler.data.list.map(item => (
+                    <Timeline.Item key={item} label="2017-03-10">
+                      The first milestone
+                    </Timeline.Item>
+                  ))}
+                </Timeline>
+              )
+            : (
+                <Empty description="暂无记录"></Empty>
+              )}
         </Spin>
       </Modal>
       <Modal
@@ -359,7 +366,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
         onCancel={() => setEdit(null)}
         confirmLoading={updateHandler.loading}
         onOk={async () => {
-          updateHandler.run();
+          updateHandler.run()
         }}
       >
         <FilterForm
@@ -386,7 +393,8 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                 <DictSelector
                   type="radio"
                   dictCode="transport_type"
-                ></DictSelector>
+                >
+                </DictSelector>
               ),
             },
             {
@@ -401,9 +409,10 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
             setEdit({
               ...edit,
               ...v,
-            });
+            })
           }}
-        ></FilterForm>
+        >
+        </FilterForm>
         <GoodsInfo
           data={edit?.orderProductVOList}
           isEdit={true}
@@ -411,23 +420,24 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
             setEdit({
               ...edit,
               logisticsOrderProductList: e,
-            });
+            })
           }}
-        ></GoodsInfo>
+        >
+        </GoodsInfo>
         <Button
           className="mt-4"
           type="outline"
           long={true}
           icon={<IconPlus></IconPlus>}
           onClick={() => {
-            setAddVisiable(true);
+            setAddVisiable(true)
           }}
         >
           添加商品
         </Button>
       </Modal>
     </div>
-  );
-};
+  )
+}
 
-export default OrderTable;
+export default OrderTable

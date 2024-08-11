@@ -5,36 +5,39 @@ import {
   Message,
   Select,
   Typography,
-} from '@arco-design/web-react';
-import { IconScan } from '@arco-design/web-react/icon';
-import classNames from 'classnames';
-import styles from './index.module.less';
-import React, { useState } from 'react';
-import { useRequest, useLocalStorageState } from 'ahooks';
-import { ScanParams, entrepotAPI } from '@/api/admin/entrepot';
-import { useEntrepotOptions } from '@/components/Selectors/EntrepotSelector';
+} from '@arco-design/web-react'
+import { IconScan } from '@arco-design/web-react/icon'
+import { useLocalStorageState } from 'ahooks'
+import classNames from 'classnames'
+
+import React, { useState } from 'react'
+
+import styles from './index.module.less'
+
+import { ScanParams } from '@/api/admin/entrepot'
+import { useEntrepotOptions } from '@/components/Selectors/EntrepotSelector'
 
 interface ScanComponentProps {
-  placeholder?: string;
-  className?: string;
-  style?: React.CSSProperties;
-  onScan?: (params: ScanParams) => void;
+  placeholder?: string
+  className?: string
+  style?: React.CSSProperties
+  onScan?: (params: ScanParams) => void
 }
 
 export default (props: ScanComponentProps) => {
-  const { placeholder, className, style, onScan } = props;
-  const { data, loading } = useEntrepotOptions();
-  const [value, setValue] = useState<string>();
-  const [entrepot, setEntrepot] = useLocalStorageState<any>('scan-entrepot');
-  const height = 'h-20';
+  const { placeholder, className, style, onScan } = props
+  const { data, loading } = useEntrepotOptions()
+  const [value, setValue] = useState<string>()
+  const [entrepot, setEntrepot] = useLocalStorageState<any>('scan-entrepot')
+  const height = 'h-20'
   return (
-    <div className={classNames('bg-white p-4', className)} style={style}>
+    <div className={className} style={style}>
       <Grid.Row className="mx-auto w-1/2" style={{ minWidth: 650 }}>
         <Grid.Col span={5}>
           <div
             className={classNames(
               height,
-              'flex flex-col border-r border-neutral-3 justify-center px-2'
+              'flex flex-col border-r border-neutral-3 justify-center px-2',
             )}
             style={{
               backgroundColor: 'var(--color-fill-2)',
@@ -51,32 +54,35 @@ export default (props: ScanComponentProps) => {
               placeholder="请选择仓库"
               options={data}
               loading={loading}
-            ></Select>
+            >
+            </Select>
           </div>
         </Grid.Col>
         <Grid.Col span={19}>
           <Input
             value={value}
             onChange={(e) => {
-              setValue(e);
+              setValue(e)
             }}
             size="large"
             className={classNames(height, styles['input-style'], 'text-3xl')}
-            placeholder={placeholder || "扫描或者输入快递单号"}
+            placeholder={placeholder || '扫描或者输入快递单号'}
             onPressEnter={(e) => {
               if (entrepot === undefined) {
-                return Message.error('请选择仓库');
-              } else if (!e.target.value) {
-                return Message.error('请输入信息');
+                return Message.error('请选择仓库')
               }
-              setValue('');
+              else if (!e.target.value) {
+                return Message.error('请输入信息')
+              }
+              setValue('')
               onScan({
                 trackingNo: e.target.value,
                 sendWarehouse: entrepot,
-              });
+              })
             }}
             suffix={<IconScan />}
-          ></Input>
+          >
+          </Input>
         </Grid.Col>
         <Alert
           type="info"
@@ -85,5 +91,5 @@ export default (props: ScanComponentProps) => {
         />
       </Grid.Row>
     </div>
-  );
-};
+  )
+}

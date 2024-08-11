@@ -1,18 +1,18 @@
-import { Alert, Button, Tag } from '@arco-design/web-react';
-import { useRequest } from 'ahooks';
-import React, { useState } from 'react';
+import { Alert, Button, Tag } from '@arco-design/web-react'
+import { useRequest } from 'ahooks'
+import React, { useState } from 'react'
 
-import { expressAPI } from '@/api/client/express';
-import SearchTable, { SearchTableRef } from '@/components/SearchTable';
-import { useDictOptions } from '@/components/Selectors/DictSelector';
-import EntrepotRadio from '@/components/Selectors/EntrepotRadio';
-import { DividerSchema } from '@/constants/schema/common';
-import { TagColors } from '@/pages/admin/components/OrderTable/SendCargoInfo';
-import { showMessageStatus, showModal, tryFn } from '@/utils';
+import { expressAPI } from '@/api/client/express'
+import SearchTable, { SearchTableRef } from '@/components/SearchTable'
+import { useDictOptions } from '@/components/Selectors/DictSelector'
+import EntrepotRadio from '@/components/Selectors/EntrepotRadio'
+import { DividerSchema } from '@/constants/schema/common'
+import { TagColors } from '@/pages/admin/components/OrderTable/SendCargoInfo'
+import { showMessageStatus, showModal, tryFn } from '@/utils'
 
 export default () => {
-  const [current, setCurrent] = useState();
-  const ref = React.useRef<SearchTableRef>();
+  const [current, setCurrent] = useState()
+  const ref = React.useRef<SearchTableRef>()
 
   const { run, loading } = useRequest(
     async (row) => {
@@ -21,25 +21,25 @@ export default () => {
         okButtonProps: {
           status: 'warning',
         },
-      });
-      setCurrent(row);
+      })
+      setCurrent(row)
       const res = await tryFn(() =>
         expressAPI.updateExpressStatus({
           orderProductId: 111111,
           trackingStatus: '填充填充填充！！！',
-        })
-      );
-      await showMessageStatus(res.data);
-      ref.current.refreshSearchTable();
+        }),
+      )
+      await showMessageStatus(res.data)
+      ref.current.refreshSearchTable()
     },
     {
       manual: true,
-    }
-  );
+    },
+  )
 
   const { data: dictData, loading: dictLoading } = useDictOptions({
     dictCode: 'tracking_status',
-  });
+  })
 
   return (
     <div className="p-4 bg-white">
@@ -50,7 +50,7 @@ export default () => {
           '1. 拒收管理：将您采购的商品在发往仓库途中，由于虾皮买家取消订单等因素造成不需要该商品，可以通过拒收来节省退件的成本',
           '2. 需要在仓库签收之前提交拒收信息给仓库，否则，一旦仓库签收后将无法拒收，拒收成功之后会提示已拒收状态，已拒收代表快递已经取走快递原路退回',
           '3. 操作流程：新增-->选择拒收仓库-->填入需要拒收的快递单号-->确定',
-        ].map((item) => (
+        ].map(item => (
           <div key={item}>{item}</div>
         ))}
       />
@@ -59,17 +59,10 @@ export default () => {
         name="包裹拒收"
         getListRequest={expressAPI.getRejectList}
         createRequest={expressAPI.addReject}
-        tableProps={{
-          data: [
-            {
-              status: '1',
-            },
-          ],
-        }}
         formItemConfigList={[
           {
             schema: {
-              field: 'entrepot',
+              field: 'sendWarehouse',
               label: '仓库',
               span: 24,
             },
@@ -84,7 +77,7 @@ export default () => {
           {
             schema: {
               label: '快递单号',
-              field: 'deliveryNo',
+              field: 'trackingNo',
             },
             isSearch: true,
             isCreate: true,
@@ -99,7 +92,7 @@ export default () => {
                 <Tag color={TagColors[Number(c)]}>
                   {dictData?.find(({ value }) => value === c)?.label}
                 </Tag>
-              );
+              )
             },
           },
           {
@@ -128,12 +121,12 @@ export default () => {
                   type="text"
                   loading={row === current && loading} // ! 判断一下id row === current
                   onClick={async () => {
-                    run(row);
+                    run(row)
                   }}
                 >
                   取消拒收
                 </Button>
-              );
+              )
             },
           },
           // {
@@ -143,7 +136,8 @@ export default () => {
           //   },
           // },
         ]}
-      ></SearchTable>
+      >
+      </SearchTable>
     </div>
-  );
-};
+  )
+}
