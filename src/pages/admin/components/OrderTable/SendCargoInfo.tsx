@@ -1,4 +1,4 @@
-import { Descriptions, Form, Link, Tag } from '@arco-design/web-react'
+import { Form, Link, Tag } from '@arco-design/web-react'
 
 import { useRequest } from 'ahooks'
 import classNames from 'classnames'
@@ -6,13 +6,15 @@ import React, { useState } from 'react'
 
 import styles from './index.module.less'
 
+import { labelClass, valueClass } from '.'
+
 import { expressAPI } from '@/api/client/express'
 import PopconfirmDelete from '@/components/PopconfirmDelete'
 import ReturnParcel from '@/components/ReturnParcel'
 import { useDictOptions } from '@/components/Selectors/DictSelector'
 import { EmitTypes, bus } from '@/hooks/useEventBus'
 import { OrderResponseItem } from '@/types/order'
-import { showMessageStatus, showModal, showObj } from '@/utils'
+import { showMessageStatus, showModal } from '@/utils'
 
 interface SendCargoInfoProps {
   data: OrderResponseItem
@@ -39,14 +41,12 @@ function ExpressStatus(item: OrderResponseItem['orderProductVOList'][0]) {
   })
 
   return (
-    <div>
-      <Tag bordered size="small" color={TagColors[Number(item.trackingStatus)]}>
-        {
-          trackingStatus?.find(oitem => oitem.value === item.trackingStatus)
-            ?.label
-        }
-      </Tag>
-    </div>
+    <Tag bordered size="small" color={TagColors[Number(item.trackingStatus)]}>
+      {
+        trackingStatus?.find(oitem => oitem.value === item.trackingStatus)
+          ?.label
+      }
+    </Tag>
   )
 }
 
@@ -186,45 +186,42 @@ const SkuList: React.FC<SendCargoInfoProps> = (props) => {
       {data.orderProductVOList?.map((item, i) => (
         <div
           key={i}
-          className={classNames('h-28 border-r', i > 0 ? 'border-t' : '')}
+          className={classNames('h-[125px] border-r', i > 0 ? 'border-t' : '')}
         >
-          <Descriptions
-            size="small"
-            column={1}
-            colon=" :"
-            data={[
-              {
-                label: '快递',
-                value: (
-                  <Link
-                    href={`https://www.baidu.com/s?wd=${item.trackingNo}`}
-                    target="_blank"
-                  >
-                    {item.trackingNo}
-                  </Link>
-                ),
-              },
-              {
-                label: '状态',
-                value: <ExpressStatus {...item} />,
-              },
-              {
-                label: '操作',
-                value: (
-                  <ExpressStatusActions
-                    item={item}
-                    sendWarehouse={data.sendWarehouse}
-                  />
-                ),
-              },
-              ...showObj(item.freightSpaceName, {
-                label: '仓位',
-                value: item.freightSpaceName || '-',
-              }),
-            ]}
-            labelStyle={{ textAlign: 'right' }}
-            style={{ marginBottom: 20 }}
-          />
+          <div className="h-full px-2">
+            <div>
+              <span className={labelClass}>快递：</span>
+              <span className={valueClass}>
+                <Link
+                  href={`https://www.baidu.com/s?wd=${item.trackingNo}`}
+                  target="_blank"
+                >
+                  {item.trackingNo}
+                </Link>
+              </span>
+            </div>
+            <div>
+              <span className={labelClass}>状态：</span>
+              <span className={valueClass}><ExpressStatus {...item} /></span>
+            </div>
+            <div>
+              <span className={labelClass}>操作：</span>
+              <span className={classNames(valueClass, 'inline-flex')}>
+                <ExpressStatusActions
+                  item={item}
+                  sendWarehouse={data.sendWarehouse}
+                />
+              </span>
+            </div>
+            {item.freightSpaceName
+              ? (
+                  <div>
+                    <span className={labelClass}>仓位：</span>
+                    <span className={valueClass}>{item.freightSpaceName || '-'}</span>
+                  </div>
+                )
+              : null}
+          </div>
         </div>
       ))}
     </div>

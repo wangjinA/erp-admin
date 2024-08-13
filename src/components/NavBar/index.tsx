@@ -1,67 +1,71 @@
-import React, { useContext, useEffect } from 'react';
 import {
-  Tooltip,
-  Input,
   Avatar,
-  Select,
+  Button,
+  Divider,
   Dropdown,
   Menu,
-  Divider,
   Message,
-  Button,
-} from '@arco-design/web-react';
+  Select,
+  Tooltip,
+} from '@arco-design/web-react'
 import {
   IconLanguage,
-  IconNotification,
-  IconSunFill,
-  IconMoonFill,
-  IconUser,
-  IconSettings,
-  IconPoweroff,
-  IconExperiment,
-  IconDashboard,
-  IconInteraction,
-  IconTag,
   IconLoading,
-} from '@arco-design/web-react/icon';
-import { useSelector, useDispatch } from 'react-redux';
-import { GlobalState } from '@/store';
-import { GlobalContext } from '@/context';
-import useLocale from '@/utils/useLocale';
-import Logo from '@/assets/logo.svg';
-import MessageBox from '@/components/MessageBox';
-import IconButton from './IconButton';
-import Settings from '../Settings';
-import styles from './style/index.module.less';
-import defaultLocale from '@/locale';
-import useStorage from '@/utils/useStorage';
-import { generatePermission, toLoginPage } from '@/routes';
-import { loginExit } from '@/api/admin/user';
-import { getRequestEndInfo } from '@/api';
+  IconMoonFill,
+  IconNotification,
+  IconPoweroff,
+  IconSettings,
+  IconSunFill,
+  IconUser,
+} from '@arco-design/web-react/icon'
+import React, { useContext, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+
+import Settings from '../Settings'
+
+import IconButton from './IconButton'
+
+import styles from './style/index.module.less'
+
+import { getRequestEndInfo } from '@/api'
+import { loginExit } from '@/api/admin/user'
+import Logo from '@/assets/logo.svg'
+import MessageBox from '@/components/MessageBox'
+import { GlobalContext } from '@/context'
+import defaultLocale from '@/locale'
+import { GlobalState } from '@/store'
+import useLocale from '@/utils/useLocale'
+
+
+
+
+import useStorage from '@/utils/useStorage'
+import { generatePermission, toLoginPage } from '@/routes'
 
 function Navbar({ show }: { show: boolean }) {
-  const t = useLocale();
-  const { userInfo, userLoading } = useSelector((state: GlobalState) => state);
-  const dispatch = useDispatch();
+  const t = useLocale()
+  const { userInfo, userLoading } = useSelector((state: GlobalState) => state)
+  const dispatch = useDispatch()
 
-  const [_, setUserStatus] = useStorage('userStatus');
-  const [role, setRole] = useStorage('userRole', 'admin');
+  const [_, setUserStatus] = useStorage('userStatus')
+  const [role, setRole] = useStorage('userRole', 'admin')
 
-  const { setLang, lang, theme, setTheme } = useContext(GlobalContext);
+  const { setLang, lang, theme, setTheme } = useContext(GlobalContext)
 
   function logout() {
-    setUserStatus('logout');
-    localStorage.removeItem('userInfo');
-    localStorage.removeItem(getRequestEndInfo.tokenKey);
-    toLoginPage();
+    setUserStatus('logout')
+    localStorage.removeItem('userInfo')
+    localStorage.removeItem(getRequestEndInfo.tokenKey)
+    toLoginPage()
   }
 
   function onMenuItemClick(key) {
     if (key === 'logout') {
-      loginExit();
-      logout();
-    } else {
-      Message.info(`You clicked ${key}`);
+      loginExit()
+      logout()
+    }
+    else {
+      Message.info(`You clicked ${key}`)
     }
   }
 
@@ -74,8 +78,8 @@ function Navbar({ show }: { show: boolean }) {
           permissions: generatePermission(role),
         },
       },
-    });
-  }, [role]);
+    })
+  }, [role])
 
   if (!show) {
     return (
@@ -86,13 +90,13 @@ function Navbar({ show }: { show: boolean }) {
           }
         />
       </div>
-    );
+    )
   }
 
   const handleChangeRole = () => {
-    const newRole = role === 'admin' ? 'user' : 'admin';
-    setRole(newRole);
-  };
+    const newRole = role === 'admin' ? 'user' : 'admin'
+    setRole(newRole)
+  }
 
   const droplist = (
     <Menu onClickMenuItem={onMenuItemClick}>
@@ -150,7 +154,7 @@ function Navbar({ show }: { show: boolean }) {
         退出登录
       </Menu.Item>
     </Menu>
-  );
+  )
 
   return (
     <div className={styles.navbar}>
@@ -161,12 +165,12 @@ function Navbar({ show }: { show: boolean }) {
         </div>
       </div>
       <ul className={styles.right}>
-        <li>
+        {/* <li>
           <Input.Search
             className={styles.round}
             placeholder={t['navbar.search.placeholder']}
           />
-        </li>
+        </li> */}
         <li>
           <Select
             triggerElement={<IconButton icon={<IconLanguage />} />}
@@ -182,9 +186,9 @@ function Navbar({ show }: { show: boolean }) {
             }}
             trigger="hover"
             onChange={(value) => {
-              setLang(value);
-              const nextLang = defaultLocale[value];
-              Message.info(`${nextLang['message.lang.tips']}${value}`);
+              setLang(value)
+              const nextLang = defaultLocale[value]
+              Message.info(`${nextLang['message.lang.tips']}${value}`)
             }}
           />
         </li>
@@ -214,18 +218,20 @@ function Navbar({ show }: { show: boolean }) {
           <li>
             <Dropdown droplist={droplist} position="br" disabled={userLoading}>
               <Avatar size={32} style={{ cursor: 'pointer' }}>
-                {userLoading ? (
-                  <IconLoading />
-                ) : (
-                  <img alt="avatar" src={userInfo.headImg} />
-                )}
+                {userLoading
+                  ? (
+                      <IconLoading />
+                    )
+                  : (
+                      <img alt="avatar" src={userInfo.headImg} />
+                    )}
               </Avatar>
             </Dropdown>
           </li>
         )}
       </ul>
     </div>
-  );
+  )
 }
 
-export default Navbar;
+export default Navbar

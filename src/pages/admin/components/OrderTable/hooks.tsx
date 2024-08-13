@@ -4,10 +4,9 @@ import { IconFile } from '@arco-design/web-react/icon'
 
 import SendCargoInfo from './SendCargoInfo'
 
-import { OrderTablePorps } from '.'
+import { OrderTablePorps, labelClass, valueClass } from '.'
 
 import GoodsInfo from '@/components/GoodsInfo'
-import { isAdmin } from '@/routes'
 import { Order } from '@/types/order'
 
 export function useColumns(props: OrderTablePorps) {
@@ -37,41 +36,33 @@ export function useColumns(props: OrderTablePorps) {
       width: 240,
       render(c, row) {
         return (
-          <Descriptions
-            className="border-r h-full px-2"
-            size="small"
-            column={1}
-            colon=" :"
-            data={[
-              {
-                label: '尾程物流',
-                value: '蝦皮店到店',
-              },
-              {
-                label: '物流单号',
-                value: row.packagenumber || '-',
-              },
-              {
-                label: '申请时间',
-                value: row.shippingTime,
-              },
-              {
-                label: '查看单号',
-                value: (
-                  <Button
-                    className="px-1"
-                    type="text"
-                    icon={<IconFile />}
-                    size="mini"
-                  >
-                    查看面单
-                  </Button>
-                ),
-              },
-            ]}
-            labelStyle={{ textAlign: 'right' }}
-            style={{ marginBottom: 20 }}
-          />
+          <div className="border-r h-full px-2">
+            <div>
+              <span className={labelClass}>尾程物流：</span>
+              <span className={valueClass}>蝦皮店到店</span>
+            </div>
+            <div>
+              <span className={labelClass}>物流单号：</span>
+              <span className={valueClass}>{row.packagenumber || '-'}</span>
+            </div>
+            <div>
+              <span className={labelClass}>申请时间：</span>
+              <span className={valueClass}>{row.shippingTime}</span>
+            </div>
+            <div>
+              <span className={labelClass}>查看单号：</span>
+              <span className={valueClass}>
+                <Button
+                  className="px-1"
+                  type="text"
+                  icon={<IconFile />}
+                  size="mini"
+                >
+                  查看面单
+                </Button>
+              </span>
+            </div>
+          </div>
         )
       },
     },
@@ -81,32 +72,50 @@ export function useColumns(props: OrderTablePorps) {
       width: 180,
       render(c, row) {
         return (
-          <Descriptions
-            size="small"
-            className="border-r h-full px-2"
-            column={1}
-            colon=" :"
-            data={[
-              {
-                label: '买家',
-                value: row.buyerUsername || '-',
-              },
-              {
-                label: '收货人',
-                value: row.recipients || '-',
-              },
-              {
-                label: '收货电话',
-                value: row.mobilenumber || '-',
-              },
-              {
-                label: '收货地址',
-                value: row.detailedAddress || '-',
-              },
-            ]}
-            labelStyle={{ textAlign: 'right' }}
-            style={{ marginBottom: 20 }}
-          />
+          <div className="border-r h-full px-2">
+            <div>
+              <span className={labelClass}>买家：</span>
+              <span className={valueClass}>{row.buyerUsername || '-'}</span>
+            </div>
+            <div>
+              <span className={labelClass}>收货人：</span>
+              <span className={valueClass}>{row.recipients || '-'}</span>
+            </div>
+            <div>
+              <span className={labelClass}>收货电话：</span>
+              <span className={valueClass}>{row.mobilenumber || '-'}</span>
+            </div>
+            <div>
+              <span className={labelClass}>收货地址：</span>
+              <span className={valueClass}>{row.detailedAddress || '-'}</span>
+            </div>
+          </div>
+          // <Descriptions
+          //   size="small"
+          //   className="border-r h-full px-2"
+          //   column={1}
+          //   colon=" :"
+          //   data={[
+          //     {
+          //       label: '买家',
+          //       value: row.buyerUsername || '-',
+          //     },
+          //     {
+          //       label: '收货人',
+          //       value: row.recipients || '-',
+          //     },
+          //     {
+          //       label: '收货电话',
+          //       value: row.mobilenumber || '-',
+          //     },
+          //     {
+          //       label: '收货地址',
+          //       value: row.detailedAddress || '-',
+          //     },
+          //   ]}
+          //   labelStyle={{ textAlign: 'right' }}
+          //   style={{ marginBottom: 20 }}
+          // />
         )
       },
     },
@@ -116,24 +125,16 @@ export function useColumns(props: OrderTablePorps) {
       width: 150,
       render(c, row) {
         return (
-          <Descriptions
-            size="small"
-            className="border-r h-full px-2"
-            column={1}
-            colon=" :"
-            data={[
-              {
-                label: '打包仓库',
-                value: row.sendWarehouseText || '-',
-              },
-              {
-                label: '备注',
-                value: row.remark || '-',
-              },
-            ]}
-            labelStyle={{ textAlign: 'right' }}
-            style={{ marginBottom: 20 }}
-          />
+          <div className="border-r h-full px-2">
+            <div>
+              <span className={labelClass}>打包仓库：</span>
+              <span className={valueClass}>{row.sendWarehouseText || '-'}</span>
+            </div>
+            <div>
+              <span className={labelClass}>备注：</span>
+              <span className={valueClass}>{row.remark || '-'}</span>
+            </div>
+          </div>
         )
       },
     },
@@ -143,32 +144,24 @@ export function useColumns(props: OrderTablePorps) {
       width: 180,
       render(c, row: Order) {
         return (
-          <Descriptions
-            size="small"
-            className="border-r h-full px-2"
-            column={1}
-            colon=" :"
-            data={[
-              {
-                label: '打包仓库',
-                value: row.sendWarehouseText || '-',
-              },
-              {
-                label: '卖家标识',
-                value: 'row.' || '-',
-              },
-              {
-                label: '卖家备注',
-                value: row.remark || '-',
-              },
-              {
-                label: '仓库备注',
-                value: row.entrepotRemark || '-',
-              },
-            ]}
-            labelStyle={{ textAlign: 'right' }}
-            style={{ marginBottom: 20 }}
-          />
+          <div className="border-r h-full px-2">
+            <div>
+              <span className={labelClass}>打包仓库：</span>
+              <span className={valueClass}>{row.sendWarehouseText || '-'}</span>
+            </div>
+            <div>
+              <span className={labelClass}>卖家标识：</span>
+              <span className={valueClass}>{'row.' || '-'}</span>
+            </div>
+            <div>
+              <span className={labelClass}>卖家备注：</span>
+              <span className={valueClass}>{row.remark || '-'}</span>
+            </div>
+            <div>
+              <span className={labelClass}>仓库备注：</span>
+              <span className={valueClass}>{row.entrepotRemark || '-'}</span>
+            </div>
+          </div>
         )
       },
     },
@@ -204,45 +197,45 @@ export function useColumns(props: OrderTablePorps) {
     },
     ...(dictCode === 'order_status'
       ? [
-          {
-            title: isAdmin() ? '费用' : '货代费用',
-            dataIndex: 'hd',
-            width: 180,
-            render(c, row) {
-              return (
-                <Descriptions
-                  size="small"
-                  className="h-full px-2"
-                  column={1}
-                  colon=" :"
-                  data={[
-                    {
-                      label: '总费用',
-                      value: 1.5,
-                    },
-                    {
-                      label: '打包费用',
-                      value: 1.5,
-                    },
-                    ...(isAdmin()
-                      ? [
-                          {
-                            label: '打包附加费用',
-                            value: <Button>添加</Button>,
-                          },
-                          {
-                            label: '增值费用',
-                            value: <Button>添加</Button>,
-                          },
-                        ]
-                      : []),
-                  ]}
-                  labelStyle={{ textAlign: 'right' }}
-                  style={{ marginBottom: 20 }}
-                />
-              )
-            },
-          },
+          // {
+          //   title: isAdmin() ? '费用' : '货代费用',
+          //   dataIndex: 'hd',
+          //   width: 180,
+          //   render(c, row) {
+          //     return (
+          //       <Descriptions
+          //         size="small"
+          //         className="h-full px-2"
+          //         column={1}
+          //         colon=" :"
+          //         data={[
+          //           {
+          //             label: '总费用',
+          //             value: 1.5,
+          //           },
+          //           {
+          //             label: '打包费用',
+          //             value: 1.5,
+          //           },
+          //           ...(isAdmin()
+          //             ? [
+          //                 {
+          //                   label: '打包附加费用',
+          //                   value: <Button>添加</Button>,
+          //                 },
+          //                 {
+          //                   label: '增值费用',
+          //                   value: <Button>添加</Button>,
+          //                 },
+          //               ]
+          //             : []),
+          //         ]}
+          //         labelStyle={{ textAlign: 'right' }}
+          //         style={{ marginBottom: 20 }}
+          //       />
+          //     )
+          //   },
+          // },
         ]
       : []),
   ]

@@ -1,4 +1,4 @@
-import { ModalProps, RangePickerProps } from '@arco-design/web-react';
+import { ModalProps } from '@arco-design/web-react'
 
 export const TimeRangeDefaultProps = {
   showTime: {
@@ -6,29 +6,29 @@ export const TimeRangeDefaultProps = {
     format: 'HH:mm',
   },
   format: 'YYYY-MM-DD HH:mm',
-};
+}
 
 export const TimeDefaultProps = {
   format: 'YYYY-MM-DD HH:mm',
-  className: "w-full"
-};
+  className: 'w-full',
+}
 
 export enum ShowFormType {
-  'create' = 'create',
-  'edit' = 'edit',
-  'view' = 'view',
+  create = 'create',
+  edit = 'edit',
+  view = 'view',
 }
 
 export const ShowFormTypeMap = {
   [ShowFormType.create]: '创建',
   [ShowFormType.edit]: '编辑',
   [ShowFormType.view]: '查看',
-};
+}
 
 export const ShowFormTypeActionMap = {
   [ShowFormType.create]: '添加',
   [ShowFormType.edit]: '修改',
-};
+}
 
 export const WhetherOptions = [
   {
@@ -39,7 +39,7 @@ export const WhetherOptions = [
     label: '否',
     value: 0,
   },
-];
+]
 export const WhetherBooleanOptions = [
   {
     label: '是',
@@ -49,10 +49,10 @@ export const WhetherBooleanOptions = [
     label: '否',
     value: false,
   },
-];
+]
 
 export const FormModalCommonProps: ModalProps = {
   style: {
     width: '900px',
   },
-};
+}

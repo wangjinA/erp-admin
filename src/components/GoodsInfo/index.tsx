@@ -1,4 +1,4 @@
-import { Descriptions, Image, List, Switch } from '@arco-design/web-react'
+import { Image, List, Switch } from '@arco-design/web-react'
 import classNames from 'classnames'
 import React, { useRef } from 'react'
 
@@ -8,6 +8,7 @@ import DictSelector from '../Selectors/DictSelector'
 
 import styles from './index.module.less'
 
+import { labelClass, valueClass } from '@/pages/admin/components/OrderTable'
 import { OrderResponseItem } from '@/types/order'
 
 interface GoodsInfoProps {
@@ -33,42 +34,35 @@ export default (props: GoodsInfoProps) => {
           <div
             key={item.id}
             className={classNames([
-              'grid grid-cols-2',
+              'grid',
+              'h-[125px]',
+              { 'grid-cols-2': isEdit },
               index > 0 ? 'border-t' : '',
             ])}
           >
             <List.Item.Meta
-              className="!items-center p-2"
+              className="!items-center p-2 w-full"
               avatar={<Image className="size-24" src={item.productImg[0]} />}
               title={item.productName}
               description={(
-                <Descriptions
-                  size="mini"
-                  column={2}
-                  colon=" :"
-                  data={[
-                    {
-                      label: '单  价',
-                      value: item.unitPrice || '-',
-                    },
-                    {
-                      label: '数  量',
-                      value: item.quantity || '-',
-                    },
-                    {
-                      label: '规格名称',
-                      value: item.specificationName || '-',
-                      span: 24,
-                    },
-                    {
-                      label: '规格SKU',
-                      value: item.sku || '-',
-                      span: 24,
-                    },
-                  ]}
-                  labelStyle={{ textAlign: 'right' }}
-                  style={{ marginBottom: 20 }}
-                />
+                <div>
+                  <div>
+                    <span className={classNames(labelClass, 'text-sm')}>单  价：</span>
+                    <span className={classNames(valueClass, 'text-sm')}>{item.unitPrice || '-'}</span>
+                  </div>
+                  <div>
+                    <span className={classNames(labelClass, 'text-sm')}>数  量：</span>
+                    <span className={classNames(valueClass, 'text-sm')}>{item.quantity || '-'}</span>
+                  </div>
+                  <div>
+                    <span className={classNames(labelClass, 'text-sm')}>规格名称：</span>
+                    <span className={classNames(valueClass, 'text-sm')}>{item.specificationName || '-'}</span>
+                  </div>
+                  <div>
+                    <span className={classNames(labelClass, 'text-sm')}>规格SKU：</span>
+                    <span className={classNames(valueClass, 'text-sm')}>{item.sku || '-'}</span>
+                  </div>
+                </div>
               )}
             />
             {isEdit

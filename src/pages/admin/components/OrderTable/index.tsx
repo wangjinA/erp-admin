@@ -53,7 +53,7 @@ export interface OrderTablePorps extends StyleProps {
 }
 
 export const labelClass = 'arco-descriptions-item-label w-auto pb-0'
-export const valueClass = 'arco-descriptions-item-label w-auto pb-0'
+export const valueClass = 'arco-descriptions-item-value w-auto pb-0'
 
 const OrderTable: React.FC<OrderTablePorps> = (props) => {
   const { className, style, run, dictCode, data, pagination } = props
@@ -83,7 +83,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
   const updateHandler = useRequest(
     async (newSku?: any) => {
       const data = omit(currentOrder, ['orderProductVOList', 'orderPackageList'])
-      showMessage(() => orderAPI.update({
+      await showMessage(() => orderAPI.update({
         ...data,
         logisticsOrderProductList: [
           ...data.logisticsOrderProductList,
@@ -317,6 +317,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
         title="添加商品"
         visible={actionType === ShowFormType.create}
         onCancel={() => setActionType(null)}
+        confirmLoading={updateHandler.loading}
         onOk={async () => {
           const formData = await form.validate()
           updateHandler.run(formData)
