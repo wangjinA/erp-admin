@@ -31,13 +31,14 @@ import DictSelector, {
   useDictOptions,
 } from '@/components/Selectors/DictSelector'
 import EntrepotSelector from '@/components/Selectors/EntrepotSelector'
+import { ShowFormType } from '@/constants'
 import { EmitTypes, bus } from '@/hooks/useEventBus'
 import { OrderCreateSchema2 } from '@/pages/client/order/create/schema'
 import { OrderPageProps } from '@/pages/client/order/orderPage'
 import { isClient } from '@/routes'
 import { StyleProps } from '@/types'
 import { Order, OrderResponseItem } from '@/types/order'
-import { showMessageStatus, showModal, tryFn } from '@/utils'
+import { showMessage, showMessageStatus, showModal } from '@/utils'
 
 export interface OrderTablePorps extends StyleProps {
   // tableProps: TableProps;
@@ -56,11 +57,10 @@ export const valueClass = 'arco-descriptions-item-label w-auto pb-0'
 
 const OrderTable: React.FC<OrderTablePorps> = (props) => {
   const { className, style, run, dictCode, data, pagination } = props
-  const [addVisiable, setAddVisiable] = useState(false)
   const [record, setRecord] = useState(false)
-  const [edit, setEdit] = useState<any>()
+  const [currentOrder, setCurrentOrder] = useState<any>()
+  const [actionType, setActionType] = useState<ShowFormType>()
   const [sheet, setSheet] = useState<any>()
-  // const [editProductList, setEditProductList] = useState<any>();
 
   const columns = useColumns(props)
   const refreshHandler = useRequest(
@@ -81,12 +81,17 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
     },
   )
   const updateHandler = useRequest(
-    async () => {
-      const res = await orderAPI.update(
-        omit(edit, ['orderProductVOList', 'orderPackageList']),
-      )
-      await showMessageStatus(res.data)
-      setEdit(null)
+    async (newSku?: any) => {
+      const data = omit(currentOrder, ['orderProductVOList', 'orderPackageList'])
+      showMessage(() => orderAPI.update({
+        ...data,
+        logisticsOrderProductList: [
+          ...data.logisticsOrderProductList,
+          ...(newSku ? [newSku] : []),
+        ],
+      },
+      ), newSku ? '添加' : '编辑')
+      setActionType(null)
       bus.emit(EmitTypes.refreshOrderPage)
     },
     {
@@ -129,7 +134,8 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                   <Button
                     onClick={() => {
                       console.log(item)
-                      setEdit({
+                      setActionType(ShowFormType.edit)
+                      setCurrentOrder({
                         ...item,
                         logisticsOrderProductList: item.orderProductVOList,
                       })
@@ -142,10 +148,8 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                       await showModal({
                         content: '确定要取消打包吗？',
                       })
-                      const res = await tryFn(() =>
-                        orderAPI.cancelPack(item.id),
-                      )
-                      await showMessageStatus(res.data, '取消打包')
+                      await showMessage(() =>
+                        orderAPI.cancelPack(item.id), '取消打包')
                       bus.emit(EmitTypes.refreshOrderPage)
                     }}
                   >
@@ -177,7 +181,11 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                   {/* <Button>隔离订单</Button> */}
                   <Button
                     onClick={() => {
-                      setAddVisiable(true)
+                      setCurrentOrder({
+                        ...item,
+                        logisticsOrderProductList: item.orderProductVOList,
+                      })
+                      setActionType(ShowFormType.create)
                     }}
                   >
                     添加商品
@@ -277,7 +285,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                   <Button
                     type="text"
                     onClick={() => {
-                      setEdit({
+                      setCurrentOrder({
                         ...item,
                         logisticsOrderProductList: item.orderProductVOList,
                       })
@@ -307,19 +315,30 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
       </div>
       <Modal
         title="添加商品"
-        visible={addVisiable}
-        onCancel={() => setAddVisiable(false)}
+        visible={actionType === ShowFormType.create}
+        onCancel={() => setActionType(null)}
         onOk={async () => {
           const formData = await form.validate()
-          console.log(formData)
-          Message.success('添加成功')
-          setAddVisiable(false)
+          updateHandler.run(formData)
         }}
       >
         <FilterForm
           span={24}
           form={form}
-          formItemConfigList={OrderCreateSchema2}
+          initialValues={{
+            extraStatus: true,
+          }}
+          formItemConfigList={[
+            ...OrderCreateSchema2,
+            {
+              schema: {
+                field: 'extraStatus',
+              },
+              formItemProps: {
+                hidden: true,
+              },
+            },
+          ]}
         >
         </FilterForm>
       </Modal>
@@ -362,8 +381,8 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
           width: 870,
         }}
         title="编辑订单"
-        visible={Boolean(edit)}
-        onCancel={() => setEdit(null)}
+        visible={actionType === ShowFormType.edit}
+        onCancel={() => setActionType(null)}
         confirmLoading={updateHandler.loading}
         onOk={async () => {
           updateHandler.run()
@@ -372,7 +391,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
         <FilterForm
           span={24}
           form={form}
-          initialValues={edit}
+          initialValues={currentOrder}
           formItemConfigList={[
             {
               schema: {
@@ -406,19 +425,19 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
             },
           ]}
           onChange={(_, v) => {
-            setEdit({
-              ...edit,
+            setCurrentOrder({
+              ...currentOrder,
               ...v,
             })
           }}
         >
         </FilterForm>
         <GoodsInfo
-          data={edit?.orderProductVOList}
+          data={currentOrder?.orderProductVOList}
           isEdit={true}
           onChange={(e) => {
-            setEdit({
-              ...edit,
+            setCurrentOrder({
+              ...currentOrder,
               logisticsOrderProductList: e,
             })
           }}
@@ -430,7 +449,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
           long={true}
           icon={<IconPlus></IconPlus>}
           onClick={() => {
-            setAddVisiable(true)
+            setActionType(ShowFormType.create)
           }}
         >
           添加商品
