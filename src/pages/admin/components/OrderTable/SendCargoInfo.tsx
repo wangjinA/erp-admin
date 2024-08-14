@@ -14,7 +14,7 @@ import ReturnParcel from '@/components/ReturnParcel'
 import { useDictOptions } from '@/components/Selectors/DictSelector'
 import { EmitTypes, bus } from '@/hooks/useEventBus'
 import { OrderResponseItem } from '@/types/order'
-import { showMessageStatus, showModal } from '@/utils'
+import { showMessage, showMessageStatus, showModal } from '@/utils'
 
 interface SendCargoInfoProps {
   data: OrderResponseItem
@@ -61,11 +61,10 @@ function ExpressStatusActions(props: {
   // 设置快递状态
   const updateStatusHandle = useRequest(
     async (trackingStatus) => {
-      const res = await expressAPI.updateExpressStatus({
+      await showMessage(() => expressAPI.updateExpressStatus({
         orderProductId: item.id,
         trackingStatus,
-      })
-      await showMessageStatus(res.data)
+      }))
       bus.emit(EmitTypes.refreshOrderPage)
     },
     {
@@ -79,6 +78,19 @@ function ExpressStatusActions(props: {
       const res = await expressAPI.returnOperation(formData)
       await showMessageStatus(res.data)
       setIsReturnGoods(false)
+    },
+    {
+      manual: true,
+    },
+  )
+
+  const rejectHandle = useRequest(
+    async () => {
+      await showMessage(() => expressAPI.addReject({
+        sendWarehouse,
+        trackingNo: item.trackingNo,
+      }))
+      bus.emit(EmitTypes.refreshOrderPage)
     },
     {
       manual: true,
@@ -100,7 +112,7 @@ function ExpressStatusActions(props: {
                 confirmLoading: updateStatusHandle.loading,
                 content: `所有跟快递单号"${item.trackingNo}"有关联的订单都会拒收，确定要继续吗？`,
               })
-              updateStatusHandle.run('2')
+              rejectHandle.run()
             }}
           >
             拒收
