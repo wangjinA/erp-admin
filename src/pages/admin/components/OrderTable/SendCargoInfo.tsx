@@ -84,9 +84,24 @@ function ExpressStatusActions(props: {
     },
   )
 
+  // 拒收
   const rejectHandle = useRequest(
     async () => {
       await showMessage(() => expressAPI.addReject({
+        sendWarehouse,
+        trackingNo: item.trackingNo,
+      }))
+      bus.emit(EmitTypes.refreshOrderPage)
+    },
+    {
+      manual: true,
+    },
+  )
+
+  // 取消拒收
+  const cancelRejectHandle = useRequest(
+    async () => {
+      await showMessage(() => expressAPI.cancelReject({
         sendWarehouse,
         trackingNo: item.trackingNo,
       }))
@@ -109,7 +124,7 @@ function ExpressStatusActions(props: {
             checked={true}
             onClick={async () => {
               await showModal({
-                confirmLoading: updateStatusHandle.loading,
+                confirmLoading: rejectHandle.loading,
                 content: `所有跟快递单号"${item.trackingNo}"有关联的订单都会拒收，确定要继续吗？`,
               })
               rejectHandle.run()
@@ -139,6 +154,9 @@ function ExpressStatusActions(props: {
             setVisible={setIsReturnGoods}
             sendWarehouse={sendWarehouse}
             trackingNo={item.trackingNo}
+            onSuccess={() => {
+              bus.emit(EmitTypes.refreshOrderPage)
+            }}
           >
           </ReturnParcel>
         </div>
@@ -149,7 +167,7 @@ function ExpressStatusActions(props: {
           <PopconfirmDelete
             title="确定取消拒收吗？"
             onOk={async () => {
-              updateStatusHandle.run('0')
+              cancelRejectHandle.run()
             }}
           >
             <Tag

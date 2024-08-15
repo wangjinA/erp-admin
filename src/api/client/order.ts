@@ -1,7 +1,7 @@
 import baseAxios from '..'
 import { APIListResponse, APIResponse, IPageParams } from '../type'
 
-import { Order, OrderResponseItem } from '@/types/order'
+import { Order, OrderProductList, OrderResponseItem } from '@/types/order'
 
 export const orderAPI = {
   // 获取订单列表
@@ -54,6 +54,11 @@ export const orderAPI = {
   getPackCount(body: Partial<SearchOrderParams & IPageParams>) {
     return baseAxios.post<APIResponse<Record<string, number>>>('/api/logistics/order/fetch/package/count', body)
   },
+
+  // 添加商品
+  addProduct(body: Partial<OrderProductList>) {
+    return baseAxios.post('/api/logistics/order/add/product', body)
+  },
 }
 
 export interface ReturnOperationInfo {
@@ -62,14 +67,14 @@ export interface ReturnOperationInfo {
   storeRemark: string // 店铺退件备注
   trackingNo: string // 快递单号，添加多个请使用英文逗号隔开
 }
-export interface 未知 {
-  chargeMethod: string // 收费方式 字典值
-  id: number // 主键
-  logisticsCompany: string // 物流公司
-  logisticsTrackingNumber: string // 退件物流单号
-  platformRemark: string // 平台退件备注
-  returnLogisticsCosts: number // 退件物流费用
-}
+// export interface 未知 {
+//   chargeMethod: string // 收费方式 字典值
+//   id: number // 主键
+//   logisticsCompany: string // 物流公司
+//   logisticsTrackingNumber: string // 退件物流单号
+//   platformRemark: string // 平台退件备注
+//   returnLogisticsCosts: number // 退件物流费用
+// }
 
 export interface SearchOrderParams extends IPageParams {
   selectLogisticsOrderVO: {

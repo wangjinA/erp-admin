@@ -62,8 +62,11 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
   const [actionType, setActionType] = useState<ShowFormType>()
   const [sheet, setSheet] = useState<any>()
 
+  const [form] = useForm()
+  const [addForm] = useForm()
+
   const columns = useColumns(props)
-  const refreshHandler = useRequest(
+  const refreshHandle = useRequest(
     async (id) => {
       const res = await orderAPI.refresh(id)
       await showMessageStatus(res.data)
@@ -72,7 +75,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
       manual: true,
     },
   )
-  const logHandler = useRequest(
+  const logHandle = useRequest(
     async (id) => {
       return orderAPI.getLog(id).then(r => r.data)
     },
@@ -80,7 +83,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
       manual: true,
     },
   )
-  const updateHandler = useRequest(
+  const updateHandle = useRequest(
     async (newSku?: any) => {
       const data = omit(currentOrder, ['orderProductVOList', 'orderPackageList'])
       await showMessage(() => orderAPI.update({
@@ -99,11 +102,24 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
     },
   )
 
+  const addProductHandle = useRequest(
+    async () => {
+      const formData = await addForm.validate()
+      await showMessage(() => orderAPI.addProduct({
+        ...formData,
+      }), '添加')
+      setActionType(null)
+      bus.emit(EmitTypes.refreshOrderPage)
+    },
+    {
+      manual: true,
+    },
+  )
+
   const { data: orderStatusOptions } = useDictOptions({
     dictCode: 'order_status',
   })
 
-  const [form] = useForm()
   // const { data: shopeeStatus } = useDictOptions({
   //   dictCode: 'shopee_status',
   //   displayName: '',
@@ -169,9 +185,9 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                     查看面单
                   </Button>
                   <Button
-                    loading={refreshHandler.loading}
+                    loading={refreshHandle.loading}
                     onClick={() => {
-                      refreshHandler.run(item.id)
+                      refreshHandle.run(item.id)
                     }}
                   >
                     更新订单
@@ -208,7 +224,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                   <Button
                     icon={<IconFile />}
                     onClick={() => {
-                      logHandler.run(item.id)
+                      logHandle.run(item.id)
                       setRecord(true)
                     }}
                   >
@@ -317,23 +333,31 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
         title="添加商品"
         visible={actionType === ShowFormType.create}
         onCancel={() => setActionType(null)}
-        confirmLoading={updateHandler.loading}
+        confirmLoading={addProductHandle.loading}
         onOk={async () => {
-          const formData = await form.validate()
-          updateHandler.run(formData)
+          addProductHandle.run()
         }}
       >
         <FilterForm
           span={24}
-          form={form}
+          form={addForm}
           initialValues={{
-            extraStatus: true,
+            // extraStatus: true,
+            id: currentOrder?.id,
           }}
           formItemConfigList={[
             ...OrderCreateSchema2,
+            // {
+            //   schema: {
+            //     field: 'extraStatus',
+            //   },
+            //   formItemProps: {
+            //     hidden: true,
+            //   },
+            // },
             {
               schema: {
-                field: 'extraStatus',
+                field: 'id',
               },
               formItemProps: {
                 hidden: true,
@@ -361,11 +385,11 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
           setRecord(false)
         }}
       >
-        <Spin loading={logHandler.loading} className="mx-auto block">
-          {!logHandler.loading && logHandler.data?.list?.length
+        <Spin loading={logHandle.loading} className="mx-auto block">
+          {!logHandle.loading && logHandle.data?.list?.length
             ? (
                 <Timeline>
-                  {logHandler.data.list.map(item => (
+                  {logHandle.data.list.map(item => (
                     <Timeline.Item key={item} label="2017-03-10">
                       The first milestone
                     </Timeline.Item>
@@ -384,9 +408,9 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
         title="编辑订单"
         visible={actionType === ShowFormType.edit}
         onCancel={() => setActionType(null)}
-        confirmLoading={updateHandler.loading}
+        confirmLoading={updateHandle.loading}
         onOk={async () => {
-          updateHandler.run()
+          updateHandle.run()
         }}
       >
         <FilterForm
