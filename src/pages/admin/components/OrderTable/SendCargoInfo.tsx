@@ -1,4 +1,4 @@
-import { Form, Link, Tag } from '@arco-design/web-react'
+import { Link, Tag } from '@arco-design/web-react'
 
 import { useRequest } from 'ahooks'
 import classNames from 'classnames'
@@ -14,7 +14,7 @@ import ReturnParcel from '@/components/ReturnParcel'
 import { useDictOptions } from '@/components/Selectors/DictSelector'
 import { EmitTypes, bus } from '@/hooks/useEventBus'
 import { OrderResponseItem } from '@/types/order'
-import { showMessage, showMessageStatus, showModal } from '@/utils'
+import { showMessage, showModal } from '@/utils'
 
 interface SendCargoInfoProps {
   data: OrderResponseItem
@@ -58,40 +58,27 @@ function ExpressStatusActions(props: {
   const { item, sendWarehouse, data } = props
 
   const [isReturnGoods, setIsReturnGoods] = useState<boolean>(false)
-  const [formRef] = Form.useForm()
+  // const [formRef] = Form.useForm()
   // 设置快递状态
-  const updateStatusHandle = useRequest(
-    async (trackingStatus) => {
-      await showMessage(() => expressAPI.updateExpressStatus({
-        orderProductId: item.id,
-        trackingStatus,
-      }))
-      bus.emit(EmitTypes.refreshOrderPage)
-    },
-    {
-      manual: true,
-    },
-  )
-  // 退件
-  const returnHandle = useRequest(
-    async () => {
-      const formData = await formRef.validate()
-      const res = await expressAPI.returnOperation(formData)
-      await showMessageStatus(res.data)
-      setIsReturnGoods(false)
-    },
-    {
-      manual: true,
-    },
-  )
-
+  // const updateStatusHandle = useRequest(
+  //   async (trackingStatus) => {
+  //     await showMessage(() => expressAPI.updateExpressStatus({
+  //       orderProductId: item.id,
+  //       trackingStatus,
+  //     }))
+  //     bus.emit(EmitTypes.refreshOrderPage)
+  //   },
+  //   {
+  //     manual: true,
+  //   },
+  // )
   // 拒收
   const rejectHandle = useRequest(
     async () => {
       await showMessage(() => expressAPI.addReject({
         orderId: data.id,
         trackingNo: item.trackingNo,
-      }))
+      }), '快递拒收申请')
       bus.emit(EmitTypes.refreshOrderPage)
     },
     {
@@ -102,7 +89,7 @@ function ExpressStatusActions(props: {
   // 取消拒收
   const cancelRejectHandle = useRequest(
     async () => {
-      await showMessage(() => expressAPI.cancelReject(data.id))
+      await showMessage(() => expressAPI.cancelReject(data.id), '取消拒收')
       bus.emit(EmitTypes.refreshOrderPage)
     },
     {
@@ -178,7 +165,6 @@ function ExpressStatusActions(props: {
               取消拒收
             </Tag>
           </PopconfirmDelete>
-
         </div>
       )
     case '4':
@@ -187,7 +173,8 @@ function ExpressStatusActions(props: {
           <PopconfirmDelete
             title="确定取消退件吗？"
             onOk={async () => {
-              updateStatusHandle.run('1')
+              await showMessage(() => expressAPI.cancelReturn(data.id), '退件取消')
+              bus.emit(EmitTypes.refreshOrderPage)
             }}
           >
             <Tag

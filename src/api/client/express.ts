@@ -71,6 +71,12 @@ export const expressAPI = {
   returnOperation(body: Partial<ReturnOperationInfo>) {
     return baseAxios.post('/api/return/management/insert', body)
   },
+  /**
+   * 取消退件
+   */
+  cancelReturn(orderId: any) {
+    return baseAxios.get<APIResponse>(`/api/return/management/cancel/${orderId}`)
+  },
 }
 
 export interface ReturnOperationInfo {
