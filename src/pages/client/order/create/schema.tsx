@@ -71,6 +71,7 @@ export const OrderCreateSchema1: CreateFormItemType[] = [
   },
   {
     schema: {
+      required: true,
       field: 'sendWarehouse',
       label: '送往仓库',
     },

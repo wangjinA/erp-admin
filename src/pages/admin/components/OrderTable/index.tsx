@@ -332,10 +332,15 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
       <Modal
         title="添加商品"
         visible={actionType === ShowFormType.create}
-        onCancel={() => setActionType(null)}
+        onCancel={() => {
+          addForm.resetFields()
+          setActionType(null)
+        }}
+        unmountOnExit={true}
         confirmLoading={addProductHandle.loading}
         onOk={async () => {
           addProductHandle.run()
+          addForm.resetFields()
         }}
       >
         <FilterForm
@@ -343,10 +348,11 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
           form={addForm}
           initialValues={{
             // extraStatus: true,
-            id: currentOrder?.id,
+            orderId: currentOrder?.id,
+            quantity: 1,
           }}
           formItemConfigList={[
-            ...OrderCreateSchema2,
+            ...OrderCreateSchema2.filter(item => !['trackingNo'].includes(item.schema.field)),
             // {
             //   schema: {
             //     field: 'extraStatus',
@@ -357,7 +363,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
             // },
             {
               schema: {
-                field: 'id',
+                field: 'orderId',
               },
               formItemProps: {
                 hidden: true,

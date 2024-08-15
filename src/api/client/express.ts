@@ -38,8 +38,8 @@ export const expressAPI = {
   /**
    * 取消拒收
    */
-  cancelReject(body: AddRejectParam) {
-    return baseAxios.post<APIResponse>(`/api/reject/management/cancel`, body)
+  cancelReject(orderId: any) {
+    return baseAxios.get<APIResponse>(`/api/reject/management/cancel/${orderId}`)
   },
   /**
    * 退件列表
@@ -112,7 +112,7 @@ export interface ReturnParams {
 }
 
 export interface AddRejectParam {
-  sendWarehouse: string
+  orderId: number
   trackingNo: string
 }
 

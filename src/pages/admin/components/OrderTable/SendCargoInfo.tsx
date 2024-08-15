@@ -53,8 +53,9 @@ function ExpressStatus(item: OrderResponseItem['orderProductVOList'][0]) {
 function ExpressStatusActions(props: {
   item: OrderResponseItem['orderProductVOList'][0]
   sendWarehouse: string
+  data: OrderResponseItem
 }) {
-  const { item, sendWarehouse } = props
+  const { item, sendWarehouse, data } = props
 
   const [isReturnGoods, setIsReturnGoods] = useState<boolean>(false)
   const [formRef] = Form.useForm()
@@ -88,7 +89,7 @@ function ExpressStatusActions(props: {
   const rejectHandle = useRequest(
     async () => {
       await showMessage(() => expressAPI.addReject({
-        sendWarehouse,
+        orderId: data.id,
         trackingNo: item.trackingNo,
       }))
       bus.emit(EmitTypes.refreshOrderPage)
@@ -101,10 +102,7 @@ function ExpressStatusActions(props: {
   // 取消拒收
   const cancelRejectHandle = useRequest(
     async () => {
-      await showMessage(() => expressAPI.cancelReject({
-        sendWarehouse,
-        trackingNo: item.trackingNo,
-      }))
+      await showMessage(() => expressAPI.cancelReject(data.id))
       bus.emit(EmitTypes.refreshOrderPage)
     },
     {
@@ -238,6 +236,7 @@ const SkuList: React.FC<SendCargoInfoProps> = (props) => {
               <span className={labelClass}>操作：</span>
               <span className={classNames(valueClass, 'inline-flex')}>
                 <ExpressStatusActions
+                  data={data}
                   item={item}
                   sendWarehouse={data.sendWarehouse}
                 />
