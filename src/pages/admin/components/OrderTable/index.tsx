@@ -38,7 +38,7 @@ import { OrderPageProps } from '@/pages/client/order/orderPage'
 import { isClient } from '@/routes'
 import { StyleProps } from '@/types'
 import { Order, OrderResponseItem } from '@/types/order'
-import { showMessage, showMessageStatus, showModal } from '@/utils'
+import { formatDate, showMessage, showMessageStatus, showModal } from '@/utils'
 
 export interface OrderTablePorps extends StyleProps {
   // tableProps: TableProps;
@@ -387,17 +387,19 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
         title="操作记录"
         visible={record}
         onCancel={() => setRecord(false)}
+        cancelText="关闭"
         onOk={async () => {
           setRecord(false)
         }}
       >
-        <Spin loading={logHandle.loading} className="mx-auto block">
-          {!logHandle.loading && logHandle.data?.list?.length
+        <Spin loading={logHandle.loading} className="mx-auto block max-h-96 overflow-y-auto">
+          {!logHandle.loading && logHandle.data?.data.list?.length
             ? (
                 <Timeline>
-                  {logHandle.data.list.map(item => (
-                    <Timeline.Item key={item} label="2017-03-10">
-                      The first milestone
+                  {logHandle.data?.data.list.map(item => (
+                    <Timeline.Item key={item.id} label={item.operationContent}>
+                      <span>{item.operationProcedure}</span>
+                      <span className="ml-4 text-gray-500">{formatDate(item.createTime)}</span>
                     </Timeline.Item>
                   ))}
                 </Timeline>

@@ -8,10 +8,10 @@ import { useDictOptions } from '@/components/Selectors/DictSelector'
 import EntrepotRadio from '@/components/Selectors/EntrepotRadio'
 import { DividerSchema } from '@/constants/schema/common'
 import { TagColors } from '@/pages/admin/components/OrderTable/SendCargoInfo'
-import { showMessageStatus, showModal, tryFn } from '@/utils'
+import { showMessage, showModal } from '@/utils'
 
 export default () => {
-  const [current, setCurrent] = useState()
+  const [current, setCurrent] = useState<any>()
   const ref = React.useRef<SearchTableRef>()
 
   const { run, loading } = useRequest(
@@ -23,13 +23,9 @@ export default () => {
         },
       })
       setCurrent(row)
-      const res = await tryFn(() =>
-        expressAPI.updateExpressStatus({
-          orderProductId: 111111,
-          trackingStatus: '填充填充填充！！！',
-        }),
+      await showMessage(() =>
+        expressAPI.cancelReject(row.id),
       )
-      await showMessageStatus(res.data)
       ref.current.refreshSearchTable()
     },
     {
@@ -119,7 +115,7 @@ export default () => {
               return (
                 <Button
                   type="text"
-                  loading={row === current && loading} // ! 判断一下id row === current
+                  loading={row.id === current?.id && loading} // ! 判断一下id row === current
                   onClick={async () => {
                     run(row)
                   }}

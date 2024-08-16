@@ -34,9 +34,9 @@ export const orderAPI = {
   },
 
   getLog(orderId: number) {
-    return baseAxios.post(`/api/logistics/order/log/list`, {
+    return baseAxios.post<APIListResponse<OrderLogItem>>(`/api/logistics/order/log/list`, {
       pageNum: 1,
-      pageSize: 50,
+      pageSize: 30,
       orderId,
     })
   },
@@ -67,6 +67,21 @@ export interface ReturnOperationInfo {
   storeRemark: string // 店铺退件备注
   trackingNo: string // 快递单号，添加多个请使用英文逗号隔开
 }
+
+export interface OrderLogItem {
+  createBy: string
+  createTime: string
+  updateBy: string
+  updateTime: string
+  id: string
+  tenantryId: string
+  orderId: string
+  operationProcedure: string
+  operationContent: string
+  operatorUser: string
+  deleteStatus: number
+}
+
 // export interface 未知 {
 //   chargeMethod: string // 收费方式 字典值
 //   id: number // 主键

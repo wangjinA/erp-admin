@@ -38,8 +38,8 @@ export const expressAPI = {
   /**
    * 取消拒收
    */
-  cancelReject(orderId: any) {
-    return baseAxios.get<APIResponse>(`/api/reject/management/cancel/${orderId}`)
+  cancelReject(id: any) {
+    return baseAxios.get<APIResponse>(`/api/reject/management/cancel/${id}`)
   },
   /**
    * 退件列表
@@ -74,8 +74,8 @@ export const expressAPI = {
   /**
    * 取消退件
    */
-  cancelReturn(orderId: any) {
-    return baseAxios.get<APIResponse>(`/api/return/management/cancel/${orderId}`)
+  cancelReturn(id: any) {
+    return baseAxios.get<APIResponse>(`/api/return/management/cancel/${id}`)
   },
 }
 

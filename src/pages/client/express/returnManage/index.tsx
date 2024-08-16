@@ -1,45 +1,40 @@
-import { Alert, Button, Tag } from '@arco-design/web-react';
-import { useRequest } from 'ahooks';
-import React, { useState } from 'react';
+import { Alert, Button, Tag } from '@arco-design/web-react'
+import { useRequest } from 'ahooks'
+import React, { useState } from 'react'
 
-import { expressAPI } from '@/api/client/express';
-import ReturnParcel from '@/components/ReturnParcel';
-import SearchTable, { SearchTableRef } from '@/components/SearchTable';
+import { expressAPI } from '@/api/client/express'
+import ReturnParcel from '@/components/ReturnParcel'
+import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 
-import { DictNameFC } from '@/components/Selectors/DictSelector';
-import EntrepotRadio from '@/components/Selectors/EntrepotRadio';
-import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector';
-import { DividerSchema } from '@/constants/schema/common';
-import { TagColors } from '@/pages/admin/components/OrderTable/SendCargoInfo';
-import { showMessageStatus, showModal, tryFn } from '@/utils';
+import { DictNameFC } from '@/components/Selectors/DictSelector'
+import EntrepotRadio from '@/components/Selectors/EntrepotRadio'
+import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
+import { DividerSchema } from '@/constants/schema/common'
+import { TagColors } from '@/pages/admin/components/OrderTable/SendCargoInfo'
+import { showMessage, showModal } from '@/utils'
 
 export default () => {
-  const [current, setCurrent] = useState();
-  const [visible, setVisible] = React.useState<boolean>(false);
-  const ref = React.useRef<SearchTableRef>();
+  const [current, setCurrent] = useState()
+  const [visible, setVisible] = React.useState<boolean>(false)
+  const ref = React.useRef<SearchTableRef>()
 
   const { run, loading } = useRequest(
     async (row) => {
       await showModal({
-        content: '确定取消？',
+        content: '确定取消退件？',
         okButtonProps: {
           status: 'warning',
         },
-      });
-      setCurrent(row);
-      const res = await tryFn(() =>
-        expressAPI.updateExpressStatus({
-          orderProductId: 111111,
-          trackingStatus: '1', // 改回已收状态
-        })
-      );
-      await showMessageStatus(res.data);
-      ref.current.refreshSearchTable();
+      })
+      setCurrent(row)
+      await showMessage(() =>
+        expressAPI.cancelReturn(row.id), '取消退件')
+      ref.current.refreshSearchTable()
     },
     {
       manual: true,
-    }
-  );
+    },
+  )
 
   return (
     <div className="p-4 bg-white">
@@ -51,7 +46,7 @@ export default () => {
           '2. 无论是上门取件还是仓库快递寄回，仓库统一收取每个退件包裹1元/单的退件服务费。退件完成之后仓库将会把寄回的快递单号填入，您可通过此处自行查看退件单号',
           '3. 操作流程：新增-->选择退件仓库-->依次填入需要退件的信息-->确定。 注：上门取件务必在备注上填写取件码 ，否则将退件失败',
           '4. 无主件仓库会进行公示 15天，15天后无人认领，仓库即做销毁处理，不予任何查找或理赔',
-        ].map((item) => (
+        ].map(item => (
           <div key={item}>{item}</div>
         ))}
       />
@@ -60,7 +55,7 @@ export default () => {
         name="包裹认领"
         getListRequest={expressAPI.getReturnList}
         createHandle={() => {
-          setVisible(true);
+          setVisible(true)
         }}
         formItemConfigList={[
           {
@@ -72,7 +67,7 @@ export default () => {
             control: <EntrepotRadio></EntrepotRadio>,
             isSearch: true,
             render(col) {
-              return <EntrepotNameFC value={String(col)} />;
+              return <EntrepotNameFC value={String(col)} />
             },
           },
           {
@@ -131,7 +126,7 @@ export default () => {
                 <Tag color={TagColors[Number(c)]}>
                   <DictNameFC dictCode="tracking_status" value={c} />
                 </Tag>
-              );
+              )
             },
           },
           {
@@ -144,17 +139,18 @@ export default () => {
                   type="text"
                   loading={row === current && loading}
                   onClick={async () => {
-                    run(row);
+                    run(row)
                   }}
                 >
                   取消退件
                 </Button>
-              );
+              )
             },
           },
         ]}
-      ></SearchTable>
+      >
+      </SearchTable>
       <ReturnParcel visible={visible} setVisible={setVisible}></ReturnParcel>
     </div>
-  );
-};
+  )
+}

@@ -1,6 +1,7 @@
 import { Message, Modal } from '@arco-design/web-react'
 import { ConfirmProps } from '@arco-design/web-react/es/Modal/confirm'
 import { AxiosResponse } from 'axios'
+import dayjs from 'dayjs'
 import { isArray } from 'lodash'
 import * as XLSX from 'xlsx'
 
@@ -146,4 +147,11 @@ export function showObj(value, obj): any[] {
   else {
     return []
   }
+}
+
+export function formatDate(date: string) {
+  if (!date) {
+    return '-'
+  }
+  return dayjs(date).format('YYYY-MM-DD HH:mm').replace(`${new Date().getFullYear()}-`, '')
 }
