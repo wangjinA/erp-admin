@@ -62,7 +62,6 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.27.1",
     "eslint-plugin-react-hooks": "^4.3.0",
-    "husky": "^7.0.2",
     "less": "^4.1.2",
     "less-loader": "7.3.0",
     "postcss": "^8.4.38",
@@ -86,14 +85,6 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
-    ]
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "eslint --fix --cache"
-    ],
-    "*.{css, less}": [
-      "stylelint --fix"
     ]
   }
 }

@@ -6,100 +6,104 @@ import {
   Result,
   Space,
   Steps,
-} from '@arco-design/web-react'
-import { IconDelete, IconPlus } from '@arco-design/web-react/icon'
+} from '@arco-design/web-react';
+import { IconDelete, IconPlus } from '@arco-design/web-react/icon';
 
-import { useLocalStorageState, useRequest } from 'ahooks'
-import classNames from 'classnames'
-import { random } from 'lodash'
-import { useEffect, useRef, useState } from 'react'
-import { useHistory } from 'react-router'
-import { useDebouncedCallback } from 'use-debounce'
+import { useLocalStorageState, useRequest } from 'ahooks';
+import classNames from 'classnames';
+import { random } from 'lodash';
+import { useEffect, useRef, useState } from 'react';
+import { useHistory } from 'react-router';
+import { useDebouncedCallback } from 'use-debounce';
 
-import styles from './index.module.less'
-import locale from './locale'
+import styles from './index.module.less';
+import locale from './locale';
 import {
   OrderCreateSchema1,
   OrderCreateSchema2,
   OrderCreateSchema3,
-} from './schema'
+} from './schema';
 
-import { orderAPI } from '@/api/admin/order'
-import FilterForm from '@/components/FilterForm'
-import PopconfirmDelete from '@/components/PopconfirmDelete'
-import { HideClass } from '@/constants/style'
-import { Order, OrderProductList } from '@/types/order'
-import { showMessage } from '@/utils'
-import useLocale from '@/utils/useLocale'
+import { orderAPI } from '@/api/admin/order';
+import FilterForm from '@/components/FilterForm';
+import PopconfirmDelete from '@/components/PopconfirmDelete';
+import { HideClass } from '@/constants/style';
+import { Order, OrderProductList } from '@/types/order';
+import { showMessage } from '@/utils';
+import useLocale from '@/utils/useLocale';
 
 export default () => {
   const [formData, setFormData] = useLocalStorageState<Partial<Order>>(
     'create-order',
     {
       defaultValue: {},
-    },
-  )
-  const [current, setCurrent] = useState(3)
-  const [skuList, setSkuList] = useState<(Partial<OrderProductList & { _id: number }>)[]>((formData.orderProductList || [{}]).map(item => ({
-    ...item,
-    _id: random(0, 999999),
-  })))
-  const history = useHistory()
+    }
+  );
+  const [current, setCurrent] = useState(3);
+  const [skuList, setSkuList] = useState<
+    Partial<OrderProductList & { _id: number }>[]
+  >(
+    (formData.orderProductList || [{}]).map((item) => ({
+      ...item,
+      _id: random(0, 999999),
+    }))
+  );
+  const history = useHistory();
 
-  const skuRefs = useRef<FormInstance<any>[]>([])
-  const [ref1] = Form.useForm()
-  const [ref3] = Form.useForm()
+  const skuRefs = useRef<FormInstance<any>[]>([]);
+  const [ref1] = Form.useForm();
+  const [ref3] = Form.useForm();
 
   const setFormDataDebounce = useDebouncedCallback((v: Partial<Order>) => {
     setFormData({
       ...formData,
       ...v,
-    })
-  }, 300)
+    });
+  }, 300);
 
-  const t = useLocale(locale)
+  const t = useLocale(locale);
   const resetCreateForm = () => {
-    ref1.clearFields()
-    ref3.clearFields()
-    setSkuList([{
-      _id: random(0, 999999),
-    }])
+    ref1.clearFields();
+    ref3.clearFields();
+    setSkuList([
+      {
+        _id: random(0, 999999),
+      },
+    ]);
     skuRefs.current.forEach((item) => {
-      item.clearFields()
-    })
-  }
+      item.clearFields();
+    });
+  };
 
   const createHandler = useRequest(
     async () => {
-      console.log(formData)
-      await showMessage(() => orderAPI.insert(formData))
-      setCurrent(current + 1)
+      console.log(formData);
+      await showMessage(() => orderAPI.insert(formData));
+      setCurrent(current + 1);
     },
     {
       manual: true,
-    },
-  )
+    }
+  );
 
   const toNext = async () => {
     if (current === 1) {
-      await ref1.validate()
-    }
-    else if (current === 2) {
-      console.log(skuRefs.current)
+      await ref1.validate();
+    } else if (current === 2) {
+      console.log(skuRefs.current);
 
-      await Promise.all(skuRefs.current?.map(item => item.validate()))
+      await Promise.all(skuRefs.current?.map((item) => item.validate()));
+    } else if (current === 3) {
+      await ref3.validate();
     }
-    else if (current === 3) {
-      await ref3.validate()
-    }
-    setCurrent(current + 1)
-  }
+    setCurrent(current + 1);
+  };
 
   useEffect(() => {
-    console.log(formData)
-  }, [])
+    console.log(formData);
+  }, []);
 
-  console.log(formData)
+  console.log(formData);
   return (
     <div className="bg-white p-4">
       <Card>
@@ -122,19 +126,18 @@ export default () => {
             size="small"
             formItemConfigList={OrderCreateSchema1}
             onValuesChange={(val, vals) => {
-              setFormDataDebounce(vals)
+              setFormDataDebounce(vals);
             }}
-          >
-          </FilterForm>
+          ></FilterForm>
           <div className={classNames(current !== 2 ? HideClass : '')}>
             <Form.Provider
               onFormValuesChange={async (name, changedValues, info) => {
                 const orderProductList = await Promise.all(
                   skuList.map((sku, index) =>
-                    info.forms[`orderProductList[${index}]`].validate(),
-                  ),
-                )
-                setFormDataDebounce({ orderProductList })
+                    info.forms[`orderProductList[${index}]`].validate()
+                  )
+                );
+                setFormDataDebounce({ orderProductList });
               }}
             >
               <div className="flex flex-col gap-4">
@@ -149,9 +152,14 @@ export default () => {
                         <Space>
                           <PopconfirmDelete
                             onOk={() => {
-                              skuList.splice(index, 1)
-                              setFormDataDebounce({ orderProductList: formData.orderProductList.filter((_, i) => i !== index) })
-                              setSkuList([...skuList])
+                              skuList.splice(index, 1);
+                              setFormDataDebounce({
+                                orderProductList:
+                                  formData.orderProductList.filter(
+                                    (_, i) => i !== index
+                                  ),
+                              });
+                              setSkuList([...skuList]);
                             }}
                           >
                             <Button
@@ -162,8 +170,7 @@ export default () => {
                               style={{
                                 margin: '0 20px',
                               }}
-                            >
-                            </Button>
+                            ></Button>
                           </PopconfirmDelete>
                           {/* <Button
                             size="mini"
@@ -184,13 +191,11 @@ export default () => {
                       span={12}
                       size="small"
                       formItemConfigList={OrderCreateSchema2}
-
                       ref={(el: FormInstance) => {
                         if (!el) {
-                          skuRefs.current.splice(index, 1)
-                        }
-                        else {
-                          skuRefs.current[index] = el
+                          skuRefs.current.splice(index, 1);
+                        } else {
+                          skuRefs.current[index] = el;
                         }
                       }}
                       // formItemConfigList={OrderCreateSchema2.map(oitem => ({
@@ -201,10 +206,9 @@ export default () => {
                       //   }
                       // }))}
                       onValuesChange={(val, vals) => {
-                        setFormDataDebounce(vals)
+                        setFormDataDebounce(vals);
                       }}
-                    >
-                    </FilterForm>
+                    ></FilterForm>
                   </Card>
                 ))}
                 <Button
@@ -215,8 +219,8 @@ export default () => {
                   onClick={() => {
                     skuList.push({
                       _id: random(0, 999999),
-                    })
-                    setSkuList([...skuList])
+                    });
+                    setSkuList([...skuList]);
                   }}
                 >
                   添加
@@ -232,10 +236,9 @@ export default () => {
             size="small"
             formItemConfigList={OrderCreateSchema3}
             onValuesChange={(val, vals) => {
-              setFormDataDebounce(vals)
+              setFormDataDebounce(vals);
             }}
-          >
-          </FilterForm>
+          ></FilterForm>
           {current === 4 && (
             <Result
               status="success"
@@ -247,7 +250,7 @@ export default () => {
                   style={{ marginRight: 16 }}
                   onClick={() => {
                     // resetCreateForm()
-                    setCurrent(1)
+                    setCurrent(1);
                   }}
                 >
                   继续创建
@@ -255,11 +258,9 @@ export default () => {
                 <Button
                   key="again"
                   type="primary"
-                  onClick={
-                    () => {
-                      history.push('/client/order/alreadyPacked')
-                    }
-                  }
+                  onClick={() => {
+                    history.push('/client/order/alreadyPacked');
+                  }}
                 >
                   查看订单
                 </Button>,
@@ -282,7 +283,7 @@ export default () => {
                 type="primary"
                 size="large"
                 onClick={() => {
-                  createHandler.run()
+                  createHandler.run();
                 }}
                 loading={createHandler.loading}
               >
@@ -300,5 +301,5 @@ export default () => {
         </div> */}
       </Card>
     </div>
-  )
-}
+  );
+};
