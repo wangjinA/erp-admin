@@ -12,8 +12,6 @@ export default () => {
       ...params,
       pageNum: params?.current || pagination.current,
       pageSize: params?.pageSize || pagination.pageSize,
-      ...timeArrToObject(),
-
     })
     return res.data.data
   })
