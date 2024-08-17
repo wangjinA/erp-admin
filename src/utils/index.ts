@@ -155,3 +155,7 @@ export function formatDate(date: string) {
   }
   return dayjs(date).format('YYYY-MM-DD HH:mm').replace(`${new Date().getFullYear()}-`, '')
 }
+
+export function isProd() {
+  return process.env.NODE_ENV === 'production'
+}

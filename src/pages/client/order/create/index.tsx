@@ -6,7 +6,6 @@ import {
   Result,
   Space,
   Steps,
-  Typography,
 } from '@arco-design/web-react'
 import { IconDelete, IconPlus } from '@arco-design/web-react/icon'
 
@@ -32,8 +31,6 @@ import { HideClass } from '@/constants/style'
 import { Order, OrderProductList } from '@/types/order'
 import { showMessage } from '@/utils'
 import useLocale from '@/utils/useLocale'
-
-const { Title, Paragraph } = Typography
 
 export default () => {
   const [formData, setFormData] = useLocalStorageState<Partial<Order>>(
@@ -61,6 +58,17 @@ export default () => {
   }, 300)
 
   const t = useLocale(locale)
+  const resetCreateForm = () => {
+    ref1.clearFields()
+    ref3.clearFields()
+    setSkuList([{
+      _id: random(0, 999999),
+    }])
+    skuRefs.current.forEach((item) => {
+      item.clearFields()
+    })
+  }
+
   const createHandler = useRequest(
     async () => {
       console.log(formData)
@@ -71,10 +79,6 @@ export default () => {
       manual: true,
     },
   )
-  // const reCreateForm = () => {
-  //   form.resetFields()
-  //   setCurrent(1)
-  // }
 
   const toNext = async () => {
     if (current === 1) {
@@ -158,7 +162,6 @@ export default () => {
                               style={{
                                 margin: '0 20px',
                               }}
-                              // onClick={() => remove(index)}
                             >
                             </Button>
                           </PopconfirmDelete>
@@ -243,7 +246,7 @@ export default () => {
                   key="reset"
                   style={{ marginRight: 16 }}
                   onClick={() => {
-                    // reCreateForm()
+                    // resetCreateForm()
                     setCurrent(1)
                   }}
                 >
