@@ -1,7 +1,9 @@
 import {
+  Grid,
   Message,
   Table,
   TableColumnProps,
+  Typography,
 } from '@arco-design/web-react'
 import { useRequest } from 'ahooks'
 import dayjs from 'dayjs'
@@ -58,7 +60,7 @@ export default () => {
   )
   console.log(list)
   return (
-    <div className="bg-white p-4">
+    <div className="bg-white py-6 px-4">
       <ScanCommon
         onScan={(info) => {
           console.log(info.trackingNo)
@@ -85,7 +87,20 @@ export default () => {
       ) : null} */}
       {list?.length
         ? (
-            <Table loading={loading} data={list} columns={columns}></Table>
+            <>
+
+              <Grid.Row justify="space-between" align="center" className="my-4">
+                <Grid.Col span={16}>
+                  <Typography.Title heading={6} className="!mb-0">
+                    签收列表
+                  </Typography.Title>
+                </Grid.Col>
+                {/* <Grid.Col span={8} style={{ textAlign: 'right' }}>
+                  <Button type="text">查看扫码记录</Button>
+                </Grid.Col> */}
+              </Grid.Row>
+              <Table loading={loading} data={list} columns={columns}></Table>
+            </>
           )
         : null}
     </div>

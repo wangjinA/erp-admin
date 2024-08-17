@@ -1,44 +1,44 @@
-import baseAxios from '..';
-import { APIListResponse, APIResponse, IPageParams } from '../type';
+import baseAxios from '..'
+import { APIListResponse, APIResponse, IPageParams } from '../type'
 
-import { Order } from '@/types/order';
+import { Order } from '@/types/order'
 
 export interface Entrepot {
-  consignee: string;
-  createBy: number;
-  createTime: string;
-  deleteStatus: number;
-  deliveryAddress: string;
-  detailedAddress: string;
-  entrepotName: string;
-  entrepotType: number;
-  id: number;
-  inventorySupported: number;
-  openUser: number;
-  qrCode: string;
-  remark: string;
-  storeType: string;
-  supportArea: string;
-  telephone: string;
-  updateBy: number;
-  updateTime: string;
+  consignee: string
+  createBy: number
+  createTime: string
+  deleteStatus: number
+  deliveryAddress: string
+  detailedAddress: string
+  entrepotName: string
+  entrepotType: number
+  id: number
+  inventorySupported: number
+  openUser: number
+  qrCode: string
+  remark: string
+  storeType: string
+  supportArea: string
+  telephone: string
+  updateBy: number
+  updateTime: string
 }
 
 export interface EntrepotStorageRacks {
-  available: number;
-  createBy: number;
-  createTime: string;
-  deleteStatus: number;
-  entrepotId: number;
-  id: number;
-  locationPrefix: string;
-  numberColumns: number;
-  numberFloors: number;
-  storageRacksCode: string;
-  storageRacksName: string;
-  storageRacksType: string;
-  updateBy: number;
-  updateTime: string;
+  available: number
+  createBy: number
+  createTime: string
+  deleteStatus: number
+  entrepotId: number
+  id: number
+  locationPrefix: string
+  numberColumns: number
+  numberFloors: number
+  storageRacksCode: string
+  storageRacksName: string
+  storageRacksType: string
+  updateBy: number
+  updateTime: string
 }
 
 // 仓库
@@ -47,146 +47,146 @@ export const entrepotAPI = {
     return baseAxios.post<APIListResponse<Entrepot>>('/api/entrepot/list', {
       entrepotType: 1,
       ...body,
-    });
+    })
   },
   getListAll(body: Partial<Entrepot & IPageParams>) {
     return baseAxios.post<APIListResponse<Entrepot>>('/api/entrepot/list/all', {
       entrepotType: 1,
       ...body,
-    });
+    })
   },
   insert(body: Partial<Entrepot>) {
-    return baseAxios.post<APIResponse>('/api/entrepot/insert', body);
+    return baseAxios.post<APIResponse>('/api/entrepot/insert', body)
   },
   remove(id) {
-    return baseAxios.get(`/api/entrepot/remove/${id}`);
+    return baseAxios.get(`/api/entrepot/remove/${id}`)
   },
   update(body: Partial<Entrepot>) {
-    return baseAxios.post('/api/entrepot/update', body);
+    return baseAxios.post('/api/entrepot/update', body)
   },
-};
+}
 
 // 仓位
 export const racksAPI = {
   getList(body: Partial<EntrepotStorageRacks & IPageParams>) {
     return baseAxios.post<APIListResponse<EntrepotStorageRacks>>(
       '/api/racks/list',
-      body
-    );
+      body,
+    )
   },
   insert(body: Partial<EntrepotStorageRacks>) {
-    return baseAxios.post<APIResponse>('/api/racks/insert', body);
+    return baseAxios.post<APIResponse>('/api/racks/insert', body)
   },
   remove(id) {
-    return baseAxios.get<APIResponse>(`/api/racks/remove/${id}`);
+    return baseAxios.get<APIResponse>(`/api/racks/remove/${id}`)
   },
   update(body: Partial<EntrepotStorageRacks>) {
-    return baseAxios.post<APIResponse>('/api/racks/update', body);
+    return baseAxios.post<APIResponse>('/api/racks/update', body)
   },
-};
+}
 
 export const scanAPI = {
   // 获取扫码记录
   getRecord(body: Partial<ScanRecord> & IPageParams) {
     return baseAxios.post<APIListResponse<ScanRecord>>(
       '/api/scanning/record/log/list',
-      body
-    );
+      body,
+    )
   },
   // 扫码入库
   scanPut(params: ScanParams) {
     return baseAxios.post<APIResponse<ScanResponse>>(
       '/api/business/operation/scan/put',
-      params
-    );
+      params,
+    )
   },
   // 扫码签收
   scanSign(params: ScanParams) {
     return baseAxios.post<APIResponse<ScanSignResponse>>(
       '/api/business/operation/scan/sign',
-      params
-    );
+      params,
+    )
   },
   // 扫码出库
   ScanOut(params: ScanParams) {
-    return baseAxios.post('/api/business/operation/scan/out/storage', params);
+    return baseAxios.post<APIResponse<ScanResponse>>('/api/business/operation/scan/out/storage', params)
   },
-};
+}
 
 interface ScanRecord {
-  createBy: number;
-  createTime: string;
-  deleteStatus: number;
-  id: number;
-  instructions: string;
-  scanningRecordId: number;
-  sendWarehouse: number;
-  sendWarehouseName: string;
-  signer: string;
-  trackingNumber: string;
-  updateBy: number;
-  updateTime: string;
+  createBy: number
+  createTime: string
+  deleteStatus: number
+  id: number
+  instructions: string
+  scanningRecordId: number
+  sendWarehouse: number
+  sendWarehouseName: string
+  signer: string
+  trackingNumber: string
+  updateBy: number
+  updateTime: string
 }
 
 export interface ScanSignResponse {
-  createBy: string;
-  createTime: string;
-  updateBy: string;
-  updateTime: string;
-  id: string;
-  trackingNumber: string;
-  sendWarehouse: number;
-  sendWarehouseName: string;
-  instructions: string;
-  problemStatus: false;
-  operator: string;
-  deleteStatus: number;
+  createBy: string
+  createTime: string
+  updateBy: string
+  updateTime: string
+  id: string
+  trackingNumber: string
+  sendWarehouse: number
+  sendWarehouseName: string
+  instructions: string
+  problemStatus: false
+  operator: string
+  deleteStatus: number
 }
 
 export interface ScanResponse {
-  orderType: string;
-  orderCount: number;
-  freightSpaceName: string;
-  signingTime: string;
+  orderType: string
+  orderCount: number
+  freightSpaceName: string
+  signingTime: string
   orderItemInfoBgResultList: Omit<Order, 'orderProductList'> &
-    {
-      logisticsOrderProductList: LogisticsOrderProduct[];
-    }[];
-  logisticsEntrepot: Entrepot;
+  {
+    logisticsOrderProductList: LogisticsOrderProduct[]
+  }[]
+  logisticsEntrepot: Entrepot
 }
 
 export interface LogisticsOrderProduct {
-  createBy: string;
-  createTime: string;
-  updateBy: string;
-  updateTime: string;
-  id: string;
-  tenantryId: string;
-  orderId: string;
-  freightSpaceName: string;
-  itemId: any;
-  orderItemId: any;
-  productImg: string[];
-  productName: string;
-  sku: string;
-  globalArticleNo: string;
-  specificationName: string;
-  quantity: number;
-  unitPrice: number;
-  trackingNo: string;
-  actualQuantity: any;
-  holdStock: boolean;
-  trackingStatus: string;
-  deliveryMethod: string;
-  stockOutStatus: boolean;
-  purchaseStatus: boolean;
-  problemStatus: boolean;
-  customStatus: boolean;
-  checkStatus: any;
-  extraStatus: boolean;
-  remark: string;
-  deleteStatus: number;
-  signingTime: string;
+  createBy: string
+  createTime: string
+  updateBy: string
+  updateTime: string
+  id: string
+  tenantryId: string
+  orderId: string
+  freightSpaceName: string
+  itemId: any
+  orderItemId: any
+  productImg: string[]
+  productName: string
+  sku: string
+  globalArticleNo: string
+  specificationName: string
+  quantity: number
+  unitPrice: number
+  trackingNo: string
+  actualQuantity: any
+  holdStock: boolean
+  trackingStatus: string
+  deliveryMethod: string
+  stockOutStatus: boolean
+  purchaseStatus: boolean
+  problemStatus: boolean
+  customStatus: boolean
+  checkStatus: any
+  extraStatus: boolean
+  remark: string
+  deleteStatus: number
+  signingTime: string
 }
 
 // const data = {
@@ -345,9 +345,9 @@ export interface LogisticsOrderProduct {
 //   },
 // };
 export interface ScanParams {
-  sendWarehouse: number; // 送往仓库
-  trackingNo?: string; // 快递单号
-  shrimpOrderNo?: string; // 订单号
+  sendWarehouse: number // 送往仓库
+  trackingNo?: string // 快递单号
+  shrimpOrderNo?: string // 订单号
 }
 
 // export interface OrderInfo {

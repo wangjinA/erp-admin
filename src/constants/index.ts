@@ -2,14 +2,14 @@ import { ModalProps } from '@arco-design/web-react'
 
 export const TimeRangeDefaultProps = {
   showTime: {
-    defaultValue: ['00:00', '23:59'],
+    defaultValue: ['00:00:00', '23:59:59'],
     format: 'HH:mm',
   },
-  format: 'YYYY-MM-DD HH:mm',
+  format: 'YYYY-MM-DD HH:mm:ss',
 }
 
 export const TimeDefaultProps = {
-  format: 'YYYY-MM-DD HH:mm',
+  format: 'YYYY-MM-DD HH:mm:ss',
   className: 'w-full',
 }
 

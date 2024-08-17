@@ -116,8 +116,8 @@ export function getExcleData(file: File): Promise<any[][]> {
 export function timeArrToObject(arr: string[], key1: string, key2: string) {
   if (arr?.length) {
     return {
-      key1: arr[0],
-      key2: arr[1],
+      [key1]: arr[0],
+      [key2]: arr[1],
     }
   }
   return {}

@@ -6,9 +6,9 @@ import {
   Space,
   Table,
   TableProps,
-} from '@arco-design/web-react';
+} from '@arco-design/web-react'
 
-import { ColumnProps } from '@arco-design/web-react/es/Table';
+import { ColumnProps } from '@arco-design/web-react/es/Table'
 
 import {
   IconEdit,
@@ -16,34 +16,34 @@ import {
   IconPlus,
   IconRefresh,
   IconSearch,
-} from '@arco-design/web-react/icon';
+} from '@arco-design/web-react/icon'
 import {
   useLocalStorageState,
   useRequest,
   useSessionStorageState,
-} from 'ahooks';
+} from 'ahooks'
 
-import { AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios'
 
-import { omit } from 'lodash';
-import React, { CSSProperties, forwardRef, useImperativeHandle } from 'react';
+import { omit } from 'lodash'
+import React, { CSSProperties, forwardRef, useImperativeHandle } from 'react'
 
-import { CreateFormItemType } from '../CreateFormItem';
-import CreateWrap, { ActionsContext, CreateWrapProps } from '../CreateWrap';
-import FilterForm from '../FilterForm';
-import PopconfirmDelete from '../PopconfirmDelete';
+import { CreateFormItemType } from '../CreateFormItem'
+import CreateWrap, { ActionsContext, CreateWrapProps } from '../CreateWrap'
+import FilterForm from '../FilterForm'
+import PopconfirmDelete from '../PopconfirmDelete'
 
-import { useSearchParam } from './hooks';
+import { useSearchParam } from './hooks'
 
-import { APIListResponse, APIResponse, IPageParams } from '@/api/type';
+import { APIListResponse, APIResponse, IPageParams } from '@/api/type'
 import {
   FormModalCommonProps,
   ShowFormType,
   ShowFormTypeMap,
-} from '@/constants';
+} from '@/constants'
 
 export interface SearchTableRef {
-  refreshSearchTable: () => void;
+  refreshSearchTable: () => void
 }
 
 const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
@@ -59,6 +59,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
       formProps,
       initialValues = {},
       showActions = true,
+      requestQueryTransform,
       leftTool,
       onView,
       createRequest,
@@ -66,9 +67,9 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
       getListRequest,
       updateRequest,
       removeRequest,
-    } = props;
-    const [formRef] = Form.useForm();
-    const [searchFromRef] = Form.useForm();
+    } = props
+    const [formRef] = Form.useForm()
+    const [searchFromRef] = Form.useForm()
     const {
       value: searchFromData,
       setValue: setSearchFromData,
@@ -76,41 +77,41 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
     } = useSearchParam({
       initialValues,
       isSearchParams,
-    });
+    })
 
     const [pageSize, setPageSize] = useLocalStorageState(`${name}-page-size`, {
       defaultValue: 10,
-    });
+    })
     const [pageNum, setPageNum] = useSessionStorageState(`${name}-page-num`, {
       defaultValue: 1,
-    });
+    })
 
     const { data, run, loading } = useRequest(
       () => {
         return getListRequest?.({
-          ...searchFromData,
+          ...(requestQueryTransform ? requestQueryTransform(searchFromData) : searchFromData),
           pageNum,
           pageSize,
         }).then((res) => {
-          const result = res.data.data;
+          const result = res.data.data
           // 删除最后一页且只有一行的的时候优化加载。
           if (result.total && result.list.length === 0 && pageNum !== 1) {
-            setPageNum(pageNum - 1);
-            return;
+            setPageNum(pageNum - 1)
+            return
           }
-          return result;
-        });
+          return result
+        })
       },
       {
         refreshDeps: [pageSize, pageNum],
-      }
-    );
+      },
+    )
 
     useImperativeHandle(ref, () => {
       return {
         refreshSearchTable: run,
-      };
-    });
+      }
+    })
 
     return (
       <CreateWrap
@@ -128,12 +129,13 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                 initialValues={searchFromData}
                 formItemConfigList={formItemConfigListStatusFilter(
                   formItemConfigList,
-                  'isSearch'
+                  'isSearch',
                 )}
                 onValuesChange={(val, vals) => {
-                  setSearchFromData(vals);
+                  setSearchFromData(vals)
                 }}
-              ></FilterForm>
+              >
+              </FilterForm>
               <div className="flex justify-between py-6 pr-2">
                 <Space size={20}>
                   {(createRequest || createHandle) && (
@@ -141,9 +143,10 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                       type="primary"
                       onClick={() => {
                         if (createHandle) {
-                          createHandle();
-                        } else {
-                          setShowType(ShowFormType.create);
+                          createHandle()
+                        }
+                        else {
+                          setShowType(ShowFormType.create)
                         }
                       }}
                       icon={<IconPlus></IconPlus>}
@@ -160,16 +163,17 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                     loading={loading}
                     icon={<IconRefresh />}
                     onClick={() => {
-                      searchFromRef.clearFields();
-                      searchFromRef.setFieldsValue(resetParams());
+                      searchFromRef.clearFields()
+                      searchFromRef.setFieldsValue(resetParams())
 
                       setTimeout(() => {
                         if (pageNum === 1) {
-                          run();
-                        } else {
-                          setPageNum(1);
+                          run()
                         }
-                      });
+                        else {
+                          setPageNum(1)
+                        }
+                      })
                     }}
                   >
                     重置
@@ -193,8 +197,8 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                   showTotal: true,
                   sizeCanChange: true,
                   onChange(pageNumber, pageSize) {
-                    setPageNum(pageNumber);
-                    setPageSize(pageSize);
+                    setPageNum(pageNumber)
+                    setPageSize(pageSize)
                   },
                 }}
                 data={data?.list}
@@ -203,9 +207,9 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                 columns={[
                   ...createFormListToColumnList(
                     formItemConfigList.filter(
-                      (item) =>
-                        !item.hideTable && item.schema.field !== 'actions'
-                    )
+                      item =>
+                        !item.hideTable && item.schema.field !== 'actions',
+                    ),
                   ),
                   ...(showActions
                     ? [
@@ -220,7 +224,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                                   type="text"
                                   icon={<IconEye />}
                                   onClick={() => {
-                                    onView(record);
+                                    onView(record)
                                   }}
                                 >
                                   查看
@@ -228,7 +232,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                               )}
                               {formItemConfigList
                                 .find(
-                                  (oitem) => oitem.schema.field === 'actions'
+                                  oitem => oitem.schema.field === 'actions',
                                 )
                                 ?.render?.(_, record, index)}
                               {updateRequest && (
@@ -237,8 +241,8 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                                   status="warning"
                                   icon={<IconEdit />}
                                   onClick={() => {
-                                    setShowType(ShowFormType.edit);
-                                    formRef.setFieldsValue(record);
+                                    setShowType(ShowFormType.edit)
+                                    formRef.setFieldsValue(record)
                                   }}
                                 >
                                   编辑
@@ -251,10 +255,10 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                                   }}
                                   onOk={() =>
                                     removeRequest(record[majorKey]).then(() => {
-                                      run();
-                                    })
-                                  }
-                                ></PopconfirmDelete>
+                                      run()
+                                    })}
+                                >
+                                </PopconfirmDelete>
                               )}
                             </Space>
                           ),
@@ -262,26 +266,27 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                       ]
                     : []),
                 ]}
-              ></Table>
+              >
+              </Table>
 
               <Modal
                 {...FormModalCommonProps}
                 confirmLoading={createAction?.loading || updateAction.loading}
                 onCancel={() => {
-                  setShowType(null);
-                  formRef.resetFields();
+                  setShowType(null)
+                  formRef.resetFields()
                 }}
                 onOk={async () => {
-                  const formData = await formRef.validate();
+                  const formData = await formRef.validate()
                   switch (showType) {
                     case ShowFormType.create:
-                      createAction.run(formData);
-                      break;
+                      createAction.run(formData)
+                      break
                     case ShowFormType.edit:
-                      updateAction.run(formData);
-                      break;
+                      updateAction.run(formData)
+                      break
                     default:
-                      break;
+                      break
                   }
                 }}
                 visible={!!showType}
@@ -296,7 +301,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                   formItemConfigList={[
                     ...formItemConfigListStatusFilter(
                       formItemConfigList,
-                      'isCreate'
+                      'isCreate',
                     ),
                     {
                       schema: {
@@ -307,68 +312,70 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                       },
                     },
                   ]}
-                ></FilterForm>
+                >
+                </FilterForm>
               </Modal>
             </div>
           )}
         </ActionsContext.Consumer>
       </CreateWrap>
-    );
-  }
-);
+    )
+  },
+)
 
 /**
  * 创建、搜索。状态过滤，并去除相关字段
  */
 function formItemConfigListStatusFilter(
   formItemConfigList: SearchTableSchema[],
-  key: string
+  key: string,
 ): any {
   return formItemConfigList
-    .filter((item) => item[key])
-    .map((item) => omit(item, ['isCreate', 'isSearch']));
+    .filter(item => item[key])
+    .map(item => omit(item, ['isCreate', 'isSearch']))
 }
 
 function createFormListToColumnList(
-  formItemConfigList: SearchTableSchema[]
+  formItemConfigList: SearchTableSchema[],
 ): SearchTableSchema & Required<ColumnProps>[] {
   const res: any = formItemConfigList
-    .filter((item) => !item.formItemProps?.hidden)
-    .map((item) => ({
+    .filter(item => !item.formItemProps?.hidden)
+    .map(item => ({
       ...item,
       title: item.title || item.schema.label,
       dataIndex: item.schema.field,
-    }));
-  return res;
+    }))
+  return res
 }
 
-export default SearchTable;
+export default SearchTable
 
 interface SearchTableProps {
-  name: string;
-  formItemConfigList: SearchTableSchema[];
-  isSearchParams?: boolean;
-  className?: string;
-  style?: CSSProperties;
-  majorKey?: string;
-  tableProps?: TableProps;
-  formProps?: FormProps;
-  initialValues?: any;
-  showActions?: boolean;
-  leftTool?: () => React.ReactNode;
-  createRequest?: CreateWrapProps['createRequest'];
-  createHandle?: () => void;
+  name: string
+  formItemConfigList: SearchTableSchema[]
+  isSearchParams?: boolean
+  className?: string
+  style?: CSSProperties
+  majorKey?: string
+  tableProps?: TableProps
+  formProps?: FormProps
+  initialValues?: any
+  showActions?: boolean
+  requestQueryTransform?: (params: any) => any
+  leftTool?: () => React.ReactNode
+  createRequest?: CreateWrapProps['createRequest']
+  createHandle?: () => void
   getListRequest?: (
     params: IPageParams & Record<string, any>
-  ) => Promise<AxiosResponse<APIListResponse<any>>>;
-  removeRequest?: (id) => Promise<AxiosResponse<APIResponse>>;
-  updateRequest?: (id) => Promise<AxiosResponse<APIResponse>>;
-  onView?: (record) => void;
+  ) => Promise<AxiosResponse<APIListResponse<any>>>
+  removeRequest?: (id) => Promise<AxiosResponse<APIResponse>>
+  updateRequest?: (id) => Promise<AxiosResponse<APIResponse>>
+  onView?: (record) => void
 }
 
 export type SearchTableSchema = CreateFormItemType &
   Partial<ColumnProps> & {
-    isSearch?: boolean;
-    isCreate?: boolean;
-    hideTable?: boolean;
-  };
+    isSearch?: boolean
+    isCreate?: boolean
+    hideTable?: boolean
+  }

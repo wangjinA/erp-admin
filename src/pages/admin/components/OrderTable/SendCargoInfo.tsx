@@ -89,7 +89,10 @@ function ExpressStatusActions(props: {
   // 取消拒收
   const cancelRejectHandle = useRequest(
     async () => {
-      await showMessage(() => expressAPI.cancelReject(data.id), '取消拒收')
+      await showMessage(() => expressAPI.orderCancelReject({
+        orderId: data.id,
+        trackingNo: item.trackingNo,
+      }), '取消拒收')
       bus.emit(EmitTypes.refreshOrderPage)
     },
     {
@@ -173,7 +176,10 @@ function ExpressStatusActions(props: {
           <PopconfirmDelete
             title="确定取消退件吗？"
             onOk={async () => {
-              await showMessage(() => expressAPI.cancelReturn(data.id), '退件取消')
+              await showMessage(() => expressAPI.orderCancelReturn({
+                orderId: data.id,
+                trackingNo: item.trackingNo,
+              }), '退件取消')
               bus.emit(EmitTypes.refreshOrderPage)
             }}
           >

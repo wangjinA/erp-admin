@@ -1,11 +1,12 @@
 import {
   Badge,
   Button,
+  Form,
   Space,
   Tabs,
 } from '@arco-design/web-react'
 import { IconRefresh, IconSearch } from '@arco-design/web-react/icon'
-import { useLocalStorageState, usePagination } from 'ahooks'
+import { useLocalStorageState, usePagination, useResetState } from 'ahooks'
 import { omit } from 'lodash'
 import React, { useState } from 'react'
 
@@ -43,22 +44,19 @@ export default (props: OrderPageProps) => {
   const { dictCode } = props
   const [activeTab, setActiveTab] = useLocalStorageState<string>(location.pathname)
   const [countMap, setCountMap] = useState<Record<string, number>>()
-  const [formData, _setFormData] = useState<any>({
+  const [formData, _setFormData, restFormData] = useResetState<any>({
     selectLogisticsOrderVO: {},
     selectOrderProductVO: {},
     trackingNumber: '',
   })
+  const [filterForm] = Form.useForm()
 
   function setFormData(values) {
+    console.log(values)
+
     _setFormData({
       ...formData,
       ...values,
-      ...timeArrToObject(values.packTimes, 'packStartTime', 'packEndTime'),
-      ...timeArrToObject(
-        values.stockRemovalTimes,
-        'stockRemovalStartTime',
-        'stockRemovalEndTime',
-      ),
     })
   }
   const { data: shrimpStatus } = useDictOptions({
@@ -74,6 +72,8 @@ export default (props: OrderPageProps) => {
       if (!shrimpStatus?.length) {
         return null
       }
+      console.log(formData)
+
       const body = {
         ...formData,
         selectOrderProductVO: {
@@ -81,6 +81,12 @@ export default (props: OrderPageProps) => {
         },
         selectLogisticsOrderVO: {
           ...formData.selectLogisticsOrderVO,
+          ...timeArrToObject(formData.selectLogisticsOrderVO.packTimes, 'packStartTime', 'packEndTime'),
+          ...timeArrToObject(
+            formData.selectLogisticsOrderVO.stockRemovalTimes,
+            'stockRemovalStartTime',
+            'stockRemovalEndTime',
+          ),
           orderStatus: dictCode === 'order_status' ? activeTab : undefined,
           ...(dictCode === 'shopee_status'
             ? {
@@ -129,6 +135,7 @@ export default (props: OrderPageProps) => {
   return (
     <div className="bg-white p-4">
       <FilterForm
+        form={filterForm}
         size="small"
         formItemConfigList={OrderFilter}
         onValuesChange={(val, values) => {
@@ -155,15 +162,11 @@ export default (props: OrderPageProps) => {
             loading={loading}
             icon={<IconRefresh />}
             onClick={() => {
-              // searchFromRef.clearFields();
-              // searchFromRef.setFieldsValue(resetParams());
-              // setTimeout(() => {
-              //   if (pageNum === 1) {
-              //     run();
-              //   } else {
-              //     setPageNum(1);
-              //   }
-              // });
+              filterForm.resetFields()
+              restFormData()
+              setTimeout(() => {
+                pagination.changeCurrent(1)
+              }, 0)
             }}
           >
             重置

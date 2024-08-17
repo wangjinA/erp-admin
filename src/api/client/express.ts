@@ -42,6 +42,15 @@ export const expressAPI = {
     return baseAxios.get<APIResponse>(`/api/reject/management/cancel/${id}`)
   },
   /**
+   * 订单取消拒收
+   */
+  orderCancelReject(body: {
+    orderId: number
+    trackingNo: string
+  }) {
+    return baseAxios.post<APIResponse>(`/api/return/management/order/cancel`, body)
+  },
+  /**
    * 退件列表
    */
   getReturnList(body: Partial<ReturnParams> & IPageParams) {
@@ -76,6 +85,15 @@ export const expressAPI = {
    */
   cancelReturn(id: any) {
     return baseAxios.get<APIResponse>(`/api/return/management/cancel/${id}`)
+  },
+  /**
+   * 订单取消退件
+   */
+  orderCancelReturn(body: {
+    orderId: number
+    trackingNo: string
+  }) {
+    return baseAxios.post<APIResponse>(`/api/return/management/order/cancel`, body)
   },
 }
 

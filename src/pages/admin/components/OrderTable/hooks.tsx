@@ -17,7 +17,6 @@ export function useColumns(props: OrderTablePorps) {
       dataIndex: 'orderProductVOList',
       width: 550,
       render(col) {
-        console.log(col)
         return <GoodsInfo data={col}></GoodsInfo>
       },
       fixed: 'left',
