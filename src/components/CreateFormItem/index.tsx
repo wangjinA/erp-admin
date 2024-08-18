@@ -135,9 +135,7 @@ const createFormItem: CreateFormItemParams = ({
           )
         case 'entrepotRadio':
           return (
-            <>
-              <EntrepotRadio />
-            </>
+            <EntrepotRadio />
           )
         default:
           return <span>{control}</span>

@@ -132,6 +132,8 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                   'isSearch',
                 )}
                 onValuesChange={(val, vals) => {
+                  console.log(vals)
+
                   setSearchFromData(vals)
                 }}
               >

@@ -1,106 +1,123 @@
-import React from 'react';
-import FilterForm from '@/components/FilterForm';
-import EntrepotRadio from '@/components/Selectors/EntrepotRadio';
-import { DatePicker, Divider, Table } from '@arco-design/web-react';
-import { DividerSchema } from '@/constants/schema/common';
+import React from 'react'
+
+import { entrepotAPI } from '@/api/admin/entrepot'
+import SearchTable from '@/components/SearchTable'
+import { DictNameFC } from '@/components/Selectors/DictSelector'
+import EntrepotRadio from '@/components/Selectors/EntrepotRadio'
+import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
+import { DividerSchema } from '@/constants/schema/common'
+
 export default () => {
   return (
     <div className="p-4 bg-white">
-      <div>
-        <FilterForm
-          layout="inline"
-          span={6}
-          initialValues={{
-            entrepot: '0',
-          }}
-          formItemConfigList={[
-            {
-              schema: {
-                field: 'entrepot',
-                label: '所属仓库',
-                span: 24,
-              },
-              control: <EntrepotRadio></EntrepotRadio>,
+      <SearchTable
+        showActions={false}
+        name="扫码记录"
+        formItemConfigList={[
+          {
+            schema: {
+              field: 'sendWarehouse',
+              label: '所属仓库',
+              span: 24,
             },
-            DividerSchema,
-            {
-              schema: {
-                label: '快递单号',
-                field: 'deliveryNo',
-              },
-              control: 'input',
+            control: <EntrepotRadio></EntrepotRadio>,
+            render(c) {
+              return <EntrepotNameFC value={c}></EntrepotNameFC>
             },
-            {
-              schema: {
-                label: '操作人',
-                field: 'operatorName',
-              },
-              control: 'input',
+          },
+          DividerSchema,
+          {
+            schema: {
+              label: '订单号',
+              field: 'shrimpOrderNo',
             },
-            {
-              schema: {
-                label: '扫码时间',
-                field: 'scanTime',
-              },
-              control: (props: any) => (
-                <DatePicker.RangePicker showTime={true} {...props} />
-              ),
+            isSearch: true,
+          },
+          {
+            schema: {
+              label: '运单号',
+              field: 'trackingNumber',
             },
-          ]}
-        ></FilterForm>
-      </div>
-      <Table
-        className="mt-4"
-        columns={[
-          {
-            title: '快递单号',
-            dataIndex: 'deliveryNo',
           },
           {
-            title: '仓库',
-            dataIndex: 'entrepot',
+            schema: {
+              label: '尾程物流',
+              field: '',
+            },
           },
           {
-            title: '说明',
-            dataIndex: 'remark',
+            schema: {
+              label: '类型',
+              field: 'businessType',
+            },
+            render(c) {
+              return <DictNameFC value={c} dictCode="business_type"></DictNameFC>
+            },
           },
           {
-            title: '扫码时间',
-            dataIndex: 'scanTime',
+            schema: {
+              label: '地区',
+              field: 'region',
+            },
           },
           {
-            title: '操作人',
-            dataIndex: 'operatorName',
+            schema: {
+              label: '出库时间',
+              field: 'stockRemovalTime',
+            },
           },
           {
-            title: '操作',
-            dataIndex: 'operator',
+            schema: {
+              label: '打包收费',
+              field: 'packCost',
+            },
+          },
+          {
+            schema: {
+              label: '包裹重量',
+              field: 'parcelWeight',
+            },
+          },
+          {
+            schema: {
+              label: '头程收费',
+              field: 'firstLegCost',
+            },
+          },
+          {
+            schema: {
+              label: '附加收费',
+              field: 'appendCost',
+            },
+          },
+          {
+            schema: {
+              label: '增值收费',
+              field: 'addedCost',
+            },
+          },
+          {
+            schema: {
+              label: '打包员',
+              field: 'operatorUser',
+            },
+          },
+          {
+            schema: {
+              label: '库存发货数',
+              field: 'inventoryShippedQuantity',
+            },
+          },
+          {
+            schema: {
+              label: '快递包裹数',
+              field: 'quantityExpressGoods',
+            },
           },
         ]}
-        data={[
-          {
-            deliveryNo: '1234567890',
-            entrepot: '仓库1',
-            remark: '备注',
-            scanTime: '2020-01-01 12:12:12',
-            operatorName: '张三',
-          },
-          {
-            deliveryNo: '1234567890',
-            entrepot: '仓库1',
-            remark: '备注',
-            scanTime: '2020-01-01 12:12:12',
-            operatorName: '张三',
-          },
-          {
-            deliveryNo: '1234567890',
-            entrepot: '仓库1',
-            remark: '备注',
-            scanTime: '2020-01-01 12:12:12',
-            operatorName: '张三',
-          },
-        ]}
-      ></Table>
+        getListRequest={entrepotAPI.getDeliveryHistory}
+      >
+      </SearchTable>
     </div>
-  );
-};
+  )
+}

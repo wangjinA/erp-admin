@@ -2,10 +2,10 @@ import { Spin } from '@arco-design/web-react'
 import { useRequest } from 'ahooks'
 import React, { useState } from 'react'
 
+import OrderTable from '../../components/OrderTable'
 import ScanCommon from '../ScanCommon'
 
 import { ScanParams, scanAPI } from '@/api/admin/entrepot'
-import OrderTable from '@/components/OrderTable'
 import { showMessageStatus } from '@/utils'
 
 export default () => {

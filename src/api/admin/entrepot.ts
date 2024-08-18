@@ -64,6 +64,12 @@ export const entrepotAPI = {
   update(body: Partial<Entrepot>) {
     return baseAxios.post('/api/entrepot/update', body)
   },
+  /**
+   * 出库记录
+   */
+  getDeliveryHistory(body: Partial<DhParams>) {
+    return baseAxios.post<APIListResponse<any>>('/api/logistics/order/out/record/list', body)
+  },
 }
 
 // 仓位
@@ -89,7 +95,7 @@ export const scanAPI = {
   // 获取扫码记录
   getRecord(body: Partial<ScanRecord> & IPageParams) {
     return baseAxios.post<APIListResponse<ScanRecord>>(
-      '/api/scanning/record/log/list',
+      '/api/scanning/record/list',
       body,
     )
   },
@@ -111,6 +117,21 @@ export const scanAPI = {
   ScanOut(params: ScanParams) {
     return baseAxios.post<APIResponse<ScanResponse>>('/api/business/operation/scan/out/storage', params)
   },
+}
+
+interface DhParams {
+  businessType: string // 业务类型 字典值：business_type
+  operatorUser: string // 打包员
+  pageNum: number // 当前页
+  pageSize: number // 每页大小
+  region: string // 地区
+  sendWarehouse: number // 送往仓库
+  shippingCarrier: string // 运输承运商
+  shopeeStatus: string // 虾皮订单状态 字典值
+  shrimpOrderNo: string // 虾皮订单号
+  stockRemovalEndTime: string // 出库时间--结束时间
+  stockRemovalStartTime: string // 出库时间--开始时间
+  storeType: string // 店铺类型 字典值：business_type
 }
 
 interface ScanRecord {
