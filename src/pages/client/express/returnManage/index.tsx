@@ -134,17 +134,19 @@ export default () => {
               field: 'actions',
             },
             render(c, row) {
-              return (
-                <Button
-                  type="text"
-                  loading={row === current && loading}
-                  onClick={async () => {
-                    run(row)
-                  }}
-                >
-                  取消退件
-                </Button>
-              )
+              return row.returnStatus !== '1'
+                ? (
+                    <Button
+                      type="text"
+                      loading={row === current && loading}
+                      onClick={async () => {
+                        run(row)
+                      }}
+                    >
+                      取消退件
+                    </Button>
+                  )
+                : null
             },
           },
         ]}

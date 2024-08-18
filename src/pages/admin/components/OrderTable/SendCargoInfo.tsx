@@ -99,103 +99,104 @@ function ExpressStatusActions(props: {
       manual: true,
     },
   )
-
-  switch (item.trackingStatus) {
-    case '0':
-      return (
-        <div>
-          <Tag
-            className="cursor-pointer"
-            bordered
-            size="small"
-            color="orange"
-            checked={true}
-            onClick={async () => {
-              await showModal({
-                confirmLoading: rejectHandle.loading,
-                content: `所有跟快递单号"${item.trackingNo}"有关联的订单都会拒收，确定要继续吗？`,
-              })
-              rejectHandle.run()
-            }}
-          >
-            拒收
-          </Tag>
-        </div>
-      )
-    case '1':
-      return (
-        <div>
-          <Tag
-            className="cursor-pointer"
-            bordered
-            size="small"
-            color="orange"
-            checked={true}
-            onClick={async () => {
-              setIsReturnGoods(true)
-            }}
-          >
-            退件
-          </Tag>
-          <ReturnParcel
-            visible={isReturnGoods}
-            setVisible={setIsReturnGoods}
-            sendWarehouse={sendWarehouse}
-            trackingNo={item.trackingNo}
-            onSuccess={() => {
-              bus.emit(EmitTypes.refreshOrderPage)
-            }}
-          >
-          </ReturnParcel>
-        </div>
-      )
-    case '2':
-      return (
-        <div>
-          <PopconfirmDelete
-            title="确定取消拒收吗？"
-            onOk={async () => {
-              cancelRejectHandle.run()
-            }}
-          >
+  if (item.trackingNo) {
+    switch (item.trackingStatus) {
+      case '0':
+        return (
+          <div>
             <Tag
               className="cursor-pointer"
               bordered
               size="small"
               color="orange"
               checked={true}
+              onClick={async () => {
+                await showModal({
+                  confirmLoading: rejectHandle.loading,
+                  content: `所有跟快递单号"${item.trackingNo}"有关联的订单都会拒收，确定要继续吗？`,
+                })
+                rejectHandle.run()
+              }}
             >
-              取消拒收
+              拒收
             </Tag>
-          </PopconfirmDelete>
-        </div>
-      )
-    case '4':
-      return (
-        <div>
-          <PopconfirmDelete
-            title="确定取消退件吗？"
-            onOk={async () => {
-              await showMessage(() => expressAPI.orderCancelReturn({
-                orderId: data.id,
-                trackingNo: item.trackingNo,
-              }), '退件取消')
-              bus.emit(EmitTypes.refreshOrderPage)
-            }}
-          >
+          </div>
+        )
+      case '1':
+        return (
+          <div>
             <Tag
               className="cursor-pointer"
               bordered
               size="small"
               color="orange"
               checked={true}
+              onClick={async () => {
+                setIsReturnGoods(true)
+              }}
             >
-              取消退件
+              退件
             </Tag>
-          </PopconfirmDelete>
+            <ReturnParcel
+              visible={isReturnGoods}
+              setVisible={setIsReturnGoods}
+              sendWarehouse={sendWarehouse}
+              trackingNo={item.trackingNo}
+              onSuccess={() => {
+                bus.emit(EmitTypes.refreshOrderPage)
+              }}
+            >
+            </ReturnParcel>
+          </div>
+        )
+      case '2':
+        return (
+          <div>
+            <PopconfirmDelete
+              title="确定取消拒收吗？"
+              onOk={async () => {
+                cancelRejectHandle.run()
+              }}
+            >
+              <Tag
+                className="cursor-pointer"
+                bordered
+                size="small"
+                color="orange"
+                checked={true}
+              >
+                取消拒收
+              </Tag>
+            </PopconfirmDelete>
+          </div>
+        )
+      case '4':
+        return (
+          <div>
+            <PopconfirmDelete
+              title="确定取消退件吗？"
+              onOk={async () => {
+                await showMessage(() => expressAPI.orderCancelReturn({
+                  orderId: data.id,
+                  trackingNo: item.trackingNo,
+                }), '退件取消')
+                bus.emit(EmitTypes.refreshOrderPage)
+              }}
+            >
+              <Tag
+                className="cursor-pointer"
+                bordered
+                size="small"
+                color="orange"
+                checked={true}
+              >
+                取消退件
+              </Tag>
+            </PopconfirmDelete>
 
-        </div>
-      )
+          </div>
+        )
+    }
   }
   return <div>-</div>
 }
@@ -209,32 +210,44 @@ const SkuList: React.FC<SendCargoInfoProps> = (props) => {
           key={i}
           className={classNames('h-[125px] border-r', i > 0 ? 'border-t' : '')}
         >
-          <div className="h-full px-2">
+          <div className="h-full p-2">
             <div>
               <span className={labelClass}>快递：</span>
               <span className={valueClass}>
-                <Link
-                  href={`https://www.baidu.com/s?wd=${item.trackingNo}`}
-                  target="_blank"
-                >
-                  {item.trackingNo}
-                </Link>
+                {item.trackingNo
+                  ? (
+                      <Link
+                        href={`https://www.baidu.com/s?wd=${item.trackingNo}`}
+                        target="_blank"
+                      >
+                        {item.trackingNo}
+                      </Link>
+                    )
+                  : <Tag>未填</Tag>}
               </span>
             </div>
-            <div>
-              <span className={labelClass}>状态：</span>
-              <span className={valueClass}><ExpressStatus {...item} /></span>
-            </div>
-            <div>
-              <span className={labelClass}>操作：</span>
-              <span className={classNames(valueClass, 'inline-flex')}>
-                <ExpressStatusActions
-                  data={data}
-                  item={item}
-                  sendWarehouse={data.sendWarehouse}
-                />
-              </span>
-            </div>
+            {
+              item.trackingNo
+                ? (
+                    <>
+                      <div>
+                        <span className={labelClass}>状态：</span>
+                        <span className={valueClass}><ExpressStatus {...item} /></span>
+                      </div>
+                      <div>
+                        <span className={labelClass}>操作：</span>
+                        <span className={classNames(valueClass, 'inline-flex')}>
+                          <ExpressStatusActions
+                            data={data}
+                            item={item}
+                            sendWarehouse={data.sendWarehouse}
+                          />
+                        </span>
+                      </div>
+                    </>
+                  )
+                : null
+            }
             {item.freightSpaceName
               ? (
                   <div>

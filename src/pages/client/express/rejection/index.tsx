@@ -112,7 +112,7 @@ export default () => {
               field: 'actions',
             },
             render(c, row) {
-              return (
+              return row.rejectionStatus !== '1' ? (
                 <Button
                   type="text"
                   loading={row.id === current?.id && loading} // ! 判断一下id row === current
@@ -122,7 +122,7 @@ export default () => {
                 >
                   取消拒收
                 </Button>
-              )
+              ) : null
             },
           },
           // {
