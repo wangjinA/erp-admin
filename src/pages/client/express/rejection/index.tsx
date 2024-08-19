@@ -1,5 +1,6 @@
 import { Alert, Button, Tag } from '@arco-design/web-react'
 import { useRequest } from 'ahooks'
+import { omit } from 'lodash'
 import React, { useState } from 'react'
 
 import { expressAPI } from '@/api/client/express'
@@ -8,7 +9,7 @@ import { useDictOptions } from '@/components/Selectors/DictSelector'
 import EntrepotRadio from '@/components/Selectors/EntrepotRadio'
 import { DividerSchema } from '@/constants/schema/common'
 import { TagColors } from '@/pages/admin/components/OrderTable/SendCargoInfo'
-import { showMessage, showModal } from '@/utils'
+import { showMessage, showModal, timeArrToObject } from '@/utils'
 
 export default () => {
   const [current, setCurrent] = useState<any>()
@@ -55,6 +56,11 @@ export default () => {
         name="包裹拒收"
         getListRequest={expressAPI.getRejectList}
         createRequest={expressAPI.addReject}
+        requestQueryTransform={params => ({
+          ...omit(params, ['applyTime', 'rejectionTime']),
+          ...timeArrToObject(params.applyTime, 'applyStartTime', 'applyEndTime'),
+          ...timeArrToObject(params.rejectionTime, 'rejectionStartTime', 'rejectionEndTime'),
+        })}
         formItemConfigList={[
           {
             schema: {
@@ -81,7 +87,7 @@ export default () => {
           {
             schema: {
               label: '状态',
-              field: 'status',
+              field: 'rejectionStatus',
             },
             render(c) {
               return (
@@ -94,15 +100,18 @@ export default () => {
           {
             schema: {
               label: '拒收时间',
-              field: '填充11111',
+              field: 'rejectionTime',
             },
             control: 'datePickerRange',
             isSearch: true,
+            render(c) {
+              return c || '-'
+            },
           },
           {
             schema: {
               label: '申请时间',
-              field: '填充22222',
+              field: 'applyTime',
             },
             control: 'datePickerRange',
             isSearch: true,
