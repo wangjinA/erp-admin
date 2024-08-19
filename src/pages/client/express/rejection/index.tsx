@@ -112,17 +112,19 @@ export default () => {
               field: 'actions',
             },
             render(c, row) {
-              return row.rejectionStatus !== '1' ? (
-                <Button
-                  type="text"
-                  loading={row.id === current?.id && loading} // ! 判断一下id row === current
-                  onClick={async () => {
-                    run(row)
-                  }}
-                >
-                  取消拒收
-                </Button>
-              ) : null
+              return row.rejectionStatus !== '1'
+                ? (
+                    <Button
+                      type="text"
+                      loading={row.id === current?.id && loading}
+                      onClick={async () => {
+                        run(row)
+                      }}
+                    >
+                      取消拒收
+                    </Button>
+                  )
+                : null
             },
           },
           // {

@@ -8,24 +8,6 @@ import * as XLSX from 'xlsx'
 import { SuccessCode } from '@/api'
 import { APIResponse } from '@/api/type'
 
-export function showMessageStatus(resp: APIResponse<any>, message = '操作') {
-  if (resp.code === SuccessCode) {
-    Message.success({
-      content: `${message}成功`,
-      duration: 3000,
-    })
-    return Promise.resolve()
-  }
-  else {
-    const errMsg = resp.msg || `${message}失败`
-    Message.error({
-      content: errMsg,
-      duration: 3000,
-    })
-    return Promise.reject(errMsg)
-  }
-}
-
 export function toArray(value) {
   return isArray(value) ? value : [value]
 }
@@ -52,7 +34,7 @@ export function showMessage<T>(fn: () => Promise<AxiosResponse<APIResponse<T>>>,
     }
   }).catch((error) => {
     Message.error({
-      content: `${message}失败 ${error.message ? `,${error.message}` : ''}`,
+      content: `${message}失败${error.message ? `，${error.message}` : ''}`,
       duration: 3000,
     })
     throw error

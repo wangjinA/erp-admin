@@ -7,88 +7,87 @@ import {
   Spin,
   Tag,
   Timeline,
-} from '@arco-design/web-react';
+} from '@arco-design/web-react'
 
-import useForm from '@arco-design/web-react/es/Form/useForm';
-import { IconEdit, IconFile, IconPlus } from '@arco-design/web-react/icon';
-import { useRequest } from 'ahooks';
-import { PaginationResult } from 'ahooks/lib/usePagination/types';
+import useForm from '@arco-design/web-react/es/Form/useForm'
+import { IconEdit, IconFile, IconPlus } from '@arco-design/web-react/icon'
+import { useRequest } from 'ahooks'
+import { PaginationResult } from 'ahooks/lib/usePagination/types'
 
-import { omit } from 'lodash';
-import React, { useState } from 'react';
+import { omit } from 'lodash'
+import React, { useState } from 'react'
 
-import OrderHeaderStatusInfo from './OrderHeaderStatusInfo';
-import { TagColors } from './SendCargoInfo';
-import { useColumns } from './hooks';
+import OrderHeaderStatusInfo from './OrderHeaderStatusInfo'
+import { TagColors } from './SendCargoInfo'
+import { useColumns } from './hooks'
 
-import { SuccessCode } from '@/api';
-import { orderAPI } from '@/api/client/order';
-import { APIListResponse } from '@/api/type';
-import FilterForm from '@/components/FilterForm';
-import GoodsInfo from '@/components/GoodsInfo';
-import PopconfirmDelete from '@/components/PopconfirmDelete';
+import { SuccessCode } from '@/api'
+import { orderAPI } from '@/api/client/order'
+import { APIListResponse } from '@/api/type'
+import FilterForm from '@/components/FilterForm'
+import GoodsInfo from '@/components/GoodsInfo'
+import PopconfirmDelete from '@/components/PopconfirmDelete'
 import DictSelector, {
   useDictOptions,
-} from '@/components/Selectors/DictSelector';
-import EntrepotSelector from '@/components/Selectors/EntrepotSelector';
-import { ShowFormType } from '@/constants';
-import { EmitTypes, bus } from '@/hooks/useEventBus';
-import { OrderCreateSchema2 } from '@/pages/client/order/create/schema';
-import { OrderPageProps } from '@/pages/client/order/orderPage';
-import { isClient } from '@/routes';
-import { StyleProps } from '@/types';
-import { Order, OrderResponseItem } from '@/types/order';
-import { formatDate, showMessage, showMessageStatus, showModal } from '@/utils';
+} from '@/components/Selectors/DictSelector'
+import EntrepotSelector from '@/components/Selectors/EntrepotSelector'
+import { ShowFormType } from '@/constants'
+import { EmitTypes, bus } from '@/hooks/useEventBus'
+import { OrderCreateSchema2 } from '@/pages/client/order/create/schema'
+import { OrderPageProps } from '@/pages/client/order/orderPage'
+import { isClient } from '@/routes'
+import { StyleProps } from '@/types'
+import { Order, OrderResponseItem } from '@/types/order'
+import { formatDate, showMessage, showModal } from '@/utils'
 
 export interface OrderTablePorps extends StyleProps {
   // tableProps: TableProps;
-  data?: APIListResponse<OrderResponseItem>['data'];
-  dictCode: OrderPageProps['dictCode'];
-  loading: boolean;
-  run: any;
+  data?: APIListResponse<OrderResponseItem>['data']
+  dictCode: OrderPageProps['dictCode']
+  loading: boolean
+  run: any
   pagination: PaginationResult<
     APIListResponse<Order>['data'],
     any
-  >['pagination'];
+  >['pagination']
 }
 
-export const labelClass = 'arco-descriptions-item-label w-auto pb-0';
-export const valueClass = 'arco-descriptions-item-value w-auto pb-0';
+export const labelClass = 'arco-descriptions-item-label w-auto pb-0'
+export const valueClass = 'arco-descriptions-item-value w-auto pb-0'
 
 const OrderTable: React.FC<OrderTablePorps> = (props) => {
-  const { className, style, run, dictCode, data, pagination } = props;
-  const [record, setRecord] = useState(false);
-  const [currentOrder, setCurrentOrder] = useState<any>();
-  const [actionType, setActionType] = useState<ShowFormType>();
-  const [sheet, setSheet] = useState<any>();
+  const { className, style, run, dictCode, data, pagination } = props
+  const [record, setRecord] = useState(false)
+  const [currentOrder, setCurrentOrder] = useState<any>()
+  const [actionType, setActionType] = useState<ShowFormType>()
+  const [sheet, setSheet] = useState<any>()
 
-  const [form] = useForm();
-  const [addForm] = useForm();
+  const [form] = useForm()
+  const [addForm] = useForm()
 
-  const columns = useColumns(props);
+  const columns = useColumns(props)
   const refreshHandle = useRequest(
     async (id) => {
-      const res = await orderAPI.refresh(id);
-      await showMessageStatus(res.data);
+      await showMessage(() => orderAPI.refresh(id))
     },
     {
       manual: true,
-    }
-  );
+    },
+  )
   const logHandle = useRequest(
     async (id) => {
-      return orderAPI.getLog(id).then((r) => r.data);
+      return orderAPI.getLog(id).then(r => r.data)
     },
     {
       manual: true,
-    }
-  );
+    },
+  )
   const updateHandle = useRequest(
     async (newSku?: any) => {
       const data = omit(currentOrder, [
         'orderProductVOList',
         'orderPackageList',
-      ]);
+      ])
       await showMessage(
         () =>
           orderAPI.update({
@@ -98,37 +97,37 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
               ...(newSku ? [newSku] : []),
             ],
           }),
-        newSku ? '添加' : '编辑'
-      );
-      setActionType(null);
-      bus.emit(EmitTypes.refreshOrderPage);
+        newSku ? '添加' : '编辑',
+      )
+      setActionType(null)
+      bus.emit(EmitTypes.refreshOrderPage)
     },
     {
       manual: true,
-    }
-  );
+    },
+  )
 
   const addProductHandle = useRequest(
     async () => {
-      const formData = await addForm.validate();
+      const formData = await addForm.validate()
       await showMessage(
         () =>
           orderAPI.addProduct({
             ...formData,
           }),
-        '添加'
-      );
-      setActionType(null);
-      bus.emit(EmitTypes.refreshOrderPage);
+        '添加',
+      )
+      setActionType(null)
+      bus.emit(EmitTypes.refreshOrderPage)
     },
     {
       manual: true,
-    }
-  );
+    },
+  )
 
   const { data: orderStatusOptions } = useDictOptions({
     dictCode: 'order_status',
-  });
+  })
 
   // const { data: shopeeStatus } = useDictOptions({
   //   dictCode: 'shopee_status',
@@ -139,7 +138,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
     <div className={className}>
       <div>
         <header className="flex">
-          {columns.map((item) => (
+          {columns.map(item => (
             <div
               className="font-medium px-4 py-2"
               style={{
@@ -153,18 +152,18 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
           ))}
         </header>
         <main className="flex flex-col gap-4 bg-white">
-          {data?.list?.map((item) => (
+          {data?.list?.map(item => (
             <div className="border" key={item.id}>
               <header className="flex items-center p-2 border-b">
                 <Button.Group>
                   <Button
                     onClick={() => {
-                      console.log(item);
-                      setActionType(ShowFormType.edit);
+                      console.log(item)
+                      setActionType(ShowFormType.edit)
                       setCurrentOrder({
                         ...item,
                         logisticsOrderProductList: item.orderProductVOList,
-                      });
+                      })
                     }}
                   >
                     编辑打包
@@ -173,12 +172,12 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                     onClick={async () => {
                       await showModal({
                         content: '确定要取消打包吗？',
-                      });
+                      })
                       await showMessage(
                         () => orderAPI.cancelPack(item.id),
-                        '取消打包'
-                      );
-                      bus.emit(EmitTypes.refreshOrderPage);
+                        '取消打包',
+                      )
+                      bus.emit(EmitTypes.refreshOrderPage)
                     }}
                   >
                     取消打包
@@ -187,11 +186,11 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                     icon={<IconFile />}
                     onClick={async () => {
                       // `${getRequestEndInfo.baseUrl}/`
-                      const res = await orderAPI.getSheet(item.id);
+                      const res = await orderAPI.getSheet(item.id)
                       if (res.data.code !== SuccessCode) {
-                        return Message.error(res.data.msg);
+                        return Message.error(res.data.msg)
                       }
-                      setSheet(res.data.data);
+                      setSheet(res.data.data)
                     }}
                   >
                     查看面单
@@ -199,7 +198,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                   <Button
                     loading={refreshHandle.loading}
                     onClick={() => {
-                      refreshHandle.run(item.id);
+                      refreshHandle.run(item.id)
                     }}
                   >
                     更新订单
@@ -212,8 +211,8 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                       setCurrentOrder({
                         ...item,
                         logisticsOrderProductList: item.orderProductVOList,
-                      });
-                      setActionType(ShowFormType.create);
+                      })
+                      setActionType(ShowFormType.create)
                     }}
                   >
                     添加商品
@@ -227,8 +226,8 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                           status: 'default',
                         },
                       }).then(() => {
-                        Message.success('预刷成功！');
-                      });
+                        Message.success('预刷成功！')
+                      })
                     }}
                   >
                     申请预刷
@@ -236,8 +235,8 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                   <Button
                     icon={<IconFile />}
                     onClick={() => {
-                      logHandle.run(item.id);
-                      setRecord(true);
+                      logHandle.run(item.id)
+                      setRecord(true)
                     }}
                   >
                     操作记录
@@ -247,11 +246,11 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                     content="确认删除订单？操作不可逆！"
                     isModal={true}
                     onOk={async () => {
-                      const res = await orderAPI.remove(item.id);
-                      await showMessageStatus(res.data);
-                      run();
+                      await showMessage(() => orderAPI.remove(item.id))
+                      run()
                     }}
-                  ></PopconfirmDelete>
+                  >
+                  </PopconfirmDelete>
                 </Button.Group>
                 <div className="flex items-center ml-auto">
                   <span className={labelClass}>订单编号：</span>
@@ -271,7 +270,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                   >
                     {
                       orderStatusOptions?.find(
-                        (oitem) => oitem.value === item.orderStatus
+                        oitem => oitem.value === item.orderStatus,
                       )?.label
                     }
                   </Tag>
@@ -281,7 +280,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                 <OrderHeaderStatusInfo data={item}></OrderHeaderStatusInfo>
               </header>
               <main className="flex p-4">
-                {columns.map((oitem) => (
+                {columns.map(oitem => (
                   <div
                     style={{
                       width: oitem.width,
@@ -315,7 +314,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                       setCurrentOrder({
                         ...item,
                         logisticsOrderProductList: item.orderProductVOList,
-                      });
+                      })
                     }}
                   >
                     <IconEdit />
@@ -325,30 +324,33 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
             </div>
           ))}
         </main>
-        {data?.list?.length ? (
-          <Pagination
-            className="mt-4 flex justify-end"
-            total={data?.total}
-            onChange={(pageNumber: number, pageSize: number) => {
-              pagination.changePageSize(pageSize);
-              pagination.changeCurrent(pageNumber);
-            }}
-          ></Pagination>
-        ) : null}
+        {data?.list?.length
+          ? (
+              <Pagination
+                className="mt-4 flex justify-end"
+                total={data?.total}
+                onChange={(pageNumber: number, pageSize: number) => {
+                  pagination.changePageSize(pageSize)
+                  pagination.changeCurrent(pageNumber)
+                }}
+              >
+              </Pagination>
+            )
+          : null}
         {!data?.list?.length && <Empty className="py-28"></Empty>}
       </div>
       <Modal
         title="添加商品"
         visible={actionType === ShowFormType.create}
         onCancel={() => {
-          addForm.resetFields();
-          setActionType(null);
+          addForm.resetFields()
+          setActionType(null)
         }}
         unmountOnExit={true}
         confirmLoading={addProductHandle.loading}
         onOk={async () => {
-          addProductHandle.run();
-          addForm.resetFields();
+          addProductHandle.run()
+          addForm.resetFields()
         }}
       >
         <FilterForm
@@ -361,7 +363,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
           }}
           formItemConfigList={[
             ...OrderCreateSchema2.filter(
-              (item) => !['trackingNo'].includes(item.schema.field)
+              item => !['trackingNo'].includes(item.schema.field),
             ),
             // {
             //   schema: {
@@ -380,14 +382,15 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
               },
             },
           ]}
-        ></FilterForm>
+        >
+        </FilterForm>
       </Modal>
       <Modal
         title="查看面单"
         visible={sheet}
         onCancel={() => setSheet(null)}
         onOk={async () => {
-          setSheet(null);
+          setSheet(null)
         }}
       >
         面单信息，开发中...
@@ -398,30 +401,32 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
         onCancel={() => setRecord(false)}
         cancelText="关闭"
         onOk={async () => {
-          setRecord(false);
+          setRecord(false)
         }}
       >
         <Spin
           loading={logHandle.loading}
           className="mx-auto block max-h-96 overflow-y-auto"
         >
-          {!logHandle.loading && logHandle.data?.data.list?.length ? (
-            <Timeline>
-              {logHandle.data?.data.list.map((item) => (
-                <Timeline.Item
-                  key={item.id}
-                  label={item.operationContent || '-'}
-                >
-                  <span>{item.operationProcedure}</span>
-                  <span className="ml-4 text-gray-500">
-                    {formatDate(item.createTime)}
-                  </span>
-                </Timeline.Item>
-              ))}
-            </Timeline>
-          ) : (
-            <Empty description="暂无记录"></Empty>
-          )}
+          {!logHandle.loading && logHandle.data?.data.list?.length
+            ? (
+                <Timeline>
+                  {logHandle.data?.data.list.map(item => (
+                    <Timeline.Item
+                      key={item.id}
+                      label={item.operationContent || '-'}
+                    >
+                      <span>{item.operationProcedure}</span>
+                      <span className="ml-4 text-gray-500">
+                        {formatDate(item.createTime)}
+                      </span>
+                    </Timeline.Item>
+                  ))}
+                </Timeline>
+              )
+            : (
+                <Empty description="暂无记录"></Empty>
+              )}
         </Spin>
       </Modal>
       <Modal
@@ -433,7 +438,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
         onCancel={() => setActionType(null)}
         confirmLoading={updateHandle.loading}
         onOk={async () => {
-          updateHandle.run();
+          updateHandle.run()
         }}
       >
         <FilterForm
@@ -460,7 +465,8 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                 <DictSelector
                   type="radio"
                   dictCode="transport_type"
-                ></DictSelector>
+                >
+                </DictSelector>
               ),
             },
             {
@@ -475,9 +481,10 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
             setCurrentOrder({
               ...currentOrder,
               ...v,
-            });
+            })
           }}
-        ></FilterForm>
+        >
+        </FilterForm>
         <GoodsInfo
           data={currentOrder?.orderProductVOList}
           isEdit={true}
@@ -485,23 +492,24 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
             setCurrentOrder({
               ...currentOrder,
               logisticsOrderProductList: e,
-            });
+            })
           }}
-        ></GoodsInfo>
+        >
+        </GoodsInfo>
         <Button
           className="mt-4"
           type="outline"
           long={true}
           icon={<IconPlus></IconPlus>}
           onClick={() => {
-            setActionType(ShowFormType.create);
+            setActionType(ShowFormType.create)
           }}
         >
           添加商品
         </Button>
       </Modal>
     </div>
-  );
-};
+  )
+}
 
-export default OrderTable;
+export default OrderTable

@@ -1,10 +1,10 @@
-import { Alert } from '@arco-design/web-react';
-import React from 'react';
+import { Alert } from '@arco-design/web-react'
+import React from 'react'
 
-import { expressAPI } from '@/api/client/express';
-import SearchTable from '@/components/SearchTable';
-import EntrepotRadio from '@/components/Selectors/EntrepotRadio';
-import { DividerSchema } from '@/constants/schema/common';
+import { expressAPI } from '@/api/client/express'
+import SearchTable from '@/components/SearchTable'
+import EntrepotRadio from '@/components/Selectors/EntrepotRadio'
+import { DividerSchema } from '@/constants/schema/common'
 
 export default () => {
   return (
@@ -17,7 +17,7 @@ export default () => {
           '2. 如果您是使用 欣承国际物流境助手浏览器插件采购的，需要检查采购账号是不是登录状态，同时确保网站的账户余额充足，否则将无法提交打包',
           '3. 您没有提交打包信息给仓库是无法匹配订单信息打包出库的，请在获取快递单号后，务必第一时间提交打包',
           '4. 如果是您单方面没有提交订单信息给仓库打包出库导致成为问题包裹，造成丢件、打包出库异常等后果，仓库一律不予理赔',
-        ].map((item) => (
+        ].map(item => (
           <div key={item}>{item}</div>
         ))}
       />
@@ -28,7 +28,7 @@ export default () => {
         formItemConfigList={[
           {
             schema: {
-              field: 'entrepot',
+              field: 'sendWarehouse',
               label: '仓库',
               span: 24,
             },
@@ -73,7 +73,8 @@ export default () => {
             },
           },
         ]}
-      ></SearchTable>
+      >
+      </SearchTable>
     </div>
-  );
-};
+  )
+}

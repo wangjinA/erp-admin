@@ -1,9 +1,10 @@
-import React from 'react';
-import FilterForm from '@/components/FilterForm';
-import EntrepotRadio from '@/components/Selectors/EntrepotRadio';
-import { DividerSchema } from '@/constants/schema/common';
-import { DatePicker, Table } from '@arco-design/web-react';
-import { WhetherOptions } from '@/constants';
+import { DatePicker, Table } from '@arco-design/web-react'
+import React from 'react'
+
+import FilterForm from '@/components/FilterForm'
+import EntrepotRadio from '@/components/Selectors/EntrepotRadio'
+import { WhetherOptions } from '@/constants'
+import { DividerSchema } from '@/constants/schema/common'
 
 export default () => {
   return (
@@ -17,7 +18,7 @@ export default () => {
           formItemConfigList={[
             {
               schema: {
-                field: 'entrepot',
+                field: 'sendWarehouse',
                 label: '所属仓库',
                 span: 24,
               },
@@ -66,7 +67,8 @@ export default () => {
               },
             },
           ]}
-        ></FilterForm>
+        >
+        </FilterForm>
       </div>
       <Table
         className="mt-4"
@@ -142,7 +144,8 @@ export default () => {
             operator1: '2024-06-16 18:35:02',
           },
         ]}
-      ></Table>
+      >
+      </Table>
     </div>
-  );
-};
+  )
+}

@@ -2,39 +2,38 @@
  * 退件弹窗
  */
 
-import { Form, Modal } from '@arco-design/web-react';
-import { useRequest } from 'ahooks';
-import React from 'react';
+import { Form, Modal } from '@arco-design/web-react'
+import { useRequest } from 'ahooks'
+import React from 'react'
 
-import { expressAPI } from '@/api/client/express';
-import FilterForm from '@/components/FilterForm';
-import EntrepotSelector from '@/components/Selectors/EntrepotSelector';
-import { showMessageStatus } from '@/utils';
+import { expressAPI } from '@/api/client/express'
+import FilterForm from '@/components/FilterForm'
+import EntrepotSelector from '@/components/Selectors/EntrepotSelector'
+import { showMessage } from '@/utils'
 
 interface ReturnParcelProps {
-  visible: boolean;
-  sendWarehouse?: string;
-  trackingNo?: string;
-  setVisible: (v: boolean) => void;
-  onSuccess?: () => void;
+  visible: boolean
+  sendWarehouse?: string
+  trackingNo?: string
+  setVisible: (v: boolean) => void
+  onSuccess?: () => void
 }
 const ReturnParcel: React.FC<ReturnParcelProps> = (props) => {
-  const { visible, sendWarehouse, trackingNo, setVisible, onSuccess } = props;
-  const [formRef] = Form.useForm();
+  const { visible, sendWarehouse, trackingNo, setVisible, onSuccess } = props
+  const [formRef] = Form.useForm()
 
   // 退件
   const returnHandle = useRequest(
     async () => {
-      const formData = await formRef.validate();
-      const res = await expressAPI.returnOperation(formData);
-      await showMessageStatus(res.data);
-      onSuccess?.();
-      setVisible(false);
+      const formData = await formRef.validate()
+      await showMessage(() => expressAPI.returnOperation(formData))
+      onSuccess?.()
+      setVisible(false)
     },
     {
       manual: true,
-    }
-  );
+    },
+  )
 
   return (
     <Modal
@@ -42,10 +41,10 @@ const ReturnParcel: React.FC<ReturnParcelProps> = (props) => {
       visible={visible}
       confirmLoading={returnHandle.loading}
       onCancel={() => {
-        setVisible(false);
+        setVisible(false)
       }}
       onOk={() => {
-        returnHandle.run();
+        returnHandle.run()
       }}
     >
       <FilterForm
@@ -96,9 +95,10 @@ const ReturnParcel: React.FC<ReturnParcelProps> = (props) => {
             control: 'textarea',
           },
         ]}
-      ></FilterForm>
+      >
+      </FilterForm>
     </Modal>
-  );
-};
+  )
+}
 
-export default ReturnParcel;
+export default ReturnParcel

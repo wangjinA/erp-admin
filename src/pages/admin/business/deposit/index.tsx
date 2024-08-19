@@ -10,7 +10,7 @@ import {
   ScanResponse,
   scanAPI,
 } from '@/api/admin/entrepot'
-import { tryFn } from '@/utils'
+import { showMessage } from '@/utils'
 
 function ShowAlert(props: {
   data: ScanResponse
@@ -113,14 +113,13 @@ function ShowAlert(props: {
 export default () => {
   const { run, data, loading } = useRequest(
     async (params: ScanParams) => {
-      const res = await tryFn(() => scanAPI.scanPut(params))
+      const res = await showMessage(() => scanAPI.scanPut(params))
       return res.data.data
     },
     {
       manual: true,
     },
   )
-  console.log(data)
 
   const [trackingNo, setTrackingNo] = useState<string>()
 

@@ -234,130 +234,129 @@ export const routes: IRoute[] = [
       },
     ],
   },
-  {
-    name: 'admin.dashboard',
-    key: 'admin/dashboard',
-    children: [
-      {
-        name: 'admin.dashboard.workplace',
-        key: 'admin/dashboard/workplace',
-      },
-      {
-        name: 'admin.dashboard.monitor',
-        key: 'admin/dashboard/monitor',
-        requiredPermissions: [
-          { resource: 'menu.dashboard.monitor', actions: ['write'] },
-        ],
-      },
-    ],
-  },
-  {
-    name: 'admin.visualization',
-    key: 'admin/visualization',
-    children: [
-      {
-        name: 'admin.visualization.dataAnalysis',
-        key: 'admin/visualization/data-analysis',
-        requiredPermissions: [
-          { resource: 'menu.visualization.dataAnalysis', actions: ['read'] },
-        ],
-      },
-      {
-        name: 'admin.visualization.multiDimensionDataAnalysis',
-        key: 'admin/visualization/multi-dimension-data-analysis',
-        requiredPermissions: [
-          {
-            resource: 'menu.visualization.dataAnalysis',
-            actions: ['read', 'write'],
-          },
-          {
-            resource: 'menu.visualization.multiDimensionDataAnalysis',
-            actions: ['write'],
-          },
-        ],
-        oneOfPerm: true,
-      },
-    ],
-  },
-  {
-    name: 'admin.list',
-    key: 'admin/list',
-    children: [
-      {
-        name: 'admin.list.searchTable',
-        key: 'admin/list/search-table',
-      },
-      {
-        name: 'admin.list.cardList',
-        key: 'admin/list/card',
-      },
-    ],
-  },
-  {
-    name: 'admin.form',
-    key: 'admin/form',
-    children: [
-      {
-        name: 'admin.form.group',
-        key: 'admin/form/group',
-        requiredPermissions: [
-          { resource: 'menu.form.group', actions: ['read', 'write'] },
-        ],
-      },
-      {
-        name: 'admin.form.step',
-        key: 'admin/form/step',
-        requiredPermissions: [
-          { resource: 'menu.form.step', actions: ['read'] },
-        ],
-      },
-    ],
-  },
-  {
-    name: 'admin.profile',
-    key: 'admin/profile',
-    children: [
-      {
-        name: 'admin.profile.basic',
-        key: 'admin/profile/basic',
-      },
-    ],
-  },
-
-  {
-    name: 'admin.result',
-    key: 'admin/result',
-    children: [
-      {
-        name: 'admin.result.success',
-        key: 'admin/result/success',
-        breadcrumb: false,
-      },
-      {
-        name: 'admin.result.error',
-        key: 'admin/result/error',
-        breadcrumb: false,
-      },
-    ],
-  },
-  {
-    name: 'admin.exception',
-    key: 'admin/exception',
-    children: [
-      {
-        name: 'admin.exception.403',
-        key: 'admin/exception/403',
-      },
-      {
-        name: 'admin.exception.404',
-        key: 'admin/exception/404',
-      },
-      {
-        name: 'admin.exception.500',
-        key: 'admin/exception/500',
-      },
-    ],
-  },
+  // {
+  //   name: 'admin.dashboard',
+  //   key: 'admin/dashboard',
+  //   children: [
+  //     {
+  //       name: 'admin.dashboard.workplace',
+  //       key: 'admin/dashboard/workplace',
+  //     },
+  //     {
+  //       name: 'admin.dashboard.monitor',
+  //       key: 'admin/dashboard/monitor',
+  //       requiredPermissions: [
+  //         { resource: 'menu.dashboard.monitor', actions: ['write'] },
+  //       ],
+  //     },
+  //   ],
+  // },
+  // {
+  //   name: 'admin.visualization',
+  //   key: 'admin/visualization',
+  //   children: [
+  //     {
+  //       name: 'admin.visualization.dataAnalysis',
+  //       key: 'admin/visualization/data-analysis',
+  //       requiredPermissions: [
+  //         { resource: 'menu.visualization.dataAnalysis', actions: ['read'] },
+  //       ],
+  //     },
+  //     {
+  //       name: 'admin.visualization.multiDimensionDataAnalysis',
+  //       key: 'admin/visualization/multi-dimension-data-analysis',
+  //       requiredPermissions: [
+  //         {
+  //           resource: 'menu.visualization.dataAnalysis',
+  //           actions: ['read', 'write'],
+  //         },
+  //         {
+  //           resource: 'menu.visualization.multiDimensionDataAnalysis',
+  //           actions: ['write'],
+  //         },
+  //       ],
+  //       oneOfPerm: true,
+  //     },
+  //   ],
+  // },
+  // {
+  //   name: 'admin.list',
+  //   key: 'admin/list',
+  //   children: [
+  //     {
+  //       name: 'admin.list.searchTable',
+  //       key: 'admin/list/search-table',
+  //     },
+  //     {
+  //       name: 'admin.list.cardList',
+  //       key: 'admin/list/card',
+  //     },
+  //   ],
+  // },
+  // {
+  //   name: 'admin.form',
+  //   key: 'admin/form',
+  //   children: [
+  //     {
+  //       name: 'admin.form.group',
+  //       key: 'admin/form/group',
+  //       requiredPermissions: [
+  //         { resource: 'menu.form.group', actions: ['read', 'write'] },
+  //       ],
+  //     },
+  //     {
+  //       name: 'admin.form.step',
+  //       key: 'admin/form/step',
+  //       requiredPermissions: [
+  //         { resource: 'menu.form.step', actions: ['read'] },
+  //       ],
+  //     },
+  //   ],
+  // },
+  // {
+  //   name: 'admin.profile',
+  //   key: 'admin/profile',
+  //   children: [
+  //     {
+  //       name: 'admin.profile.basic',
+  //       key: 'admin/profile/basic',
+  //     },
+  //   ],
+  // },
+  // {
+  //   name: 'admin.result',
+  //   key: 'admin/result',
+  //   children: [
+  //     {
+  //       name: 'admin.result.success',
+  //       key: 'admin/result/success',
+  //       breadcrumb: false,
+  //     },
+  //     {
+  //       name: 'admin.result.error',
+  //       key: 'admin/result/error',
+  //       breadcrumb: false,
+  //     },
+  //   ],
+  // },
+  // {
+  //   name: 'admin.exception',
+  //   key: 'admin/exception',
+  //   children: [
+  //     {
+  //       name: 'admin.exception.403',
+  //       key: 'admin/exception/403',
+  //     },
+  //     {
+  //       name: 'admin.exception.404',
+  //       key: 'admin/exception/404',
+  //     },
+  //     {
+  //       name: 'admin.exception.500',
+  //       key: 'admin/exception/500',
+  //     },
+  //   ],
+  // },
   {
     name: 'admin.user',
     key: 'admin/user',

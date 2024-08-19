@@ -1,4 +1,5 @@
 import { Alert, Button, Tag } from '@arco-design/web-react'
+import { IconPoweroff } from '@arco-design/web-react/icon'
 import { useRequest } from 'ahooks'
 import React, { useState } from 'react'
 
@@ -14,7 +15,7 @@ import { TagColors } from '@/pages/admin/components/OrderTable/SendCargoInfo'
 import { showMessage, showModal } from '@/utils'
 
 export default () => {
-  const [current, setCurrent] = useState()
+  const [current, setCurrent] = useState<any>()
   const [visible, setVisible] = React.useState<boolean>(false)
   const ref = React.useRef<SearchTableRef>()
 
@@ -138,7 +139,9 @@ export default () => {
                 ? (
                     <Button
                       type="text"
-                      loading={row === current && loading}
+                      icon={<IconPoweroff />}
+                      status="warning"
+                      loading={row.id === current?.id && loading}
                       onClick={async () => {
                         run(row)
                       }}

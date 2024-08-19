@@ -1,15 +1,17 @@
-import { Alert, Button } from '@arco-design/web-react';
-import { useRequest } from 'ahooks';
-import React, { useState } from 'react';
+import { Alert, Button } from '@arco-design/web-react'
+import { useRequest } from 'ahooks'
+import { omit, pick } from 'lodash'
+import React, { useRef, useState } from 'react'
 
-import { expressAPI } from '@/api/client/express';
-import SearchTable from '@/components/SearchTable';
-import EntrepotRadio from '@/components/Selectors/EntrepotRadio';
-import { DividerSchema } from '@/constants/schema/common';
-import { showMessageStatus, showModal, tryFn } from '@/utils';
+import { expressAPI } from '@/api/client/express'
+import SearchTable, { SearchTableRef } from '@/components/SearchTable'
+import EntrepotRadio from '@/components/Selectors/EntrepotRadio'
+import { DividerSchema } from '@/constants/schema/common'
+import { showMessage, showModal, timeArrToObject } from '@/utils'
 
 export default () => {
-  const [current, setCurrent] = useState();
+  const [current, setCurrent] = useState<any>()
+  const ref = useRef<SearchTableRef>()
 
   const { run, loading } = useRequest(
     async (row) => {
@@ -18,15 +20,15 @@ export default () => {
         okButtonProps: {
           status: 'warning',
         },
-      });
-      setCurrent(row);
-      const res = await tryFn(() => expressAPI.claimHandle(row));
-      await showMessageStatus(res.data);
+      })
+      setCurrent(row)
+      await showMessage(() => expressAPI.claimHandle(pick(row, ['sendWarehouse', 'trackingNo'])), '认领')
+      ref.current.refreshSearchTable()
     },
     {
       manual: true,
-    }
-  );
+    },
+  )
 
   return (
     <div className="p-4 bg-white">
@@ -38,17 +40,22 @@ export default () => {
           '2. 仓库会将“无主件”进行公示，您可以通过输入完整的快递单号校验，校验正确后则可以点击认领',
           '3. 认领完成后，包裹会在问题包裹列表里，请及时录单处理',
           '4. 无主件仓库会进行公示 15天，15天后无人认领，仓库即做销毁处理，不予任何查找或理赔',
-        ].map((item) => (
+        ].map(item => (
           <div key={item}>{item}</div>
         ))}
       />
       <SearchTable
+        ref={ref}
         name="包裹认领"
-        // getListRequest={expressAPI.getClaimList}
+        getListRequest={expressAPI.getClaimList}
+        requestQueryTransform={params => ({
+          ...omit(params, ['shelfTime']),
+          ...timeArrToObject(params.shelfTime, 'shelfStartTime', 'shelfEndTime'),
+        })}
         formItemConfigList={[
           {
             schema: {
-              field: 'entrepot',
+              field: 'sendWarehouse',
               label: '仓库',
               span: 24,
             },
@@ -75,7 +82,7 @@ export default () => {
           {
             schema: {
               label: '签收时间',
-              field: 'createTime',
+              field: 'shelfTime',
             },
             control: 'datePickerRange',
             isSearch: true,
@@ -88,14 +95,14 @@ export default () => {
               return (
                 <Button
                   type="text"
-                  loading={row === current && loading} // ! 判断一下id row === current
+                  loading={row.id === current?.id && loading}
                   onClick={async () => {
-                    run(row);
+                    run(row)
                   }}
                 >
                   认领
                 </Button>
-              );
+              )
             },
           },
           // {
@@ -105,7 +112,8 @@ export default () => {
           //   },
           // },
         ]}
-      ></SearchTable>
+      >
+      </SearchTable>
     </div>
-  );
-};
+  )
+}

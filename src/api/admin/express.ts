@@ -2,54 +2,54 @@ import baseAxios from '..'
 import { APIListResponse, APIResponse, IPageParams } from '../type'
 
 export const expressAPI = {
-  /**
-   * 包裹认领列表
-   */
-  getClaimList(body: Partial<ClaimParams> & IPageParams) {
-    return baseAxios.post<APIListResponse<ClaimParams>>(
-      '/api/parcel/management/claim/list',
-      body,
-    )
-  },
-  /**
-   * 问题包裹列表
-   */
-  getProblemList(body: Partial<ProblemParams> & IPageParams) {
-    return baseAxios.post<APIListResponse<ProblemParams>>(
-      '/api/parcel/management/problem/list',
-      body,
-    )
-  },
-  /**
-   * 快递拒收列表
-   */
+  // /**
+  //  * 包裹认领列表
+  //  */
+  // getClaimList(body: Partial<ClaimParams> & IPageParams) {
+  //   return baseAxios.post<APIListResponse<ClaimParams>>(
+  //     '/api/parcel/management/claim/list',
+  //     body,
+  //   )
+  // },
+  // /**
+  //  * 问题包裹列表
+  //  */
+  // getProblemList(body: Partial<ProblemParams> & IPageParams) {
+  //   return baseAxios.post<APIListResponse<ProblemParams>>(
+  //     '/api/parcel/management/problem/list',
+  //     body,
+  //   )
+  // },
+  // /**
+  //  * 快递拒收列表
+  //  */
   getRejectList(body: Partial<ExpressRejectParams> & IPageParams) {
     return baseAxios.post<APIListResponse<ExpressRejectParams>>(
       '/api/reject/management/list',
       body,
     )
   },
-  /**
-   * 新增拒收
-   */
-  addReject(body: AddRejectParam) {
-    return baseAxios.post<APIResponse>('/api/reject/management/insert', body)
-  },
+  // /**
+  //  * 新增拒收
+  //  */
+  // addReject(body: AddRejectParam) {
+  //   return baseAxios.post<APIResponse>('/api/reject/management/insert', body)
+  // },
   /**
    * 取消拒收
    */
   cancelReject(id: any) {
     return baseAxios.get<APIResponse>(`/api/reject/management/cancel/${id}`)
   },
-  /**
-   * 订单取消拒收
-   */
-  orderCancelReject(body: {
-    orderId: number
-    trackingNo: string
-  }) {
-    return baseAxios.post<APIResponse>(`/api/return/management/order/cancel`, body)
-  },
+  // /**
+  //  * 订单取消拒收
+  //  */
+  // orderCancelReject(body: {
+  //   orderId: number
+  //   trackingNo: string
+  // }) {
+  //   return baseAxios.post<APIResponse>(`/api/return/management/order/cancel`, body)
+  // },
   /**
    * 退件列表
    */
@@ -59,42 +59,42 @@ export const expressAPI = {
       body,
     )
   },
-  /**
-   * 认领操作
-   */
-  claimHandle(params: { trackingNo: string, sendWarehouse: string }) {
-    return baseAxios.get<APIResponse>('/api/parcel/management/claim/parcel', { params })
-  },
+  // /**
+  //  * 认领操作
+  //  */
+  // claimHandle(params: { trackingNo: string, sendWarehouse: string }) {
+  //   return baseAxios.get<APIResponse>('/api/parcel/management/claim/parcel', { params })
+  // },
 
-  // 修改快递状态
-  updateExpressStatus(params: {
-    orderProductId: number
-    trackingStatus: string
-  }) {
-    return baseAxios.post(
-      '/api/logistics/order/update/order/product/status',
-      params,
-    )
-  },
-  // 退件操作
-  returnOperation(body: Partial<ReturnOperationInfo>) {
-    return baseAxios.post('/api/return/management/insert', body)
-  },
+  // // 修改快递状态
+  // updateExpressStatus(params: {
+  //   orderProductId: number
+  //   trackingStatus: string
+  // }) {
+  //   return baseAxios.post(
+  //     '/api/logistics/order/update/order/product/status',
+  //     params,
+  //   )
+  // },
+  // // 退件操作
+  // returnOperation(body: Partial<ReturnOperationInfo>) {
+  //   return baseAxios.post('/api/return/management/insert', body)
+  // },
   /**
    * 取消退件
    */
   cancelReturn(id: any) {
     return baseAxios.get<APIResponse>(`/api/return/management/cancel/${id}`)
   },
-  /**
-   * 订单取消退件
-   */
-  orderCancelReturn(body: {
-    orderId: number
-    trackingNo: string
-  }) {
-    return baseAxios.post<APIResponse>(`/api/return/management/order/cancel`, body)
-  },
+  // /**
+  //  * 订单取消退件
+  //  */
+  // orderCancelReturn(body: {
+  //   orderId: number
+  //   trackingNo: string
+  // }) {
+  //   return baseAxios.post<APIResponse>(`/api/return/management/order/cancel`, body)
+  // },
 }
 
 export interface ReturnOperationInfo {

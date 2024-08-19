@@ -6,13 +6,12 @@ import OrderTable from '../../components/OrderTable'
 import ScanCommon from '../ScanCommon'
 
 import { ScanParams, scanAPI } from '@/api/admin/entrepot'
-import { showMessageStatus } from '@/utils'
+import { showMessage } from '@/utils'
 
 export default () => {
   const { run, data, loading } = useRequest(
     async (params: ScanParams) => {
-      const res = await scanAPI.ScanOut(params)
-      showMessageStatus(res.data)
+      const res = await showMessage(() => scanAPI.ScanOut(params))
       return res.data.data
     },
     {

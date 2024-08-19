@@ -16,7 +16,7 @@ export default () => {
           formItemConfigList={[
             {
               schema: {
-                field: 'entrepot',
+                field: 'sendWarehouse',
                 label: '所属仓库',
                 span: 24,
               },
