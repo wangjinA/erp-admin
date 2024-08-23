@@ -20,7 +20,7 @@ export function loginExit() {
   return baseAxios.post<APIResponse<LoginResponse>>('/api/system/exit')
 }
 
-export function getCaptcha(randomVal?: any) {
+export function getCaptcha(randomVal: any) {
   const val = randomVal ? `?sessionId=${randomVal}` : ''
   return `${getRequestEndInfo.baseUrl}/api/code/captcha.jpg${val}`
 }

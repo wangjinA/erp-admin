@@ -36,7 +36,7 @@ export default function LoginForm() {
   const [loginParams, setLoginParams, removeLoginParams]
     = useStorage('loginParams')
   const [value, setValue] = useLocalStorageState('userInfo')
-  const [randomStr, setRandomStr] = useState(null)
+  const [randomStr, setRandomStr] = useState(random(1, 99999))
   const t = useLocale(locale)
 
   const [rememberPassword, setRememberPassword] = useState(!!loginParams)
