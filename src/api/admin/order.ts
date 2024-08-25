@@ -16,6 +16,16 @@ export const orderAPI = {
   insert(body) {
     return baseAxios.post('/api/logistics/order/insert', body)
   },
+  cancel(orderIdList: any[]) {
+    return baseAxios.post('/api/logistics/order/batch/cancel/order', {
+      orderIdList,
+    })
+  },
+  refresh(orderIdList: number[]) {
+    return baseAxios.get(`/api/logistics/order/batch/update/order`, {
+      params: { orderIdList },
+    })
+  },
 }
 
 export interface SearchOrderParams extends IPageParams {

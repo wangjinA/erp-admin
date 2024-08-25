@@ -2,48 +2,39 @@ import {
   Badge,
   Button,
   Form,
+  Message,
   Space,
   Tabs,
+  Tag,
 } from '@arco-design/web-react'
-import { IconRefresh, IconSearch } from '@arco-design/web-react/icon'
-import { useLocalStorageState, usePagination, useResetState } from 'ahooks'
+import { IconExport, IconRefresh, IconSearch } from '@arco-design/web-react/icon'
+import { useLocalStorageState, usePagination, useRequest, useResetState } from 'ahooks'
 import { omit } from 'lodash'
 import React, { useState } from 'react'
 
 import { OrderFilter } from './schema'
 
+import { scanAPI } from '@/api/admin/entrepot'
+import { orderAPI as adminOrderApi } from '@/api/admin/order'
 import { orderAPI } from '@/api/client/order'
 import FilterForm from '@/components/FilterForm'
 
 import { useDictOptions } from '@/components/Selectors/DictSelector'
 import { getEntrepotOptions } from '@/components/Selectors/EntrepotSelector'
-import { EmitTypes, useEventBus } from '@/hooks/useEventBus'
+import { EmitTypes, bus, useEventBus } from '@/hooks/useEventBus'
 import OrderTable from '@/pages/admin/components/OrderTable'
-import { timeArrToObject } from '@/utils'
+import { isAdmin } from '@/routes'
+import { showMessage, showModal, timeArrToObject } from '@/utils'
 
 export interface OrderPageProps {
   dictCode: 'shopee_status' | 'order_status'
 }
 
-const searchStatusMap = {
-  shopee_status: 'shrimpStatus',
-  order_status: '',
-}
-
-// const shrimpStatus = [
-//   { label: '尚未付款', value: 'UNPAID' },
-//   { label: '待出库', value: 'READY_TO_SHIP' },
-//   { label: '处理中', value: 'PROCESSED' },
-//   { label: '已装船', value: 'SHIPPED' },
-//   { label: '已完成', value: 'COMPLETED' },
-//   { label: '取消中', value: 'IN_CANCEL' },
-//   { label: '已取消', value: 'CANCELLED' },
-//   { label: '开票', value: 'INVOICE_PENDING' },
-// ];
 export default (props: OrderPageProps) => {
   const { dictCode } = props
   const [activeTab, setActiveTab] = useLocalStorageState<string>(location.pathname)
   const [countMap, setCountMap] = useState<Record<string, number>>()
+  const [selectIds, setSelectIds] = useState([])
   const [formData, _setFormData, restFormData] = useResetState<any>({
     selectLogisticsOrderVO: {},
     selectOrderProductVO: {},
@@ -69,11 +60,10 @@ export default (props: OrderPageProps) => {
 
   const { data, run, pagination, loading, refresh } = usePagination(
     async (params) => {
+      bus.emit(EmitTypes.clearSelectOrderList)
       if (!shrimpStatus?.length) {
         return null
       }
-      console.log(formData)
-
       const body = {
         ...formData,
         selectOrderProductVO: {
@@ -129,9 +119,24 @@ export default (props: OrderPageProps) => {
     },
   )
 
+  const outListHandle = useRequest(async () => {
+    await showMessage(() => scanAPI.outList(selectIds), '出库')
+    refresh()
+  }, {
+    manual: true,
+  })
+
+  const cancelListHandle = useRequest(async () => {
+    await showMessage(() => adminOrderApi.cancel(selectIds), '取消')
+    refresh()
+  }, {
+    manual: true,
+  })
+
   useEventBus(EmitTypes.refreshOrderPage, () => {
     refresh()
   })
+
   return (
     <div className="bg-white p-4">
       <FilterForm
@@ -146,14 +151,109 @@ export default (props: OrderPageProps) => {
       >
       </FilterForm>
       <div className="flex justify-between py-6 pr-2">
-        <Space size={20}>
-          {/* <Button
-            type="primary"
-            // onClick={() => setShowType(ShowFormType.create)}
-            // icon={<IconPlus></IconPlus>}
-          >
-            新建
-          </Button> */}
+        <Space size={8}>
+          {
+            isAdmin()
+              ? (
+                  <>
+                    <Button
+                      type="outline"
+                      icon={<IconExport />}
+                      onClick={() => {
+                        Message.error('开发中...')
+                      }}
+                    >
+                      导出数据
+                    </Button>
+                    <Button
+                      type="outline"
+                      status="warning"
+                      loading={cancelListHandle.loading}
+                      onClick={async () => {
+                        if (!selectIds.length) {
+                          return Message.error('请选择订单')
+                        }
+                        await showModal({
+                          content: `确认取消选中的${selectIds.length}个订单？`,
+                        })
+                        cancelListHandle.run()
+                      }}
+                    >
+                      批量取消订单
+                    </Button>
+                    <Button
+                      type="outline"
+                      onClick={() => {
+                        if (!selectIds.length) {
+                          return Message.error('请选择订单')
+                        }
+                        Message.error('开发中...')
+                      }}
+                    >
+                      批量申请运单号
+                    </Button>
+                    <Button
+                      type="outline"
+                      onClick={() => {
+                        if (!selectIds.length) {
+                          return Message.error('请选择订单')
+                        }
+                        Message.error('开发中...')
+                      }}
+                    >
+                      批量更新订单
+                    </Button>
+                    <Button
+                      type="outline"
+                      onClick={() => {
+                        Message.error('开发中...')
+                      }}
+                    >
+                      下载全部面单
+                    </Button>
+                    <Button
+                      type="outline"
+                      loading={outListHandle.loading}
+                      onClick={async () => {
+                        if (!selectIds.length) {
+                          return Message.error('请选择订单')
+                        }
+                        await showModal({
+                          content: '确定批量出库？',
+                        })
+
+                        outListHandle.run()
+                      }}
+                    >
+                      批量出库
+                    </Button>
+                  </>
+                )
+              : (
+                  <>
+                    <Button
+                      type="outline"
+                      icon={<IconExport />}
+                      onClick={() => {
+                        Message.error('开发中...')
+                      }}
+                    >
+                      导出订单
+                    </Button>
+                  </>
+                )
+          }
+          {selectIds.length
+            ? (
+                <Tag checked={true} color="pinkpurple">
+                  已选中
+                  {' '}
+                  {selectIds.length}
+                  {' '}
+                  个订单
+                </Tag>
+              )
+            : null}
         </Space>
 
         <Space size={20}>
@@ -207,6 +307,9 @@ export default (props: OrderPageProps) => {
         data={data}
         loading={loading}
         pagination={pagination}
+        onSelect={(ids) => {
+          setSelectIds(ids)
+        }}
       >
       </OrderTable>
     </div>

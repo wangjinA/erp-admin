@@ -6,13 +6,19 @@ import {
   Typography,
 } from '@arco-design/web-react'
 import { useRequest } from 'ahooks'
-import dayjs from 'dayjs'
 import React, { useState } from 'react'
 
 import ScanCommon from '../ScanCommon'
 
 import { ScanParams, ScanSignResponse, scanAPI } from '@/api/admin/entrepot'
-import { showMessage } from '@/utils'
+import MyBadge from '@/components/MyBadge'
+import { StatusColorMap } from '@/constants/statusTag'
+import { formatDate, showMessage } from '@/utils'
+
+export function checkIsProblem(instructions: string) {
+  const msgs = ['拒收', '异常', '问题']
+  return msgs.some(o => instructions?.includes(o))
+}
 
 const columns: TableColumnProps[] = [
   {
@@ -26,12 +32,23 @@ const columns: TableColumnProps[] = [
   {
     title: '说明',
     dataIndex: 'instructions',
+    render(c: string) {
+      const status = checkIsProblem(c) ? 'error' : 'success'
+      return (
+        <MyBadge
+          status="default"
+          color={StatusColorMap[status]}
+          text={c}
+        >
+        </MyBadge>
+      )
+    },
   },
   {
     title: '扫码时间',
     dataIndex: 'createTime',
     render(c) {
-      return c || dayjs().format('YYYY-MM-DD HH:mm:ss')
+      return formatDate(c, new Date())
     },
   },
   {
@@ -99,7 +116,15 @@ export default () => {
                   <Button type="text">查看扫码记录</Button>
                 </Grid.Col> */}
               </Grid.Row>
-              <Table loading={loading} data={list} columns={columns}></Table>
+              <Table
+                loading={loading}
+                data={list}
+                columns={columns}
+                rowClassName={(record) => {
+                  return checkIsProblem(record.instructions) ? 'error-row' : ''
+                }}
+              >
+              </Table>
             </>
           )
         : null}

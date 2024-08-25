@@ -1,4 +1,4 @@
-import { TagInfoMap } from '@/components/StatusTag';
+import { TagInfoMap } from '@/components/StatusTag'
 
 const colors = [
   'red',
@@ -14,7 +14,15 @@ const colors = [
   'pinkpurple',
   'magenta',
   'gray',
-];
+]
+
+export const StatusColorMap = {
+  success: 'green',
+  error: 'red',
+  warning: 'orange',
+  processing: 'arcoblue',
+  default: 'gray',
+}
 
 export const usableTagInfoMap: TagInfoMap[] = [
   {
@@ -27,4 +35,4 @@ export const usableTagInfoMap: TagInfoMap[] = [
     text: '禁用',
     color: 'red',
   },
-];
+]

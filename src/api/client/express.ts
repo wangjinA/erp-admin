@@ -48,7 +48,7 @@ export const expressAPI = {
     orderId: number
     trackingNo: string
   }) {
-    return baseAxios.post<APIResponse>(`/api/return/management/order/cancel`, body)
+    return baseAxios.post<APIResponse>(`/api/reject/management/order/cancel`, body)
   },
   /**
    * 退件列表

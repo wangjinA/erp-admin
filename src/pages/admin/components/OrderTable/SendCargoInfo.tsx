@@ -1,4 +1,4 @@
-import { Link, Tag } from '@arco-design/web-react'
+import { Tag } from '@arco-design/web-react'
 
 import { useRequest } from 'ahooks'
 import classNames from 'classnames'
@@ -9,10 +9,14 @@ import styles from './index.module.less'
 import { labelClass, valueClass } from '.'
 
 import { expressAPI } from '@/api/client/express'
+import LabelValue from '@/components/LabelValue'
+import MyBadge from '@/components/MyBadge'
 import PopconfirmDelete from '@/components/PopconfirmDelete'
 import ReturnParcel from '@/components/ReturnParcel'
 import { useDictOptions } from '@/components/Selectors/DictSelector'
+import TrackingNo from '@/components/TrackingNo'
 import { EmitTypes, bus } from '@/hooks/useEventBus'
+import { isClient } from '@/routes'
 import { OrderResponseItem } from '@/types/order'
 import { showMessage, showModal } from '@/utils'
 
@@ -39,14 +43,21 @@ function ExpressStatus(item: OrderResponseItem['orderProductVOList'][0]) {
   const { data: trackingStatus } = useDictOptions({
     dictCode: 'tracking_status',
   })
-
+  const statusText = trackingStatus?.find(oitem => oitem.value === item.trackingStatus)
+    ?.label
+  const color = TagColors[Number(item.trackingStatus)]
   return (
-    <Tag bordered size="small" color={TagColors[Number(item.trackingStatus)]}>
-      {
-        trackingStatus?.find(oitem => oitem.value === item.trackingStatus)
-          ?.label
-      }
-    </Tag>
+    <>
+      <MyBadge
+        status="default"
+        style={{
+          transform: ' translateY(-2px)',
+        }}
+        color={color}
+        text={statusText}
+      >
+      </MyBadge>
+    </>
   )
 }
 
@@ -211,39 +222,44 @@ const SkuList: React.FC<SendCargoInfoProps> = (props) => {
           className={classNames('h-[125px] border-r', i > 0 ? 'border-t' : '')}
         >
           <div className="h-full p-2">
-            <div>
-              <span className={labelClass}>快递：</span>
-              <span className={valueClass}>
-                {item.trackingNo
-                  ? (
-                      <Link
-                        href={`https://www.baidu.com/s?wd=${item.trackingNo}`}
-                        target="_blank"
-                      >
-                        {item.trackingNo}
-                      </Link>
-                    )
-                  : <Tag>未填</Tag>}
-              </span>
-            </div>
+            <LabelValue
+              label="快递"
+              value={item.trackingNo
+                ? (
+                    <TrackingNo
+                      value={item.trackingNo}
+                    >
+                    </TrackingNo>
+                  )
+                : <Tag>未填</Tag>}
+            >
+            </LabelValue>
             {
               item.trackingNo
                 ? (
                     <>
-                      <div>
-                        <span className={labelClass}>状态：</span>
-                        <span className={valueClass}><ExpressStatus {...item} /></span>
-                      </div>
-                      <div>
-                        <span className={labelClass}>操作：</span>
-                        <span className={classNames(valueClass, 'inline-flex')}>
-                          <ExpressStatusActions
-                            data={data}
-                            item={item}
-                            sendWarehouse={data.sendWarehouse}
-                          />
-                        </span>
-                      </div>
+                      <LabelValue
+                        label="状态"
+                        value={<ExpressStatus {...item} />}
+                      >
+                      </LabelValue>
+                      {
+                        ['0', '1', '2'].includes(data.orderStatus) && isClient()
+                          ? (
+                              <LabelValue
+                                valueClassName="inline-flex"
+                                label="操作"
+                                value={(
+                                  <ExpressStatusActions
+                                    data={data}
+                                    item={item}
+                                    sendWarehouse={data.sendWarehouse}
+                                  />
+                                )}
+                              />
+                            )
+                          : null
+                      }
                     </>
                   )
                 : null

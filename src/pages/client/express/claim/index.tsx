@@ -1,4 +1,5 @@
 import { Alert, Button } from '@arco-design/web-react'
+import { IconImport } from '@arco-design/web-react/icon'
 import { useRequest } from 'ahooks'
 import { omit, pick } from 'lodash'
 import React, { useRef, useState } from 'react'
@@ -6,6 +7,8 @@ import React, { useRef, useState } from 'react'
 import { expressAPI } from '@/api/client/express'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 import EntrepotRadio from '@/components/Selectors/EntrepotRadio'
+import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
+import TrackingNo from '@/components/TrackingNo'
 import { DividerSchema } from '@/constants/schema/common'
 import { showMessage, showModal, timeArrToObject } from '@/utils'
 
@@ -61,6 +64,9 @@ export default () => {
             },
             control: <EntrepotRadio></EntrepotRadio>,
             isSearch: true,
+            render(c) {
+              return <EntrepotNameFC value={c}></EntrepotNameFC>
+            },
           },
           {
             ...DividerSchema,
@@ -69,16 +75,19 @@ export default () => {
           {
             schema: {
               label: '快递单号',
-              field: 'deliveryNo',
+              field: 'trackingNo',
             },
             isSearch: true,
-          },
-          {
-            schema: {
-              label: '状态',
-              field: 'status',
+            render(c) {
+              return <TrackingNo value={c}></TrackingNo>
             },
           },
+          // {
+          //   schema: {
+          //     label: '状态',
+          //     field: 'status',
+          //   },
+          // },
           {
             schema: {
               label: '签收时间',
@@ -94,6 +103,7 @@ export default () => {
             render(c, row) {
               return (
                 <Button
+                  icon={<IconImport />}
                   type="text"
                   loading={row.id === current?.id && loading}
                   onClick={async () => {

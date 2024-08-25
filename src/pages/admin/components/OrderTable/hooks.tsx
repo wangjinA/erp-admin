@@ -1,16 +1,33 @@
-import { Button, Descriptions } from '@arco-design/web-react'
+import { Button, Space } from '@arco-design/web-react'
 
 import { IconFile } from '@arco-design/web-react/icon'
 
+import { useMemo } from 'react'
+import { useLocation } from 'react-router-dom'
+
+import ActionHistory from './ActionHistory'
+import DeliveryButton from './DeliveryButton'
 import SendCargoInfo from './SendCargoInfo'
 
-import { OrderTablePorps, labelClass, valueClass } from '.'
+import { OrderTablePorps } from '.'
 
+import { orderAPI } from '@/api/admin/order'
 import GoodsInfo from '@/components/GoodsInfo'
+import LabelValue from '@/components/LabelValue'
+import { DictNameFC } from '@/components/Selectors/DictSelector'
+import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
+import { EmitTypes, bus } from '@/hooks/useEventBus'
+import { isAdmin } from '@/routes'
 import { Order } from '@/types/order'
+import { showMessage, showModal } from '@/utils'
 
 export function useColumns(props: OrderTablePorps) {
   const { dictCode } = props
+  const { pathname } = useLocation()
+  const showMj = useMemo(() => {
+    return ['/admin/order/all'].includes(pathname)
+  }, [pathname])
+  const showActions = isAdmin()
   return [
     {
       title: '商品信息',
@@ -35,22 +52,13 @@ export function useColumns(props: OrderTablePorps) {
       width: 240,
       render(c, row) {
         return (
-          <div className="border-r h-full px-2">
-            <div>
-              <span className={labelClass}>尾程物流：</span>
-              <span className={valueClass}>蝦皮店到店</span>
-            </div>
-            <div>
-              <span className={labelClass}>物流单号：</span>
-              <span className={valueClass}>{row.packagenumber || '-'}</span>
-            </div>
-            <div>
-              <span className={labelClass}>申请时间：</span>
-              <span className={valueClass}>{row.shippingTime}</span>
-            </div>
-            <div>
-              <span className={labelClass}>查看单号：</span>
-              <span className={valueClass}>
+          <div className="border-r h-full p-2">
+            <LabelValue label="尾程物流" value={<DictNameFC value={row.orderPackageList[0]?.shippingCarrier} dictCode="logistics_channel"></DictNameFC>}></LabelValue>
+            <LabelValue label="物流单号" value={row.orderPackageList[0]?.packageNumber}></LabelValue>
+            <LabelValue label="出货时间" value={row.shippingTime}></LabelValue>
+            <LabelValue
+              label="查看单号"
+              value={(
                 <Button
                   className="px-1"
                   type="text"
@@ -59,138 +67,72 @@ export function useColumns(props: OrderTablePorps) {
                 >
                   查看面单
                 </Button>
-              </span>
-            </div>
+              )}
+            >
+            </LabelValue>
           </div>
         )
       },
     },
-    {
-      title: '买家信息',
-      dataIndex: 'seller',
-      width: 180,
-      render(c, row) {
-        return (
-          <div className="border-r h-full px-2">
-            <div>
-              <span className={labelClass}>买家：</span>
-              <span className={valueClass}>{row.buyerUsername || '-'}</span>
-            </div>
-            <div>
-              <span className={labelClass}>收货人：</span>
-              <span className={valueClass}>{row.recipients || '-'}</span>
-            </div>
-            <div>
-              <span className={labelClass}>收货电话：</span>
-              <span className={valueClass}>{row.mobilenumber || '-'}</span>
-            </div>
-            <div>
-              <span className={labelClass}>收货地址：</span>
-              <span className={valueClass}>{row.detailedAddress || '-'}</span>
-            </div>
-          </div>
-          // <Descriptions
-          //   size="small"
-          //   className="border-r h-full px-2"
-          //   column={1}
-          //   colon=" :"
-          //   data={[
-          //     {
-          //       label: '买家',
-          //       value: row.buyerUsername || '-',
-          //     },
-          //     {
-          //       label: '收货人',
-          //       value: row.recipients || '-',
-          //     },
-          //     {
-          //       label: '收货电话',
-          //       value: row.mobilenumber || '-',
-          //     },
-          //     {
-          //       label: '收货地址',
-          //       value: row.detailedAddress || '-',
-          //     },
-          //   ]}
-          //   labelStyle={{ textAlign: 'right' }}
-          //   style={{ marginBottom: 20 }}
-          // />
-        )
-      },
-    },
+    ...(showMj
+      ? [{
+          title: '买家信息',
+          dataIndex: 'seller',
+          width: 180,
+          render(c, row) {
+            return (
+              <div className="border-r h-full p-2">
+                <LabelValue label="买家" value={row.buyerUsername}></LabelValue>
+                <LabelValue label="收货人" value={row.recipients}></LabelValue>
+                <LabelValue label="收货电话" value={row.mobileNumber}></LabelValue>
+                <LabelValue label="收货地址" value={row.detailedAddress}></LabelValue>
+              </div>
+            )
+          },
+        }]
+      : []),
     {
       title: '打包信息',
       dataIndex: 'db',
       width: 150,
       render(c, row) {
         return (
-          <div className="border-r h-full px-2">
-            <div>
-              <span className={labelClass}>打包仓库：</span>
-              <span className={valueClass}>{row.sendWarehouseText || '-'}</span>
-            </div>
-            <div>
-              <span className={labelClass}>备注：</span>
-              <span className={valueClass}>{row.remark || '-'}</span>
-            </div>
+          <div className="border-r h-full p-2">
+            <LabelValue label="打包仓库" value={<EntrepotNameFC value={row.sendWarehouse} />}></LabelValue>
+            <LabelValue label="仓库备注" value={row.entrepotRemark}></LabelValue>
+            <LabelValue label="卖家备注" value={row.remark}></LabelValue>
           </div>
         )
       },
     },
-    {
-      title: '卖家信息',
-      dataIndex: '卖家信息',
-      width: 180,
-      render(c, row: Order) {
-        return (
-          <div className="border-r h-full px-2">
-            <div>
-              <span className={labelClass}>打包仓库：</span>
-              <span className={valueClass}>{row.sendWarehouseText || '-'}</span>
-            </div>
-            <div>
-              <span className={labelClass}>卖家标识：</span>
-              <span className={valueClass}>{'row.' || '-'}</span>
-            </div>
-            <div>
-              <span className={labelClass}>卖家备注：</span>
-              <span className={valueClass}>{row.remark || '-'}</span>
-            </div>
-            <div>
-              <span className={labelClass}>仓库备注：</span>
-              <span className={valueClass}>{row.entrepotRemark || '-'}</span>
-            </div>
-          </div>
-        )
-      },
-    },
+    ...(showMj
+      ? [{
+          title: '卖家信息',
+          dataIndex: '卖家信息',
+          width: 180,
+          render(c, row: Order) {
+            return (
+              <div className="border-r h-full p-2">
+                <LabelValue label="打包仓库" value={<EntrepotNameFC value={row.sendWarehouse} />}></LabelValue>
+                {/* <LabelValue label="卖家标识" value="row"></LabelValue> */}
+                <LabelValue label="卖家备注" value={row.remark}></LabelValue>
+                <LabelValue label="仓库备注" value={row.entrepotRemark}></LabelValue>
+              </div>
+            )
+          },
+        }]
+      : []),
     {
       title: '订单金额',
       dataIndex: 'fee',
       width: 200,
       render(c, row) {
         return (
-          <Descriptions
-            size="small"
-            className="border-r h-full px-2"
-            column={1}
-            colon=" :"
-            data={[
-              {
-                label: '总费用(TWD)',
-                value: row.totalCost,
-              },
-              {
-                label: '预估运费(TWD)',
-                value: row.estimatedShippingFee || '-',
-              },
-              {
-                label: '实际运费(TWD)',
-                value: row.actualShippingFee || '-',
-              },
-            ]}
-            style={{ marginBottom: 20 }}
-          />
+          <div className="border-r h-full p-2">
+            <LabelValue label="总费用(TWD)" value={row.total}></LabelValue>
+            <LabelValue label="预估运费(TWD)" value={row.estimatedShippingFee}></LabelValue>
+            <LabelValue label="实际运费(TWD)" value={row.actualShippingFee}></LabelValue>
+          </div>
         )
       },
     },
@@ -237,5 +179,57 @@ export function useColumns(props: OrderTablePorps) {
           // },
         ]
       : []),
+    ...(showActions
+      ? [{
+          title: '操作',
+          dataIndex: 'actions',
+          width: 120,
+          render(c, row) {
+            return (
+              <div className="h-full p-2 flex justify-center">
+                <Space direction="vertical" size={4}>
+                  <Button
+                    type="text"
+                    size="small"
+                    disabled={['5', '6'].includes(row.orderStatus)}
+                    onClick={async () => {
+                      await showModal({
+                        content: '确定要取消打包吗？',
+                        onOk() {
+                          return showMessage(
+                            () => orderAPI.cancel([row.id]),
+                            '取消打包',
+                          )
+                        },
+                      })
+                      bus.emit(EmitTypes.refreshOrderPage)
+                    }}
+                  >
+                    取消订单
+                  </Button>
+                  <DeliveryButton
+                    sendWarehouse={row.sendWarehouse}
+                    trackingNo={row.trackingNo}
+                    shrimpOrderNo={row.shrimpOrderNo}
+                    onSuccess={() => {
+                      bus.emit(EmitTypes.refreshOrderPage)
+                    }}
+                    buttonProps={{ size: 'small', disabled: row.orderStatus !== '2' }}
+                  />
+                  <ActionHistory
+                    buttonProps={{
+                      type: 'text',
+                      icon: null,
+                    }}
+                    id={row.id}
+                  >
+                  </ActionHistory>
+                </Space>
+              </div>
+            )
+          },
+        }]
+      : []
+    ),
   ]
 }

@@ -131,11 +131,11 @@ export function showObj(value, obj): any[] {
   }
 }
 
-export function formatDate(date: string) {
-  if (!date) {
+export function formatDate(date: string, defaultDate?: dayjs.ConfigType) {
+  if (!date && !defaultDate) {
     return '-'
   }
-  return dayjs(date).format('YYYY-MM-DD HH:mm').replace(`${new Date().getFullYear()}-`, '')
+  return dayjs(date || defaultDate).format('YYYY-MM-DD HH:mm').replace(`${new Date().getFullYear()}-`, '')
 }
 
 export function isProd() {

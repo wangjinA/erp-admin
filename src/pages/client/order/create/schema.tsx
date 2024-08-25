@@ -29,7 +29,7 @@ export const OrderCreateSchema1: CreateFormItemType[] = [
   },
   {
     schema: {
-      field: 'packagenumber',
+      field: 'packageNumber',
       label: '物流单号',
     },
     control: 'input',
@@ -161,7 +161,7 @@ export const OrderCreateSchema3: CreateFormItemType[] = [
   },
   {
     schema: {
-      field: 'mobilenumber',
+      field: 'mobileNumber',
       label: '手机号码',
     },
     control: 'input',

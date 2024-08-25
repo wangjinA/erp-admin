@@ -42,7 +42,10 @@ export default () => {
           {
             schema: {
               label: '尾程物流',
-              field: '',
+              field: 'shippingCarrier',
+            },
+            render(c) {
+              return <DictNameFC value={c} dictCode="logistics_channel"></DictNameFC>
             },
           },
           {

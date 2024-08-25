@@ -92,29 +92,33 @@ export const racksAPI = {
 }
 
 export const scanAPI = {
-  // 获取扫码记录
+  /** 获取扫码记录 */
   getRecord(body: Partial<ScanRecord> & IPageParams) {
     return baseAxios.post<APIListResponse<ScanRecord>>(
       '/api/scanning/record/list',
       body,
     )
   },
-  // 扫码入库
+  /** 扫码入库 */
   scanPut(params: ScanParams) {
     return baseAxios.post<APIResponse<ScanResponse>>(
       '/api/business/operation/scan/put',
       params,
     )
   },
-  // 扫码签收
+  /** 扫码签收 */
   scanSign(params: ScanParams) {
     return baseAxios.post<APIResponse<ScanSignResponse>>(
       '/api/business/operation/scan/sign',
       params,
     )
   },
-  // 扫码出库
+  /** 扫码出库 */
   ScanOut(params: ScanParams) {
+    return baseAxios.post<APIResponse<ScanResponse>>('/api/business/operation/scan/out/storage', params)
+  },
+  /** 批量出库 */
+  outList(params: ScanParams) {
     return baseAxios.post<APIResponse<ScanResponse>>('/api/business/operation/scan/out/storage', params)
   },
 }

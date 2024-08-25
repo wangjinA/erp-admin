@@ -39,8 +39,6 @@ export function useEntrepotOptions() {
 export function EntrepotNameFC(props: { value: string }) {
   const { value } = props
   const { data: options } = useEntrepotOptions()
-  console.log(options, value)
-
   return <>{options?.find(item => String(item.value) === String(value))?.label}</>
 }
 

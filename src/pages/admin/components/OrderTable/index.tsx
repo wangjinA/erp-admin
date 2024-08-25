@@ -1,12 +1,11 @@
 import {
   Button,
+  Checkbox,
   Empty,
   Message,
   Modal,
   Pagination,
-  Spin,
   Tag,
-  Timeline,
 } from '@arco-design/web-react'
 
 import useForm from '@arco-design/web-react/es/Form/useForm'
@@ -15,9 +14,11 @@ import { useRequest } from 'ahooks'
 import { PaginationResult } from 'ahooks/lib/usePagination/types'
 
 import { omit } from 'lodash'
-import React, { useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
+import ActionHistory from './ActionHistory'
 import OrderHeaderStatusInfo from './OrderHeaderStatusInfo'
+import RefreshButton from './RefreshButton'
 import { TagColors } from './SendCargoInfo'
 import { useColumns } from './hooks'
 
@@ -32,13 +33,13 @@ import DictSelector, {
 } from '@/components/Selectors/DictSelector'
 import EntrepotSelector from '@/components/Selectors/EntrepotSelector'
 import { ShowFormType } from '@/constants'
-import { EmitTypes, bus } from '@/hooks/useEventBus'
+import { EmitTypes, bus, useEventBus } from '@/hooks/useEventBus'
 import { OrderCreateSchema2 } from '@/pages/client/order/create/schema'
 import { OrderPageProps } from '@/pages/client/order/orderPage'
 import { isClient } from '@/routes'
 import { StyleProps } from '@/types'
 import { Order, OrderResponseItem } from '@/types/order'
-import { formatDate, showMessage, showModal } from '@/utils'
+import { showMessage, showModal } from '@/utils'
 
 export interface OrderTablePorps extends StyleProps {
   // tableProps: TableProps;
@@ -50,18 +51,21 @@ export interface OrderTablePorps extends StyleProps {
     APIListResponse<Order>['data'],
     any
   >['pagination']
+  onSelect?: (ids: number[]) => void
 }
 
 export const labelClass = 'arco-descriptions-item-label w-auto pb-0'
 export const valueClass = 'arco-descriptions-item-value w-auto pb-0'
 
 const OrderTable: React.FC<OrderTablePorps> = (props) => {
-  const { className, style, run, dictCode, data, pagination } = props
+  const { className, style, run, dictCode, data, pagination, onSelect } = props
   const [record, setRecord] = useState(false)
   const [currentOrder, setCurrentOrder] = useState<any>()
+  const [selectList, setSelectList] = useState<number[]>([])
+
   const [actionType, setActionType] = useState<ShowFormType>()
   const [sheet, setSheet] = useState<any>()
-
+  const showHeaderActions = isClient()
   const [form] = useForm()
   const [addForm] = useForm()
 
@@ -69,14 +73,6 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
   const refreshHandle = useRequest(
     async (id) => {
       await showMessage(() => orderAPI.refresh(id))
-    },
-    {
-      manual: true,
-    },
-  )
-  const logHandle = useRequest(
-    async (id) => {
-      return orderAPI.getLog(id).then(r => r.data)
     },
     {
       manual: true,
@@ -129,15 +125,47 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
     dictCode: 'order_status',
   })
 
+  useEventBus(EmitTypes.clearSelectOrderList, () => {
+    setSelectList([])
+  })
+
+  useEffect(() => {
+    onSelect?.(selectList)
+  }, [selectList])
+
   // const { data: shopeeStatus } = useDictOptions({
   //   dictCode: 'shopee_status',
   //   displayName: '',
   // });
 
+  const isSelectAll = useMemo(() => {
+    if (selectList.length === data?.list?.length) {
+      return true
+    }
+  }, [selectList, data?.list])
+
   return (
     <div className={className}>
       <div>
-        <header className="flex">
+        <header className="flex items-center">
+          {onSelect
+            ? (
+                <Checkbox
+                  disabled={!data?.list?.length}
+                  className="mr-2 pl-[10px]"
+                  checked={isSelectAll}
+                  onChange={(checked) => {
+                    if (checked) {
+                      setSelectList(data?.list?.map(item => item.id))
+                    }
+                    else {
+                      setSelectList([])
+                    }
+                  }}
+                >
+                </Checkbox>
+              )
+            : null}
           {columns.map(item => (
             <div
               className="font-medium px-4 py-2"
@@ -154,118 +182,138 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
         <main className="flex flex-col gap-4 bg-white">
           {data?.list?.map(item => (
             <div className="border" key={item.id}>
-              <header className="flex items-center p-2 border-b">
-                <Button.Group>
-                  <Button
-                    onClick={() => {
-                      console.log(item)
-                      setActionType(ShowFormType.edit)
-                      setCurrentOrder({
-                        ...item,
-                        logisticsOrderProductList: item.orderProductVOList,
-                      })
-                    }}
-                  >
-                    编辑打包
-                  </Button>
-                  <Button
-                    onClick={async () => {
-                      await showModal({
-                        content: '确定要取消打包吗？',
-                      })
-                      await showMessage(
-                        () => orderAPI.cancelPack(item.id),
-                        '取消打包',
-                      )
-                      bus.emit(EmitTypes.refreshOrderPage)
-                    }}
-                  >
-                    取消打包
-                  </Button>
-                  <Button
-                    icon={<IconFile />}
-                    onClick={async () => {
-                      // `${getRequestEndInfo.baseUrl}/`
-                      const res = await orderAPI.getSheet(item.id)
-                      if (res.data.code !== SuccessCode) {
-                        return Message.error(res.data.msg)
-                      }
-                      setSheet(res.data.data)
-                    }}
-                  >
-                    查看面单
-                  </Button>
-                  <Button
-                    loading={refreshHandle.loading}
-                    onClick={() => {
-                      refreshHandle.run(item.id)
-                    }}
-                  >
-                    更新订单
-                  </Button>
-                  {/* <Button>发货预报</Button> */}
-                  {/* <Button>订单收入</Button> */}
-                  {/* <Button>隔离订单</Button> */}
-                  <Button
-                    onClick={() => {
-                      setCurrentOrder({
-                        ...item,
-                        logisticsOrderProductList: item.orderProductVOList,
-                      })
-                      setActionType(ShowFormType.create)
-                    }}
-                  >
-                    添加商品
-                  </Button>
-                  {/* <Button>打印出货单</Button> */}
-                  <Button
-                    onClick={() => {
-                      showModal({
-                        content: '确定要申请预刷吗?',
-                        okButtonProps: {
-                          status: 'default',
-                        },
-                      }).then(() => {
-                        Message.success('预刷成功！')
-                      })
-                    }}
-                  >
-                    申请预刷
-                  </Button>
-                  <Button
-                    icon={<IconFile />}
-                    onClick={() => {
-                      logHandle.run(item.id)
-                      setRecord(true)
-                    }}
-                  >
-                    操作记录
-                  </Button>
-                  <PopconfirmDelete
-                    title="删除订单"
-                    content="确认删除订单？操作不可逆！"
-                    isModal={true}
-                    onOk={async () => {
-                      await showMessage(() => orderAPI.remove(item.id))
-                      run()
-                    }}
-                  >
-                  </PopconfirmDelete>
-                </Button.Group>
-                <div className="flex items-center ml-auto">
+              {
+                showHeaderActions
+                  ? (
+                      <header className="flex items-center p-2 border-b">
+                        <Button.Group>
+                          <Button
+                            onClick={() => {
+                              setActionType(ShowFormType.edit)
+                              setCurrentOrder(structuredClone({
+                                ...item,
+                                logisticsOrderProductList: item.orderProductVOList,
+                              }))
+                            }}
+                          >
+                            编辑打包
+                          </Button>
+                          <Button
+                            onClick={async () => {
+                              await showModal({
+                                content: '确定要取消打包吗？',
+                              })
+                              await showMessage(
+                                () => orderAPI.cancelPack(item.id),
+                                '取消打包',
+                              )
+                              bus.emit(EmitTypes.refreshOrderPage)
+                            }}
+                          >
+                            取消打包
+                          </Button>
+                          <Button
+                            icon={<IconFile />}
+                            onClick={async () => {
+                              // `${getRequestEndInfo.baseUrl}/`
+                              const res = await orderAPI.getSheet(item.id)
+                              if (res.data.code !== SuccessCode) {
+                                return Message.error(res.data.msg)
+                              }
+                              setSheet(res.data.data)
+                            }}
+                          >
+                            查看面单
+                          </Button>
+                          <Button
+                            loading={refreshHandle.loading}
+                            onClick={() => {
+                              refreshHandle.run(item.id)
+                            }}
+                          >
+                            更新订单
+                          </Button>
+                          <RefreshButton
+                            buttonProps={{
+                              type: 'default',
+                              status: 'default',
+                            }}
+                            ids={[item.id]}
+                          >
+                          </RefreshButton>
+                          {/* <Button>发货预报</Button> */}
+                          {/* <Button>订单收入</Button> */}
+                          {/* <Button>隔离订单</Button> */}
+                          <Button
+                            onClick={() => {
+                              setCurrentOrder({
+                                ...item,
+                                logisticsOrderProductList: item.orderProductVOList,
+                              })
+                              setActionType(ShowFormType.create)
+                            }}
+                          >
+                            添加商品
+                          </Button>
+                          {/* <Button>打印出货单</Button> */}
+                          <Button
+                            onClick={() => {
+                              showModal({
+                                content: '确定要申请预刷吗?',
+                                okButtonProps: {
+                                  status: 'default',
+                                },
+                              }).then(() => {
+                                Message.success('预刷成功！')
+                              })
+                            }}
+                          >
+                            申请预刷
+                          </Button>
+                          <ActionHistory id={item.id}></ActionHistory>
+                          <PopconfirmDelete
+                            title="删除订单"
+                            content="确认删除订单？操作不可逆！"
+                            isModal={true}
+                            onOk={async () => {
+                              await showMessage(() => orderAPI.remove(item.id))
+                              run()
+                            }}
+                          >
+                          </PopconfirmDelete>
+                        </Button.Group>
+                        {/* <div className="flex items-center ml-auto">
                   <span className={labelClass}>订单编号：</span>
                   <span className={valueClass}>{item.shrimpOrderNo}</span>
                   <Button size="mini" type="text">
                     查看详情
                   </Button>
-                </div>
-              </header>
-              <header className="gap-12 px-4 py-2 border-b grid grid-cols-[240px_240px_600px]">
+                </div> */}
+                      </header>
+                    )
+                  : null
+              }
+              <header className="gap-12 pl-1 pr-4 py-2 border-b grid grid-cols-[240px_240px_600px]">
                 <div>
+                  {onSelect
+                    ? (
+                        <Checkbox
+                          checked={selectList.includes(item.id)}
+                          onChange={(checked) => {
+                            if (checked) {
+                              setSelectList([...selectList, item.id])
+                            }
+                            else {
+                              setSelectList(selectList.filter(id => id !== item.id))
+                            }
+                          }}
+                        />
+                      )
+                    : null}
                   <Tag
                     bordered
                     size="small"
-                    className="mr-2"
+                    className="mx-2"
                     color={TagColors[Number(item.orderStatus)]}
                   >
                     {
@@ -389,45 +437,12 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
         title="查看面单"
         visible={sheet}
         onCancel={() => setSheet(null)}
+        unmountOnExit={true}
         onOk={async () => {
           setSheet(null)
         }}
       >
         面单信息，开发中...
-      </Modal>
-      <Modal
-        title="操作记录"
-        visible={record}
-        onCancel={() => setRecord(false)}
-        cancelText="关闭"
-        onOk={async () => {
-          setRecord(false)
-        }}
-      >
-        <Spin
-          loading={logHandle.loading}
-          className="mx-auto block max-h-96 overflow-y-auto"
-        >
-          {!logHandle.loading && logHandle.data?.data.list?.length
-            ? (
-                <Timeline>
-                  {logHandle.data?.data.list.map(item => (
-                    <Timeline.Item
-                      key={item.id}
-                      label={item.operationContent || '-'}
-                    >
-                      <span>{item.operationProcedure}</span>
-                      <span className="ml-4 text-gray-500">
-                        {formatDate(item.createTime)}
-                      </span>
-                    </Timeline.Item>
-                  ))}
-                </Timeline>
-              )
-            : (
-                <Empty description="暂无记录"></Empty>
-              )}
-        </Spin>
       </Modal>
       <Modal
         style={{
@@ -437,6 +452,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
         visible={actionType === ShowFormType.edit}
         onCancel={() => setActionType(null)}
         confirmLoading={updateHandle.loading}
+        unmountOnExit={true}
         onOk={async () => {
           updateHandle.run()
         }}
@@ -445,6 +461,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
           span={24}
           form={form}
           initialValues={currentOrder}
+          className="mb-4"
           formItemConfigList={[
             {
               schema: {
@@ -475,6 +492,9 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                 label: '备注',
               },
               control: 'textarea',
+              controlProps: {
+                placeholder: '请输入备注，此备注仓库可见',
+              },
             },
           ]}
           onChange={(_, v) => {

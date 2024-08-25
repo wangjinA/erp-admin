@@ -28,8 +28,7 @@
 // boolean
 // trackingNo	快递单号
 
-import React from 'react';
-import { CreateFormItemType } from '@/components/CreateFormItem';
+import { CreateFormItemType } from '@/components/CreateFormItem'
 
 export const OrderFilter: CreateFormItemType[] = [
   {
@@ -38,7 +37,7 @@ export const OrderFilter: CreateFormItemType[] = [
       label: '订单编号',
     },
     controlProps: {
-      placeholder: "请输入订单号，多个订单号用英文逗号','或空格' '隔开",
+      placeholder: '请输入订单号，多个订单号用英文逗号\',\'或空格\' \'隔开',
     },
     control: 'input',
   },
@@ -81,13 +80,13 @@ export const OrderFilter: CreateFormItemType[] = [
     },
     control: 'input',
   },
-  {
-    schema: {
-      field: 'selectOrderProductVO.globalArticleNo',
-      label: '全球货号',
-    },
-    control: 'input',
-  },
+  // {
+  //   schema: {
+  //     field: 'selectOrderProductVO.globalArticleNo',
+  //     label: '全球货号',
+  //   },
+  //   control: 'input',
+  // },
   // {
   //   schema: {
   //     field: 'orderType',
@@ -200,4 +199,4 @@ export const OrderFilter: CreateFormItemType[] = [
   //   },
   //   control: 'input',
   // },
-];
+]

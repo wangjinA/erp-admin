@@ -1,22 +1,23 @@
-import { useEffect } from 'react';
-import mitt from 'mitt';
+import mitt from 'mitt'
+import { useEffect } from 'react'
 
 export enum EmitTypes {
-  refreshOrderPage = 'refresh-order-page'
+  refreshOrderPage = 'refresh-order-page',
+  clearSelectOrderList = 'clear-select-order-list',
 }
 
 // 创建事件总线
-export const bus = mitt<Record<EmitTypes, any>>();
+export const bus = mitt<Record<EmitTypes, any>>()
 
 // 自定义 Hook
-export const useEventBus = (eventType: EmitTypes, handler) => {
+export function useEventBus(eventType: EmitTypes, handler) {
   useEffect(() => {
     // 在组件挂载时监听事件
-    bus.on(eventType, handler);
+    bus.on(eventType, handler)
 
     // 组件卸载时取消监听
     return () => {
-      bus.off(eventType, handler);
-    };
-  }, [eventType, handler]);
-};
+      bus.off(eventType, handler)
+    }
+  }, [eventType, handler])
+}

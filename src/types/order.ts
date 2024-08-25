@@ -50,7 +50,7 @@ export interface Order {
   firstLegCost: number // 头程费用
   id: number // 主键
   label: string // 标签
-  mobilenumber: string // 手机号码
+  mobileNumber: string // 手机号码
   orderAmount: number // 订单金额
   orderProductList: OrderProductList[]
   logisticsOrderProductList?: OrderProductList[]
@@ -59,7 +59,7 @@ export interface Order {
   orderType: string // 订单类型 字典值
   packCost: number // 打包费用
   packTime: string // 打包时间
-  packagenumber: string // 物流单号
+  packageNumber: string // 物流单号
   panelBarCode: string // 面板条码
   parcelHigh: number // 包裹高度
   parcelLength: number // 包裹长度

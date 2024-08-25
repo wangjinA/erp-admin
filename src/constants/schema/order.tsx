@@ -1,8 +1,11 @@
-import React from 'react';
-import { CreateFormItemType } from '@/components/CreateFormItem';
-import { DatePicker, Input } from '@arco-design/web-react';
-import { TimeRangeDefaultProps } from '..';
-import DictSelector from '@/components/Selectors/DictSelector';
+import { DatePicker } from '@arco-design/web-react'
+import React from 'react'
+
+import { TimeRangeDefaultProps } from '..'
+
+import { CreateFormItemType } from '@/components/CreateFormItem'
+
+import DictSelector from '@/components/Selectors/DictSelector'
 
 export const OrderFilter: CreateFormItemType[] = [
   {
@@ -11,7 +14,7 @@ export const OrderFilter: CreateFormItemType[] = [
       label: '订单编号',
     },
     controlProps: {
-      placeholder: "请输入订单号，多个订单号用英文逗号','或空格' '隔开",
+      placeholder: '请输入订单号，多个订单号用英文逗号\',\'或空格\' \'隔开',
     },
     control: 'input',
   },
@@ -38,8 +41,8 @@ export const OrderFilter: CreateFormItemType[] = [
   },
   {
     schema: {
-      field: 'timeType3',
-      label: '尾程物流',
+      field: 'shippingCarrier',
+      label: '物流类型',
     },
     control: 'input',
   },
@@ -62,7 +65,7 @@ export const OrderFilter: CreateFormItemType[] = [
       field: 'timeType6',
       label: '订单状态',
     },
-    control: <DictSelector dictCode='order_status'></DictSelector>
+    control: <DictSelector dictCode="order_status"></DictSelector>,
   },
   {
     schema: {
@@ -158,4 +161,4 @@ export const OrderFilter: CreateFormItemType[] = [
     },
     control: 'input',
   },
-];
+]

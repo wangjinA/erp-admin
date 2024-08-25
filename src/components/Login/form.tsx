@@ -47,15 +47,21 @@ export default function LoginForm() {
     data,
   } = useRequest(
     async (params) => {
-      const res = await login(params, randomStr)
-      if (res.data.code === SuccessCode) {
-        setValue(res.data.data)
-        localStorage.setItem(getRequestEndInfo.tokenKey, res.data.data.token)
-        localStorage.removeItem('scan-entrepot')
-        afterLoginSuccess(params)
+      try {
+        const res = await login(params, randomStr)
+        if (res.data.code === SuccessCode) {
+          setValue(res.data.data)
+          localStorage.setItem(getRequestEndInfo.tokenKey, res.data.data.token)
+          localStorage.removeItem('scan-entrepot')
+          afterLoginSuccess(params)
+        }
+        else {
+          Message.error(res.data.msg || t['login.form.login.errMsg'])
+          throw new Error(res.data.msg)
+        }
       }
-      else {
-        Message.error(res.data.msg || t['login.form.login.errMsg'])
+      catch (error) {
+        setRandomStr(random(1, 99999))
       }
     },
     {

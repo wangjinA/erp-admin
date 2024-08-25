@@ -1,10 +1,14 @@
+import { Badge } from '@arco-design/web-react'
 import { usePagination } from 'ahooks'
 import { omit } from 'lodash'
 import React from 'react'
 
+import { checkIsProblem } from '../signfor'
+
 import { scanAPI } from '@/api/admin/entrepot'
 import SearchTable from '@/components/SearchTable'
-import { timeArrToObject } from '@/utils'
+import TrackingNo from '@/components/TrackingNo'
+import { formatDate, timeArrToObject } from '@/utils'
 
 export default () => {
   const { pagination, data, loading } = usePagination(async (params) => {
@@ -39,6 +43,14 @@ export default () => {
               field: 'trackingNumber',
             },
             isSearch: true,
+            render(c) {
+              return (
+                <TrackingNo
+                  value={c}
+                >
+                </TrackingNo>
+              )
+            },
           },
           {
             schema: {
@@ -47,17 +59,23 @@ export default () => {
             },
             control: 'datePickerRange',
             isSearch: true,
+            render(c) {
+              return formatDate(c)
+            },
           },
           {
             schema: {
               label: '说明',
               field: 'instructions',
             },
+            render(c) {
+              return <Badge status={checkIsProblem(c) ? 'error' : 'success'} text={c}></Badge>
+            },
           },
           {
             schema: {
               label: '操作人',
-              field: 'signer',
+              field: 'operator',
             },
             isSearch: true,
           },
