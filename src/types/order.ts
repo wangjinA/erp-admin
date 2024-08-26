@@ -75,7 +75,6 @@ export interface Order {
   region: string // 地区
   remark: string // 备注
   sendWarehouse: string // 送往仓库字典
-  sendWarehouseText: string // 送往仓库
   clickPack: boolean // 是否一键打包，false就是编辑 true就是打包
   sheetnumber: string // 面单条码
   sheetStatus: boolean // 面单申请状态 false 没有申请 true 已经申请

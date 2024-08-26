@@ -51,6 +51,10 @@ export const orderAPI = {
     return baseAxios.get(`/api/logistics/order/cancel/${id}`)
   },
 
+  getShopOrderCount(body: Partial<SearchOrderParams & IPageParams>) {
+    return baseAxios.post<APIResponse<Record<string, number>>>('/api/logistics/order/fetch/store/count', body)
+  },
+
   getPackCount(body: Partial<SearchOrderParams & IPageParams>) {
     return baseAxios.post<APIResponse<Record<string, number>>>('/api/logistics/order/fetch/package/count', body)
   },

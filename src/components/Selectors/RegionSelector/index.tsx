@@ -1,18 +1,20 @@
-import React from 'react';
-import { Cascader } from '@arco-design/web-react';
-import { useRequest } from 'ahooks';
-import { regionAPI } from '@/api/admin/region';
-let cache: any;
+import { Cascader } from '@arco-design/web-react'
+import { useRequest } from 'ahooks'
+import React from 'react'
+
+import { regionAPI } from '@/api/admin/region'
+
+let cache: any
 export default () => {
   const { data, loading } = useRequest<any[], []>(() => {
     if (cache) {
-      return cache;
+      return cache
     }
     return regionAPI.get().then((res) => {
-      cache = res.data.data.list[0].children;
-      return cache;
-    });
-  });
+      cache = res.data.data.list[0].children
+      return cache
+    })
+  })
 
   return (
     <Cascader
@@ -23,6 +25,7 @@ export default () => {
       }}
       placeholder="请选择"
       loading={loading}
-    ></Cascader>
-  );
-};
+    >
+    </Cascader>
+  )
+}

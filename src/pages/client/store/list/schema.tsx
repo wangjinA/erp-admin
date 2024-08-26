@@ -1,8 +1,8 @@
-import { SearchTableSchema } from '@/components/SearchTable';
-import PlatformRadio from '@/components/Selectors/PlatformRadio';
-import { Button, Image } from '@arco-design/web-react';
-import shopeeIcon from '@/assets/shopee.png';
-import { shopStoreAPI } from '@/api/client/shopStore';
+import { Button, Image } from '@arco-design/web-react'
+
+import { shopStoreAPI } from '@/api/client/shopStore'
+import shopeeIcon from '@/assets/shopee.png'
+import { SearchTableSchema } from '@/components/SearchTable'
 
 const StoreListSchema: SearchTableSchema[] = [
   {
@@ -11,8 +11,10 @@ const StoreListSchema: SearchTableSchema[] = [
       field: 'platform_type',
       span: 16,
     },
-    control: <PlatformRadio></PlatformRadio>,
     isSearch: true,
+    render(c) {
+      return c || '-'
+    },
   },
   {
     schema: {
@@ -23,40 +25,40 @@ const StoreListSchema: SearchTableSchema[] = [
       <div className="flex gap-4 justify-end">
         <Button
           type="outline"
-          icon={
+          icon={(
             <Image
               style={{
                 transform: 'translateY(-2px)',
-                marginRight: 2
+                marginRight: 2,
               }}
               width={15}
               height={15}
               src={shopeeIcon}
             />
-          }
+          )}
           onClick={async () => {
-            const res = await shopStoreAPI.getAuthLink();
-            window.open(res.data.data);
+            const res = await shopStoreAPI.getAuthLink()
+            window.open(res.data.data)
           }}
         >
           Shopee跨境店铺授权
         </Button>
         <Button
           type="outline"
-          icon={
+          icon={(
             <Image
               style={{
                 transform: 'translateY(-2px)',
-                marginRight: 2
+                marginRight: 2,
               }}
               width={15}
               height={15}
               src={shopeeIcon}
             />
-          }
+          )}
           onClick={async () => {
-            const res = await shopStoreAPI.getAuthLink();
-            window.open(res.data.data);
+            const res = await shopStoreAPI.getAuthLink()
+            window.open(res.data.data)
           }}
         >
           Shopee本土店铺授权
@@ -79,14 +81,8 @@ const StoreListSchema: SearchTableSchema[] = [
   // },
   {
     schema: {
-      label: '电商平台',
-      field: '',
-    },
-  },
-  {
-    schema: {
       label: '地区',
-      field: '',
+      field: 'region',
     },
   },
   {
@@ -95,13 +91,13 @@ const StoreListSchema: SearchTableSchema[] = [
       field: 'storeType',
     },
     render(col) {
-      return col ? '跨境' : '本土';
+      return col ? '跨境' : '本土'
     },
   },
   {
     schema: {
       label: '授权状态',
-      field: '',
+      field: 'status',
     },
   },
   {
@@ -110,6 +106,12 @@ const StoreListSchema: SearchTableSchema[] = [
       field: 'authTime',
     },
   },
-];
+  {
+    schema: {
+      label: '授权过期时间',
+      field: 'authExpireTime',
+    },
+  },
+]
 
-export default StoreListSchema;
+export default StoreListSchema

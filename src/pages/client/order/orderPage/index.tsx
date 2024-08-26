@@ -20,7 +20,6 @@ import { orderAPI } from '@/api/client/order'
 import FilterForm from '@/components/FilterForm'
 
 import { useDictOptions } from '@/components/Selectors/DictSelector'
-import { getEntrepotOptions } from '@/components/Selectors/EntrepotSelector'
 import { EmitTypes, bus, useEventBus } from '@/hooks/useEventBus'
 import OrderTable from '@/pages/admin/components/OrderTable'
 import { isAdmin } from '@/routes'
@@ -91,24 +90,27 @@ export default (props: OrderPageProps) => {
         pageSize: params?.pageSize || pagination.pageSize,
       }
       const res = await orderAPI.getList(body)
-      orderAPI.getPackCount({
-        ...body,
-        selectLogisticsOrderVO: {
-          ...omit(body.selectLogisticsOrderVO, ['orderStatus']),
-        },
-      }).then((res) => {
-        setCountMap(res.data.data)
-      })
+      if (dictCode === 'order_status') {
+        orderAPI.getPackCount({
+          ...body,
+          selectLogisticsOrderVO: {
+            ...omit(body.selectLogisticsOrderVO, ['orderStatus']),
+          },
+        }).then((res) => {
+          setCountMap(res.data.data)
+        })
+      }
+      else {
+        orderAPI.getShopOrderCount({
+          ...body,
+          selectLogisticsOrderVO: {
+            ...omit(body.selectLogisticsOrderVO, ['orderStatus']),
+          },
+        }).then((res) => {
+          setCountMap(res.data.data)
+        })
+      }
 
-      res.data.data.list = await Promise.all(
-        res.data.data.list.map(async (item) => {
-          item.sendWarehouseText
-            = (await getEntrepotOptions()).find(
-              oitem => oitem.value === item.sendWarehouse,
-            )?.label || item.sendWarehouse
-          return item
-        }),
-      )
       return res.data.data
     },
     {
@@ -120,7 +122,7 @@ export default (props: OrderPageProps) => {
   )
 
   const outListHandle = useRequest(async () => {
-    await showMessage(() => scanAPI.outList(selectIds), '出库')
+    await showMessage(() => scanAPI.outList(selectIds), '出库') // ! Todo 后端接口未实现
     refresh()
   }, {
     manual: true,

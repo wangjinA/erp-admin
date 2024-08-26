@@ -1,36 +1,16 @@
-// fillShipInfo 存在未填发货信息 默认null true 是 false
-// boolean
-// label 标签 false
-// string
-// orderStatus 订单状态 字典值 false
-// string
-// string
-// platformShopId 店铺id false
-// string
-// problemStatus 是否问题订单 null 全部 false 否 true 是 false
-// boolean
-// remark 备注 false
-// string
-// string
-// sortType 查询排序 0 按打包时间排序 1 按紧急程度排序 false
-// integer
-// string
-// whetherPack 是否打包 false 标识是待处理的订单 true 标识已经打包在自己平台的数据 false
-// boolean
+import { SearchTableSchema } from '@/components/SearchTable'
+import ShopRadio from '@/components/Selectors/ShopRadio'
 
-// string
-// string
-// purchaseStatus 是否采购 null 全部 false 否 true 是 false
-// boolean
-// sku SKU false
-// string
-// stockOutStatus 存在缺货打包 默认null true 是 false
-// boolean
-// trackingNo 快递单号
-
-import { CreateFormItemType } from '@/components/CreateFormItem'
-
-export const OrderFilter: CreateFormItemType[] = [
+export const OrderFilter: SearchTableSchema[] = [
+  {
+    schema: {
+      field: 'platformShopId',
+      label: '所属店铺',
+      span: 24,
+    },
+    control: <ShopRadio></ShopRadio>,
+    isSearch: true,
+  },
   {
     schema: {
       field: 'selectLogisticsOrderVO.shrimpOrderNo',

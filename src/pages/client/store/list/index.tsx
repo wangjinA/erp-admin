@@ -1,33 +1,37 @@
-import FilterForm from '@/components/FilterForm';
-import React from 'react';
-import StoreListSchema from './schema';
-import SearchTable from '@/components/SearchTable';
-import { useRequest } from 'ahooks';
-import { shopStoreAPI } from '@/api/client/shopStore';
-import { Button } from '@arco-design/web-react';
-import { IconEdit } from '@arco-design/web-react/icon';
+import { Button, Message } from '@arco-design/web-react'
+import { IconEdit } from '@arco-design/web-react/icon'
+import { useRequest } from 'ahooks'
+import React, { useRef } from 'react'
+
+import StoreListSchema from './schema'
+
+import { shopStoreAPI } from '@/api/client/shopStore'
+import SearchTable, { SearchTableRef } from '@/components/SearchTable'
+import { showMessage, showModal } from '@/utils'
 
 interface StoreListProps {}
 const StoreList: React.FC<StoreListProps> = (props) => {
-  const { data: res, loading } = useRequest(() => {
-    return shopStoreAPI.getList({
-      pageNum: 1,
-      pageSize: 10,
-    });
-  });
+  const ref = useRef<SearchTableRef>()
+  const { run: unbindRun, loading: unbindLoading } = useRequest(async (id) => {
+    await showMessage(() => shopStoreAPI.unbind(id), '解绑')
+    ref.current.refreshSearchTable()
+  }, {
+    manual: true,
+  })
   return (
     <div className="p-4 bg-white">
       {/* <FilterForm formItemConfigList={StoreListSchema}></FilterForm> */}
       <SearchTable
-        showEdit={false}
-        tableProps={{
-          data: res?.data?.data?.list,
-          pagination: {
-            total: res?.data?.data?.total,
-            pageSize: 15,
-          },
-          loading,
-        }}
+        ref={ref}
+        getListRequest={shopStoreAPI.getList}
+        // tableProps={{
+        //   data: res?.data?.data?.list,
+        //   pagination: {
+        //     total: res?.data?.data?.total,
+        //     pageSize: 15,
+        //   },
+        //   loading,
+        // }}
         formItemConfigList={[
           ...StoreListSchema,
           {
@@ -43,29 +47,35 @@ const StoreList: React.FC<StoreListProps> = (props) => {
                     status="warning"
                     icon={<IconEdit />}
                     onClick={() => {
-                      // setShowType(ShowFormType.edit);
-                      // formRef.setFieldsValue(record);
+                      Message.info('开发中...')
                     }}
-                  >重新授权</Button>
+                  >
+                    重新授权
+                  </Button>
                   <Button
                     type="text"
                     status="warning"
+                    loading={unbindLoading}
                     icon={<IconEdit />}
-                    onClick={() => {
-                      // setShowType(ShowFormType.edit);
-                      // formRef.setFieldsValue(record);
+                    onClick={async () => {
+                      await showModal({
+                        content: '确认操作？解除绑定后需要重新授权！',
+                      })
+                      unbindRun(row.id)
                     }}
-                  >解绑</Button>
+                  >
+                    解绑
+                  </Button>
                 </>
-              );
+              )
             },
           },
         ]}
         name="店铺授权"
-        showCreate={false}
-      ></SearchTable>
+      >
+      </SearchTable>
     </div>
-  );
-};
+  )
+}
 
-export default StoreList;
+export default StoreList
