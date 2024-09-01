@@ -121,6 +121,9 @@ export const scanAPI = {
   outList(params: ScanParams) {
     return baseAxios.post<APIResponse<ScanResponse>>('/api/business/operation/scan/out/storage', params)
   },
+  scanHistory(body: Partial<EntrepotStorageRacks & IPageParams>) {
+    return baseAxios.post<APIListResponse<ScanRecord>>('/api/sign/record/list', body)
+  },
 }
 
 interface DhParams {

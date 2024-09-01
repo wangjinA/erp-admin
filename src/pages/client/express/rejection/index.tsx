@@ -5,8 +5,10 @@ import React, { useState } from 'react'
 
 import { expressAPI } from '@/api/client/express'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
-import { useDictOptions } from '@/components/Selectors/DictSelector'
+import { DictNameFC } from '@/components/Selectors/DictSelector'
 import EntrepotRadio from '@/components/Selectors/EntrepotRadio'
+import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
+import TrackingNo from '@/components/TrackingNo'
 import { DividerSchema } from '@/constants/schema/common'
 import { TagColors } from '@/pages/admin/components/OrderTable/SendCargoInfo'
 import { showMessage, showModal, timeArrToObject } from '@/utils'
@@ -33,10 +35,6 @@ export default () => {
       manual: true,
     },
   )
-
-  const { data: dictData, loading: dictLoading } = useDictOptions({
-    dictCode: 'tracking_status',
-  })
 
   return (
     <div className="p-4 bg-white">
@@ -71,6 +69,9 @@ export default () => {
             control: <EntrepotRadio></EntrepotRadio>,
             isSearch: true,
             isCreate: true,
+            render(c) {
+              return <EntrepotNameFC value={c}></EntrepotNameFC>
+            },
           },
           {
             ...DividerSchema,
@@ -83,6 +84,9 @@ export default () => {
             },
             isSearch: true,
             isCreate: true,
+            render(c) {
+              return <TrackingNo value={c}></TrackingNo>
+            },
           },
           {
             schema: {
@@ -92,7 +96,7 @@ export default () => {
             render(c) {
               return (
                 <Tag color={TagColors[Number(c)]}>
-                  {dictData?.find(({ value }) => value === c)?.label}
+                  <DictNameFC value={c} dictCode="rejection_status"></DictNameFC>
                 </Tag>
               )
             },
@@ -118,6 +122,12 @@ export default () => {
           },
           {
             schema: {
+              label: '申请人',
+              field: 'applyUser',
+            },
+          },
+          {
+            schema: {
               field: 'actions',
             },
             render(c, row) {
@@ -133,7 +143,7 @@ export default () => {
                       取消拒收
                     </Button>
                   )
-                : null
+                : '-'
             },
           },
           // {

@@ -1,5 +1,4 @@
 import { Badge } from '@arco-design/web-react'
-import { usePagination } from 'ahooks'
 import { omit } from 'lodash'
 import React from 'react'
 
@@ -11,14 +10,6 @@ import TrackingNo from '@/components/TrackingNo'
 import { formatDate, timeArrToObject } from '@/utils'
 
 export default () => {
-  const { pagination, data, loading } = usePagination(async (params) => {
-    const res = await scanAPI.getRecord({
-      ...params,
-      pageNum: params?.current || pagination.current,
-      pageSize: params?.pageSize || pagination.pageSize,
-    })
-    return res.data.data
-  })
   return (
     <div className="p-4 bg-white">
       <SearchTable

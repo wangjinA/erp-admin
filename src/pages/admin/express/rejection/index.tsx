@@ -4,8 +4,10 @@ import React, { useState } from 'react'
 
 import { expressAPI } from '@/api/admin/express'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
-import { useDictOptions } from '@/components/Selectors/DictSelector'
+import { DictNameFC } from '@/components/Selectors/DictSelector'
 import EntrepotRadio from '@/components/Selectors/EntrepotRadio'
+import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
+import TrackingNo from '@/components/TrackingNo'
 import { DividerSchema } from '@/constants/schema/common'
 import { TagColors } from '@/pages/admin/components/OrderTable/SendCargoInfo'
 import { showMessage, showModal } from '@/utils'
@@ -33,17 +35,12 @@ export default () => {
     },
   )
 
-  const { data: dictData, loading: dictLoading } = useDictOptions({
-    dictCode: 'tracking_status',
-  })
-
   return (
     <div className="p-4 bg-white">
       <SearchTable
         ref={ref}
         name="包裹拒收"
         getListRequest={expressAPI.getRejectList}
-        // createRequest={expressAPI.addReject}
         formItemConfigList={[
           {
             schema: {
@@ -54,6 +51,9 @@ export default () => {
             control: <EntrepotRadio></EntrepotRadio>,
             isSearch: true,
             isCreate: true,
+            render(c) {
+              return <EntrepotNameFC value={c}></EntrepotNameFC>
+            },
           },
           {
             ...DividerSchema,
@@ -66,16 +66,19 @@ export default () => {
             },
             isSearch: true,
             isCreate: true,
+            render(c) {
+              return <TrackingNo value={c}></TrackingNo>
+            },
           },
           {
             schema: {
               label: '状态',
-              field: 'status',
+              field: 'rejectionStatus',
             },
             render(c) {
               return (
                 <Tag color={TagColors[Number(c)]}>
-                  {dictData?.find(({ value }) => value === c)?.label}
+                  <DictNameFC value={c} dictCode="rejection_status"></DictNameFC>
                 </Tag>
               )
             },
@@ -83,7 +86,7 @@ export default () => {
           {
             schema: {
               label: '拒收时间',
-              field: '填充11111',
+              field: 'rejectionTime',
             },
             control: 'datePickerRange',
             isSearch: true,
@@ -91,7 +94,7 @@ export default () => {
           {
             schema: {
               label: '申请时间',
-              field: '填充22222',
+              field: 'applyTime',
             },
             control: 'datePickerRange',
             isSearch: true,
@@ -113,7 +116,7 @@ export default () => {
                       取消拒收
                     </Button>
                   )
-                : null
+                : '-'
             },
           },
           // {
