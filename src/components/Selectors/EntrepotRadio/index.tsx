@@ -12,14 +12,14 @@ export default (props) => {
     : res.data
       ? (
           <Radio.Group {...props}>
-            {res.data?.map((item) => {
+            {[{ label: '全部', value: undefined }, ...res.data].map((item) => {
               return (
                 <Radio className="pl-0" key={item.value} value={item.value}>
                   {({ checked }) => {
                     return (
                       <Button
                         tabIndex={-1}
-                        key={item.value}
+                        key={item.value || 'all'}
                         type={checked ? 'primary' : 'default'}
                       >
                         {item.label}

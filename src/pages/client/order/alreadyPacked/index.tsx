@@ -1,7 +1,7 @@
 import React from 'react'
 
-import OrderPage from '../orderPage'
+import OrderPage, { OrderPageType } from '../orderPage'
 
 export default (props) => {
-  return <OrderPage dictCode="order_status"></OrderPage>
+  return <OrderPage type={OrderPageType.PACK_ORDER}></OrderPage>
 }

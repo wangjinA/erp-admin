@@ -22,9 +22,7 @@ export const orderAPI = {
     })
   },
   refresh(orderIdList: number[]) {
-    return baseAxios.get(`/api/logistics/order/batch/update/order`, {
-      params: { orderIdList },
-    })
+    return baseAxios.post(`/api/logistics/order/batch/update/order`, orderIdList)
   },
 }
 

@@ -118,8 +118,8 @@ export const scanAPI = {
     return baseAxios.post<APIResponse<ScanResponse>>('/api/business/operation/scan/out/storage', params)
   },
   /** 批量出库 */
-  outList(params: ScanParams) {
-    return baseAxios.post<APIResponse<ScanResponse>>('/api/business/operation/scan/out/storage', params)
+  outList(body: { orderIdList: any[] }) {
+    return baseAxios.post<APIResponse<ScanResponse>>('/api/logistics/order/delivery/storage', body.orderIdList)
   },
   scanHistory(body: Partial<EntrepotStorageRacks & IPageParams>) {
     return baseAxios.post<APIListResponse<ScanRecord>>('/api/sign/record/list', body)

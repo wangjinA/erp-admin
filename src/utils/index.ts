@@ -122,8 +122,8 @@ export function showModal(params: Partial<ConfirmProps>) {
   })
 }
 
-export function showObj(value, obj): any[] {
-  if (value) {
+export function showObj<T>(isShow, obj: T): T[] {
+  if (isShow) {
     return [obj]
   }
   else {

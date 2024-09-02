@@ -1,6 +1,7 @@
-import OrderPage from '@/pages/client/order/orderPage';
-import React from 'react';
+import React from 'react'
+
+import OrderPage, { OrderPageType } from '@/pages/client/order/orderPage'
 
 export default (props: {}) => {
-  return <OrderPage dictCode="order_status"></OrderPage>;
-};
+  return <OrderPage type={OrderPageType.PACK_ORDER}></OrderPage>
+}

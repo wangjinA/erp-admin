@@ -1,11 +1,65 @@
-import { ModalProps } from '@arco-design/web-react'
+import { ModalProps, RangePickerProps } from '@arco-design/web-react'
+import dayjs from 'dayjs'
 
-export const TimeRangeDefaultProps = {
+const timeRangeShortcuts: any[] = [
+  {
+    text: '今天',
+    value: () => [dayjs().startOf('day'), dayjs()],
+  },
+  {
+    text: '昨天',
+    value: () => [
+      dayjs().subtract(1, 'day').startOf('day'),
+      dayjs().subtract(1, 'day').endOf('day'),
+    ],
+  },
+  {
+    text: '最近一周',
+    value: () => [dayjs().startOf('week'), dayjs()],
+  },
+  {
+    text: '上周',
+    value: () => [
+      dayjs()
+        .subtract(1, 'week')
+        .startOf('week')
+        .add(1, 'day'),
+      dayjs().subtract(1, 'week').endOf('week').add(1, 'day'),
+    ],
+  },
+  {
+    text: '最近一个月',
+    value: () => [
+      dayjs().startOf('day').subtract(1, 'month'),
+      dayjs(),
+    ],
+  },
+  {
+    text: '上个月',
+    value: () => [
+      dayjs()
+        .subtract(1, 'month')
+        .startOf('day'),
+      dayjs().subtract(1, 'month').endOf('day'),
+    ],
+  },
+  {
+    text: '最近三个月',
+    value: () => [
+      dayjs().startOf('day').subtract(3, 'month'),
+      dayjs(),
+    ],
+  },
+]
+
+export const TimeRangeDefaultProps: RangePickerProps = {
   showTime: {
     defaultValue: ['00:00:00', '23:59:59'],
     format: 'HH:mm',
   },
   format: 'YYYY-MM-DD HH:mm:ss',
+  shortcuts: timeRangeShortcuts,
+  shortcutsPlacementLeft: true,
 }
 
 export const TimeDefaultProps = {

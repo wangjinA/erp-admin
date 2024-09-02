@@ -2,6 +2,8 @@ import { Button, Message } from '@arco-design/web-react'
 import { ButtonProps } from '@arco-design/web-react/lib'
 import { useRequest } from 'ahooks'
 
+import React, { ReactNode } from 'react'
+
 import { orderAPI as adminOrderApi } from '@/api/admin/order'
 import { orderAPI } from '@/api/client/order'
 import { EmitTypes, bus } from '@/hooks/useEventBus'
@@ -11,9 +13,11 @@ import { showMessage } from '@/utils'
 interface RefreshButtonProps {
   buttonProps?: ButtonProps
   ids: number[]
+  children?: ReactNode
 }
+
 export default (props: RefreshButtonProps) => {
-  const { buttonProps, ids } = props
+  const { buttonProps, ids, children } = props
   const refreshHandle = useRequest(
     async () => {
       if (!ids?.length) {
@@ -37,7 +41,7 @@ export default (props: RefreshButtonProps) => {
         }}
         {...buttonProps}
       >
-        更新订单
+        {children || '更新订单'}
       </Button>
     </>
   )

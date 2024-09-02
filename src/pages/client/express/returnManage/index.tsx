@@ -1,6 +1,7 @@
 import { Alert, Button, Tag } from '@arco-design/web-react'
 import { IconPoweroff } from '@arco-design/web-react/icon'
 import { useRequest } from 'ahooks'
+import { omit } from 'lodash'
 import React, { useState } from 'react'
 
 import { expressAPI } from '@/api/client/express'
@@ -58,6 +59,11 @@ export default () => {
         createHandle={() => {
           setVisible(true)
         }}
+        requestQueryTransform={formData => ({
+          ...omit(formData, 'applyTime'),
+          applyStartTime: formData.applyTime?.[0],
+          applyEndTime: formData.applyTime?.[1],
+        })}
         formItemConfigList={[
           {
             schema: {
@@ -112,7 +118,7 @@ export default () => {
           {
             schema: {
               label: '申请时间',
-              field: 'createTime',
+              field: 'applyTime',
             },
             control: 'datePickerRange',
             isSearch: true,

@@ -76,6 +76,10 @@ const FilterForm = React.forwardRef(
           ...labelCol,
           style: { flex: `0 0 ${maxLabelLength}em`, ...labelCol?.style },
         }}
+
+        onSubmit={(v) => {
+          console.log(v)
+        }}
         wrapperCol={{
           className: 'w-0 flex-1',
         }}

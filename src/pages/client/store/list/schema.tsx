@@ -3,17 +3,18 @@ import { Button, Image } from '@arco-design/web-react'
 import { shopStoreAPI } from '@/api/client/shopStore'
 import shopeeIcon from '@/assets/shopee.png'
 import { SearchTableSchema } from '@/components/SearchTable'
+import { DictNameFC } from '@/components/Selectors/DictSelector'
 
 const StoreListSchema: SearchTableSchema[] = [
   {
     schema: {
       label: '电商平台',
-      field: 'platform_type',
+      field: 'commercePlatform',
       span: 16,
     },
     isSearch: true,
     render(c) {
-      return c || '-'
+      return <DictNameFC value={c} dictCode="platform_type" />
     },
   },
   {

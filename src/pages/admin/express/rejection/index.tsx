@@ -1,5 +1,6 @@
 import { Button, Tag } from '@arco-design/web-react'
 import { useRequest } from 'ahooks'
+import { omit } from 'lodash'
 import React, { useState } from 'react'
 
 import { expressAPI } from '@/api/admin/express'
@@ -10,7 +11,7 @@ import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
 import TrackingNo from '@/components/TrackingNo'
 import { DividerSchema } from '@/constants/schema/common'
 import { TagColors } from '@/pages/admin/components/OrderTable/SendCargoInfo'
-import { showMessage, showModal } from '@/utils'
+import { showMessage, showModal, timeArrToObject } from '@/utils'
 
 export default () => {
   const [current, setCurrent] = useState<any>()
@@ -41,6 +42,11 @@ export default () => {
         ref={ref}
         name="包裹拒收"
         getListRequest={expressAPI.getRejectList}
+        requestQueryTransform={formData => ({
+          ...omit(formData, ['applyTime', 'rejectionTime']),
+          ...timeArrToObject(formData.applyTime, 'applyStartTime', 'applyEndTime'),
+          ...timeArrToObject(formData.rejectionTime, 'rejectionStartTime', 'rejectionEndTime'),
+        })}
         formItemConfigList={[
           {
             schema: {

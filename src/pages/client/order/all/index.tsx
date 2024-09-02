@@ -1,7 +1,7 @@
 import React from 'react'
 
-import OrderPage from '../orderPage'
+import OrderPage, { OrderPageType } from '../orderPage'
 
 export default (props: {}) => {
-  return <OrderPage dictCode="shopee_status"></OrderPage>
+  return <OrderPage type={OrderPageType.SHOPEE}></OrderPage>
 }

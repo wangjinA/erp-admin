@@ -1,12 +1,15 @@
 import { Alert } from '@arco-design/web-react'
+import { omit } from 'lodash'
 import React from 'react'
 
 import { expressAPI } from '@/api/client/express'
+import MyBadge from '@/components/MyBadge'
 import SearchTable from '@/components/SearchTable'
 import EntrepotRadio from '@/components/Selectors/EntrepotRadio'
 import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
 import TrackingNo from '@/components/TrackingNo'
 import { DividerSchema } from '@/constants/schema/common'
+import { timeArrToObject } from '@/utils'
 
 export default () => {
   return (
@@ -26,6 +29,10 @@ export default () => {
         name="问题包裹"
         showActions={false}
         getListRequest={expressAPI.getProblemList}
+        requestQueryTransform={params => ({
+          ...omit(params, ['shelfTime']),
+          ...timeArrToObject(params.shelfTime, 'shelfStartTime', 'shelfEndTime'),
+        })}
         formItemConfigList={[
           {
             schema: {
@@ -55,8 +62,22 @@ export default () => {
           },
           {
             schema: {
+              label: '仓位',
+              field: 'freightSpaceName',
+            },
+            render(c) {
+              return c || '-'
+            },
+          },
+          {
+            schema: {
               label: '状态',
-              field: 'status',
+              field: 'claimStatus',
+            },
+            render(c) {
+              const status: any = ['warning', 'success'][Number(c)]
+              const text = ['未认领', '已认领'][Number(c)]
+              return <MyBadge status={status} text={text}></MyBadge>
             },
           },
           {
@@ -67,18 +88,27 @@ export default () => {
             control: 'datePickerRange',
             isSearch: true,
           },
+          // {
+          //   schema: {
+          //     label: '问题件',
+          //     field: 'ss',
+          //   },
+          // },
           {
             schema: {
-              label: '问题件',
-              field: 'ss',
+              label: '签收人',
+              field: 'signerUser',
+            },
+            render(c) {
+              return c || '-'
             },
           },
-          {
-            schema: {
-              label: '包裹年龄',
-              field: 'operator0',
-            },
-          },
+          // {
+          //   schema: {
+          //     label: '包裹年龄',
+          //     field: 'operator0',
+          //   },
+          // },
         ]}
       >
       </SearchTable>

@@ -59,10 +59,6 @@ export const routes: IRoute[] = [
     key: 'client.order',
     children: [
       {
-        name: 'client.order.create',
-        key: 'client/order/create',
-      },
-      {
         name: 'client.order.all',
         key: 'client/order/all',
       },
@@ -73,6 +69,10 @@ export const routes: IRoute[] = [
       {
         name: 'client.order.alreadyPacked',
         key: 'client/order/alreadyPacked',
+      },
+      {
+        name: 'client.order.create',
+        key: 'client/order/create',
       },
     ],
   },

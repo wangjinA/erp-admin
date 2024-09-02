@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 
-import { labelClass } from '@/pages/admin/components/OrderTable'
+import { labelClass, valueClass } from '@/pages/admin/components/OrderTable'
 
 interface LabelValueProps {
   label: any
@@ -17,7 +17,7 @@ export default ({ label, value, className, labelClassName, valueClassName }: Lab
         {label}
         ：
       </span>
-      <span className={classNames(labelClass, valueClassName)}>{value || '-'}</span>
+      <span className={classNames(valueClass, valueClassName)}>{value || '-'}</span>
     </div>
   )
 }

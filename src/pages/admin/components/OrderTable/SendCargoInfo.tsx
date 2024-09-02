@@ -6,8 +6,6 @@ import React, { useState } from 'react'
 
 import styles from './index.module.less'
 
-import { labelClass, valueClass } from '.'
-
 import { expressAPI } from '@/api/client/express'
 import LabelValue from '@/components/LabelValue'
 import MyBadge from '@/components/MyBadge'
@@ -266,10 +264,7 @@ const SkuList: React.FC<SendCargoInfoProps> = (props) => {
             }
             {item.freightSpaceName
               ? (
-                  <div>
-                    <span className={labelClass}>仓位：</span>
-                    <span className={valueClass}>{item.freightSpaceName || '-'}</span>
-                  </div>
+                  <LabelValue label="仓位" value={item.freightSpaceName}></LabelValue>
                 )
               : null}
           </div>

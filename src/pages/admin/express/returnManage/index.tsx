@@ -1,11 +1,11 @@
-import { Button, Tag } from '@arco-design/web-react'
+import { Button, Message, Tag } from '@arco-design/web-react'
 import { IconCheck, IconPoweroff } from '@arco-design/web-react/icon'
 import { useRequest } from 'ahooks'
+import { omit } from 'lodash'
 import React, { useState } from 'react'
 
 import { expressAPI } from '@/api/admin/express'
 import PopconfirmDelete from '@/components/PopconfirmDelete'
-import ReturnParcel from '@/components/ReturnParcel'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 
 import { DictNameFC } from '@/components/Selectors/DictSelector'
@@ -17,7 +17,6 @@ import { showMessage, showModal } from '@/utils'
 
 export default () => {
   const [current, setCurrent] = useState<any>()
-  const [visible, setVisible] = React.useState<boolean>(false)
   const ref = React.useRef<SearchTableRef>()
 
   const { run, loading } = useRequest(
@@ -44,9 +43,11 @@ export default () => {
         ref={ref}
         name="包裹认领"
         getListRequest={expressAPI.getReturnList}
-        createHandle={() => {
-          setVisible(true)
-        }}
+        requestQueryTransform={formData => ({
+          ...omit(formData, 'applyTime'),
+          applyStartTime: formData.applyTime[0],
+          applyEndTime: formData.applyTime[1],
+        })}
         formItemConfigList={[
           {
             schema: {
@@ -107,7 +108,7 @@ export default () => {
           {
             schema: {
               label: '申请时间',
-              field: 'createTime',
+              field: 'applyTime',
             },
             control: 'datePickerRange',
             isSearch: true,
@@ -151,7 +152,7 @@ export default () => {
                         }}
                         onOk={() => {
                           // run(row)
-                          alert('开发中')
+                          Message.warning('开发中')
                         }}
                       >
                         <Button
@@ -171,7 +172,6 @@ export default () => {
         ]}
       >
       </SearchTable>
-      <ReturnParcel visible={visible} setVisible={setVisible}></ReturnParcel>
     </div>
   )
 }

@@ -12,7 +12,7 @@ import { useLocalStorageState, usePagination, useRequest, useResetState } from '
 import { omit } from 'lodash'
 import React, { useState } from 'react'
 
-import { OrderFilter } from './schema'
+import { getOrderFilter } from './schema'
 
 import { scanAPI } from '@/api/admin/entrepot'
 import { orderAPI as adminOrderApi } from '@/api/admin/order'
@@ -22,15 +22,26 @@ import FilterForm from '@/components/FilterForm'
 import { useDictOptions } from '@/components/Selectors/DictSelector'
 import { EmitTypes, bus, useEventBus } from '@/hooks/useEventBus'
 import OrderTable from '@/pages/admin/components/OrderTable'
+import RefreshButton from '@/pages/admin/components/OrderTable/RefreshButton'
 import { isAdmin } from '@/routes'
 import { showMessage, showModal, timeArrToObject } from '@/utils'
 
+export enum OrderPageType {
+  SHOPEE = 'shopee',
+  PACK_ORDER = 'pack_order',
+}
+
 export interface OrderPageProps {
-  dictCode: 'shopee_status' | 'order_status'
+  dictCode?: 'shopee_status' | 'order_status'
+  type: OrderPageType
 }
 
 export default (props: OrderPageProps) => {
-  const { dictCode } = props
+  const { type } = props
+  const dictCode = {
+    shopee: 'shopee_status',
+    pack_order: 'order_status',
+  }[type]
   const [activeTab, setActiveTab] = useLocalStorageState<string>(location.pathname)
   const [countMap, setCountMap] = useState<Record<string, number>>()
   const [selectIds, setSelectIds] = useState([])
@@ -42,8 +53,6 @@ export default (props: OrderPageProps) => {
   const [filterForm] = Form.useForm()
 
   function setFormData(values) {
-    console.log(values)
-
     _setFormData({
       ...formData,
       ...values,
@@ -76,8 +85,8 @@ export default (props: OrderPageProps) => {
             'stockRemovalStartTime',
             'stockRemovalEndTime',
           ),
-          orderStatus: dictCode === 'order_status' ? activeTab : undefined,
-          ...(dictCode === 'shopee_status'
+          orderStatus: type === OrderPageType.PACK_ORDER ? activeTab : undefined,
+          ...(type === OrderPageType.SHOPEE
             ? {
                 shrimpStatus: activeTab,
                 storeFlag: true,
@@ -90,7 +99,7 @@ export default (props: OrderPageProps) => {
         pageSize: params?.pageSize || pagination.pageSize,
       }
       const res = await orderAPI.getList(body)
-      if (dictCode === 'order_status') {
+      if (type === OrderPageType.PACK_ORDER) {
         orderAPI.getPackCount({
           ...body,
           selectLogisticsOrderVO: {
@@ -122,7 +131,9 @@ export default (props: OrderPageProps) => {
   )
 
   const outListHandle = useRequest(async () => {
-    await showMessage(() => scanAPI.outList(selectIds), '出库') // ! Todo 后端接口未实现
+    await showMessage(() => scanAPI.outList({
+      orderIdList: selectIds,
+    }), '出库')
     refresh()
   }, {
     manual: true,
@@ -144,11 +155,13 @@ export default (props: OrderPageProps) => {
       <FilterForm
         form={filterForm}
         size="small"
-        formItemConfigList={OrderFilter}
+        formItemConfigList={getOrderFilter({ type })}
         onValuesChange={(val, values) => {
           setFormData(values)
-
           // console.log(...e);
+        }}
+        onSubmit={(e) => {
+          console.log(e)
         }}
       >
       </FilterForm>
@@ -194,17 +207,25 @@ export default (props: OrderPageProps) => {
                     >
                       批量申请运单号
                     </Button>
-                    <Button
+                    <RefreshButton
+                      ids={selectIds}
+                      buttonProps={{
+                        type: 'outline',
+                        status: 'default',
+                      }}
+                    >
+                      批量更新订单
+                    </RefreshButton>
+                    {/* <Button
                       type="outline"
                       onClick={() => {
                         if (!selectIds.length) {
                           return Message.error('请选择订单')
                         }
-                        Message.error('开发中...')
                       }}
                     >
                       批量更新订单
-                    </Button>
+                    </Button> */}
                     <Button
                       type="outline"
                       onClick={() => {
@@ -221,7 +242,10 @@ export default (props: OrderPageProps) => {
                           return Message.error('请选择订单')
                         }
                         await showModal({
-                          content: '确定批量出库？',
+                          content: `确定出库 ${selectIds.length} 个订单？`,
+                          okButtonProps: {
+                            status: 'success',
+                          },
                         })
 
                         outListHandle.run()
@@ -305,7 +329,6 @@ export default (props: OrderPageProps) => {
       </Tabs>
       <OrderTable
         run={run}
-        dictCode={dictCode}
         data={data}
         loading={loading}
         pagination={pagination}
