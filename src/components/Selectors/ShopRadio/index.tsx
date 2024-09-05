@@ -7,7 +7,7 @@ import { shopStoreAPI } from '@/api/client/shopStore'
 // value为 shopStoreAPI.getList的返回类型
 const cache: Record<string, ReturnType<typeof shopStoreAPI.getList>> = {}
 
-function useShopOptions(type = 'default-test') {
+export function useShopOptions(type = 'default-test') {
   const res = useRequest(() => {
     cache[type] = cache[type] || shopStoreAPI.getList({
       pageNum: 1,

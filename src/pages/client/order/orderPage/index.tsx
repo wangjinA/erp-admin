@@ -9,6 +9,7 @@ import {
 } from '@arco-design/web-react'
 import { IconExport, IconRefresh, IconSearch } from '@arco-design/web-react/icon'
 import { useLocalStorageState, usePagination, useRequest, useResetState } from 'ahooks'
+import dayjs from 'dayjs'
 import { omit } from 'lodash'
 import React, { useState } from 'react'
 
@@ -20,6 +21,7 @@ import { orderAPI } from '@/api/client/order'
 import FilterForm from '@/components/FilterForm'
 
 import { useDictOptions } from '@/components/Selectors/DictSelector'
+import { useShopOptions } from '@/components/Selectors/ShopRadio'
 import { EmitTypes, bus, useEventBus } from '@/hooks/useEventBus'
 import OrderTable from '@/pages/admin/components/OrderTable'
 import RefreshButton from '@/pages/admin/components/OrderTable/RefreshButton'
@@ -51,6 +53,8 @@ export default (props: OrderPageProps) => {
     trackingNumber: '',
   })
   const [filterForm] = Form.useForm()
+
+  const shopOptions = useShopOptions()
 
   function setFormData(values) {
     _setFormData({
@@ -148,6 +152,19 @@ export default (props: OrderPageProps) => {
 
   useEventBus(EmitTypes.refreshOrderPage, () => {
     refresh()
+  })
+
+  const syncOrderHandle = useRequest(async () => {
+    if (!shopOptions.data?.length) {
+      return Message.error('未获取到店铺信息')
+    }
+    await showMessage(() => orderAPI.syncOrder({
+      orderUpdateStartTime: dayjs().subtract(15, 'day').format('YYYY-MM-DD HH:mm:ss'),
+      orderUpdateEndTime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+      storeId: shopOptions.data.map(item => item.value),
+    }), '同步订单')
+  }, {
+    manual: true,
   })
 
   return (
@@ -257,6 +274,16 @@ export default (props: OrderPageProps) => {
                 )
               : (
                   <>
+                    <Button
+                      type="outline"
+                      icon={<IconExport />}
+                      loading={syncOrderHandle.loading}
+                      onClick={() => {
+                        syncOrderHandle.run()
+                      }}
+                    >
+                      同步订单
+                    </Button>
                     <Button
                       type="outline"
                       icon={<IconExport />}

@@ -63,6 +63,16 @@ export const orderAPI = {
   addProduct(body: Partial<OrderProductList>) {
     return baseAxios.post('/api/logistics/order/add/product', body)
   },
+
+  syncOrder(body: SyncOrderParams) {
+    return baseAxios.post('/api/logistics/order/synchronous/order', body)
+  },
+}
+
+export interface SyncOrderParams {
+  orderUpdateEndTime: string
+  orderUpdateStartTime: string
+  storeId: number[]
 }
 
 export interface ReturnOperationInfo {
