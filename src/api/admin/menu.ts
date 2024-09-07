@@ -1,7 +1,39 @@
-import baseAxios from '..';
+import baseAxios from '..'
+import { APIListResponse, IPageParams } from '../type'
 
 export const menuAPI = {
-  get() {
-    return baseAxios.get('/api/menu/insert');
+  list(body: Partial<MenuItem> & IPageParams) {
+    return baseAxios.post<APIListResponse<MenuItem>>('/api/menu/list', body)
   },
-};
+  create(body: MenuItem) {
+    return baseAxios.post('/api/menu/insert', body)
+  },
+  update(body: MenuItem) {
+    return baseAxios.post('/api/menu/update', body)
+  },
+  remove(id: number) {
+    return baseAxios.get(`/api/menu/remove/${id}`)
+  },
+}
+
+export interface MenuItem {
+  cacheStatus: string
+  createBy: number
+  createTime: string
+  menuAdminType: number
+  menuComponent: string
+  menuDataType: number
+  menuIcon: string
+  menuId: number
+  menuName: string
+  menuPath: string
+  menuPerms: string
+  menuSort: number
+  menuStatus: string
+  menuType: string
+  parentId: string
+  remark: string
+  showStatus: string
+  updateBy: number
+  updateTime: string
+}

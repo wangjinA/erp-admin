@@ -1,14 +1,14 @@
 import { TagInfoMap } from '@/components/StatusTag'
 
-const colors = [
+export const colors = [
   'red',
-  'orangered',
-  'orange',
-  'gold',
-  'lime',
   'green',
-  'cyan',
   'blue',
+  'orangered',
+  'lime',
+  'gold',
+  'cyan',
+  'orange',
   'arcoblue',
   'purple',
   'pinkpurple',

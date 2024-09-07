@@ -7,7 +7,7 @@ import {
 } from '@arco-design/web-react'
 import classNames from 'classnames'
 import { isString, max } from 'lodash'
-import React, { useEffect, useImperativeHandle, useRef } from 'react'
+import React, { useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 import createFormItem, { CreateFormItemType } from '../CreateFormItem'
 
@@ -45,6 +45,8 @@ const FilterForm = React.forwardRef(
     ref,
   ) => {
     const formRef = useRef<FormInstance>()
+    const [formData, setFormData] = useState<any>()
+
     useImperativeHandle(ref, () => formRef.current)
 
     // 设置一下初始值
@@ -57,6 +59,7 @@ const FilterForm = React.forwardRef(
 
       setTimeout(() => {
         formRef.current?.setFieldsValue(initValues)
+        setFormData(initValues)
       })
     }, [formItemConfigList.map(item => item.schema.field).toString()])
 
@@ -84,8 +87,10 @@ const FilterForm = React.forwardRef(
           className: 'w-0 flex-1',
         }}
         onValuesChange={(value) => {
+          const values = formRef.current.getFieldsValue()
           // 因为去除筛选条件后，少了一个formItem，此时需要再获取一遍最新数据
-          onValuesChange?.(value, formRef.current.getFieldsValue())
+          onValuesChange?.(value, values)
+          setFormData(values)
         }}
         initialValues={initialValues}
         {...otherFormProps}
@@ -95,31 +100,35 @@ const FilterForm = React.forwardRef(
           {[...formItemConfigList]
             .filter(item => item.schema.field || item.schema.key)
             .map(item => (
-              <Grid.Col
-                className={classNames(
-                  item.formItemProps?.hidden ? HideClass : '',
-                )}
-                span={item.schema.span || span}
-                key={item.schema.field || item.schema.key}
-              >
-                {createFormItem({
-                  ...item,
-                  formItemProps: {
-                    ...item.formItemProps,
-                    labelCol: {
-                      ...labelCol,
-                      ...item.formItemProps?.labelCol,
-                      style: item.schema.label ? { flex: `0 0 ${maxLabelLength}em`, ...labelCol?.style } : { display: 'none' },
-                    },
-                  },
-                  schema: {
-                    ...item.schema,
-                    defaultValue:
+              (item.showItemHandle ? item.showItemHandle(formData) : true)
+                ? (
+                    <Grid.Col
+                      className={classNames(
+                        item.formItemProps?.hidden ? HideClass : '',
+                      )}
+                      span={item.schema.span || span}
+                      key={item.schema.field || item.schema.key}
+                    >
+                      {createFormItem({
+                        ...item,
+                        formItemProps: {
+                          ...item.formItemProps,
+                          labelCol: {
+                            ...labelCol,
+                            ...item.formItemProps?.labelCol,
+                            style: item.schema.label ? { flex: `0 0 ${maxLabelLength}em`, ...labelCol?.style } : { display: 'none' },
+                          },
+                        },
+                        schema: {
+                          ...item.schema,
+                          defaultValue:
                       initialValues?.[item.schema.field]
                       ?? item.schema.defaultValue,
-                  },
-                })}
-              </Grid.Col>
+                        },
+                      })}
+                    </Grid.Col>
+                  )
+                : null
             ))}
         </Grid.Row>
       </Form>

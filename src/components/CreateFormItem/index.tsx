@@ -9,10 +9,12 @@ import {
   Select,
   Switch,
 } from '@arco-design/web-react'
+import { omit } from 'lodash'
 import React, { ReactElement, ReactNode } from 'react'
 
 import LabelWithTips, { LabelWithTipsProps } from '../LabelWithTips'
 import EntrepotRadio from '../Selectors/EntrepotRadio'
+import RoleSelector from '../Selectors/RoleSelector'
 import Upload from '../Upload'
 
 import { TimeDefaultProps, TimeRangeDefaultProps } from '@/constants'
@@ -41,12 +43,14 @@ type ControlType =
   | 'datePicker'
   | 'datePickerRange'
   | 'entrepotRadio'
+  | 'role'
 
 export interface CreateFormItemType {
   schema: FormSchema
   control?: ControlType | ReactElement | ((schema: FormSchema) => ReactElement)
   formItemProps?: FormItemProps
   controlProps?: Partial<any>
+  showItemHandle?: (values?: any) => boolean
 }
 export type CreateFormItemParams = (params: CreateFormItemType) => ReactElement
 
@@ -81,6 +85,7 @@ const createFormItem: CreateFormItemParams = ({
     defaultValue,
     required,
   } = schema
+
   const getFormControl = (s: FormSchema) => {
     if (typeof control === 'function') {
       return control(s)
@@ -135,7 +140,11 @@ const createFormItem: CreateFormItemParams = ({
           )
         case 'entrepotRadio':
           return (
-            <EntrepotRadio />
+            <EntrepotRadio {...controlProps} />
+          )
+        case 'role':
+          return (
+            <RoleSelector {...controlProps} />
           )
         default:
           return <span>{control}</span>
@@ -178,7 +187,7 @@ const createFormItem: CreateFormItemParams = ({
       // wrapperCol={{ style: { flex: 1, width: 0 } }}
       {...defaultValueObj}
       {...formItemProps}
-      {...otherProps}
+      {...omit(otherProps, ['render', 'showItemHandle', 'hideTable'])}
     >
       {getFormControl({ ...schema })}
     </Form.Item>

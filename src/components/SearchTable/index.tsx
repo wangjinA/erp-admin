@@ -132,8 +132,6 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                   'isSearch',
                 )}
                 onValuesChange={(val, vals) => {
-                  console.log(vals)
-
                   setSearchFromData(vals)
                 }}
               >
@@ -358,7 +356,7 @@ interface SearchTableProps {
   isSearchParams?: boolean
   className?: string
   style?: CSSProperties
-  majorKey?: string
+  majorKey?: string // rowKey
   tableProps?: TableProps
   formProps?: FormProps
   initialValues?: any

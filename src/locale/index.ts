@@ -5,7 +5,6 @@ const i18n = {
     'admin.financial.expense': '人员费用',
     'admin.financial.businessMap': '快递映射',
 
-
     'admin.dict': '字典管理',
 
     'admin.business': '业务操作',
@@ -51,7 +50,8 @@ const i18n = {
     'admin.account.users': '用户管理',
     'admin.account.member': '会员管理',
     'admin.account.setting': '账户设置',
-    'admin.account.permission': '权限管理',
+    'admin.account.role': '角色管理',
+    'admin.account.menu': '菜单管理',
 
     'admin.express': '快递管理',
     'admin.express.signforHistory': '签收记录',
@@ -175,6 +175,6 @@ const i18n = {
     'message.lang.tips': 'Language switch to ',
     'navbar.search.placeholder': 'Please search',
   },
-};
+}
 
-export default i18n;
+export default i18n

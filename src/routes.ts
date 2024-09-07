@@ -207,8 +207,12 @@ export const routes: IRoute[] = [
         key: 'admin/account/setting',
       },
       {
-        name: 'admin.account.permission',
-        key: 'admin/account/permission',
+        name: 'admin.account.role',
+        key: 'admin/account/role',
+      },
+      {
+        name: 'admin.account.menu',
+        key: 'admin/account/menu',
       },
     ],
   },

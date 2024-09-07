@@ -16,6 +16,7 @@ export function login(params, sessionId) {
     },
   })
 }
+
 export function loginExit() {
   return baseAxios.post<APIResponse<LoginResponse>>('/api/system/exit')
 }
@@ -57,5 +58,19 @@ export const userAPI = {
   },
   updateSelf(body: Partial<UserInfo>) {
     return baseAxios.post<APIResponse>('/api/user/updateSelf', body)
+  },
+
+  list(body) {
+    return baseAxios.post('/api/user/list', body)
+  },
+
+  create(body) {
+    return baseAxios.post('/api/user/insert', body)
+  },
+  update(body) {
+    return baseAxios.post('/api/user/update', body)
+  },
+  remove(id) {
+    return baseAxios.get(`/api/user/remove/${id}`)
   },
 }
