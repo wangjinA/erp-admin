@@ -2,6 +2,7 @@ import { Breadcrumb, Layout, Menu, Spin } from '@arco-design/web-react'
 import {
   IconApps,
   IconArchive,
+  IconBook,
   IconCheckCircle,
   IconCommon,
   IconExclamationCircle,
@@ -40,16 +41,22 @@ const Content = Layout.Content
 
 function getIconFromKey(key) {
   switch (key) {
-    case 'business':
+    case 'admin/business':
       return <IconApps className={styles.icon} />
-    case 'order':
+    case 'admin/order':
+    case 'client/order':
       return <IconFile className={styles.icon} />
-    case 'entrepot':
+    case 'admin/entrepot':
       return <IconArchive className={styles.icon} />
-    case 'account':
+    case 'admin/account':
       return <IconUserGroup className={styles.icon} />
-    case 'express':
+    case 'admin/dict/list':
+      return <IconBook className={styles.icon} />
+    case 'admin/express':
+    case 'client/express':
       return <IconCommon className={styles.icon} />
+    case 'client/store':
+      return <IconArchive className={styles.icon} />
     case 'list':
       return <IconList className={styles.icon} />
     case 'form':
@@ -229,7 +236,7 @@ function PageLayout() {
     setBreadCrumb(routeConfig || [])
     updateMenuStatus()
   }, [pathname])
-
+  console.log(openKeys)
   return (
     <Layout className={styles.layout}>
       <div

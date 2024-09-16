@@ -143,7 +143,7 @@
 //   )
 // }
 
-import { Switch } from '@arco-design/web-react'
+import { Avatar, Switch } from '@arco-design/web-react'
 import { useRequest } from 'ahooks'
 import { omit } from 'lodash'
 import React, { useState } from 'react'
@@ -200,25 +200,41 @@ export default () => {
           },
           {
             schema: { label: '用户头像', field: 'headImg' },
-            render(col, row, index) {
-              return index + 1
+            render(col) {
+              return (
+                <Avatar>
+                  <img
+                    alt="avatar"
+                    src={col}
+                  />
+                </Avatar>
+              )
             },
             control: 'upload',
+            controlProps: {
+              limit: 1,
+            },
             isCreate: true,
           },
           {
             schema: { label: '是否为管理员', field: 'isAdmin' },
-            render(col, row, index) {
-              return index + 1
+            render(col) {
+              return (
+                <Switch
+                  checked={!!col}
+                  checkedText="是"
+                  uncheckedText="否"
+                >
+                </Switch>
+              )
             },
             control: 'select',
             controlProps: {
               options: WhetherOptions,
             },
-            isCreate: true,
           },
           {
-            schema: { label: '员工姓名', field: 'employeeName' },
+            schema: { label: '姓名', field: 'userName' },
             isCreate: true,
             isSearch: true,
           },
@@ -234,6 +250,9 @@ export default () => {
             schema: { label: '密码', field: 'userPassword' },
             isCreate: true,
             hideTable: true,
+            controlProps: {
+              type: 'password',
+            },
           },
           {
             schema: { label: '用户组', field: 'roleIds' },
@@ -249,12 +268,11 @@ export default () => {
             isSearch: true,
           },
           {
-            schema: { label: '状态', field: 'status' },
+            schema: { label: '状态', field: 'userStatus' },
             render(col) {
               return (
                 <Switch
-                  checked={col}
-                  type="line"
+                  checked={!col}
                   checkedText="启用"
                   uncheckedText="禁用"
                 >

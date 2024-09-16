@@ -56,7 +56,7 @@ export const routes: IRoute[] = [
   },
   {
     name: 'client.order',
-    key: 'client.order',
+    key: 'client/order',
     children: [
       {
         name: 'client.order.all',
@@ -78,7 +78,7 @@ export const routes: IRoute[] = [
   },
   {
     name: 'client.store',
-    key: 'client.store',
+    key: 'client/store',
     children: [
       {
         name: 'client.store.list',
@@ -361,20 +361,20 @@ export const routes: IRoute[] = [
   //     },
   //   ],
   // },
-  {
-    name: 'admin.user',
-    key: 'admin/user',
-    children: [
-      {
-        name: 'admin.user.info',
-        key: 'admin/user/info',
-      },
-      {
-        name: 'admin.user.setting',
-        key: 'admin/user/setting',
-      },
-    ],
-  },
+  // {
+  //   name: 'admin.user',
+  //   key: 'admin/user',
+  //   children: [
+  //     {
+  //       name: 'admin.user.info',
+  //       key: 'admin/user/info',
+  //     },
+  //     {
+  //       name: 'admin.user.setting',
+  //       key: 'admin/user/setting',
+  //     },
+  //   ],
+  // },
 ].filter((item: any) => item.name.startsWith(getEndType())) as any
 
 export function getName(path: string, routes) {

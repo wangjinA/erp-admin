@@ -192,11 +192,12 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                                 setActionType(ShowFormType.edit)
                                 setCurrentOrder(structuredClone({
                                   ...item,
+                                  clickPack: true,
                                   logisticsOrderProductList: item.orderProductVOList,
                                 }))
                               }}
                             >
-                              编辑打包
+                              一件打包
                             </Button>
                             <Button
                               onClick={async () => {
