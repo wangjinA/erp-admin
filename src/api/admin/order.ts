@@ -24,6 +24,26 @@ export const orderAPI = {
   refresh(orderIdList: number[]) {
     return baseAxios.post(`/api/logistics/order/batch/update/order`, orderIdList)
   },
+
+  /**
+   * 安排出货
+   */
+  shipment(body: {
+    orderId: number
+    /** 寄件人姓名 */
+    senderRealName: string
+    /** 快递单号 */
+    trackingNo: string
+  }) {
+    return baseAxios.post(`/api/logistics/order/arrange/shipment`, body)
+  },
+
+  /**
+   * 获取发货时所需要填写的数据
+   */
+  getShippingParameter(orderId: number) {
+    return baseAxios.get(`/api/logistics/order/get/shipping/parameter/${orderId}`)
+  },
 }
 
 export interface SearchOrderParams extends IPageParams {

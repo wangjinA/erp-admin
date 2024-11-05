@@ -14,6 +14,7 @@ import { IconEdit, IconFile, IconPlus } from '@arco-design/web-react/icon'
 import { useRequest } from 'ahooks'
 import { PaginationResult } from 'ahooks/lib/usePagination/types'
 
+import classNames from 'classnames'
 import { omit } from 'lodash'
 import React, { useEffect, useMemo, useState } from 'react'
 
@@ -43,6 +44,7 @@ import { showMessage, showModal } from '@/utils'
 
 export interface OrderTablePorps extends StyleProps {
   // tableProps: TableProps;
+  dictCode: any
   data?: APIListResponse<OrderResponseItem>['data']
   loading: boolean
   run: any
@@ -191,13 +193,13 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                               onClick={() => {
                                 setActionType(ShowFormType.edit)
                                 setCurrentOrder(structuredClone({
-                                  ...item,
+                                  ...omit(item, 'orderStatus'),
                                   clickPack: true,
                                   logisticsOrderProductList: item.orderProductVOList,
                                 }))
                               }}
                             >
-                              一件打包
+                              一键打包
                             </Button>
                             <Button
                               onClick={async () => {
@@ -294,8 +296,8 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                       )
                     : null
                 }
-                <header className="gap-12 pl-1 pr-4 py-2 border-b grid grid-cols-[240px_240px_600px]">
-                  <div>
+                <header className="gap-12 pl-1 pr-4 py-2 border-b grid grid-cols-[340px_240px_600px]">
+                  <div className="flex">
                     {onSelect
                       ? (
                           <Checkbox
@@ -324,7 +326,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                       }
                     </Tag>
                     <span className={labelClass}>订单编号：</span>
-                    <span className={valueClass}>{item.shrimpOrderNo}</span>
+                    <span className={classNames(valueClass, 'truncate')}>{item.shrimpOrderNo}</span>
                   </div>
                   <OrderHeaderStatusInfo data={item}></OrderHeaderStatusInfo>
                 </header>

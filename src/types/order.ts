@@ -52,6 +52,7 @@ export interface Order {
   label: string // 标签
   mobileNumber: string // 手机号码
   orderAmount: number // 订单金额
+  needFill: number // 刷新列表，当订单数据的needFill为true 已出库的物流单号这里则是安排出货
   orderProductList: OrderProductList[]
   logisticsOrderProductList?: OrderProductList[]
   orderStatus: string // 订单状态 字典值

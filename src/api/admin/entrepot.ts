@@ -70,6 +70,16 @@ export const entrepotAPI = {
   getDeliveryHistory(body: Partial<DhParams>) {
     return baseAxios.post<APIListResponse<any>>('/api/logistics/order/out/record/list', body)
   },
+
+  /**
+   * 查询物流仓库寄件人列表--全部数据（安排出货时使用）
+   */
+  getSender(body: {
+    entrepotId: string
+    // type: number
+  }) {
+    return baseAxios.post<APIResponse<ScanResponse>>('/api/entrepot/sender/list/all', body)
+  },
 }
 
 // 仓位

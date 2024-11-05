@@ -9,6 +9,8 @@ import ActionHistory from './ActionHistory'
 import DeliveryButton from './DeliveryButton'
 import SendCargoInfo from './SendCargoInfo'
 
+import ShipmentButton from './ShipmentButton'
+
 import { OrderTablePorps } from '.'
 
 import { orderAPI } from '@/api/admin/order'
@@ -18,7 +20,7 @@ import { DictNameFC } from '@/components/Selectors/DictSelector'
 import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
 import { EmitTypes, bus } from '@/hooks/useEventBus'
 import { isAdmin } from '@/routes'
-import { Order } from '@/types/order'
+import { Order, OrderResponseItem } from '@/types/order'
 import { showMessage, showModal } from '@/utils'
 
 export function useColumns(props: OrderTablePorps) {
@@ -184,7 +186,7 @@ export function useColumns(props: OrderTablePorps) {
           title: '操作',
           dataIndex: 'actions',
           width: 120,
-          render(c, row) {
+          render(c, row: OrderResponseItem) {
             return (
               <div className="h-full p-2 flex justify-center">
                 <Space direction="vertical" size={4}>
@@ -215,6 +217,19 @@ export function useColumns(props: OrderTablePorps) {
                       bus.emit(EmitTypes.refreshOrderPage)
                     }}
                     buttonProps={{ size: 'small', disabled: row.orderStatus !== '2' }}
+                  />
+                  <ShipmentButton
+                    orderItem={row}
+                    sendWarehouse={row.sendWarehouse}
+                    trackingNo={row.trackingNo}
+                    shrimpOrderNo={row.shrimpOrderNo}
+                    onSuccess={() => {
+                      bus.emit(EmitTypes.refreshOrderPage)
+                    }}
+                    buttonProps={{
+                      size: 'small',
+                      //  disabled: !row.needFill
+                    }}
                   />
                   <ActionHistory
                     buttonProps={{

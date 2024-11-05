@@ -1,7 +1,8 @@
-import React from 'react';
-import { Chart, Line, Axis, Area, Tooltip } from 'bizcharts';
-import { Spin } from '@arco-design/web-react';
-import CustomTooltip from './customer-tooltip';
+import { Spin } from '@arco-design/web-react'
+import { Area, Axis, Chart, Line, Tooltip } from 'bizcharts'
+import React from 'react'
+
+import CustomTooltip from './customer-tooltip'
 
 function OverviewAreaLine({
   data,
@@ -9,10 +10,10 @@ function OverviewAreaLine({
   name = '总内容量',
   color = '#4080FF',
 }: {
-  data: any[];
-  loading: boolean;
-  name?: string;
-  color?: string;
+  data: any[]
+  loading: boolean
+  name?: string
+  color?: string
 }) {
   return (
     <Spin loading={loading} style={{ width: '100%' }}>
@@ -22,7 +23,7 @@ function OverviewAreaLine({
         autoFit
         height={300}
         data={data}
-        className={'chart-wrapper'}
+        className="chart-wrapper"
       >
         <Axis
           name="count"
@@ -36,7 +37,7 @@ function OverviewAreaLine({
           }}
           label={{
             formatter(text) {
-              return `${Number(text) / 1000}k`;
+              return `${Number(text) / 1000}k`
             },
           }}
         />
@@ -70,14 +71,14 @@ function OverviewAreaLine({
                 data={items}
                 color={color}
                 name={name}
-                formatter={(value) => Number(value).toLocaleString()}
+                formatter={value => Number(value).toLocaleString()}
               />
-            );
+            )
           }}
         </Tooltip>
       </Chart>
     </Spin>
-  );
+  )
 }
 
-export default OverviewAreaLine;
+export default OverviewAreaLine
