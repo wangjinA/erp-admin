@@ -54,7 +54,7 @@ export default (props: ShipmentButtonButtonProps) => {
     const [shippingRes, senderRes] = await Promise.all([
       orderAPI.getShippingParameter(orderItem.id),
       // ! 没写完检查
-      entrepotAPI.getSender({
+      entrepotAPI.getSenderAll({
         entrepotId: orderItem.sendWarehouse,
       }),
     ])

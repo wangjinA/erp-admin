@@ -25,6 +25,7 @@ import {
 
 import { AxiosResponse } from 'axios'
 
+import classNames from 'classnames'
 import { omit } from 'lodash'
 import React, { CSSProperties, forwardRef, useImperativeHandle } from 'react'
 
@@ -41,6 +42,7 @@ import {
   ShowFormType,
   ShowFormTypeMap,
 } from '@/constants'
+import { showMessage } from '@/utils'
 
 export interface SearchTableRef {
   refreshSearchTable: () => void
@@ -58,6 +60,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
       tableProps,
       formProps,
       initialValues = {},
+      createInitialValue = {},
       showActions = true,
       requestQueryTransform,
       leftTool,
@@ -113,6 +116,9 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
       }
     })
 
+    const showSearchSection = formItemConfigList.some(item => item.isSearch) // 是否有搜索项
+    const showHeaderSection = showSearchSection || createRequest // 是否有搜索项或者创建按钮
+
     return (
       <CreateWrap
         formRef={formRef}
@@ -123,71 +129,83 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
         <ActionsContext.Consumer>
           {({ showType, setShowType, createAction, updateAction }) => (
             <div className={className} style={style}>
-              <FilterForm
-                {...formProps}
-                form={searchFromRef}
-                initialValues={searchFromData}
-                formItemConfigList={formItemConfigListStatusFilter(
-                  formItemConfigList,
-                  'isSearch',
-                )}
-                onValuesChange={(val, vals) => {
-                  setSearchFromData(vals)
-                }}
-              >
-              </FilterForm>
-              <div className="flex justify-between py-6 pr-2">
-                <Space size={20}>
-                  {(createRequest || createHandle) && (
-                    <Button
-                      type="primary"
-                      onClick={() => {
-                        if (createHandle) {
-                          createHandle()
-                        }
-                        else {
-                          setShowType(ShowFormType.create)
-                        }
+              {showSearchSection
+                ? (
+                    <FilterForm
+                      {...formProps}
+                      form={searchFromRef}
+                      initialValues={searchFromData}
+                      formItemConfigList={formItemConfigListStatusFilter(
+                        formItemConfigList,
+                        'isSearch',
+                      )}
+                      onValuesChange={(val, vals) => {
+                        setSearchFromData(vals)
                       }}
-                      icon={<IconPlus></IconPlus>}
                     >
-                      新建
-                    </Button>
-                  )}
-                  {leftTool?.()}
-                </Space>
+                    </FilterForm>
+                  )
+                : null}
+              {showHeaderSection
+                ? (
+                    <div className={classNames('flex justify-between pr-2', showSearchSection ? 'py-6' : 'pb-6')}>
+                      <Space size={20}>
+                        {(createRequest || createHandle) && (
+                          <Button
+                            type="primary"
+                            onClick={() => {
+                              if (createHandle) {
+                                createHandle()
+                              }
+                              else {
+                                setShowType(ShowFormType.create)
+                              }
+                            }}
+                            icon={<IconPlus></IconPlus>}
+                          >
+                            新建
+                          </Button>
+                        )}
+                        {leftTool?.()}
+                      </Space>
 
-                <Space size={20}>
-                  <Button
-                    type="default"
-                    loading={loading}
-                    icon={<IconRefresh />}
-                    onClick={() => {
-                      searchFromRef.clearFields()
-                      searchFromRef.setFieldsValue(resetParams())
+                      {showSearchSection
+                        ? (
+                            <Space size={20}>
+                              <Button
+                                type="default"
+                                loading={loading}
+                                icon={<IconRefresh />}
+                                onClick={() => {
+                                  searchFromRef.clearFields()
+                                  searchFromRef.setFieldsValue(resetParams())
 
-                      setTimeout(() => {
-                        if (pageNum === 1) {
-                          run()
-                        }
-                        else {
-                          setPageNum(1)
-                        }
-                      })
-                    }}
-                  >
-                    重置
-                  </Button>
-                  <Button
-                    type="primary"
-                    icon={<IconSearch />}
-                    loading={loading}
-                    onClick={() => run()}
-                  >
-                    查询
-                  </Button>
-                </Space>
-              </div>
+                                  setTimeout(() => {
+                                    if (pageNum === 1) {
+                                      run()
+                                    }
+                                    else {
+                                      setPageNum(1)
+                                    }
+                                  })
+                                }}
+                              >
+                                重置
+                              </Button>
+                              <Button
+                                type="primary"
+                                icon={<IconSearch />}
+                                loading={loading}
+                                onClick={() => run()}
+                              >
+                                查询
+                              </Button>
+                            </Space>
+                          )
+                        : null}
+                    </div>
+                  )
+                : null}
               <Table
                 rowKey={majorKey}
                 pagination={{
@@ -254,7 +272,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                                     type: 'text',
                                   }}
                                   onOk={() =>
-                                    removeRequest(record[majorKey]).then(() => {
+                                    showMessage(() => removeRequest(record[majorKey])).then(() => {
                                       run()
                                     })}
                                 >
@@ -293,7 +311,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                 title={`${ShowFormTypeMap[showType]}${name}`}
               >
                 <FilterForm
-                  // initialValues={createInitialValue}
+                  initialValues={createInitialValue}
                   form={formRef}
                   labelLength={8}
                   span={12}
@@ -360,6 +378,7 @@ interface SearchTableProps {
   tableProps?: TableProps
   formProps?: FormProps
   initialValues?: any
+  createInitialValue?: any
   showActions?: boolean
   requestQueryTransform?: (params: any) => any
   leftTool?: () => React.ReactNode

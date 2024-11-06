@@ -74,12 +74,46 @@ export const entrepotAPI = {
   /**
    * 查询物流仓库寄件人列表--全部数据（安排出货时使用）
    */
-  getSender(body: {
+  getSenderAll(body: {
     entrepotId: string
     // type: number
   }) {
     return baseAxios.post<APIResponse<ScanResponse>>('/api/entrepot/sender/list/all', body)
   },
+  /**
+   * 查询物流仓库寄件人列表
+   */
+  getSenderList(body: Partial<Sender & IPageParams>) {
+    return baseAxios.post<APIListResponse<Sender>>('/api/entrepot/sender/list', body)
+  },
+
+  /**
+   * 删除物流仓库寄件人
+   */
+  removeSender(id) {
+    return baseAxios.get<APIResponse>(`/api/entrepot/sender/remove/${id}`)
+  },
+  /**
+   * 新增物流仓库寄件人
+   */
+  insertSender(body: Partial<Sender>) {
+    return baseAxios.post<APIResponse>('/api/entrepot/sender/insert', body)
+  },
+  /**
+   * 更新物流仓库寄件人
+   */
+  updateSender(body: Partial<Sender>) {
+    return baseAxios.post(`/api/entrepot/sender/update`, body)
+  },
+  /**
+   * 修改默认物流仓库寄件人
+   */
+  updateSenderDefault(id: number, defaultStatus: boolean) {
+    return baseAxios.post(`/api/entrepot/sender/update/default`, {
+      id,
+      defaultStatus,
+    })
+  }
 }
 
 // 仓位
@@ -134,6 +168,20 @@ export const scanAPI = {
   scanHistory(body: Partial<EntrepotStorageRacks & IPageParams>) {
     return baseAxios.post<APIListResponse<ScanRecord>>('/api/sign/record/list', body)
   },
+}
+
+interface Sender {
+  createBy: number
+  createTime: string
+  deleteStatus: number
+  details: string
+  entrepotId: number
+  id: number
+  isDefault: boolean
+  state: boolean
+  type: number
+  updateBy: number
+  updateTime: string
 }
 
 interface DhParams {

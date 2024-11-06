@@ -1,9 +1,3 @@
-import FilterForm from '@/components/FilterForm';
-import {
-  FormModalCommonProps,
-  ShowFormType,
-  ShowFormTypeMap,
-} from '@/constants';
 import {
   Avatar,
   Button,
@@ -12,12 +6,22 @@ import {
   Modal,
   Space,
   Typography,
-} from '@arco-design/web-react';
-import { IconCheck, IconDelete, IconPlus } from '@arco-design/web-react/icon';
-import classNames from 'classnames';
-import useInfo from './hooks';
-import { CreateEntrepotSchema, CreateRacksSchema } from './schema';
-import PopconfirmDelete from '@/components/PopconfirmDelete';
+} from '@arco-design/web-react'
+import { IconCheck, IconDelete, IconPlus } from '@arco-design/web-react/icon'
+import classNames from 'classnames'
+
+import EntrepotList from '../components/EntrepotList'
+
+import { useEntrepotInfo } from './hooks'
+import { CreateEntrepotSchema, CreateRacksSchema } from './schema'
+
+import FilterForm from '@/components/FilterForm'
+import PopconfirmDelete from '@/components/PopconfirmDelete'
+import {
+  FormModalCommonProps,
+  ShowFormType,
+  ShowFormTypeMap,
+} from '@/constants'
 
 const createInitialValue = {
   entrepotName: '测试111',
@@ -31,7 +35,7 @@ const createInitialValue = {
   inventoryStatus: 1,
   qrCode:
     'https://g-search3.alicdn.com/img/bao/uploaded/i4/i2/2206469993218/O1CN01GgZIv21ZdtGVU5hF1_!!0-item_pic.jpg_.webp',
-};
+}
 
 const createRacksInitialValue = {
   storageRacksName: '',
@@ -40,9 +44,10 @@ const createRacksInitialValue = {
   locationPrefix: '',
   numberFloors: '5',
   numberColumns: '5',
-};
+}
 
 export default () => {
+  const entrepotInfoHandle = useEntrepotInfo({})
   const {
     showTypeRacks,
     setShowTypeRacks,
@@ -72,13 +77,14 @@ export default () => {
     updateEntrepotLoading,
     removeEntrepot,
     removeEntrepotLoading,
-  } = useInfo();
+  } = entrepotInfoHandle
 
   return (
     <div className="bg-white p-4 pb-6">
       <Grid.Row gutter={[20, 0]}>
         <Grid.Col span={6} className="border-r border-neutral-3 pr-4">
-          <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">
+          <EntrepotList entrepotInfoHandle={entrepotInfoHandle}></EntrepotList>
+          {/* <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">
             <Typography.Title heading={6} className="mb-0">
               仓库列表
             </Typography.Title>
@@ -88,22 +94,18 @@ export default () => {
               size="small"
               className="ml-auto"
               onClick={() => {
-                setShowTypeEntrepot(ShowFormType.create);
+                setShowTypeEntrepot(ShowFormType.create)
               }}
             >
               新增
             </Button>
           </Typography.Paragraph>
-          {/* <Input.Search
-            className="mb-4"
-            placeholder="请输入仓库名称"
-          ></Input.Search> */}
           <List>
-            {entrepotList?.map((item) => (
+            {entrepotList?.map(item => (
               <div
                 key={item.id}
                 onClick={() => {
-                  setActiveEntrepot(item);
+                  setActiveEntrepot(item)
                 }}
               >
                 <List.Item.Meta
@@ -112,34 +114,36 @@ export default () => {
                     activeEntrepot?.id === item.id
                       ? 'bg-gray-100 dark:bg-zinc-500'
                       : '',
-                    'hover:bg-gray-100 dark:hover:bg-zinc-500 cursor-pointer px-2 border-b border-neutral-3'
+                    'hover:bg-gray-100 dark:hover:bg-zinc-500 cursor-pointer px-2 border-b border-neutral-3',
                   )}
                   avatar={<Avatar>{item.consignee[0]}</Avatar>}
                   title={item.entrepotName}
                   description={item.detailedAddress}
-                ></List.Item.Meta>
+                >
+                </List.Item.Meta>
                 <div>
                   <Button
                     type="primary"
                     onClick={() => {
-                      setShowTypeEntrepot(ShowFormType.edit);
-                      formEntrepotRef.setFieldsValue(item);
+                      setShowTypeEntrepot(ShowFormType.edit)
+                      formEntrepotRef.setFieldsValue(item)
                     }}
                   >
                     编辑
                   </Button>
                   <PopconfirmDelete
                     onOk={() => {
-                      removeEntrepot(item.id);
+                      removeEntrepot(item.id)
                     }}
                     buttonProps={{
                       loading: removeEntrepotLoading,
                     }}
-                  ></PopconfirmDelete>
+                  >
+                  </PopconfirmDelete>
                 </div>
               </div>
             ))}
-          </List>
+          </List> */}
         </Grid.Col>
 
         {showTypeRacks === ShowFormType.create && !racksList?.length ? null : (
@@ -155,8 +159,8 @@ export default () => {
                 className="ml-auto"
                 disabled={showTypeRacks === ShowFormType.create}
                 onClick={() => {
-                  formRacksRef.resetFields();
-                  setActiveRacks(null);
+                  formRacksRef.resetFields()
+                  setActiveRacks(null)
                 }}
               >
                 新增
@@ -167,12 +171,12 @@ export default () => {
             placeholder="请输入仓位名称"
           ></Input.Search> */}
             <List size="small">
-              {racksList?.map((item) => (
+              {racksList?.map(item => (
                 <div
                   key={item.id}
                   onClick={() => {
-                    setActiveRacks(item);
-                    formRacksRef.setFieldsValue(item);
+                    setActiveRacks(item)
+                    formRacksRef.setFieldsValue(item)
                   }}
                 >
                   <List.Item.Meta
@@ -181,12 +185,13 @@ export default () => {
                       activeRacks?.id === item.id
                         ? 'bg-gray-100 dark:bg-zinc-500'
                         : '',
-                      'hover:bg-gray-100 dark:hover:bg-zinc-500 cursor-pointer px-2 border-b border-neutral-3'
+                      'hover:bg-gray-100 dark:hover:bg-zinc-500 cursor-pointer px-2 border-b border-neutral-3',
                     )}
                     avatar={<Avatar>{item.locationPrefix}</Avatar>}
                     title={item.storageRacksName}
                     description={item.storageRacksCode}
-                  ></List.Item.Meta>
+                  >
+                  </List.Item.Meta>
                 </div>
               ))}
             </List>
@@ -196,7 +201,8 @@ export default () => {
           <Grid.Col span={12} className="pr-6">
             <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">
               <Typography.Title heading={6} className="mb-0">
-                {ShowFormTypeMap[showTypeRacks]}货架
+                {ShowFormTypeMap[showTypeRacks]}
+                货架
               </Typography.Title>
               {showTypeRacks === ShowFormType.create && (
                 <Space className="ml-auto" size="large">
@@ -207,9 +213,9 @@ export default () => {
                     size="small"
                     loading={createRacksLoading}
                     onClick={async () => {
-                      const formData = await formRacksRef.validate();
-                      createRacksHandler(formData);
-                      setActiveRacks(null);
+                      const formData = await formRacksRef.validate()
+                      createRacksHandler(formData)
+                      setActiveRacks(null)
                     }}
                   >
                     新增
@@ -219,7 +225,7 @@ export default () => {
                     loading={createRacksLoading}
                     size="small"
                     onClick={() => {
-                      formRacksRef.setFieldsValue(activeEntrepot);
+                      formRacksRef.setFieldsValue(activeEntrepot)
                     }}
                   >
                     取消
@@ -234,11 +240,11 @@ export default () => {
                     size="small"
                     loading={createRacksLoading}
                     onClick={async () => {
-                      const formData = await formRacksRef.validate();
+                      const formData = await formRacksRef.validate()
                       await updateRacks({
                         ...formData,
                         id: activeRacks.id,
-                      });
+                      })
                     }}
                   >
                     保存
@@ -246,9 +252,10 @@ export default () => {
                   <PopconfirmDelete
                     buttonProps={{ loading: removeRacksLoading }}
                     onOk={() => {
-                      removeRacks(activeRacks.id);
+                      removeRacks(activeRacks.id)
                     }}
-                  ></PopconfirmDelete>
+                  >
+                  </PopconfirmDelete>
                 </Space>
               )}
             </Typography.Paragraph>
@@ -256,7 +263,8 @@ export default () => {
               form={formRacksRef}
               labelLength={10}
               formItemConfigList={CreateRacksSchema}
-            ></FilterForm>
+            >
+            </FilterForm>
           </Grid.Col>
         )}
       </Grid.Row>
@@ -264,20 +272,21 @@ export default () => {
         {...FormModalCommonProps}
         confirmLoading={createEntrepotLoading || updateEntrepotLoading}
         onCancel={() => {
-          setShowTypeEntrepot(null);
-          formEntrepotRef.resetFields();
+          setShowTypeEntrepot(null)
+          formEntrepotRef.resetFields()
         }}
         onOk={async () => {
-          const formData = await formEntrepotRef.validate();
+          const formData = await formEntrepotRef.validate()
           if (showTypeEntrepot === ShowFormType.create) {
-            await createEntrepotHandler(formData);
-          } else {
+            await createEntrepotHandler(formData)
+          }
+          else {
             await updateEntrepot({
               ...formData,
               id: activeEntrepot.id,
-            });
+            })
           }
-          setShowTypeEntrepot(null);
+          setShowTypeEntrepot(null)
         }}
         visible={!!showTypeEntrepot}
         title={`${ShowFormTypeMap[showTypeEntrepot]}仓库`}
@@ -288,8 +297,9 @@ export default () => {
           labelLength={8}
           span={24}
           formItemConfigList={CreateEntrepotSchema}
-        ></FilterForm>
+        >
+        </FilterForm>
       </Modal>
     </div>
-  );
-};
+  )
+}

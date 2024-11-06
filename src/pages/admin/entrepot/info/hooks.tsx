@@ -13,7 +13,10 @@ import {
 import { ShowFormType } from '@/constants'
 import { showMessage } from '@/utils'
 
-function useInfo() {
+export function useEntrepotInfo(params: {
+  isPureList?: boolean
+}) {
+  const { isPureList } = params
   const [showTypeEntrepot, setShowTypeEntrepot] = useState<ShowFormType>()
   const [showTypeRacks, setShowTypeRacks] = useState<ShowFormType>(
     ShowFormType.edit,
@@ -28,6 +31,9 @@ function useInfo() {
     run: getRacksList,
   } = useRequest(
     async (params: Parameters<typeof racksAPI.getList>[0]) => {
+      if (isPureList) {
+        return []
+      }
       formRacksRef.resetFields()
       setActiveRacks(null)
       const sendData = {
@@ -53,6 +59,7 @@ function useInfo() {
     {
       manual: false,
       refreshDeps: [activeEntrepot],
+      debounceWait: 300,
     },
   )
 
@@ -197,5 +204,3 @@ function useInfo() {
     removeEntrepotLoading,
   }
 }
-
-export default useInfo
