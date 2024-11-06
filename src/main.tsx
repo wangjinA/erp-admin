@@ -1,6 +1,8 @@
 import { ConfigProvider, Message } from '@arco-design/web-react'
 import enUS from '@arco-design/web-react/es/locale/en-US'
 import zhCN from '@arco-design/web-react/es/locale/zh-CN'
+import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration'
 import { isEmpty } from 'lodash'
 import Mock from 'mockjs'
 import React, { useEffect } from 'react'
@@ -23,10 +25,11 @@ import changeTheme from './utils/changeTheme'
 import checkLogin from './utils/checkLogin'
 import './utils/index'
 import useStorage from './utils/useStorage'
-
 // import './mock';
 
 import userPNG from '@/assets/user.png'
+
+dayjs.extend(duration)
 
 // import { AccessDB, IndexedDB, initDB } from 'react-indexed-db-hook';
 // import { DBConfig } from './db';

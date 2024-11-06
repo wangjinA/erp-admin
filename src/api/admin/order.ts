@@ -1,5 +1,5 @@
 import baseAxios from '..'
-import { APIListResponse, IPageParams } from '../type'
+import { APIListResponse, APIResponse, IPageParams } from '../type'
 
 export const orderAPI = {
   // 获取订单列表
@@ -42,8 +42,26 @@ export const orderAPI = {
    * 获取发货时所需要填写的数据
    */
   getShippingParameter(orderId: number) {
-    return baseAxios.get(`/api/logistics/order/get/shipping/parameter/${orderId}`)
+    return baseAxios.get<APIResponse<getShippingParameterRes>>(`/api/logistics/order/get/shipping/parameter/${orderId}`)
   },
+}
+
+interface getShippingParameterRes {
+  createBy: null
+  createTime: string
+  updateBy: null
+  updateTime: string
+  id: string
+  logisticsOrderId: number
+  shrimpOrderNo: string
+  infoNeeded: InfoNeeded
+  dropoff: string
+  pickUp: null
+  deleteStatus: number
+}
+
+interface InfoNeeded {
+  dropoff: ('sender_real_name' | 'tracking_no')[]
 }
 
 export interface SearchOrderParams extends IPageParams {

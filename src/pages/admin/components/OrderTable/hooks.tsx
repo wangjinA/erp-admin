@@ -131,7 +131,7 @@ export function useColumns(props: OrderTablePorps) {
       render(c, row) {
         return (
           <div className="border-r h-full p-2">
-            <LabelValue label="总费用(TWD)" value={row.total}></LabelValue>
+            <LabelValue label="总费用(TWD)" value={row.orderAmount}></LabelValue>
             <LabelValue label="预估运费(TWD)" value={row.estimatedShippingFee}></LabelValue>
             <LabelValue label="实际运费(TWD)" value={row.actualShippingFee}></LabelValue>
           </div>

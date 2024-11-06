@@ -22,8 +22,8 @@ import { useSelector } from 'react-redux'
 import { Redirect, Route, Switch, useHistory } from 'react-router-dom'
 
 import Footer from './components/Footer'
-import Navbar from './components/NavBar'
 
+import Navbar from './components/NavBar'
 import { GlobalState } from './store'
 import styles from './style/layout.module.less'
 import getUrlParams from './utils/getUrlParams'

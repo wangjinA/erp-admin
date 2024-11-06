@@ -50,6 +50,9 @@ importers:
       copy-to-clipboard:
         specifier: ^3.3.1
         version: 3.3.1
+      dayjs:
+        specifier: ^1.11.13
+        version: 1.11.13
       eslint-config-airbnb:
         specifier: ^19.0.4
         version: 19.0.4(eslint-plugin-import@2.29.1(@typescript-eslint/parser@5.5.0(eslint@9.8.0)(typescript@4.5.2))(eslint@9.8.0))(eslint-plugin-jsx-a11y@6.9.0(eslint@9.8.0))(eslint-plugin-react-hooks@4.3.0(eslint@9.8.0))(eslint-plugin-react@7.27.1(eslint@9.8.0))(eslint@9.8.0)
@@ -2414,8 +2417,8 @@ packages:
     resolution: {integrity: sha512-t/Ygsytq+R995EJ5PZlD4Cu56sWa8InXySaViRzw9apusqsOO2bQP+SbYzAhR0pFKoB+43lYy8rWban9JSuXnA==}
     engines: {node: '>= 0.4'}
 
-  dayjs@1.11.11:
-    resolution: {integrity: sha512-okzr3f11N6WuqYtZSvm+F776mB41wRZMhKP+hc34YdW+KmtYYK9iqvHSwo2k9FEH3fhGXvOPV6yz2IcSrfRUDg==}
+  dayjs@1.11.13:
+    resolution: {integrity: sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg==}
 
   debug@3.2.7:
     resolution: {integrity: sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==}
@@ -5635,7 +5638,7 @@ snapshots:
       b-tween: 0.3.3
       b-validate: 1.5.3
       compute-scroll-into-view: 1.0.20
-      dayjs: 1.11.11
+      dayjs: 1.11.13
       lodash: 4.17.21
       number-precision: 1.5.1
       react: 17.0.2
@@ -8002,7 +8005,7 @@ snapshots:
   ahooks@3.8.0(react@17.0.2):
     dependencies:
       '@babel/runtime': 7.24.7
-      dayjs: 1.11.11
+      dayjs: 1.11.13
       intersection-observer: 0.12.2
       js-cookie: 2.2.1
       lodash: 4.17.21
@@ -8643,7 +8646,7 @@ snapshots:
       es-errors: 1.3.0
       is-data-view: 1.0.1
 
-  dayjs@1.11.11: {}
+  dayjs@1.11.13: {}
 
   debug@3.2.7:
     dependencies:

@@ -105,21 +105,22 @@ export default (props: OrderPageProps) => {
       const res = await orderAPI.getList(body)
       if (type === OrderPageType.PACK_ORDER) {
         orderAPI.getPackCount({
-          ...body,
+          ...omit(body, ['selectLogisticsOrderVO']),
           selectLogisticsOrderVO: {
             ...omit(body.selectLogisticsOrderVO, ['orderStatus']),
-          },
+          } as any,
         }).then((res) => {
           setCountMap(res.data.data)
         })
       }
       else {
-        orderAPI.getShopOrderCount({
-          ...body,
+        const p = {
+          ...omit(body, ['selectLogisticsOrderVO']),
           selectLogisticsOrderVO: {
-            ...omit(body.selectLogisticsOrderVO, ['orderStatus']),
+            ...omit(body.selectLogisticsOrderVO, ['shrimpStatus']),
           },
-        }).then((res) => {
+        }
+        orderAPI.getShopOrderCount(p).then((res) => {
           setCountMap(res.data.data)
         })
       }
@@ -355,6 +356,7 @@ export default (props: OrderPageProps) => {
         ))}
       </Tabs>
       <OrderTable
+        dictCode={dictCode}
         run={run}
         data={data}
         loading={loading}

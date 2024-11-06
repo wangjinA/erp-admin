@@ -56,6 +56,7 @@ export interface Order {
   orderProductList: OrderProductList[]
   logisticsOrderProductList?: OrderProductList[]
   orderStatus: string // 订单状态 字典值
+  shopeeStatus: string // 虾皮订单状态 字典值
   orderTime: string // 订单时间
   orderType: string // 订单类型 字典值
   packCost: number // 打包费用
