@@ -1,3 +1,7 @@
 export default () => {
-  return <div>开发中...</div>
+  return (
+    <div className="bg-white py-6 px-4">
+
+    </div>
+  )
 }
