@@ -78,7 +78,7 @@ export const entrepotAPI = {
     entrepotId: string
     // type: number
   }) {
-    return baseAxios.post<APIResponse<ScanResponse>>('/api/entrepot/sender/list/all', body)
+    return baseAxios.post<APIListResponse<Sender>>('/api/entrepot/sender/list/all', body)
   },
   /**
    * 查询物流仓库寄件人列表
@@ -113,7 +113,7 @@ export const entrepotAPI = {
       id,
       defaultStatus,
     })
-  }
+  },
 }
 
 // 仓位

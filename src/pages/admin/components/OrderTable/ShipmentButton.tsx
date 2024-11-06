@@ -38,6 +38,8 @@ const InfoNeededMap: Record<string, CreateFormItemType> = {
 export default (props: ShipmentButtonButtonProps) => {
   const { orderItem, buttonProps, onSuccess, ...scanParams } = props
   const [formItemConfigList, setFormItemConfigList] = useState([])
+  const [initialValues, setInitialValues] = useState({})
+
   const [formRef] = Form.useForm()
   const { loading, run } = useRequest(async () => {
     const formData = await formRef.validate()
@@ -53,12 +55,14 @@ export default (props: ShipmentButtonButtonProps) => {
   const getNeedInfoHandle = useRequest(async () => {
     const [shippingRes, senderRes] = await Promise.all([
       orderAPI.getShippingParameter(orderItem.id),
-      // ! 没写完检查
       entrepotAPI.getSenderAll({
         entrepotId: orderItem.sendWarehouse,
       }),
     ])
-    console.log(senderRes.data)
+    const senderList = senderRes?.data?.data?.list || []
+    setInitialValues({
+      senderRealName: senderList.find(item => item.isDefault)?.details || senderList[0]?.details || '',
+    })
     setFormItemConfigList(shippingRes?.data?.data?.infoNeeded?.dropoff?.map(o => InfoNeededMap[o]) || [])
   }, {
     manual: true,
@@ -100,7 +104,7 @@ export default (props: ShipmentButtonButtonProps) => {
         <FilterForm
           span={24}
           form={formRef}
-          initialValues={{}}
+          initialValues={initialValues}
           formItemConfigList={formItemConfigList}
         >
         </FilterForm>
