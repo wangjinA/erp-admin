@@ -3,6 +3,7 @@ import classNames from 'classnames'
 import { labelClass, valueClass } from '.'
 
 import { useDictOptions } from '@/components/Selectors/DictSelector'
+import { ShopNameFC } from '@/components/Selectors/ShopRadio'
 import { OrderResponseItem } from '@/types/order'
 import { getRemainingTime } from '@/utils/date'
 
@@ -27,8 +28,7 @@ export default ({ data }: { data: OrderResponseItem }) => {
           <div>
             <span className={labelClass}>店铺：</span>
             <span className={valueClass}>
-              本土 台湾/萬福堂佛緣旗艦店 本命佛 化太歲 藏式手繩水晶手串 吊墜
-              開運吉祥
+              <ShopNameFC value={data.platformShopId}></ShopNameFC>
             </span>
           </div>
           <div className="ml-auto">

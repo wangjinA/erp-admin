@@ -11,7 +11,7 @@ import {
 } from '@arco-design/web-react'
 
 import useForm from '@arco-design/web-react/es/Form/useForm'
-import { IconEdit, IconFile, IconPlus } from '@arco-design/web-react/icon'
+import { IconEdit, IconPlus } from '@arco-design/web-react/icon'
 import { useRequest } from 'ahooks'
 import { PaginationResult } from 'ahooks/lib/usePagination/types'
 
@@ -20,12 +20,12 @@ import { omit } from 'lodash'
 import React, { useEffect, useMemo, useState } from 'react'
 
 import ActionHistory from './ActionHistory'
+import ExpressSheetButton from './ExpressSheetButton'
 import OrderHeaderStatusInfo from './OrderHeaderStatusInfo'
 import RefreshButton from './RefreshButton'
 import { TagColors } from './SendCargoInfo'
 import { useColumns } from './hooks'
 
-import { SuccessCode } from '@/api'
 import { orderAPI } from '@/api/client/order'
 import { APIListResponse } from '@/api/type'
 import FilterForm from '@/components/FilterForm'
@@ -96,7 +96,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
               ...(newSku ? [newSku] : []),
             ],
           }),
-        newSku ? '添加' : '编辑',
+        newSku ? '添加' : '打包',
       )
       setActionType(null)
       bus.emit(EmitTypes.refreshOrderPage)
@@ -195,14 +195,15 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                                   setActionType(ShowFormType.edit)
                                   setCurrentOrder(structuredClone({
                                     ...omit(item, 'orderStatus'),
-                                    clickPack: !item.clickPack,
+                                    clickPack: item.orderStatus === '5' || !item.whetherPack,
                                     logisticsOrderProductList: item.orderProductVOList,
                                   }))
                                 }}
                               >
-                                {item.clickPack ? '编辑打包' : '一键打包'}
+                                {item.whetherPack && item.orderStatus !== '5' ? '编辑打包' : '一键打包'}
                               </Button>
                               <Button
+                                disabled={!['0'].includes(item.orderStatus)}
                                 onClick={async () => {
                                   await showModal({
                                     content: '确定要取消打包吗？',
@@ -216,27 +217,15 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                               >
                                 取消打包
                               </Button>
-                              <Button
-                                icon={<IconFile />}
-                                onClick={async () => {
-                                  // `${getRequestEndInfo.baseUrl}/`
-                                  const res = await orderAPI.getSheet(item.id)
-                                  if (res.data.code !== SuccessCode) {
-                                    return Message.error(res.data.msg)
-                                  }
-                                  setSheet(res.data.data)
-                                }}
-                              >
-                                查看面单
-                              </Button>
-                              <Button
+                              <ExpressSheetButton value="" buttonProps={{}}></ExpressSheetButton>
+                              {/* <Button
                                 loading={refreshHandle.loading}
                                 onClick={() => {
                                   refreshHandle.run(item.id)
                                 }}
                               >
                                 更新订单
-                              </Button>
+                              </Button> */}
                               <RefreshButton
                                 buttonProps={{
                                   type: 'default',

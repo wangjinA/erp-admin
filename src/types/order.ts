@@ -61,7 +61,7 @@ export interface Order {
   orderType: string // 订单类型 字典值
   packCost: number // 打包费用
   packTime: string // 打包时间
-  packageNumber: string // 物流单号
+  packageNumber: string // 包裹编号
   panelBarCode: string // 面板条码
   parcelHigh: number // 包裹高度
   parcelLength: number // 包裹长度
@@ -119,10 +119,10 @@ export interface OrderResponseItem extends Omit<Order, 'orderProductList'> {
     virtualContactNumber: string
     packageQueryNumber: string
     goodsJson: string
-    documentImgUrl: null
-    documentUrl: null
+    documentImgUrl?: string
+    documentUrl?: string
     applyTime: null
-    trackingNumber: null
+    trackingNumber?: string // 物流单号
     deleteStatus: number
   }[]
 }

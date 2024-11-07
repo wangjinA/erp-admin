@@ -44,6 +44,9 @@ export const orderAPI = {
   getShippingParameter(orderId: number) {
     return baseAxios.get<APIResponse<getShippingParameterRes>>(`/api/logistics/order/get/shipping/parameter/${orderId}`)
   },
+  createShellOrder(orderId) {
+    return baseAxios.get<APIResponse>(`/api/logistics/order/get/tracking/number/${orderId}`)
+  },
 }
 
 interface getShippingParameterRes {

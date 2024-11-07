@@ -1,3 +1,7 @@
+11.01
+1. 屏幕宽度适配问题
+
+
 11.06
 1. 仓库寄件人列表管理，出货的时候用 
 https://logistics.suyunbaoo.com/prod-admin/doc.html#/%E4%BB%93%E5%BA%93%E7%AE%A1%E7%90%86/%E7%89%A9%E6%B5%81%E4%BB%93%E5%BA%93%E5%AF%84%E4%BB%B6%E4%BA%BA%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3/listAllUsingPOST

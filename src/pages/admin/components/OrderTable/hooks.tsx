@@ -1,7 +1,5 @@
 import { Button, Space } from '@arco-design/web-react'
 
-import { IconFile } from '@arco-design/web-react/icon'
-
 import { useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 
@@ -18,6 +16,7 @@ import GoodsInfo from '@/components/GoodsInfo'
 import LabelValue from '@/components/LabelValue'
 import { DictNameFC } from '@/components/Selectors/DictSelector'
 import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
+import TrackingNumber from '@/components/TrackingNumber'
 import { EmitTypes, bus } from '@/hooks/useEventBus'
 import { isAdmin } from '@/routes'
 import { Order, OrderResponseItem } from '@/types/order'
@@ -56,9 +55,9 @@ export function useColumns(props: OrderTablePorps) {
         return (
           <div className="border-r h-full p-2">
             <LabelValue label="尾程物流" value={<DictNameFC value={row.orderPackageList[0]?.shippingCarrier} dictCode="logistics_channel"></DictNameFC>}></LabelValue>
-            <LabelValue label="物流单号" value={row.orderPackageList[0]?.packageNumber}></LabelValue>
-            <LabelValue label="出货时间" value={row.shippingTime}></LabelValue>
-            <LabelValue
+            <LabelValue label="物流单号" value={<TrackingNumber value={row.orderPackageList[0]?.trackingNumber}></TrackingNumber>}></LabelValue>
+            {row.shippingTime ? <LabelValue label="出货时间" value={row.shippingTime}></LabelValue> : null}
+            {/* <LabelValue
               label="查看单号"
               value={(
                 <Button
@@ -71,7 +70,7 @@ export function useColumns(props: OrderTablePorps) {
                 </Button>
               )}
             >
-            </LabelValue>
+            </LabelValue> */}
           </div>
         )
       },

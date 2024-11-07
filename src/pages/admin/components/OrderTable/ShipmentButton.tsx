@@ -53,6 +53,8 @@ export default (props: ShipmentButtonButtonProps) => {
     manual: true,
   })
   const getNeedInfoHandle = useRequest(async () => {
+    orderAPI.createShellOrder(orderItem.id)
+    return
     const [shippingRes, senderRes] = await Promise.all([
       orderAPI.getShippingParameter(orderItem.id),
       entrepotAPI.getSenderAll({
@@ -81,6 +83,7 @@ export default (props: ShipmentButtonButtonProps) => {
         type="text"
         status="success"
         loading={getNeedInfoHandle.loading}
+        // disabled={!!orderItem.shippingTime}
         onClick={() => {
           getNeedInfoHandle.run()
         }}

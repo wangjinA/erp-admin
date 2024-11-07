@@ -53,3 +53,9 @@ export default (props) => {
           <>-</>
         )
 }
+
+export function ShopNameFC(props: { value: number }) {
+  const { value } = props
+  const { data: options } = useShopOptions()
+  return <>{options?.find(item => item.value === value)?.label}</>
+}
