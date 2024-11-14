@@ -197,6 +197,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                                     ...omit(item, 'orderStatus'),
                                     clickPack: item.orderStatus === '5' || !item.whetherPack,
                                     logisticsOrderProductList: item.orderProductVOList,
+                                    sendWarehouse: item.sendWarehouse === '0' ? undefined : item.sendWarehouse,
                                   }))
                                 }}
                               >

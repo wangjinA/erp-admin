@@ -114,7 +114,7 @@ export default (props: OrderPageProps) => {
         })
       }
       else {
-        const p = {
+        const p: any = {
           ...omit(body, ['selectLogisticsOrderVO']),
           selectLogisticsOrderVO: {
             ...omit(body.selectLogisticsOrderVO, ['shrimpStatus']),
