@@ -218,7 +218,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                               >
                                 取消打包
                               </Button>
-                              <ExpressSheetButton value="" buttonProps={{}}></ExpressSheetButton>
+                              <ExpressSheetButton id={item.id} value="" buttonProps={{}}></ExpressSheetButton>
                               {/* <Button
                                 loading={refreshHandle.loading}
                                 onClick={() => {

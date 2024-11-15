@@ -69,6 +69,8 @@ export default (props: ShipmentButtonButtonProps) => {
   }, {
     manual: true,
   })
+  console.log(orderItem)
+
   return (
     <>
       {/* <PopconfirmDelete
@@ -83,7 +85,7 @@ export default (props: ShipmentButtonButtonProps) => {
         type="text"
         status="success"
         loading={getNeedInfoHandle.loading}
-        // disabled={!!orderItem.shippingTime}
+        disabled={!!orderItem?.orderPackageList?.some(item => item.documentUrl)}
         onClick={() => {
           getNeedInfoHandle.run()
         }}

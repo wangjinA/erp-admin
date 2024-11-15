@@ -120,7 +120,7 @@ export interface OrderResponseItem extends Omit<Order, 'orderProductList'> {
     packageQueryNumber: string
     goodsJson: string
     documentImgUrl?: string
-    documentUrl?: string
+    documentUrl?: string // html文档url
     applyTime: null
     trackingNumber?: string // 物流单号
     deleteStatus: number

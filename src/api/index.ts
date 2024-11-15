@@ -1,11 +1,12 @@
-import { EndType, getEndType, toLoginPage } from '@/routes';
-import { Modal } from '@arco-design/web-react';
-import axios from 'axios';
-import { debounce } from 'lodash';
+import { Modal } from '@arco-design/web-react'
+import axios from 'axios'
+import { debounce } from 'lodash'
+
+import { EndType, getEndType, toLoginPage } from '@/routes'
 
 interface RequestEndTypeInfo {
-  baseUrl: string;
-  tokenKey: string;
+  baseUrl: string
+  tokenKey: string
 }
 
 const adminRequestEndInfo: RequestEndTypeInfo = {
@@ -13,29 +14,29 @@ const adminRequestEndInfo: RequestEndTypeInfo = {
     ? '/prod-admin'
     : 'https://logistics.drcstudio.cn/prod-admin',
   tokenKey: 'erp-admin-token',
-};
+}
 
 const userRequestEndInfo: RequestEndTypeInfo = {
   baseUrl: import.meta.env.DEV
     ? '/prod-user'
     : 'https://logistics.drcstudio.cn/prod-user',
   tokenKey: 'erp-user-token',
-};
+}
 
-export const getRequestEndInfo =
-  getEndType() === EndType.ADMIN ? adminRequestEndInfo : userRequestEndInfo;
+export const getRequestEndInfo
+  = getEndType() === EndType.ADMIN ? adminRequestEndInfo : userRequestEndInfo
 
-const timeout = 20 * 1000;
+const timeout = 20 * 1000
 
 const baseAxios = axios.create({
   baseURL: getRequestEndInfo.baseUrl,
   timeout,
-});
+})
 
 baseAxios.interceptors.request.use((config) => {
-  const token = localStorage.getItem(getRequestEndInfo.tokenKey);
+  const token = localStorage.getItem(getRequestEndInfo.tokenKey)
   if (token) {
-    config.headers.token = token;
+    config.headers.token = token
   }
   // config.headers = {
   //   ...config.headers,
@@ -43,8 +44,8 @@ baseAxios.interceptors.request.use((config) => {
   //   // identification: '1',
   //   // tenantryId: '38909991126000134',
   // } as any;
-  return config;
-});
+  return config
+})
 
 const loginModal = debounce((msg) => {
   Modal.confirm({
@@ -52,18 +53,18 @@ const loginModal = debounce((msg) => {
     content: msg || '登录失效！',
     okText: '前往登陆',
     onOk() {
-      toLoginPage();
+      toLoginPage()
     },
-  });
-}, 300);
+  })
+}, 300)
 
 baseAxios.interceptors.response.use((res) => {
   if ([30010, 20].includes(res.data.code)) {
-    loginModal(res.data.msg);
+    loginModal(res.data.msg)
   }
-  return res;
-});
+  return res
+})
 
-export const SuccessCode = 200;
+export const SuccessCode = 200
 
-export default baseAxios;
+export default baseAxios

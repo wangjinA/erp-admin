@@ -1,17 +1,36 @@
-import { Button, ButtonProps, Link, Modal } from '@arco-design/web-react'
+import { Button, ButtonProps, Link, Modal, Spin } from '@arco-design/web-react'
 import { IconFile } from '@arco-design/web-react/icon'
-import { useState } from 'react'
+import { useRequest } from 'ahooks'
+import { useEffect, useState } from 'react'
 
-export default ({ value, buttonProps }: {
-  value: any
+import { orderAPI } from '@/api/admin/order'
+import { OrderResponseItem } from '@/types/order'
+
+export default ({ orderItem, buttonProps }: {
+  orderItem: OrderResponseItem
   buttonProps?: ButtonProps
 }) => {
-  const [visible, setVisible] = useState(false)
+  // const [visible, setVisible] = useState(false)
+  const [src, setSrc] = useState<string>('')
+  useEffect(() => {
+    // setSrc(orderItem?.orderPackageList?.reduce<string>((pre, cur) => pre || cur.documentUrl, ''))
+  }, [orderItem])
+  const { run, loading } = useRequest(async () => {
+    let url = orderItem?.orderPackageList?.reduce<string>((pre, cur) => pre || cur.documentUrl, '')
+    if (!url) {
+      const list = await orderAPI.createShellOrder(orderItem.id).then(r => r.data.data.list)
+      url = list?.[0]
+    }
+    setSrc(url)
+  }, {
+    manual: true,
+  })
   return (
     <>
       {buttonProps
         ? (
             <Button
+              loading={loading}
               icon={<IconFile />}
               // onClick={async () => {
               //   const res = await orderAPI.getSheet(item.id)
@@ -21,7 +40,7 @@ export default ({ value, buttonProps }: {
               //   setSheet(res.data.data)
               // }}
               onClick={() => {
-                setVisible(true)
+                run()
               }}
               {...buttonProps}
             >
@@ -34,26 +53,27 @@ export default ({ value, buttonProps }: {
               type="text"
               icon={<IconFile />}
               onClick={() => {
-                setVisible(true)
+                // setVisible(true)
+                run()
               }}
             >
               查看面单
+              {loading ? <Spin size={12}></Spin> : ''}
             </Link>
           )}
       <Modal
         title="面单信息"
         style={{ width: 800 }}
-        visible={visible}
+        visible={!!src}
         onCancel={() => {
-          setVisible(false)
+          setSrc('')
         }}
         hideCancel={true}
         onConfirm={() => {
-          setVisible(false)
+          setSrc('')
         }}
       >
-        开发中...
-        <iframe className="h-[700px] w-full border-none outline-none" src=""></iframe>
+        <iframe className="h-[700px] w-full border-none outline-none" src={src}></iframe>
       </Modal>
     </>
   )

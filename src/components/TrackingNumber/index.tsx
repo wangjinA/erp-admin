@@ -5,6 +5,7 @@ import ExpressSheetButton from '@/pages/admin/components/OrderTable/ExpressSheet
 
 export default ({
   value,
+  orderItem,
 }) => {
   const [visible, setVisible] = useState(false)
   if (!value) {
@@ -20,7 +21,7 @@ export default ({
       >
         {value}
       </Link>
-      <ExpressSheetButton value=""></ExpressSheetButton>
+      <ExpressSheetButton orderItem={orderItem}></ExpressSheetButton>
       <Modal
         title="物流信息"
         visible={visible}

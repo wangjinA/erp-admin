@@ -26,7 +26,7 @@ export function useColumns(props: OrderTablePorps) {
   const { dictCode } = props
   const { pathname } = useLocation()
   const showMj = useMemo(() => {
-    return ['/admin/order/all'].includes(pathname)
+    return ['/client/order/all'].includes(pathname)
   }, [pathname])
   const showActions = isAdmin()
   return [
@@ -55,7 +55,7 @@ export function useColumns(props: OrderTablePorps) {
         return (
           <div className="border-r h-full p-2">
             <LabelValue label="尾程物流" value={<DictNameFC value={row.orderPackageList[0]?.shippingCarrier} dictCode="logistics_channel"></DictNameFC>}></LabelValue>
-            <LabelValue label="物流单号" value={<TrackingNumber value={row.orderPackageList[0]?.trackingNumber}></TrackingNumber>}></LabelValue>
+            <LabelValue label="物流单号" value={<TrackingNumber orderItem={row} value={row.orderPackageList[0]?.trackingNumber}></TrackingNumber>}></LabelValue>
             {row.shippingTime ? <LabelValue label="出货时间" value={row.shippingTime}></LabelValue> : null}
             {/* <LabelValue
               label="查看单号"
