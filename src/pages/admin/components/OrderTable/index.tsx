@@ -320,7 +320,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                     </div>
                     <OrderHeaderStatusInfo data={item}></OrderHeaderStatusInfo>
                   </header>
-                  <main className="flex p-4">
+                  <main className="flex p-1">
                     {columns.map(oitem => (
                       <div
                         style={{

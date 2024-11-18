@@ -4,11 +4,11 @@ import React, { useRef } from 'react'
 
 import FilterForm from '../FilterForm'
 
+import LabelValue from '../LabelValue'
 import DictSelector from '../Selectors/DictSelector'
 
 import styles from './index.module.less'
 
-import { labelClass, valueClass } from '@/pages/admin/components/OrderTable'
 import { OrderResponseItem } from '@/types/order'
 
 interface GoodsInfoProps {
@@ -46,22 +46,10 @@ export default (props: GoodsInfoProps) => {
               title={item.productName}
               description={(
                 <div>
-                  <div>
-                    <span className={classNames(labelClass, 'text-sm')}>单  价：</span>
-                    <span className={classNames(valueClass, 'text-sm')}>{item.unitPrice || '-'}</span>
-                  </div>
-                  <div>
-                    <span className={classNames(labelClass, 'text-sm')}>数  量：</span>
-                    <span className={classNames(valueClass, 'text-sm')}>{item.quantity || '-'}</span>
-                  </div>
-                  <div>
-                    <span className={classNames(labelClass, 'text-sm')}>规格名称：</span>
-                    <span className={classNames(valueClass, 'text-sm')}>{item.specificationName || '-'}</span>
-                  </div>
-                  <div>
-                    <span className={classNames(labelClass, 'text-sm')}>规格SKU：</span>
-                    <span className={classNames(valueClass, 'text-sm')}>{item.sku || '-'}</span>
-                  </div>
+                  <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="单  价" value={item.unitPrice}></LabelValue>
+                  <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="数  量" value={item.quantity}></LabelValue>
+                  <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="规格名称" value={item.specificationName}></LabelValue>
+                  <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="规格SKU" value={item.sku}></LabelValue>
                 </div>
               )}
             />
