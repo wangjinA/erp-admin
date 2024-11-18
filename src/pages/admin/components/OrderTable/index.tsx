@@ -191,10 +191,11 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                           <header className="flex items-center p-2 border-b">
                             <Button.Group>
                               <Button
+                                disabled={item.orderStatus && !['0', '1', '2'].includes(item.orderStatus)}
                                 onClick={() => {
                                   setActionType(ShowFormType.edit)
                                   setCurrentOrder(structuredClone({
-                                    ...omit(item, 'orderStatus'),
+                                    ...item,
                                     clickPack: item.orderStatus === '5' || !item.whetherPack,
                                     logisticsOrderProductList: item.orderProductVOList,
                                     sendWarehouse: item.sendWarehouse === '0' ? undefined : item.sendWarehouse,
@@ -218,7 +219,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                               >
                                 取消打包
                               </Button>
-                              <ExpressSheetButton id={item.id} value="" buttonProps={{}}></ExpressSheetButton>
+                              <ExpressSheetButton orderItem={item} buttonProps={{}}></ExpressSheetButton>
                               {/* <Button
                                 loading={refreshHandle.loading}
                                 onClick={() => {

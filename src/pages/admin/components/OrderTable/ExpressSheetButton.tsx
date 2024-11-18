@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 
 import { orderAPI } from '@/api/admin/order'
 import { OrderResponseItem } from '@/types/order'
+import { showMessage } from '@/utils'
 
 export default ({ orderItem, buttonProps }: {
   orderItem: OrderResponseItem
@@ -18,7 +19,9 @@ export default ({ orderItem, buttonProps }: {
   const { run, loading } = useRequest(async () => {
     let url = orderItem?.orderPackageList?.reduce<string>((pre, cur) => pre || cur.documentUrl, '')
     if (!url) {
-      const list = await orderAPI.createShellOrder(orderItem.id).then(r => r.data.data.list)
+      const list = await showMessage(() => orderAPI.createShellOrder(orderItem.id), '查看面单').then((r) => {
+        return r.data.data?.list
+      })
       url = list?.[0]
     }
     setSrc(url)

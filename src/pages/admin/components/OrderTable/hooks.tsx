@@ -14,7 +14,6 @@ import { OrderTablePorps } from '.'
 import { orderAPI } from '@/api/admin/order'
 import GoodsInfo from '@/components/GoodsInfo'
 import LabelValue from '@/components/LabelValue'
-import { DictNameFC } from '@/components/Selectors/DictSelector'
 import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
 import TrackingNumber from '@/components/TrackingNumber'
 import { EmitTypes, bus } from '@/hooks/useEventBus'
@@ -54,8 +53,9 @@ export function useColumns(props: OrderTablePorps) {
       render(c, row) {
         return (
           <div className="border-r h-full p-2">
-            <LabelValue label="尾程物流" value={<DictNameFC value={row.orderPackageList[0]?.shippingCarrier} dictCode="logistics_channel"></DictNameFC>}></LabelValue>
-            <LabelValue label="物流单号" value={<TrackingNumber orderItem={row} value={row.orderPackageList[0]?.trackingNumber}></TrackingNumber>}></LabelValue>
+            {/* <LabelValue label="尾程物流" value={<DictNameFC value={row.orderPackageList[0]?.shippingCarrier} dictCode="logistics_channel"></DictNameFC>}></LabelValue> */}
+            <LabelValue label="尾程物流" value={row.orderPackageList[0]?.shippingCarrier}></LabelValue>
+            <LabelValue label="物流单号" value={<TrackingNumber orderItem={row}></TrackingNumber>}></LabelValue>
             {row.shippingTime ? <LabelValue label="出货时间" value={row.shippingTime}></LabelValue> : null}
             {/* <LabelValue
               label="查看单号"

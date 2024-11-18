@@ -1,4 +1,5 @@
 import baseAxios from '..'
+import { OrderTrackRes } from '../client/express'
 import { APIListResponse, APIResponse, IPageParams } from '../type'
 
 export const expressAPI = {
@@ -95,6 +96,13 @@ export const expressAPI = {
   // }) {
   //   return baseAxios.post<APIResponse>(`/api/return/management/order/cancel`, body)
   // },
+
+  /**
+   * 获取虾皮货态
+   */
+  getOrderTrack(orderId: any) {
+    return baseAxios.get<APIResponse<OrderTrackRes>>(`${orderId}`)
+  },
 }
 
 export interface ReturnOperationInfo {

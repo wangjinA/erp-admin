@@ -69,7 +69,6 @@ export default (props: ShipmentButtonButtonProps) => {
   }, {
     manual: true,
   })
-  console.log(orderItem)
 
   return (
     <>

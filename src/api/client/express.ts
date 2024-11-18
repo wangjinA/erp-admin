@@ -95,6 +95,26 @@ export const expressAPI = {
   }) {
     return baseAxios.post<APIResponse>(`/api/return/management/order/cancel`, body)
   },
+
+  /**
+   * 获取虾皮货态
+   */
+  getOrderTrack(orderId: any) {
+    return baseAxios.get<APIResponse<OrderTrackRes>>(`/api/logistics/order/get/tracking/info/${orderId}`)
+  },
+}
+
+export interface OrderTrackRes {
+  orderSn: string
+  packageNumber: string
+  logisticsStatus: string
+  trackingInfoItemVOList: TrackingInfoItemVOList[]
+}
+
+interface TrackingInfoItemVOList {
+  updateTime: string
+  description: string
+  logisticsStatus: string
 }
 
 export interface ReturnOperationInfo {
