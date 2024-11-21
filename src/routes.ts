@@ -121,6 +121,16 @@ export const routes: IRoute[] = [
     ],
   },
   {
+    name: 'client.tools',
+    key: 'client/tools',
+    children: [
+      {
+        name: 'client.tools.shipment',
+        key: 'client/tools/shipment',
+      },
+    ],
+  },
+  {
     name: 'admin.business',
     key: 'admin/business',
     children: [

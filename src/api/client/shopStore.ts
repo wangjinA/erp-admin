@@ -2,7 +2,10 @@ import baseAxios from '..'
 import { APIListResponse, APIResponse, IPageParams } from '../type'
 
 export const shopStoreAPI = {
-  // 获取店铺列表
+  /**
+   * 获取店铺列表
+   *
+   */
   getList(body: Partial<ShopStore> & IPageParams) {
     return baseAxios.post<APIListResponse<ShopStore>>('/api/tenantry/store/list', body)
   },

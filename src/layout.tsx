@@ -67,6 +67,8 @@ function getIconFromKey(key) {
       return <IconApps className={styles.icon} />
     case 'result':
       return <IconCheckCircle className={styles.icon} />
+    case 'client/tools':
+      return <IconCheckCircle className={styles.icon} />
     case 'exception':
       return <IconExclamationCircle className={styles.icon} />
     case 'user':
