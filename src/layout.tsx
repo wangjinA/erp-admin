@@ -49,6 +49,7 @@ function getIconFromKey(key) {
     case 'admin/entrepot':
       return <IconArchive className={styles.icon} />
     case 'admin/account':
+    case 'client/account':
       return <IconUserGroup className={styles.icon} />
     case 'admin/dict/list':
       return <IconBook className={styles.icon} />

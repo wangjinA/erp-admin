@@ -7,15 +7,15 @@ import {
   Space,
   Spin,
 } from '@arco-design/web-react'
-import { FormInstance } from '@arco-design/web-react/es/Form'
 import { IconLock, IconSafe, IconUser } from '@arco-design/web-react/icon'
 
 import { useLocalStorageState, useRequest } from 'ahooks'
 
 import { random } from 'lodash'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import locale from './locale'
+import Register from './register'
 import styles from './style/index.module.less'
 
 import { SuccessCode, getRequestEndInfo } from '@/api'
@@ -26,13 +26,16 @@ import {
   LoginPathMap,
   getEndType,
   getEndTypeName,
+  isAdmin,
+  isClient,
 } from '@/routes'
 import useLocale from '@/utils/useLocale'
 import useStorage from '@/utils/useStorage'
 
 export default function LoginForm() {
-  const formRef = useRef<FormInstance>()
+  const [form] = Form.useForm()
   const [errorMessage, setErrorMessage] = useState('')
+  const [isRegister, setIsRegister] = useState(false)
   const [loginParams, setLoginParams, removeLoginParams]
     = useStorage('loginParams')
   const [value, setValue] = useLocalStorageState('userInfo')
@@ -105,7 +108,7 @@ export default function LoginForm() {
   // }
 
   function onSubmitClick() {
-    formRef.current.validate().then((values) => {
+    form.validate().then((values) => {
       loginHandler(values)
     })
   }
@@ -114,9 +117,9 @@ export default function LoginForm() {
   useEffect(() => {
     const rememberPassword = !!loginParams
     setRememberPassword(rememberPassword)
-    if (formRef.current && rememberPassword) {
+    if (form && rememberPassword) {
       const parseParams = JSON.parse(loginParams)
-      formRef.current.setFieldsValue(parseParams)
+      form.setFieldsValue(parseParams)
     }
   }, [loginParams])
 
@@ -128,9 +131,9 @@ export default function LoginForm() {
       <Form
         className={styles['login-form']}
         layout="vertical"
-        ref={formRef}
+        form={form}
         initialValues={
-          getEndType() === EndType.ADMIN
+          isAdmin()
             ? {
                 userLoginAccount: 'admin',
                 userLoginPassword: '123456',
@@ -141,55 +144,64 @@ export default function LoginForm() {
               }
         }
       >
-        <Form.Item
-          field="userLoginAccount"
-          rules={[{ required: true, message: t['login.form.userName.errMsg'] }]}
-        >
-          <Input
-            prefix={<IconUser />}
-            placeholder={t['login.form.userName.placeholder']}
-            onPressEnter={onSubmitClick}
-          />
-        </Form.Item>
-        <Form.Item
-          field="userLoginPassword"
-          rules={[{ required: true, message: t['login.form.password.errMsg'] }]}
-        >
-          <Input.Password
-            prefix={<IconLock />}
-            placeholder={t['login.form.password.placeholder']}
-            onPressEnter={onSubmitClick}
-          />
-        </Form.Item>
-        <Form.Item>
-          <div className="flex">
-            <Form.Item
-              noStyle={true}
-              field="captcha"
-              rules={[
-                { required: true, message: t['login.form.password.errMsg'] },
-              ]}
-            >
-              <Input
-                prefix={<IconSafe />}
-                placeholder="请输入验证码答案"
-                onPressEnter={onSubmitClick}
-              />
-            </Form.Item>
-            <Image
-              width={135}
-              className="flex-shrink-0 cursor-pointer"
-              loader={(
-                <div className="flex justify-center">
-                  <Spin size={4} dot></Spin>
-                </div>
-              )}
-              preview={false}
-              src={getCaptcha(randomStr)}
-              onClick={() => setRandomStr(random(1, 99999))}
-            />
-          </div>
-        </Form.Item>
+        {!isRegister
+          ? (
+              <>
+                <Form.Item
+                  field="userLoginAccount"
+                  rules={[{ required: true, message: t['login.form.userName.errMsg'] }]}
+                >
+                  <Input
+                    prefix={<IconUser />}
+                    placeholder={t['login.form.userName.placeholder']}
+                    onPressEnter={onSubmitClick}
+                  />
+                </Form.Item>
+                <Form.Item
+                  field="userLoginPassword"
+                  rules={[{ required: true, message: t['login.form.password.errMsg'] }]}
+                >
+                  <Input.Password
+                    prefix={<IconLock />}
+                    placeholder={t['login.form.password.placeholder']}
+                    onPressEnter={onSubmitClick}
+                  />
+                </Form.Item>
+                <Form.Item>
+                  <div className="flex">
+                    <Form.Item
+                      noStyle={true}
+                      field="captcha"
+                      rules={[
+                        { required: true, message: t['login.form.password.errMsg'] },
+                      ]}
+                    >
+                      <Input
+                        prefix={<IconSafe />}
+                        placeholder="请输入验证码答案"
+                        onPressEnter={onSubmitClick}
+                      />
+                    </Form.Item>
+                    <Image
+                      width={135}
+                      className="flex-shrink-0 cursor-pointer"
+                      loader={(
+                        <div className="flex justify-center">
+                          <Spin size={4} dot></Spin>
+                        </div>
+                      )}
+                      preview={false}
+                      src={getCaptcha(randomStr)}
+                      onClick={() => setRandomStr(random(1, 99999))}
+                    />
+                  </div>
+                </Form.Item>
+              </>
+            )
+          : null}
+        {
+          isRegister && isClient() ? <Register form={form}></Register> : null
+        }
         <Space size={16} direction="vertical">
           {/* <div className={styles['login-form-password-actions']}>
             <Checkbox checked={rememberPassword} onChange={setRememberPassword}>
@@ -198,14 +210,31 @@ export default function LoginForm() {
             <Link>{t['login.form.forgetPassword']}</Link>
           </div> */}
           <Button type="primary" long onClick={onSubmitClick} loading={loading}>
-            {t['login.form.login']}
+            {/* {t['login.form.login']} */}
+            {isRegister ? '注册' : '登录'}
           </Button>
+          {
+            isClient()
+              ? (
+                  <Button
+                    type="text"
+                    long
+                    className={styles['login-form-register-btn']}
+                    onClick={() => {
+                      setIsRegister(!isRegister)
+                    }}
+                  >
+                    {isRegister ? '返回登录' : '注册'}
+                  </Button>
+                )
+              : null
+          }
           <Button
             type="text"
             long
             className={styles['login-form-register-btn']}
             onClick={() => {
-              if (getEndType() === EndType.ADMIN) {
+              if (isAdmin()) {
                 window.location.href = LoginPathMap.client
               }
               else {
@@ -215,7 +244,7 @@ export default function LoginForm() {
           >
             {/* {t['login.form.register']} */}
             切换
-            {getEndType() === EndType.ADMIN
+            {isAdmin()
               ? EndTypeTextMap[EndType.CLIENT]
               : EndTypeTextMap[EndType.ADMIN]}
           </Button>

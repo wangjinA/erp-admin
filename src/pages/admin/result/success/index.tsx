@@ -1,13 +1,15 @@
-import React from 'react';
-import { Typography, Result, Button, Steps } from '@arco-design/web-react';
-import useLocale from '@/utils/useLocale';
-import locale from './locale';
-import styles from './style/index.module.less';
+import { Button, Result, Steps, Typography } from '@arco-design/web-react'
+import React from 'react'
 
-const Step = Steps.Step;
+import locale from './locale'
+import styles from './style/index.module.less'
+
+import useLocale from '@/utils/useLocale'
+
+const Step = Steps.Step
 
 function Success() {
-  const t = useLocale(locale);
+  const t = useLocale(locale)
 
   return (
     <div>
@@ -55,7 +57,7 @@ function Success() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default Success;
+export default Success

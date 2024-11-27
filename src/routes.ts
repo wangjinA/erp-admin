@@ -130,6 +130,33 @@ export const routes: IRoute[] = [
       },
     ],
   },
+
+  {
+    name: 'client.account',
+    key: 'client/account',
+    children: [
+      {
+        name: 'client.account.users',
+        key: 'admin/account/users',
+      },
+      // {
+      //   name: 'client.account.member',
+      //   key: 'client/account/member',
+      // },
+      {
+        name: 'client.account.setting',
+        key: 'admin/account/setting',
+      },
+      {
+        name: 'client.account.role',
+        key: 'admin/account/role',
+      },
+      {
+        name: 'client.account.menu',
+        key: 'admin/account/menu',
+      },
+    ],
+  },
   {
     name: 'admin.business',
     key: 'admin/business',

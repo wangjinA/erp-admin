@@ -33,9 +33,16 @@ const baseAxios = axios.create({
   timeout,
 })
 
+const whiteList = [
+  '/api/tenantry/register',
+  '/api/tenantry/short/letter',
+  '/api/tenantry/login',
+  '/api/tenantry/refresh',
+]
+
 baseAxios.interceptors.request.use((config) => {
   const token = localStorage.getItem(getRequestEndInfo.tokenKey)
-  if (token) {
+  if (token && !whiteList.includes(config.url!)) {
     config.headers.token = token
   }
   // config.headers = {

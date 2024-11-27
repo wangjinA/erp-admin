@@ -44,6 +44,13 @@ const i18n = {
     'client.tools': '快捷工具',
     'client.tools.shipment': '出货修改',
 
+    'client.account': '账户管理',
+    'client.account.users': '用户管理',
+    'client.account.member': '会员管理',
+    'client.account.setting': '账户设置',
+    'client.account.role': '角色管理',
+    'client.account.menu': '菜单管理',
+
     'admin.entrepot': '仓库管理',
     'admin.entrepot.info': '仓库信息',
     'admin.entrepot.list': '仓库列表',
