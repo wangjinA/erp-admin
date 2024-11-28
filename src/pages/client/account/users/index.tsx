@@ -1,4 +1,4 @@
-import { Avatar, Image, Message, Switch } from '@arco-design/web-react'
+import { Image, Message, Switch } from '@arco-design/web-react'
 import { useRequest } from 'ahooks'
 import { omit } from 'lodash'
 import React, { useState } from 'react'
@@ -52,12 +52,11 @@ export default () => {
             schema: { label: '用户头像', field: 'headImg' },
             render(col) {
               return (
-                <Avatar>
-                  <Image
-                    alt="avatar"
-                    src={col}
-                  />
-                </Avatar>
+                <Image
+                  className="size-9"
+                  alt="avatar"
+                  src={col}
+                />
               )
             },
             control: 'upload',

@@ -1,4 +1,4 @@
-import { Avatar, Image, Switch } from '@arco-design/web-react'
+import { Switch } from '@arco-design/web-react'
 import { useRequest } from 'ahooks'
 import { omit } from 'lodash'
 import React, { useState } from 'react'
@@ -6,6 +6,7 @@ import React, { useState } from 'react'
 import { userAPI } from '@/api/admin/user'
 import { expressAPI } from '@/api/client/express'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
+import UserAvatar from '@/components/UserAvatar'
 import { WhetherOptions } from '@/constants'
 import { showMessage, showModal } from '@/utils'
 
@@ -57,12 +58,9 @@ export default () => {
             schema: { label: '用户头像', field: 'headImg' },
             render(col) {
               return (
-                <Avatar>
-                  <Image
-                    alt="avatar"
-                    src={col}
-                  />
-                </Avatar>
+                <UserAvatar
+                  src={col}
+                />
               )
             },
             control: 'upload',
@@ -75,6 +73,9 @@ export default () => {
             schema: { label: '是否为管理员', field: 'isAdmin' },
             render(col) {
               return (
+                // <Badge>
+                //   是
+                // </Badge>
                 <Switch
                   checked={!!col}
                   checkedText="是"
