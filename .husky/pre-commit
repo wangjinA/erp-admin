@@ -1,4 +1,11 @@
-   #!/bin/sh
-   . "$(dirname "$0")/_/husky.sh"
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
 
-   pnpm run build && git add .
+# 获取最近的提交消息
+commit_msg=$(git log -1 --pretty=%B)
+
+# 检查是否以 'feat:' 开头
+if echo "$commit_msg" | grep -q "^feat:"; then
+  # 如果是以 'feat:' 开头，执行指定命令
+  pnpm run build && git add .
+fi
