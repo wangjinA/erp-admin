@@ -20,6 +20,7 @@ import styles from './style/index.module.less'
 
 import { SuccessCode, getRequestEndInfo } from '@/api'
 import { getCaptcha, login } from '@/api/admin/user'
+import { userAPI } from '@/api/client/user'
 import {
   EndType,
   EndTypeTextMap,
@@ -29,6 +30,7 @@ import {
   isAdmin,
   isClient,
 } from '@/routes'
+import { showMessage } from '@/utils'
 import useLocale from '@/utils/useLocale'
 import useStorage from '@/utils/useStorage'
 
@@ -66,6 +68,18 @@ export default function LoginForm() {
       catch (error) {
         setRandomStr(random(1, 99999))
       }
+    },
+    {
+      manual: true,
+    },
+  )
+  const {
+    run: registerHandler,
+    loading: registerLoading,
+  } = useRequest(
+    async (params) => {
+      await showMessage(() => userAPI.register(params), '注册')
+      setIsRegister(false)
     },
     {
       manual: true,
@@ -109,7 +123,12 @@ export default function LoginForm() {
 
   function onSubmitClick() {
     form.validate().then((values) => {
-      loginHandler(values)
+      if (isRegister && isClient()) {
+        registerHandler(values)
+      }
+      else {
+        loginHandler(values)
+      }
     })
   }
 

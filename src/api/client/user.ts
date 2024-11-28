@@ -1,5 +1,5 @@
 import baseAxios from '..'
-import { APIResponse } from '../type'
+import { APIListResponse, APIResponse, IPageParams } from '../type'
 
 export const userAPI = {
   /**
@@ -26,4 +26,45 @@ export const userAPI = {
       body,
     )
   },
+  insertUser(body: Partial<ClientUserInfo>) {
+    return baseAxios.post<APIResponse<any>>(
+      '/api/tenantry/register',
+      body,
+    )
+  },
+  enableUser(params: {
+    id: number
+    enable: number
+  }) {
+    return baseAxios.get('/api/tenantry/user/enable', { params })
+  },
+  removeUser(params: {
+    id: number
+  }) {
+    return baseAxios.get('/api/tenantry/user/remove', { params })
+  },
+  updateUser(body: Partial<ClientUserInfo>) {
+    return baseAxios.post('/api/tenantry/user/update', body)
+  },
+  userList(body: Partial<ClientUserInfo> & IPageParams) {
+    return baseAxios.post<APIListResponse<ClientUserInfo>>('/api/tenantry/user/list', body)
+  },
+}
+
+export interface ClientUserInfo {
+
+  createBy: number
+  createTime: string
+  deleteStatus: number
+  id: number
+  isAdmin: number
+  remark: string
+  roleIdList: any[]
+  tenantryId: number
+  updateBy: number
+  updateTime: string
+  userLoginAccount: string
+  userName: string
+  userPassword: string
+  userStatus: number
 }

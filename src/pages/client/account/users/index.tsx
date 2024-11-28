@@ -1,31 +1,26 @@
-import { Avatar, Image, Switch } from '@arco-design/web-react'
+import { Avatar, Image, Message, Switch } from '@arco-design/web-react'
 import { useRequest } from 'ahooks'
 import { omit } from 'lodash'
 import React, { useState } from 'react'
 
-import { userAPI } from '@/api/admin/user'
-import { expressAPI } from '@/api/client/express'
+import { userAPI } from '@/api/client/user'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 import { WhetherOptions } from '@/constants'
-import { showMessage, showModal } from '@/utils'
+import { showMessage } from '@/utils'
 
 export default () => {
   const [current, setCurrent] = useState<any>()
   const ref = React.useRef<SearchTableRef>()
 
-  const { run, loading } = useRequest(
-    async (row) => {
-      await showModal({
-        content: '确定取消？',
-        okButtonProps: {
-          status: 'warning',
-        },
-      })
-      setCurrent(row)
-      await showMessage(() =>
-        expressAPI.cancelReject(row.id),
-      )
-      ref.current.refreshSearchTable()
+  const { run: changeEnable, loading } = useRequest(
+    async ({ id, enable }: {
+      id: any
+      enable: number
+    }) => {
+      await showMessage(() => userAPI.enableUser({
+        id,
+        enable,
+      }), '切换')
     },
     {
       manual: true,
@@ -37,10 +32,10 @@ export default () => {
       <SearchTable
         ref={ref}
         name="用户管理"
-        getListRequest={userAPI.list}
-        createRequest={userAPI.create}
-        removeRequest={userAPI.remove}
-        updateRequest={userAPI.update}
+        getListRequest={userAPI.userList}
+        createRequest={userAPI.insertUser}
+        removeRequest={userAPI.removeUser}
+        updateRequest={userAPI.updateUser}
         requestQueryTransform={params => ({
           ...omit(params, ['applyTime', 'rejectionTime']),
           // ...timeArrToObject(params.applyTime, 'applyStartTime', 'applyEndTime'),
@@ -73,9 +68,15 @@ export default () => {
           },
           {
             schema: { label: '是否为管理员', field: 'isAdmin' },
-            render(col) {
+            render(col, row) {
               return (
                 <Switch
+                  onClick={() => {
+                    Message.warning({
+                      content: '管理员不可取消',
+                      duration: 2000,
+                    })
+                  }}
                   checked={!!col}
                   checkedText="是"
                   uncheckedText="否"
@@ -124,12 +125,19 @@ export default () => {
           },
           {
             schema: { label: '状态', field: 'userStatus' },
-            render(col) {
+            render(col, row) {
               return (
                 <Switch
-                  checked={!col}
+                  defaultChecked={!col}
                   checkedText="启用"
                   uncheckedText="禁用"
+                  loading={loading}
+                  onChange={(e) => {
+                    changeEnable({
+                      id: row.id,
+                      enable: Number(!e),
+                    })
+                  }}
                 >
                 </Switch>
               )

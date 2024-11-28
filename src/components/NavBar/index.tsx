@@ -3,6 +3,7 @@ import {
   Button,
   Divider,
   Dropdown,
+  Image,
   Menu,
   Message,
   Select,
@@ -33,14 +34,11 @@ import Logo from '@/assets/logo.svg'
 import MessageBox from '@/components/MessageBox'
 import { GlobalContext } from '@/context'
 import defaultLocale from '@/locale'
+import { generatePermission, toLoginPage } from '@/routes'
 import { GlobalState } from '@/store'
 import useLocale from '@/utils/useLocale'
 
-
-
-
 import useStorage from '@/utils/useStorage'
-import { generatePermission, toLoginPage } from '@/routes'
 
 function Navbar({ show }: { show: boolean }) {
   const t = useLocale()
@@ -94,12 +92,12 @@ function Navbar({ show }: { show: boolean }) {
   }
 
   const handleChangeRole = () => {
-    const newRole = role === 'admin' ? 'user' : 'admin'
-    setRole(newRole)
+    // const newRole = role === 'admin' ? 'user' : 'admin'
+    // setRole(newRole)
   }
 
   const droplist = (
-    <Menu onClickMenuItem={onMenuItemClick}>
+    <Menu>
       <Menu.Item onClick={handleChangeRole} key="switch role">
         {/* <IconTag className={styles['dropdown-icon']} /> */}
         <IconUser className={styles['dropdown-icon']} />
@@ -148,7 +146,13 @@ function Navbar({ show }: { show: boolean }) {
       </Menu.SubMenu> */}
 
       <Divider style={{ margin: '4px 0' }} />
-      <Menu.Item key="logout">
+      <Menu.Item
+        key="logout"
+        onClick={() => {
+          loginExit()
+          logout()
+        }}
+      >
         <IconPoweroff className={styles['dropdown-icon']} />
         {/* {t['navbar.logout']} */}
         退出登录
@@ -217,15 +221,27 @@ function Navbar({ show }: { show: boolean }) {
         {userInfo && (
           <li>
             <Dropdown droplist={droplist} position="br" disabled={userLoading}>
-              <Avatar size={32} style={{ cursor: 'pointer' }}>
+              <div className="cursor-pointer">
                 {userLoading
                   ? (
                       <IconLoading />
                     )
                   : (
-                      <img alt="avatar" src={userInfo.headImg} />
+                      userInfo.headImg
+                        ? (
+                            <Image
+                              error={
+                                <Avatar className="bg-blue-500" size={32}><IconUser /></Avatar>
+                              }
+                              className="size-9 block rounded-full"
+                              alt="avatar"
+                              preview={false}
+                              src={userInfo.headImg}
+                            />
+                          )
+                        : <Avatar className="bg-blue-500" size={32}><IconUser /></Avatar>
                     )}
-              </Avatar>
+              </div>
             </Dropdown>
           </li>
         )}

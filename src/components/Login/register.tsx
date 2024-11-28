@@ -79,7 +79,7 @@ export default (props: { form: FormInstance }) => {
               suffix={(
                 <Button
                   disabled={codeTime > 0}
-                  className="-mr-[13px]"
+                  className="-mr-[12px]"
                   loading={sendCodeLoading}
                   status="warning"
                   onClick={() => {

@@ -3,8 +3,6 @@ import enUS from '@arco-design/web-react/es/locale/en-US'
 import zhCN from '@arco-design/web-react/es/locale/zh-CN'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
-import { isEmpty } from 'lodash'
-import Mock from 'mockjs'
 import React, { useEffect } from 'react'
 
 import ReactDOM from 'react-dom'
@@ -17,24 +15,17 @@ import { GlobalContext } from './context'
 import PageLayout from './layout'
 import AdminLogin from './pages/admin/login'
 import ClientLogin from './pages/client/login'
-import { generatePermission, toLoginPage } from './routes'
+import { toLoginPage } from './routes'
 import rootReducer from './store'
 import './style/global.less'
-// import Login from './components/Login';
 import changeTheme from './utils/changeTheme'
 import checkLogin from './utils/checkLogin'
 import './utils/index'
 import useStorage from './utils/useStorage'
-// import './mock';
-
-import userPNG from '@/assets/user.png'
 
 dayjs.extend(duration)
 
-// import { AccessDB, IndexedDB, initDB } from 'react-indexed-db-hook';
-// import { DBConfig } from './db';
 const store = createStore(rootReducer)
-// initDB(DBConfig);
 function Index() {
   const [lang, setLang] = useStorage('arco-lang', 'zh-CN')
   const [theme, setTheme] = useStorage('arco-theme', 'light')
@@ -51,29 +42,11 @@ function Index() {
   }
 
   async function fetchUserInfo() {
-    const userRole = window.localStorage.getItem('userRole') || 'admin'
-    const userInfo = {
-      name: 'admin',
-      avatar: userPNG,
-      email: 'wangliqun@email.com',
-      job: 'frontend',
-      jobName: '前端开发工程师',
-      organization: 'Frontend',
-      organizationName: '前端',
-      location: 'beijing',
-      locationName: '北京',
-      introduction: '王力群并非是一个真实存在的人。',
-      personalWebsite: 'https://www.arco.design',
-      verified: true,
-      phoneNumber: 123123,
-      accountId: 123123,
-      registrationTime: Mock.Random.datetime('yyyy-MM-dd HH:mm:ss'),
-      permissions: generatePermission(userRole),
-    }
+    console.log(store.getState().userInfo)
 
-    if (!isEmpty(store.getState().userInfo)) {
-      return
-    }
+    // if (!isEmpty(store.getState().userInfo)) {
+    //   return
+    // }
     store.dispatch({
       type: 'update-userInfo',
       payload: { userLoading: true },
