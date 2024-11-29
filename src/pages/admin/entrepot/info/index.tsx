@@ -1,14 +1,11 @@
 import {
-  Avatar,
   Button,
   Grid,
-  List,
   Modal,
   Space,
   Typography,
 } from '@arco-design/web-react'
 import { IconCheck, IconDelete, IconPlus } from '@arco-design/web-react/icon'
-import classNames from 'classnames'
 
 import EntrepotList from '../components/EntrepotList'
 
@@ -16,6 +13,7 @@ import { useEntrepotInfo } from './hooks'
 import { CreateEntrepotSchema, CreateRacksSchema } from './schema'
 
 import FilterForm from '@/components/FilterForm'
+import List from '@/components/List'
 import PopconfirmDelete from '@/components/PopconfirmDelete'
 import {
   FormModalCommonProps,
@@ -84,119 +82,52 @@ export default () => {
       <Grid.Row gutter={[20, 0]}>
         <Grid.Col span={6} className="border-r border-neutral-3 pr-4">
           <EntrepotList entrepotInfoHandle={entrepotInfoHandle}></EntrepotList>
-          {/* <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">
-            <Typography.Title heading={6} className="mb-0">
-              仓库列表
-            </Typography.Title>
-            <Button
-              icon={<IconPlus></IconPlus>}
-              type="primary"
-              size="small"
-              className="ml-auto"
-              onClick={() => {
-                setShowTypeEntrepot(ShowFormType.create)
-              }}
-            >
-              新增
-            </Button>
-          </Typography.Paragraph>
-          <List>
-            {entrepotList?.map(item => (
-              <div
-                key={item.id}
-                onClick={() => {
-                  setActiveEntrepot(item)
-                }}
-              >
-                <List.Item.Meta
-                  style={{ height: 76 }}
-                  className={classNames(
-                    activeEntrepot?.id === item.id
-                      ? 'bg-gray-100 dark:bg-zinc-500'
-                      : '',
-                    'hover:bg-gray-100 dark:hover:bg-zinc-500 cursor-pointer px-2 border-b border-neutral-3',
-                  )}
-                  avatar={<Avatar>{item.consignee[0]}</Avatar>}
-                  title={item.entrepotName}
-                  description={item.detailedAddress}
-                >
-                </List.Item.Meta>
-                <div>
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      setShowTypeEntrepot(ShowFormType.edit)
-                      formEntrepotRef.setFieldsValue(item)
-                    }}
-                  >
-                    编辑
-                  </Button>
-                  <PopconfirmDelete
-                    onOk={() => {
-                      removeEntrepot(item.id)
-                    }}
-                    buttonProps={{
-                      loading: removeEntrepotLoading,
-                    }}
-                  >
-                  </PopconfirmDelete>
-                </div>
-              </div>
-            ))}
-          </List> */}
         </Grid.Col>
 
-        {showTypeRacks === ShowFormType.create && !racksList?.length ? null : (
-          <Grid.Col span={6} className="border-r border-neutral-3 pr-4">
-            <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">
-              <Typography.Title heading={6} className="mb-0">
-                货架列表
-              </Typography.Title>
-              <Button
-                icon={<IconPlus></IconPlus>}
-                type="primary"
-                size="small"
-                className="ml-auto"
-                disabled={showTypeRacks === ShowFormType.create}
-                onClick={() => {
-                  formRacksRef.resetFields()
-                  setActiveRacks(null)
-                }}
-              >
-                新增
-              </Button>
-            </Typography.Paragraph>
-            {/* <Input.Search
+        {(showTypeRacks === ShowFormType.create && !racksList?.length)
+          ? null
+          : (
+              <Grid.Col span={6} className="border-r border-neutral-3 pr-4">
+                <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">
+                  <Typography.Title heading={6} className="mb-0">
+                    货架列表
+                  </Typography.Title>
+                  <Button
+                    icon={<IconPlus></IconPlus>}
+                    type="primary"
+                    size="small"
+                    className="ml-auto"
+                    disabled={showTypeRacks === ShowFormType.create}
+                    onClick={() => {
+                      formRacksRef.resetFields()
+                      setActiveRacks(null)
+                    }}
+                  >
+                    新增
+                  </Button>
+                </Typography.Paragraph>
+                {/* <Input.Search
             className="mb-4"
             placeholder="请输入仓位名称"
           ></Input.Search> */}
-            <List size="small">
-              {racksList?.map(item => (
-                <div
-                  key={item.id}
-                  onClick={() => {
-                    setActiveRacks(item)
+                <List
+                  active={activeRacks?.id}
+                  onActive={(item) => {
+                    setActiveRacks(item as any)
                     formRacksRef.setFieldsValue(item)
                   }}
+                  data={
+                    racksList?.map(item => ({
+                      ...item,
+                      name: item.storageRacksName,
+                      description: item.storageRacksCode,
+                      avatar: item.locationPrefix,
+                    }))
+                  }
                 >
-                  <List.Item.Meta
-                    style={{ height: 76 }}
-                    className={classNames(
-                      activeRacks?.id === item.id
-                        ? 'bg-gray-100 dark:bg-zinc-500'
-                        : '',
-                      'hover:bg-gray-100 dark:hover:bg-zinc-500 cursor-pointer px-2 border-b border-neutral-3',
-                    )}
-                    avatar={<Avatar>{item.locationPrefix}</Avatar>}
-                    title={item.storageRacksName}
-                    description={item.storageRacksCode}
-                  >
-                  </List.Item.Meta>
-                </div>
-              ))}
-            </List>
-          </Grid.Col>
-        )}
+                </List>
+              </Grid.Col>
+            )}
         {showTypeRacks && (
           <Grid.Col span={12} className="pr-6">
             <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">

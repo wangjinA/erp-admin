@@ -1,0 +1,22 @@
+.syb-list {
+  width: 100%;
+
+  :global {
+    .arco-card {
+      border-left: 2px transparent solid;
+
+      &:hover,
+      &.active {
+        border-left: 2px #165DFF solid;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+
+        .syb-list-name {
+          color: #165DFF;
+          font-weight: 700;
+        }
+      }
+    }
+
+  }
+}

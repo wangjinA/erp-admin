@@ -1,8 +1,6 @@
 import {
-  Avatar,
   Button,
   Grid,
-  List,
   Modal,
   Tree,
   Typography,
@@ -14,7 +12,6 @@ import { IconPlus } from '@arco-design/web-react/icon'
 
 import { useRequest } from 'ahooks'
 
-import classNames from 'classnames'
 import { useState } from 'react'
 
 import { MenuTypeTag } from '../menu'
@@ -23,7 +20,9 @@ import { useMenuTree } from '../menu/hooks'
 import { Role, roleAPI } from '@/api/client/role'
 import CreateWrap, { ActionsContext } from '@/components/CreateWrap'
 import FilterForm from '@/components/FilterForm'
+import List from '@/components/List'
 import PopconfirmDelete from '@/components/PopconfirmDelete'
+import Title from '@/components/Title'
 import {
   FormModalCommonProps,
   ShowFormType,
@@ -62,10 +61,7 @@ function Permission() {
           <div className="bg-white p-4 pb-6">
             <Grid.Row gutter={[20, 0]}>
               <Grid.Col span={6} className="border-r border-neutral-3 pr-4">
-                <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">
-                  <Typography.Title heading={6} className="mb-0">
-                    用户组
-                  </Typography.Title>
+                <Title title="用户组">
                   <Button
                     icon={<IconPlus></IconPlus>}
                     type="primary"
@@ -78,11 +74,24 @@ function Permission() {
                   >
                     添加
                   </Button>
-                </Typography.Paragraph>
+                </Title>
                 {/* <Input.Search
               className="mb-4"
               placeholder="请输入仓库名称"
             ></Input.Search> */}
+                <List
+                  loading={rolesLoading || infoHandle.loading}
+                  data={roles?.map(item => ({
+                    name: item.roleName,
+                    id: item.id,
+                  }))}
+                  active={current?.id}
+                  onActive={(item) => {
+                    infoHandle.run(item.id)
+                  }}
+                >
+                </List>
+                {/*
                 <List>
                   {roles?.map(item => (
                     <div
@@ -93,7 +102,7 @@ function Permission() {
                     >
                       <List.Item.Meta
                         style={{ height: 76 }}
-                        className={classNames({ 'bg-gray-100': current?.id === item.id }, 'hover:bg-gray-100 dark:hover:bg-zinc-500 cursor-pointer px-2 border-b border-neutral-3')}
+                        className={classNames(current?.id === item.id ? 'bg-gray-100 border-b-0' : '', 'hover:bg-gray-100 dark:hover:bg-zinc-500 cursor-pointer px-2 border-b border-neutral-3 rounded')}
                         avatar={<Avatar>{item.roleName}</Avatar>}
                         title={item.roleName}
                         description="系统分组"
@@ -101,7 +110,7 @@ function Permission() {
                       </List.Item.Meta>
                     </div>
                   ))}
-                </List>
+                </List> */}
               </Grid.Col>
 
               <Grid.Col span={9} className="border-neutral-3 pr-4">

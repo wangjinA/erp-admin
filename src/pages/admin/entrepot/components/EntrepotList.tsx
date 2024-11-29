@@ -1,7 +1,5 @@
 import {
-  Avatar,
   Button,
-  List,
   Typography,
 } from '@arco-design/web-react'
 
@@ -9,11 +7,11 @@ import {
   IconPlus,
 } from '@arco-design/web-react/icon'
 
-import classNames from 'classnames'
-
 import { useEntrepotInfo } from '../info/hooks'
 
-import PopconfirmDelete from '@/components/PopconfirmDelete'
+import { Entrepot } from '@/api/admin/entrepot'
+import List from '@/components/List'
+import Title from '@/components/Title'
 import { ShowFormType } from '@/constants'
 
 export default (props: {
@@ -53,26 +51,25 @@ export default (props: {
   return (
     <>
       <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">
-        <Typography.Title heading={6} className="mb-0">
-          仓库列表
-        </Typography.Title>
-        <Button
-          icon={<IconPlus></IconPlus>}
-          type="primary"
-          size="small"
-          className="ml-auto"
-          onClick={() => {
-            setShowTypeEntrepot(ShowFormType.create)
-          }}
-        >
-          新增
-        </Button>
+        <Title title="仓库列表" className="w-full">
+          <Button
+            icon={<IconPlus></IconPlus>}
+            type="primary"
+            size="small"
+            className="ml-auto"
+            onClick={() => {
+              setShowTypeEntrepot(ShowFormType.create)
+            }}
+          >
+            新增
+          </Button>
+        </Title>
       </Typography.Paragraph>
       {/* <Input.Search
             className="mb-4"
             placeholder="请输入仓库名称"
           ></Input.Search> */}
-      <List>
+      {/* <List>
         {entrepotList?.map(item => (
           <div
             key={item.id}
@@ -115,6 +112,24 @@ export default (props: {
             </div>
           </div>
         ))}
+      </List> */}
+
+      <List<Entrepot>
+        loading={entrepotLoading}
+        active={activeEntrepot?.id}
+        onActive={(item) => {
+          setActiveEntrepot(item)
+        }}
+        data={
+          entrepotList?.map(item => ({
+            ...item,
+            name: item.entrepotName,
+            description: item.detailedAddress,
+            avatar: item.consignee[0],
+          }))
+        }
+        onUpdate={() => {}}
+      >
       </List>
     </>
   )

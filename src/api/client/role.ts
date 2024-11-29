@@ -20,10 +20,10 @@ export interface Role {
 
 export const roleAPI = {
   get(body?: Partial<Role & IPageParams>) {
-    return baseAxios.post<APIListResponse<Role>>('/api/role/list', body)
+    return baseAxios.post<APIListResponse<Role>>('/api/tenantry/role/list', body)
   },
   create(body: Partial<Role>) {
-    return baseAxios.post<APIResponse>('/api/role/insert', {
+    return baseAxios.post<APIResponse>('/api/tenantry/role/insert', {
       menuIds: [],
       roleCode: random(0, 1000).toString(),
       systemAcquiesce: 0,
@@ -32,12 +32,12 @@ export const roleAPI = {
     })
   },
   remove(id) {
-    return baseAxios.get<APIResponse>(`/api/role/remove/${id}`)
+    return baseAxios.get<APIResponse>(`/api/tenantry/role/remove/${id}`)
   },
   update(body: Partial<Role>) {
-    return baseAxios.post<APIResponse>('/api/role/update', body)
+    return baseAxios.post<APIResponse>('/api/tenantry/role/update', body)
   },
   info(id: any) {
-    return baseAxios.get<APIResponse>(`/api/role/info/${id}`)
+    return baseAxios.get<APIResponse>(`/api/tenantry/role/info/${id}`)
   },
 }

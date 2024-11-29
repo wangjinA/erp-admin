@@ -1,8 +1,6 @@
 import {
-  Avatar,
   Button,
   Grid,
-  List,
   Modal,
   Tree,
   Typography,
@@ -14,7 +12,6 @@ import { IconPlus } from '@arco-design/web-react/icon'
 
 import { useRequest } from 'ahooks'
 
-import classNames from 'classnames'
 import { useState } from 'react'
 
 import { MenuTypeTag } from '../menu'
@@ -23,6 +20,7 @@ import { useMenuTree } from '../menu/hooks'
 import { Role, roleAPI } from '@/api/admin/role'
 import CreateWrap, { ActionsContext } from '@/components/CreateWrap'
 import FilterForm from '@/components/FilterForm'
+import List from '@/components/List'
 import PopconfirmDelete from '@/components/PopconfirmDelete'
 import {
   FormModalCommonProps,
@@ -83,7 +81,7 @@ function Permission() {
               className="mb-4"
               placeholder="请输入仓库名称"
             ></Input.Search> */}
-                <List>
+                {/* <List>
                   {roles?.map(item => (
                     <div
                       key={item.id}
@@ -101,6 +99,18 @@ function Permission() {
                       </List.Item.Meta>
                     </div>
                   ))}
+                </List> */}
+                <List
+                  loading={rolesLoading || infoHandle.loading}
+                  data={roles?.map(item => ({
+                    name: item.roleName,
+                    id: item.id,
+                  }))}
+                  active={current?.id}
+                  onActive={(item) => {
+                    infoHandle.run(item.id)
+                  }}
+                >
                 </List>
               </Grid.Col>
 
