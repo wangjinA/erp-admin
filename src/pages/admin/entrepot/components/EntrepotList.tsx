@@ -13,6 +13,7 @@ import { Entrepot } from '@/api/admin/entrepot'
 import List from '@/components/List'
 import Title from '@/components/Title'
 import { ShowFormType } from '@/constants'
+import { showModal } from '@/utils'
 
 export default (props: {
   entrepotInfoHandle: ReturnType<typeof useEntrepotInfo>
@@ -128,7 +129,18 @@ export default (props: {
             avatar: item.consignee[0],
           }))
         }
-        onUpdate={() => {}}
+        onUpdate={(item) => {
+          setShowTypeEntrepot(ShowFormType.edit)
+          formEntrepotRef.setFieldsValue(item)
+        }}
+        onDelete={async (item) => {
+          await showModal({
+            title: '删除仓库',
+            content: `是否删除仓库：${item.entrepotName}`,
+            okText: '删除',
+          })
+          removeEntrepot(item.id)
+        }}
       >
       </List>
     </>

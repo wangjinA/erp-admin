@@ -9,6 +9,10 @@ export interface Role {
   deleteStatus: number
   id: number
   menuIds: number[]
+  roleUserInfoVOList: {
+    userId: number
+    userName: string
+  }[]
   remark: string
   roleCode: string
   roleName: string

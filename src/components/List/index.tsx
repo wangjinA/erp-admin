@@ -21,19 +21,29 @@ interface ListProps<T> {
   onUpdate?: (row: (T & DataItem)) => void
 }
 
-export const DropList = (
-  <>
-    <Menu.Item key="update">
-      <IconEdit />
-      <Typography.Text className="ml-2">修改</Typography.Text>
+export function DropList({ actionMap }: { actionMap: Record<'onUpdate' | 'onDelete', any> }) {
+  return (
+    <>
+      {actionMap.onUpdate
+        ? (
+            <Menu.Item key="update">
+              <IconEdit />
+              <Typography.Text className="ml-2">修改</Typography.Text>
 
-    </Menu.Item>
-    <Menu.Item key="delete">
-      <IconDelete />
-      <Typography.Text className="ml-2">删除</Typography.Text>
-    </Menu.Item>
-  </>
-)
+            </Menu.Item>
+          )
+        : null }
+      {actionMap.onDelete
+        ? (
+            <Menu.Item key="delete">
+              <IconDelete />
+              <Typography.Text className="ml-2">删除</Typography.Text>
+            </Menu.Item>
+          )
+        : null }
+    </>
+  )
+}
 
 function List<T>(props: ListProps<T>) {
   const { data, active, loading, onUpdate, onDelete, onActive, rowKey = 'id' } = props
@@ -86,7 +96,11 @@ function List<T>(props: ListProps<T>) {
                       }
                     }}
                     >
-                      {DropList}
+                      <DropList actionMap={{
+                        onUpdate,
+                        onDelete,
+                      }}
+                      />
                     </Menu>
                   )}
                   trigger="click"

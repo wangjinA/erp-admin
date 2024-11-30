@@ -20,6 +20,7 @@ import {
   ShowFormType,
   ShowFormTypeMap,
 } from '@/constants'
+import { showModal } from '@/utils'
 
 const createInitialValue = {
   entrepotName: '测试111',
@@ -111,6 +112,7 @@ export default () => {
             placeholder="请输入仓位名称"
           ></Input.Search> */}
                 <List
+                  loading={rackLoading}
                   active={activeRacks?.id}
                   onActive={(item) => {
                     setActiveRacks(item as any)
@@ -124,6 +126,18 @@ export default () => {
                       avatar: item.locationPrefix,
                     }))
                   }
+                  // onUpdate={(item) => {
+                  //   setShowTypeEntrepot(ShowFormType.edit)
+                  //   formEntrepotRef.setFieldsValue(item)
+                  // }}
+                  onDelete={async (item) => {
+                    await showModal({
+                      title: '删除货架',
+                      content: `是否删除货架：${item.storageRacksName}`,
+                      okText: '删除',
+                    })
+                    removeRacks(item.id)
+                  }}
                 >
                 </List>
               </Grid.Col>

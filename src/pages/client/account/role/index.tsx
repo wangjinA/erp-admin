@@ -2,6 +2,7 @@ import {
   Button,
   Grid,
   Modal,
+  Tag,
   Tree,
   Typography,
 } from '@arco-design/web-react'
@@ -36,6 +37,19 @@ function Permission() {
   const [current, setCurrent] = useState<Role>(null)
   const [formRef] = useForm()
   const menuTreeHandle = useMenuTree()
+
+  const infoHandle = useRequest((id) => {
+    if (!id) {
+      return
+    }
+    return roleAPI.info(id).then((r: any) => {
+      setCheckedKeys(r.data?.data?.menuIds || [])
+      setCurrent(r.data.data)
+    })
+  }, {
+    manual: true,
+  })
+
   const { data: roles, loading: rolesLoading, run } = useRequest(() => {
     return roleAPI
       .get({
@@ -43,24 +57,19 @@ function Permission() {
         pageSize: 30,
       })
       .then((r) => {
-        setCurrent(r.data.data.list[0])
+        const first = r.data.data.list[0]
+        setCurrent(first)
+        infoHandle.run(first?.id)
         return r.data.data.list
       })
   })
-  const infoHandle = useRequest((id) => {
-    return roleAPI.info(id).then((r: any) => {
-      setCheckedKeys(r.data?.data?.menuIds || [])
-      setCurrent(r.data.data)
-    })
-  })
-
   return (
     <CreateWrap formRef={formRef} createRequest={roleAPI.create} updateRequest={roleAPI.update} refreshRequest={run}>
       <ActionsContext.Consumer>
         {({ showType, setShowType, createAction, updateAction }) => (
-          <div className="bg-white p-4 pb-6">
-            <Grid.Row gutter={[20, 0]}>
-              <Grid.Col span={6} className="border-r border-neutral-3 pr-4">
+          <div className="bg-white p-4 h-[var(--syb-content-height)] test-1">
+            <Grid.Row gutter={[20, 0]} className="h-full">
+              <Grid.Col span={6} className="min-h-full border-r border-neutral-3 pr-4">
                 <Title title="用户组">
                   <Button
                     icon={<IconPlus></IconPlus>}
@@ -113,7 +122,7 @@ function Permission() {
                 </List> */}
               </Grid.Col>
 
-              <Grid.Col span={9} className="border-neutral-3 pr-4">
+              <Grid.Col span={9} className="min-h-full border-r border-neutral-3 pr-4">
                 <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">
                   <Typography.Title heading={6} className="mb-0">
                     功能权限
@@ -163,6 +172,15 @@ function Permission() {
                     保存
                   </Button>
                 </div>
+              </Grid.Col>
+              <Grid.Col span={9} className="min-h-full">
+                {
+                  current?.roleUserInfoVOList?.map(item => (
+                    <Tag checkable={true} color="arcoblue" checked={true}>
+                      {item.userName}
+                    </Tag>
+                  ))
+                }
               </Grid.Col>
             </Grid.Row>
             <Modal
