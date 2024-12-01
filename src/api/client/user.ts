@@ -28,7 +28,7 @@ export const userAPI = {
   },
   insertUser(body: Partial<ClientUserInfo>) {
     return baseAxios.post<APIResponse<any>>(
-      '/api/tenantry/register',
+      '/api/tenantry/user/insert',
       body,
     )
   },

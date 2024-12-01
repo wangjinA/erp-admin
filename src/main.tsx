@@ -11,11 +11,13 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { createStore } from 'redux'
 
 import { userAPI } from './api/admin/user'
+import { menuAPI } from './api/client/menu'
 import { GlobalContext } from './context'
 import PageLayout from './layout'
+import { listToTree } from './pages/admin/account/menu/hooks'
 import AdminLogin from './pages/admin/login'
 import ClientLogin from './pages/client/login'
-import { toLoginPage } from './routes'
+import { isClient, toLoginPage } from './routes'
 import rootReducer from './store'
 import './style/global.less'
 import changeTheme from './utils/changeTheme'
@@ -93,9 +95,21 @@ function Index() {
     }
   }
 
+  async function fetchClientMenuList() {
+    if (isClient()) {
+      const res = await menuAPI.list()
+      const list = listToTree(res.data.data.list)
+      store.dispatch({
+        type: 'set-client-menu-list',
+        payload: { clientMenuList: list },
+      })
+    }
+  }
+
   useEffect(() => {
     if (checkLogin()) {
       fetchUserInfo()
+      fetchClientMenuList()
     }
     else {
       toLoginPage()

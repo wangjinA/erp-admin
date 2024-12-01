@@ -44,4 +44,25 @@ export const roleAPI = {
   info(id: any) {
     return baseAxios.get<APIResponse>(`/api/tenantry/role/info/${id}`)
   },
+  getRoleUsers(roleId: any) {
+    return baseAxios.get<APIResponse>(`/api/tenantry/role/user/info/${roleId}`)
+  },
+  /**
+   * 保存角色菜单
+   */
+  saveRoleMenu(body: {
+    roleId: number
+    menuIdList: number[]
+  }) {
+    return baseAxios.post<APIResponse>('/api/tenantry/role/menu/save/or/update', body)
+  },
+  /**
+   * 保存角色用户
+   */
+  saveRoleUser(body: {
+    roleId: number
+    userIdList: number[]
+  }) {
+    return baseAxios.post<APIResponse>('/api/tenantry/role/user/save/or/update', body)
+  },
 }

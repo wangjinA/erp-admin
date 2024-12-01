@@ -1,11 +1,11 @@
-import { Image, Message, Switch } from '@arco-design/web-react'
+import { Switch } from '@arco-design/web-react'
 import { useRequest } from 'ahooks'
 import { omit } from 'lodash'
 import React, { useState } from 'react'
 
 import { userAPI } from '@/api/client/user'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
-import { WhetherOptions } from '@/constants'
+import { ShowFormType } from '@/constants'
 import { showMessage } from '@/utils'
 
 export default () => {
@@ -36,6 +36,7 @@ export default () => {
         createRequest={userAPI.insertUser}
         removeRequest={userAPI.removeUser}
         updateRequest={userAPI.updateUser}
+        editTransform={params => omit(params, ['userPassword'])}
         requestQueryTransform={params => ({
           ...omit(params, ['applyTime', 'rejectionTime']),
           // ...timeArrToObject(params.applyTime, 'applyStartTime', 'applyEndTime'),
@@ -48,80 +49,97 @@ export default () => {
               return index + 1
             },
           },
-          {
-            schema: { label: '用户头像', field: 'headImg' },
-            render(col) {
-              return (
-                <Image
-                  className="size-9"
-                  alt="avatar"
-                  src={col}
-                />
-              )
-            },
-            control: 'upload',
-            controlProps: {
-              limit: 1,
-            },
-            isCreate: true,
-          },
-          {
-            schema: { label: '是否为管理员', field: 'isAdmin' },
-            render(col, row) {
-              return (
-                <Switch
-                  onClick={() => {
-                    Message.warning({
-                      content: '管理员不可取消',
-                      duration: 2000,
-                    })
-                  }}
-                  checked={!!col}
-                  checkedText="是"
-                  uncheckedText="否"
-                >
-                </Switch>
-              )
-            },
-            control: 'select',
-            controlProps: {
-              options: WhetherOptions,
-            },
-          },
+          // {
+          //   schema: { label: '用户头像', field: 'headImg' },
+          //   render(col) {
+          //     return (
+          //       <UserAvatar src={col}></UserAvatar>
+          //     )
+          //   },
+          //   control: 'upload',
+          //   controlProps: {
+          //     limit: 1,
+          //   },
+          //   isCreate: true,
+          // },
+          // {
+          //   schema: { label: '是否为管理员', field: 'isAdmin' },
+          //   render(col, row) {
+          //     return (
+          //       <Switch
+          //         onClick={() => {
+          //           Message.warning({
+          //             content: '管理员不可取消',
+          //             duration: 2000,
+          //           })
+          //         }}
+          //         checked={!!col}
+          //         checkedText="是"
+          //         uncheckedText="否"
+          //       >
+          //       </Switch>
+          //     )
+          //   },
+          //   control: 'select',
+          //   controlProps: {
+          //     options: WhetherOptions,
+          //   },
+          // },
           {
             schema: { label: '姓名', field: 'userName' },
             isCreate: true,
             isSearch: true,
+            formItemProps: {
+              required: true,
+            },
           },
-          {
-            schema: { label: '角色', field: 'roleName' },
-          },
+          // {
+          //   schema: { label: '角色', field: 'roleName' },
+          // },
           {
             schema: { label: '登录账号', field: 'userLoginAccount' },
             isCreate: true,
             isSearch: true,
+            dynamicHandle({ showType }) {
+              return {
+                formItemProps: {
+                  required: true,
+                  disabled: showType === ShowFormType.edit,
+                },
+              }
+            },
           },
           {
             schema: { label: '密码', field: 'userPassword' },
             isCreate: true,
             hideTable: true,
-            controlProps: {
-              type: 'password',
+            dynamicHandle({ showType }) {
+              return {
+                controlProps: {
+                  required: showType === ShowFormType.create,
+                  type: 'password',
+                  placeholder: showType === ShowFormType.create ? '请输入密码' : '不修改请留空',
+                },
+              }
             },
           },
           {
-            schema: { label: '用户组', field: 'roleIds' },
+            schema: { label: '用户角色', field: 'roleIdList' },
             isCreate: true,
             control: 'role',
+            formItemProps: {
+              required: true,
+            },
             controlProps: {
               mode: 'multiple',
             },
           },
-          {
-            schema: { label: '电话', field: 'telephone' },
-            isCreate: true,
-            isSearch: true,
-          },
+          // {
+          //   schema: { label: '电话', field: 'telephone' },
+          //   isCreate: true,
+          //   isSearch: true,
+          //   render: e => e || '-',
+          // },
           {
             schema: { label: '状态', field: 'userStatus' },
             render(col, row) {
@@ -141,6 +159,12 @@ export default () => {
                 </Switch>
               )
             },
+          },
+          {
+            schema: { label: '备注', field: 'remark' },
+            isCreate: true,
+            render: e => e || '-',
+            control: 'textarea',
           },
           // {
           //   title: '操作',

@@ -1,9 +1,9 @@
 import baseAxios from '..'
-import { APIListResponse, IPageParams } from '../type'
+import { APIListResponse } from '../type'
 
 export const menuAPI = {
-  list(body: Partial<MenuItem> & IPageParams) {
-    return baseAxios.post<APIListResponse<MenuItem>>('/api/tenantry/menu/list/all', body)
+  list() {
+    return baseAxios.get<APIListResponse<MenuItem>>('/api/tenantry/menu/list/all')
   },
   create(body: MenuItem) {
     return baseAxios.post('/api/tenantry/menu/insert', body)

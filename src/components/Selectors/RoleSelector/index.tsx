@@ -6,17 +6,20 @@ import React from 'react'
 import { DictOptions } from '../DictSelector'
 
 import { roleAPI } from '@/api/admin/role'
+import { roleAPI as clientRoleAPI } from '@/api/client/role'
+import { isAdmin } from '@/routes'
 
 type RoleSelectorProps = SelectProps
 
 let cache: Promise<DictOptions[]>
+let clientCache: Promise<DictOptions[]>
 
-export function getRoleOptions() {
+function getRoleOptions() {
   cache
     = cache
     || roleAPI.get({
       pageNum: 1,
-      pageSize: 100,
+      pageSize: 50,
     })
       .then(res =>
         res.data.data?.list.map(item => ({
@@ -27,9 +30,25 @@ export function getRoleOptions() {
   return cache
 }
 
+function getClientRoleOptions() {
+  clientCache
+    = clientCache
+    || clientRoleAPI.get({
+      pageNum: 1,
+      pageSize: 50,
+    })
+      .then(res =>
+        res.data.data?.list.map(item => ({
+          label: item.roleName,
+          value: item.id,
+        })),
+      )
+  return clientCache
+}
+
 export function useRoleOptions() {
   const res = useRequest(() => {
-    return getRoleOptions()
+    return isAdmin() ? getRoleOptions() : getClientRoleOptions()
   })
   return res
 }

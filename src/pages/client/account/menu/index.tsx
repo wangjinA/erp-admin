@@ -4,12 +4,11 @@ import { useRequest } from 'ahooks'
 import { omit } from 'lodash'
 import React, { useState } from 'react'
 
-import { MenuSize, listToTree } from './hooks'
-
 import { expressAPI } from '@/api/client/express'
 import { menuAPI } from '@/api/client/menu'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 import { colors } from '@/constants/statusTag'
+import { MenuSize, listToTree } from '@/pages/admin/account/menu/hooks'
 import { formatDate, showMessage, showModal, timeArrToObject } from '@/utils'
 
 const MenuTypeOptipns = [

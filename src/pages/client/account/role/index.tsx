@@ -2,9 +2,10 @@ import {
   Button,
   Grid,
   Modal,
+  Space,
   Tag,
+  Transfer,
   Tree,
-  Typography,
 } from '@arco-design/web-react'
 
 import useForm from '@arco-design/web-react/es/Form/useForm'
@@ -15,29 +16,33 @@ import { useRequest } from 'ahooks'
 
 import { useState } from 'react'
 
+import { useSelector } from 'react-redux'
+
 import { MenuTypeTag } from '../menu'
-import { useMenuTree } from '../menu/hooks'
 
 import { Role, roleAPI } from '@/api/client/role'
 import CreateWrap, { ActionsContext } from '@/components/CreateWrap'
 import FilterForm from '@/components/FilterForm'
 import List from '@/components/List'
-import PopconfirmDelete from '@/components/PopconfirmDelete'
 import Title from '@/components/Title'
 import {
   FormModalCommonProps,
   ShowFormType,
   ShowFormTypeMap,
 } from '@/constants'
+import { GlobalState } from '@/store'
 
 function Permission() {
   const allExpandedKeys = ['0-0', '0-1', '0-0-2']
   const [checkedKeys, setCheckedKeys] = useState([])
   const [expandedKeys, setExpandedKeys] = useState(allExpandedKeys)
+  const [selectedKeys, setSelectedKeys] = useState([])
   const [current, setCurrent] = useState<Role>(null)
+  const [addUserVisible, setAddUserVisible] = useState(false)
   const [formRef] = useForm()
-  const menuTreeHandle = useMenuTree()
+  const { clientMenuList } = useSelector((state: GlobalState) => state)
 
+  // 获取用户组详情
   const infoHandle = useRequest((id) => {
     if (!id) {
       return
@@ -45,11 +50,25 @@ function Permission() {
     return roleAPI.info(id).then((r: any) => {
       setCheckedKeys(r.data?.data?.menuIds || [])
       setCurrent(r.data.data)
+      setSelectedKeys(r.data.data?.roleUserInfoVOList?.map(item => item.userId))
     })
   }, {
     manual: true,
   })
 
+  // 获取用户组下的用户
+  const roleUsersHandle = useRequest(() => {
+    if (!current?.id || !addUserVisible) {
+      return
+    }
+    return roleAPI.getRoleUsers(current.id).then((r: any) => {
+      return r.data.data
+    })
+  }, {
+    refreshDeps: [current?.id, addUserVisible],
+  })
+
+  // 获取用户组列表
   const { data: roles, loading: rolesLoading, run } = useRequest(() => {
     return roleAPI
       .get({
@@ -59,12 +78,26 @@ function Permission() {
       .then((r) => {
         const first = r.data.data.list[0]
         setCurrent(first)
+        setSelectedKeys(first?.roleUserInfoVOList?.map(item => item.userId))
         infoHandle.run(first?.id)
         return r.data.data.list
       })
   })
+
+  // const saveRoleUserHandle = useRequest(() => {
+  //   return roleAPI
+  //     .saveRoleUser()
+  //     .then((r) => {
+  //       const first = r.data.data.list[0]
+  //       setCurrent(first)
+  //       setSelectedKeys(first?.roleUserInfoVOList?.map(item => item.userId))
+  //       infoHandle.run(first?.id)
+  //       return r.data.data.list
+  //     })
+  // })
+
   return (
-    <CreateWrap formRef={formRef} createRequest={roleAPI.create} updateRequest={roleAPI.update} refreshRequest={run}>
+    <CreateWrap formRef={formRef} createRequest={roleAPI.create} updateRequest={roleAPI.saveRoleMenu} refreshRequest={run}>
       <ActionsContext.Consumer>
         {({ showType, setShowType, createAction, updateAction }) => (
           <div className="bg-white p-4 h-[var(--syb-content-height)] test-1">
@@ -123,11 +156,12 @@ function Permission() {
               </Grid.Col>
 
               <Grid.Col span={9} className="min-h-full border-r border-neutral-3 pr-4">
-                <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">
+                {/* <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">
                   <Typography.Title heading={6} className="mb-0">
                     功能权限
                   </Typography.Title>
-                </Typography.Paragraph>
+                </Typography.Paragraph> */}
+                <Title title="功能权限" className="mt-0.5"></Title>
                 <Tree
                   checkable
                   checkedKeys={checkedKeys}
@@ -147,25 +181,19 @@ function Permission() {
                       </div>
                     )
                   }}
-                  treeData={menuTreeHandle.data || []}
+                  treeData={clientMenuList || []}
                 >
                 </Tree>
-                <div className="mt-10 flex justify-center gap-4">
-                  <PopconfirmDelete
-                    deleteRequest={() => roleAPI.remove(current?.id).then((r) => {
-                      run()
-                      return r
-                    })}
-                  >
-
-                  </PopconfirmDelete>
+                <div className="mt-10 gap-4 flex justify-end">
                   <Button
                     type="primary"
                     loading={updateAction.loading}
                     onClick={() => {
                       updateAction.run({
-                        ...current,
-                        menuIds: checkedKeys,
+                        roleId: current?.id,
+                        menuIdList: checkedKeys,
+                        // roleId: number
+                        // menuIdList: number[]
                       })
                     }}
                   >
@@ -174,13 +202,28 @@ function Permission() {
                 </div>
               </Grid.Col>
               <Grid.Col span={9} className="min-h-full">
-                {
-                  current?.roleUserInfoVOList?.map(item => (
-                    <Tag checkable={true} color="arcoblue" checked={true}>
-                      {item.userName}
-                    </Tag>
-                  ))
-                }
+                <Title title="成员列表" className="mt-0.5"></Title>
+                <Space size={[16, 16]}>
+                  {
+                    current?.roleUserInfoVOList?.map(item => (
+                      <Tag checkable={true} color="arcoblue" checked={true}>
+                        {item.userName}
+                      </Tag>
+                    ))
+                  }
+                </Space>
+                <Button
+                  className="mt-4"
+                  type="primary"
+                  size="small"
+                  loading={roleUsersHandle.loading}
+                  icon={<IconPlus></IconPlus>}
+                  onClick={() => {
+                    setAddUserVisible(true)
+                  }}
+                >
+                  添加
+                </Button>
               </Grid.Col>
             </Grid.Row>
             <Modal
@@ -223,6 +266,36 @@ function Permission() {
                 ]}
               >
               </FilterForm>
+            </Modal>
+            <Modal
+              style={{
+                width: '700px',
+              }}
+              unmountOnExit={true}
+              confirmLoading={createAction?.loading}
+              onCancel={() => {
+                setAddUserVisible(false)
+              }}
+              onOk={async () => {
+
+              }}
+              visible={addUserVisible}
+              title={`编辑 ${current?.roleName} 成员`}
+            >
+              <div className="flex justify-center">
+                <Transfer
+                  dataSource={roleUsersHandle.data?.list.map(item => ({
+                    key: item,
+                    value: item,
+                  }))}
+                  targetKeys={selectedKeys}
+                  // targetKeys={current?.roleUserInfoVOList?.map(item => item.userId as any)}
+                  onChange={(e) => {
+                    setSelectedKeys(e)
+                  }}
+                  titleTexts={['用户列表', '已添加']}
+                />
+              </div>
             </Modal>
           </div>
         )}
