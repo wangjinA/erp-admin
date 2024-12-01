@@ -70,6 +70,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
       getListRequest,
       updateRequest,
       removeRequest,
+      editTransform,
     } = props
     const [formRef] = Form.useForm()
     const [searchFromRef] = Form.useForm()
@@ -118,7 +119,6 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
 
     const showSearchSection = formItemConfigList.some(item => item.isSearch) // 是否有搜索项
     const showHeaderSection = showSearchSection || createRequest // 是否有搜索项或者创建按钮
-
     return (
       <CreateWrap
         formRef={formRef}
@@ -260,7 +260,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                                   icon={<IconEdit />}
                                   onClick={() => {
                                     setShowType(ShowFormType.edit)
-                                    formRef.setFieldsValue(record)
+                                    formRef.setFieldsValue(editTransform ? editTransform(record) : record)
                                   }}
                                 >
                                   编辑
@@ -315,11 +315,12 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                   form={formRef}
                   labelLength={8}
                   span={12}
-                  // className="pb-4 pt-6"  // !留意一下哪里用到了这个样式
+                  className="pb-4 pt-6"
                   formItemConfigList={[
                     ...formItemConfigListStatusFilter(
                       formItemConfigList,
                       'isCreate',
+                      { showType },
                     ),
                     {
                       schema: {
@@ -347,10 +348,13 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
 function formItemConfigListStatusFilter(
   formItemConfigList: SearchTableSchema[],
   key: string,
-): any {
+  dynamicHandleParams: { showType?: ShowFormType } = {},
+): any[] {
   return formItemConfigList
     .filter(item => item[key])
-    .map(item => omit(item, ['isCreate', 'isSearch']))
+    .map(item => ({ ...omit(item, ['isCreate', 'isSearch', 'dynamicHandle']), ...(item.dynamicHandle
+      ? item.dynamicHandle(dynamicHandleParams)
+      : {}) }))
 }
 
 function createFormListToColumnList(
@@ -380,6 +384,7 @@ interface SearchTableProps {
   initialValues?: any
   createInitialValue?: any
   showActions?: boolean
+  editTransform?: (params: any) => any
   requestQueryTransform?: (params: any) => any
   leftTool?: () => React.ReactNode
   createRequest?: CreateWrapProps['createRequest']
@@ -397,4 +402,7 @@ export type SearchTableSchema = CreateFormItemType &
     isSearch?: boolean
     isCreate?: boolean
     hideTable?: boolean
+    dynamicHandle?: (p: {
+      showType?: ShowFormType
+    }) => Omit<SearchTableSchema, 'dynamicHandle'>
   }

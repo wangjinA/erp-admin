@@ -1,6 +1,7 @@
 import defaultSettings from '../settings.json'
 
 import { UserInfo } from '@/api/admin/user'
+import { MenuItem } from '@/api/client/menu'
 import { getEndType } from '@/routes'
 
 export interface GlobalState {
@@ -17,12 +18,14 @@ export interface GlobalState {
   // };
   userLoading?: boolean
   editPassword: boolean
+  clientMenuList: MenuItem[]
 }
 
 const initialState: GlobalState = {
   settings: defaultSettings,
   userInfo: JSON.parse(localStorage.getItem(`${getEndType()}-userInfo`) || '{}'),
   editPassword: false,
+  clientMenuList: [],
 }
 
 export default function store(state = initialState, action) {
@@ -47,6 +50,13 @@ export default function store(state = initialState, action) {
       return {
         ...state,
         editPassword,
+      }
+    }
+    case 'set-client-menu-list': {
+      const { clientMenuList } = action.payload
+      return {
+        ...state,
+        clientMenuList,
       }
     }
     default:

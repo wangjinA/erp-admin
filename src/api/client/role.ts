@@ -44,4 +44,7 @@ export const roleAPI = {
   info(id: any) {
     return baseAxios.get<APIResponse>(`/api/tenantry/role/info/${id}`)
   },
+  getRoleUsers(roleId: any) {
+    return baseAxios.get<APIResponse>(`/api/tenantry/role/user/info/${roleId}`)
+  },
 }

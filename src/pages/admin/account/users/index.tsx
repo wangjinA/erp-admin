@@ -7,7 +7,6 @@ import { userAPI } from '@/api/admin/user'
 import { expressAPI } from '@/api/client/express'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 import UserAvatar from '@/components/UserAvatar'
-import { WhetherOptions } from '@/constants'
 import { showMessage, showModal } from '@/utils'
 
 export default () => {
@@ -69,26 +68,26 @@ export default () => {
             },
             isCreate: true,
           },
-          {
-            schema: { label: '是否为管理员', field: 'isAdmin' },
-            render(col) {
-              return (
-                // <Badge>
-                //   是
-                // </Badge>
-                <Switch
-                  checked={!!col}
-                  checkedText="是"
-                  uncheckedText="否"
-                >
-                </Switch>
-              )
-            },
-            control: 'select',
-            controlProps: {
-              options: WhetherOptions,
-            },
-          },
+          // {
+          //   schema: { label: '是否为管理员', field: 'isAdmin' },
+          //   render(col) {
+          //     return (
+          //       // <Badge>
+          //       //   是
+          //       // </Badge>
+          //       <Switch
+          //         checked={!!col}
+          //         checkedText="是"
+          //         uncheckedText="否"
+          //       >
+          //       </Switch>
+          //     )
+          //   },
+          //   control: 'select',
+          //   controlProps: {
+          //     options: WhetherOptions,
+          //   },
+          // },
           {
             schema: { label: '姓名', field: 'userName' },
             isCreate: true,

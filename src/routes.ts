@@ -151,10 +151,10 @@ export const routes: IRoute[] = [
         name: 'client.account.role',
         key: 'client/account/role',
       },
-      {
-        name: 'client.account.menu',
-        key: 'client/account/menu',
-      },
+      // {
+      //   name: 'client.account.menu',
+      //   key: 'client/account/menu',
+      // },
     ],
   },
   {
