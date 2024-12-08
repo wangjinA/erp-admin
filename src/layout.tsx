@@ -111,11 +111,11 @@ function PageLayout() {
   const history = useHistory()
   const pathname = history.location.pathname
   const locale = useLocale()
-  const { settings, userLoading, userInfo } = useSelector(
+  const { settings, userLoading } = useSelector(
     (state: GlobalState) => state,
   )
 
-  const [routes, defaultRouteKeyMap] = useRoute(userInfo?.permissions)
+  const [routes, defaultRouteKeyMap] = useRoute()
   const defaultRoute = defaultRouteKeyMap[getPathEndKey()]
   const currentComponent = qs.parseUrl(pathname).url.slice(1) || defaultRoute
   if (!currentComponent) {
@@ -239,7 +239,6 @@ function PageLayout() {
     setBreadCrumb(routeConfig || [])
     updateMenuStatus()
   }, [pathname])
-  console.log(openKeys)
   return (
     <Layout className={styles.layout}>
       <div

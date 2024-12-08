@@ -1,9 +1,9 @@
 const i18n = {
   'zh-CN': {
-    'admin.financial': '财务管理',
-    'admin.financial.statement': '账单列表',
-    'admin.financial.expense': '人员费用',
-    'admin.financial.businessMap': '快递映射',
+    // 'admin.financial': '财务管理',
+    // 'admin.financial.statement': '账单列表',
+    // 'admin.financial.expense': '人员费用',
+    // 'admin.financial.businessMap': '快递映射',
 
     'admin.dict': '字典管理',
 
@@ -115,7 +115,7 @@ const i18n = {
       '复制成功，请粘贴到 src/settings.json 文件中',
     'settings.close': '关闭',
     'settings.color.tooltip':
-      '根据主题颜色生成的 10 个梯度色（将配置复制到项目中，主题色才能对亮色 / 暗黑模式同时生效）',
+      '根据主题颜色生成的 10 个梯度色',
     'message.tab.title.message': '消息',
     'message.tab.title.notice': '通知',
     'message.tab.title.todo': '待办',

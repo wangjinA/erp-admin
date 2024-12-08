@@ -1,4 +1,4 @@
-import { Switch } from '@arco-design/web-react'
+import { Switch, Tag } from '@arco-design/web-react'
 import { useRequest } from 'ahooks'
 import { omit } from 'lodash'
 import React, { useState } from 'react'
@@ -33,10 +33,19 @@ export default () => {
         ref={ref}
         name="用户管理"
         getListRequest={userAPI.userList}
-        createRequest={userAPI.insertUser}
+        createRequest={body => userAPI.insertUser({
+          ...body,
+          roleIdList: [body.roleIdList],
+        })}
         removeRequest={userAPI.removeUser}
-        updateRequest={userAPI.updateUser}
-        editTransform={params => omit(params, ['userPassword'])}
+        updateRequest={body => userAPI.updateUser({
+          ...body,
+          roleIdList: [body.roleIdList],
+        })}
+        editTransform={params => ({
+          ...omit(params, ['userPassword']),
+          roleIdList: params.roleIdList[0],
+        })}
         requestQueryTransform={params => ({
           ...omit(params, ['applyTime', 'rejectionTime']),
           // ...timeArrToObject(params.applyTime, 'applyStartTime', 'applyEndTime'),
@@ -99,7 +108,6 @@ export default () => {
           {
             schema: { label: '登录账号', field: 'userLoginAccount' },
             isCreate: true,
-            isSearch: true,
             dynamicHandle({ showType }) {
               return {
                 formItemProps: {
@@ -130,8 +138,15 @@ export default () => {
             formItemProps: {
               required: true,
             },
-            controlProps: {
-              mode: 'multiple',
+            // controlProps: {
+            //   mode: 'multiple',
+            // },
+            render(col, item, index) {
+              return item.roleNameList?.map(name => (
+                <Tag key={name} checkable color="arcoblue" checked>
+                  {name}
+                </Tag>
+              )) || '-'
             },
           },
           // {

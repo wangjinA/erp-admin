@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 
-import i18n from './locale'
+import { useSelector } from 'react-redux'
 
-import auth, { AuthParams } from '@/utils/authentication'
+import { GlobalState } from './store'
+import { SysMenuTenantryVo } from './types/user'
+
+import { AuthParams } from '@/utils/authentication'
 
 export enum EndType {
   /**
@@ -16,7 +19,8 @@ export enum EndType {
 }
 
 export type IRoute = AuthParams & {
-  name: keyof typeof i18n['zh-CN']
+  // name: keyof typeof i18n['zh-CN']
+  name: string
   key: string
   // 当前页是否展示面包屑
   breadcrumb?: boolean
@@ -57,6 +61,7 @@ export const routes: IRoute[] = [
   {
     name: 'client.order',
     key: 'client/order',
+    requiredPermissions: [],
     children: [
       {
         name: 'client.order.all',
@@ -412,7 +417,7 @@ export const routes: IRoute[] = [
   //     },
   //   ],
   // },
-].filter((item: any) => item.name.startsWith(getEndType())) as any
+].filter((item: any) => item.name.startsWith(getEndType()))
 
 export function getName(path: string, routes) {
   return routes.find((item) => {
@@ -423,6 +428,7 @@ export function getName(path: string, routes) {
     else if (item.children) {
       return getName(path, item.children)
     }
+    return false
   })
 }
 
@@ -453,6 +459,10 @@ export function getLoginPagePath() {
   return LoginPathMap[getEndType()] || LoginPathMap[EndType.ADMIN]
 }
 
+export function isLoginPage() {
+  return location.pathname.endsWith(getLoginPagePath())
+}
+
 /**
  * 判断当前端类型
  */
@@ -480,31 +490,42 @@ export function getEndTypeName() {
 
 export function toLoginPage() {
   const loginPagePath = getLoginPagePath()
-  if (!location.pathname.endsWith(loginPagePath)) {
+  if (!isLoginPage()) {
     window.location.href = loginPagePath
   }
 }
 
 type DefaultRouteMap = Partial<Record<EndType, string>>
 
-function useRoute(userPermission): [IRoute[], DefaultRouteMap] {
-  const filterRoute = (routes: IRoute[], arr = []): IRoute[] => {
+function useRoute(): [IRoute[], DefaultRouteMap] {
+  const { loginInfo } = useSelector((state: GlobalState) => state)
+  const filterRoute = (params: {
+    routes: IRoute[]
+    arr: any[]
+    menus?: SysMenuTenantryVo[]
+    parentPath?: string
+  }): IRoute[] => {
+    const { routes, arr, menus, parentPath = '' } = params
     if (!routes.length) {
       return []
     }
     for (const route of routes) {
-      const { requiredPermissions, oneOfPerm } = route
-      let visible = true
-      if (requiredPermissions) {
-        visible = auth({ requiredPermissions, oneOfPerm }, userPermission)
-      }
+      const { key } = route
+      const targetMenu = menus?.find((item) => {
+        return `${parentPath + item.menuPath}` === `/${key}`
+      })
 
-      if (!visible) {
+      if (!targetMenu) {
         continue
       }
       if (route.children && route.children.length) {
         const newRoute = { ...route, children: [] }
-        filterRoute(route.children, newRoute.children)
+        filterRoute({
+          routes: route.children,
+          arr: newRoute.children,
+          menus: targetMenu?.childDataList,
+          parentPath: targetMenu.menuPath,
+        })
         if (newRoute.children.length) {
           arr.push(newRoute)
         }
@@ -520,9 +541,20 @@ function useRoute(userPermission): [IRoute[], DefaultRouteMap] {
   const [permissionRoute, setPermissionRoute] = useState(routes)
 
   useEffect(() => {
-    const newRoutes = filterRoute(routes)
+    if (!loginInfo) {
+      return
+    }
+    // const newRoutes = routes
+    const newRoutes = loginInfo?.sysUser?.isAdmin
+      ? routes
+      : filterRoute({
+        routes,
+        arr: [],
+        menus: loginInfo.sysMenuTenantryVoList,
+      })
+
     setPermissionRoute(newRoutes)
-  }, [JSON.stringify(userPermission)])
+  }, [JSON.stringify(loginInfo)])
 
   const defaultRouteMap = useMemo(() => {
     return Object.values(EndType).reduce<DefaultRouteMap>((pre, endKey) => {

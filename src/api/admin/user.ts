@@ -1,7 +1,7 @@
-import baseAxios, { getRequestEndInfo } from '..'
+import baseAxios, { requestEndInfo } from '..'
 import { APIListResponse, APIResponse } from '../type'
 
-import { EndType, getEndType } from '@/routes'
+import { isClient } from '@/routes'
 import { LoginResponse } from '@/types/user'
 
 export function login(params, sessionId) {
@@ -23,7 +23,7 @@ export function loginExit() {
 
 export function getCaptcha(randomVal: any) {
   const val = randomVal ? `?sessionId=${randomVal}` : ''
-  return `${getRequestEndInfo.baseUrl}/api/code/captcha.jpg${val}`
+  return `${requestEndInfo.baseUrl}/api/code/captcha.jpg${val}`
 }
 
 export interface UserInfo {
@@ -51,7 +51,7 @@ export interface UserInfo {
 
 export const userAPI = {
   personalCenter() {
-    if (getEndType() === EndType.CLIENT) {
+    if (isClient()) {
       return baseAxios.get<APIListResponse<UserInfo>>('/api/tenantry/user/personalCenter')
     }
     return baseAxios.get<APIListResponse<UserInfo>>('/api/user/personalCenter')

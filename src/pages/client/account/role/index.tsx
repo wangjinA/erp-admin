@@ -31,6 +31,7 @@ import {
   ShowFormTypeMap,
 } from '@/constants'
 import { GlobalState } from '@/store'
+import { showMessage } from '@/utils'
 
 function Permission() {
   const allExpandedKeys = ['0-0', '0-1', '0-0-2']
@@ -77,24 +78,14 @@ function Permission() {
       })
       .then((r) => {
         const first = r.data.data.list[0]
-        setCurrent(first)
-        setSelectedKeys(first?.roleUserInfoVOList?.map(item => item.userId))
-        infoHandle.run(first?.id)
+        if (!current) {
+          setCurrent(first)
+          infoHandle.run(first?.id)
+          setSelectedKeys(first?.roleUserInfoVOList?.map(item => item.userId))
+        }
         return r.data.data.list
       })
   })
-
-  // const saveRoleUserHandle = useRequest(() => {
-  //   return roleAPI
-  //     .saveRoleUser()
-  //     .then((r) => {
-  //       const first = r.data.data.list[0]
-  //       setCurrent(first)
-  //       setSelectedKeys(first?.roleUserInfoVOList?.map(item => item.userId))
-  //       infoHandle.run(first?.id)
-  //       return r.data.data.list
-  //     })
-  // })
 
   return (
     <CreateWrap formRef={formRef} createRequest={roleAPI.create} updateRequest={roleAPI.saveRoleMenu} refreshRequest={run}>
@@ -102,7 +93,7 @@ function Permission() {
         {({ showType, setShowType, createAction, updateAction }) => (
           <div className="bg-white p-4 h-[var(--syb-content-height)] test-1">
             <Grid.Row gutter={[20, 0]} className="h-full">
-              <Grid.Col span={6} className="min-h-full border-r border-neutral-3 pr-4">
+              <Grid.Col span={6} className="overflow-y-auto h-full border-r border-neutral-3 pr-4">
                 <Title title="用户组">
                   <Button
                     icon={<IconPlus></IconPlus>}
@@ -131,6 +122,12 @@ function Permission() {
                   onActive={(item) => {
                     infoHandle.run(item.id)
                   }}
+                  onDelete={item => showMessage(() => roleAPI.remove(item.id), '删除').then(() => {
+                    if (current?.id === item.id) {
+                      setCurrent(roles?.[0])
+                      run()
+                    }
+                  })}
                 >
                 </List>
                 {/*
@@ -155,35 +152,38 @@ function Permission() {
                 </List> */}
               </Grid.Col>
 
-              <Grid.Col span={9} className="min-h-full border-r border-neutral-3 pr-4">
+              <Grid.Col span={9} className="overflow-y-auto h-full border-r border-neutral-3 pr-4 flex flex-col">
                 {/* <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">
                   <Typography.Title heading={6} className="mb-0">
                     功能权限
                   </Typography.Title>
                 </Typography.Paragraph> */}
                 <Title title="功能权限" className="mt-0.5"></Title>
-                <Tree
-                  checkable
-                  checkedKeys={checkedKeys}
-                  onCheck={(keys, extra) => {
-                    console.log(keys, extra)
-                    setCheckedKeys(keys)
-                  }}
-                  fieldNames={{
-                    title: 'menuName',
-                    key: 'menuId',
-                  }}
-                  renderTitle={(item: any) => {
-                    return (
-                      <div>
-                        <span className="mr-2">{item.menuName}</span>
-                        <MenuTypeTag size="small" menuType={item.menuType}></MenuTypeTag>
-                      </div>
-                    )
-                  }}
-                  treeData={clientMenuList || []}
-                >
-                </Tree>
+                <div className="flex overflow-y-auto">
+                  <Tree
+                    showLine
+                    checkable
+                    checkedKeys={checkedKeys}
+                    onCheck={(keys, extra) => {
+                      console.log(keys, extra)
+                      setCheckedKeys(keys)
+                    }}
+                    fieldNames={{
+                      title: 'menuName',
+                      key: 'menuId',
+                    }}
+                    renderTitle={(item: any) => {
+                      return (
+                        <div>
+                          <span className="mr-2">{item.menuName}</span>
+                          <MenuTypeTag size="small" menuType={item.menuType}></MenuTypeTag>
+                        </div>
+                      )
+                    }}
+                    treeData={clientMenuList || []}
+                  >
+                  </Tree>
+                </div>
                 <div className="mt-10 gap-4 flex justify-end">
                   <Button
                     type="primary"
@@ -201,19 +201,18 @@ function Permission() {
                   </Button>
                 </div>
               </Grid.Col>
-              <Grid.Col span={9} className="min-h-full">
+              <Grid.Col span={9} className="overflow-y-auto h-full">
                 <Title title="成员列表" className="mt-0.5"></Title>
                 <Space size={[16, 16]}>
                   {
                     current?.roleUserInfoVOList?.map(item => (
-                      <Tag checkable={true} color="arcoblue" checked={true}>
+                      <Tag key={item.userId} checkable={true} color="arcoblue" checked={true}>
                         {item.userName}
                       </Tag>
                     ))
                   }
                 </Space>
                 <Button
-                  className="mt-4"
                   type="primary"
                   size="small"
                   loading={roleUsersHandle.loading}
@@ -276,8 +275,15 @@ function Permission() {
               onCancel={() => {
                 setAddUserVisible(false)
               }}
-              onOk={async () => {
-
+              onOk={() => {
+                if (selectedKeys.every(id => id === current.roleUserInfoVOList?.map(item => item.userId))) {
+                  return null
+                }
+                return showMessage(() => roleAPI
+                  .saveRoleUser({
+                    roleId: current.id,
+                    userIdList: selectedKeys,
+                  }))
               }}
               visible={addUserVisible}
               title={`编辑 ${current?.roleName} 成员`}
@@ -285,10 +291,10 @@ function Permission() {
               <div className="flex justify-center">
                 <Transfer
                   dataSource={roleUsersHandle.data?.list.map(item => ({
-                    key: item,
-                    value: item,
-                  }))}
-                  targetKeys={selectedKeys}
+                    key: item.userId,
+                    value: item.userName,
+                  })) || []}
+                  targetKeys={selectedKeys || []}
                   // targetKeys={current?.roleUserInfoVOList?.map(item => item.userId as any)}
                   onChange={(e) => {
                     setSelectedKeys(e)

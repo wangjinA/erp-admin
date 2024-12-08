@@ -14,7 +14,7 @@ export default (props) => {
           <Radio.Group {...props}>
             {[{ label: '全部', value: undefined }, ...res.data].map((item) => {
               return (
-                <Radio className="pl-0" key={item.value} value={item.value}>
+                <Radio className="pl-0" key={item.value || 'all'} value={item.value}>
                   {({ checked }) => {
                     return (
                       <Button

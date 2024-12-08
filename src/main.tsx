@@ -10,6 +10,7 @@ import { Provider } from 'react-redux'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { createStore } from 'redux'
 
+import { requestEndInfo } from './api'
 import { userAPI } from './api/admin/user'
 import { menuAPI } from './api/client/menu'
 import { GlobalContext } from './context'
@@ -17,7 +18,7 @@ import PageLayout from './layout'
 import { listToTree } from './pages/admin/account/menu/hooks'
 import AdminLogin from './pages/admin/login'
 import ClientLogin from './pages/client/login'
-import { isClient, toLoginPage } from './routes'
+import { isClient, isLoginPage, toLoginPage } from './routes'
 import rootReducer from './store'
 import './style/global.less'
 import changeTheme from './utils/changeTheme'
@@ -44,14 +45,23 @@ function Index() {
   }
 
   async function fetchUserInfo() {
-    console.log(store.getState().userInfo)
-
     // if (!isEmpty(store.getState().userInfo)) {
     //   return
     // }
     store.dispatch({
       type: 'update-userInfo',
       payload: { userLoading: true },
+    })
+    const localLoginInfo = localStorage.getItem(requestEndInfo.loginInfoKey)
+    if (localLoginInfo) {
+      store.dispatch({
+        type: 'set-login-info',
+        payload: { loginInfo: JSON.parse(localLoginInfo) },
+      })
+    }
+    store.dispatch({
+      type: 'set-login-info',
+      payload: { loginInfo: JSON.parse(localStorage.getItem(requestEndInfo.loginInfoKey) || '') },
     })
     try {
       const res = await userAPI.personalCenter()
@@ -60,6 +70,7 @@ function Index() {
         type: 'update-userInfo',
         payload: { userInfo: res.data.data, userLoading: false },
       })
+
       // const res = await userAPI.personalCenter();
       // console.log(res);
       // store.dispatch({
@@ -86,7 +97,9 @@ function Index() {
       // });
     }
     catch (error) {
-      Message.error('登录失效')
+      if (!isLoginPage()) {
+        Message.error('登录失效')
+      }
       toLoginPage()
       // store.dispatch({
       //   type: 'update-userInfo',

@@ -21,30 +21,6 @@ interface ListProps<T> {
   onUpdate?: (row: (T & DataItem)) => void
 }
 
-export function DropList({ actionMap }: { actionMap: Record<'onUpdate' | 'onDelete', any> }) {
-  return (
-    <>
-      {actionMap.onUpdate
-        ? (
-            <Menu.Item key="update">
-              <IconEdit />
-              <Typography.Text className="ml-2">修改</Typography.Text>
-
-            </Menu.Item>
-          )
-        : null }
-      {actionMap.onDelete
-        ? (
-            <Menu.Item key="delete">
-              <IconDelete />
-              <Typography.Text className="ml-2">删除</Typography.Text>
-            </Menu.Item>
-          )
-        : null }
-    </>
-  )
-}
-
 function List<T>(props: ListProps<T>) {
   const { data, active, loading, onUpdate, onDelete, onActive, rowKey = 'id' } = props
   return (
@@ -87,7 +63,6 @@ function List<T>(props: ListProps<T>) {
                 <Dropdown
                   droplist={(
                     <Menu onClickMenuItem={(e) => {
-                      console.log(e)
                       if (e === 'update') {
                         onUpdate?.(item)
                       }
@@ -96,11 +71,23 @@ function List<T>(props: ListProps<T>) {
                       }
                     }}
                     >
-                      <DropList actionMap={{
-                        onUpdate,
-                        onDelete,
-                      }}
-                      />
+                      {onUpdate
+                        ? (
+                            <Menu.Item key="update">
+                              <IconEdit />
+                              <Typography.Text className="ml-2">修改</Typography.Text>
+
+                            </Menu.Item>
+                          )
+                        : null }
+                      {onDelete
+                        ? (
+                            <Menu.Item key="delete">
+                              <IconDelete />
+                              <Typography.Text className="ml-2">删除</Typography.Text>
+                            </Menu.Item>
+                          )
+                        : null }
                     </Menu>
                   )}
                   trigger="click"

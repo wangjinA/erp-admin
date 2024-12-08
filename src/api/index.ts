@@ -2,34 +2,42 @@ import { Modal } from '@arco-design/web-react'
 import axios from 'axios'
 import { debounce } from 'lodash'
 
-import { EndType, getEndType, toLoginPage } from '@/routes'
+import { EndType, getEndType, isLoginPage, toLoginPage } from '@/routes'
 
 interface RequestEndTypeInfo {
   baseUrl: string
   tokenKey: string
+  loginInfoKey: string
 }
 
-const adminRequestEndInfo: RequestEndTypeInfo = {
+const AdminRequestEndInfo: RequestEndTypeInfo = {
   baseUrl: import.meta.env.DEV
     ? '/prod-admin'
     : 'https://logistics.drcstudio.cn/prod-admin',
   tokenKey: 'erp-admin-token',
+  loginInfoKey: 'lg-admin-if',
 }
 
-const userRequestEndInfo: RequestEndTypeInfo = {
+const ClientRequestEndInfo: RequestEndTypeInfo = {
   baseUrl: import.meta.env.DEV
     ? '/prod-user'
     : 'https://logistics.drcstudio.cn/prod-user',
   tokenKey: 'erp-user-token',
+  loginInfoKey: 'lg-client-if',
 }
 
-export const getRequestEndInfo
-  = getEndType() === EndType.ADMIN ? adminRequestEndInfo : userRequestEndInfo
+// export const EndInfo = {
+//   [EndType.ADMIN]: AdminRequestEndInfo,
+//   [EndType.CLIENT]: ClientRequestEndInfo
+// }
+
+export const requestEndInfo
+  = getEndType() === EndType.ADMIN ? AdminRequestEndInfo : ClientRequestEndInfo
 
 const timeout = 20 * 1000
 
 const baseAxios = axios.create({
-  baseURL: getRequestEndInfo.baseUrl,
+  baseURL: requestEndInfo.baseUrl,
   timeout,
 })
 
@@ -41,7 +49,7 @@ const whiteList = [
 ]
 
 baseAxios.interceptors.request.use((config) => {
-  const token = localStorage.getItem(getRequestEndInfo.tokenKey)
+  const token = localStorage.getItem(requestEndInfo.tokenKey)
   if (token && !whiteList.includes(config.url!)) {
     config.headers.token = token
   }
@@ -55,14 +63,16 @@ baseAxios.interceptors.request.use((config) => {
 })
 
 const loginModal = debounce((msg) => {
-  Modal.confirm({
-    title: '温馨提示',
-    content: msg || '登录失效！',
-    okText: '前往登陆',
-    onOk() {
-      toLoginPage()
-    },
-  })
+  if (!isLoginPage()) {
+    Modal.confirm({
+      title: '温馨提示',
+      content: msg || '登录失效！',
+      okText: '前往登陆',
+      onOk() {
+        toLoginPage()
+      },
+    })
+  }
 }, 300)
 
 baseAxios.interceptors.response.use((res) => {

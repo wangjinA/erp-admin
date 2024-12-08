@@ -14,11 +14,13 @@ import { useLocalStorageState, useRequest } from 'ahooks'
 import { random } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
+import { useDispatch } from 'react-redux'
+
 import locale from './locale'
 import Register from './register'
 import styles from './style/index.module.less'
 
-import { SuccessCode, getRequestEndInfo } from '@/api'
+import { SuccessCode, requestEndInfo } from '@/api'
 import { getCaptcha, login } from '@/api/admin/user'
 import { userAPI } from '@/api/client/user'
 import {
@@ -40,6 +42,7 @@ export default function LoginForm() {
   const [isRegister, setIsRegister] = useState(false)
   const [loginParams, setLoginParams, removeLoginParams]
     = useStorage('loginParams')
+  const dispatch = useDispatch()
   const [value, setValue] = useLocalStorageState('userInfo')
   const [randomStr, setRandomStr] = useState(random(1, 99999))
   const t = useLocale(locale)
@@ -55,8 +58,16 @@ export default function LoginForm() {
       try {
         const res = await login(params, randomStr)
         if (res.data.code === SuccessCode) {
-          setValue(res.data.data)
-          localStorage.setItem(getRequestEndInfo.tokenKey, res.data.data.token)
+          const loginInfo = res.data.data
+          setValue(loginInfo)
+          localStorage.setItem(requestEndInfo.tokenKey, loginInfo.token)
+          localStorage.setItem(requestEndInfo.loginInfoKey, JSON.stringify(loginInfo))
+          dispatch({
+            type: 'set-login-info',
+            payload: {
+              loginInfo,
+            },
+          })
           localStorage.removeItem('scan-entrepot')
           afterLoginSuccess(params)
         }
@@ -86,7 +97,7 @@ export default function LoginForm() {
     },
   )
   useEffect(() => {
-    localStorage.removeItem(getRequestEndInfo.tokenKey)
+    localStorage.removeItem(requestEndInfo.tokenKey)
   }, [])
 
   function afterLoginSuccess(params) {

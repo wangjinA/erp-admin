@@ -28,7 +28,7 @@ import IconButton from './IconButton'
 
 import styles from './style/index.module.less'
 
-import { getRequestEndInfo } from '@/api'
+import { requestEndInfo } from '@/api'
 import { loginExit } from '@/api/admin/user'
 import Logo from '@/assets/logo.svg'
 import MessageBox from '@/components/MessageBox'
@@ -53,7 +53,7 @@ function Navbar({ show }: { show: boolean }) {
   function logout() {
     setUserStatus('logout')
     localStorage.removeItem('userInfo')
-    localStorage.removeItem(getRequestEndInfo.tokenKey)
+    localStorage.removeItem(requestEndInfo.tokenKey)
     toLoginPage()
   }
 

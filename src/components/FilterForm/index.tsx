@@ -63,13 +63,15 @@ const FilterForm = React.forwardRef(
       })
     }, [formItemConfigList.map(item => item.schema.field).toString()])
 
+    const requiredWidth = (formItemConfigList.some(oitem => oitem.schema.required || oitem.formItemProps?.required || oitem.formItemProps?.rules?.some(jitem => jitem.required)) ? 0.6 : 0)
+
     const maxLabelLength
       = labelLength
       || max(
         formItemConfigList.map(item =>
           isString(item.schema.label) ? item.schema.label.length : 0,
         ),
-      ) + 2 + (formItemConfigList.some(oitem => oitem.schema.required || oitem.formItemProps?.rules?.some(jitem => jitem.required)) ? 0.6 : 0)
+      ) + 2 + requiredWidth
 
     return (
       <Form

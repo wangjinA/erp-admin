@@ -2,6 +2,8 @@
  * { data-analysis:  ['read', 'write'] }
  */
 
+import { LoginResponse } from '@/types/user'
+
 export type UserPermission = Record<string, string[]>
 
 interface Auth {
@@ -44,7 +46,7 @@ function auth(params: Auth, userPermission: UserPermission) {
   return judge(actions, perm)
 }
 
-export default (params: AuthParams, userPermission: UserPermission) => {
+export default (params: AuthParams, loginInfo: LoginResponse) => {
   // const { requiredPermissions, oneOfPerm } = params;
   // if (Array.isArray(requiredPermissions) && requiredPermissions.length) {
   //   let count = 0;
