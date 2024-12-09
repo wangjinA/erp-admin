@@ -110,7 +110,7 @@ export default () => {
             },
           },
           {
-            schema: { label: '用户组', field: 'roleIds' },
+            schema: { label: '用户组', field: 'roleIdList' },
             isCreate: true,
             control: 'role',
             controlProps: {

@@ -61,7 +61,8 @@ const i18n = {
     'admin.account.member': '会员管理',
     'admin.account.setting': '账户设置',
     'admin.account.role': '角色管理',
-    'admin.account.menu': '菜单管理',
+    'admin.account.menu': '物流菜单',
+    'admin.account.clientMenu': '店铺菜单',
 
     'admin.express': '快递管理',
     'admin.express.signforHistory': '签收记录',

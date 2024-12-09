@@ -4,33 +4,19 @@ import { useRequest } from 'ahooks'
 import { omit } from 'lodash'
 import React, { useState } from 'react'
 
-import { MenuSize, listToTree } from './hooks'
+import { MenuTypeOptipns } from '../menu'
+import { MenuSize, listToTree } from '../menu/hooks'
 
-import { menuAPI } from '@/api/admin/menu'
+import { clientMenuAPI } from '@/api/admin/menu'
 import { expressAPI } from '@/api/client/express'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 import { colors } from '@/constants/statusTag'
 import { formatDate, showMessage, showModal, timeArrToObject } from '@/utils'
 
-export const MenuTypeOptipns = [
-  {
-    label: '目录',
-    value: 'M',
-  },
-  {
-    label: '菜单',
-    value: 'C',
-  },
-  {
-    label: '按钮',
-    value: 'F',
-  },
-]
-
 function SelectParentMenu(props: { menuType: string }) { // 动态选择
   const { menuType, ...otherProps } = props
   const handle = useRequest(async () => {
-    const res = await menuAPI.list({
+    const res = await clientMenuAPI.list({
       pageNum: 1,
       pageSize: MenuSize,
       menuType: menuType === 'C' ? 'M' : 'C',
@@ -84,21 +70,23 @@ export default () => {
         }}
         name="物流菜单"
         getListRequest={(params) => {
-          return menuAPI.list({
+          return clientMenuAPI.list({
             ...params,
             pageNum: 1,
             pageSize: MenuSize,
           }).then((r) => {
             r.data.data.list = listToTree(r.data.data.list)
+            console.log(r.data.data.list)
+
             r.data.data.pageSize = 1
             r.data.data.total = r.data.data.list.length
 
             return r
           })
         }}
-        createRequest={menuAPI.create}
-        updateRequest={menuAPI.update}
-        removeRequest={menuAPI.remove}
+        createRequest={clientMenuAPI.create}
+        updateRequest={clientMenuAPI.update}
+        removeRequest={clientMenuAPI.remove}
         requestQueryTransform={params => ({
           ...omit(params, ['applyTime', 'rejectionTime']),
           ...timeArrToObject(params.applyTime, 'applyStartTime', 'applyEndTime'),
@@ -110,7 +98,7 @@ export default () => {
             isCreate: true,
           },
           {
-            schema: { label: '菜单类型', field: 'menuType' },
+            schema: { label: '菜单类型', field: 'menuType', required: true },
             isCreate: true,
             control: 'select',
             controlProps: {
@@ -124,10 +112,10 @@ export default () => {
             schema: { label: '路径', field: 'menuPath' },
             isCreate: true,
           },
-          {
-            schema: { label: '标识', field: 'menuPerms', required: true },
-            isCreate: true,
-          },
+          // {
+          //   schema: { label: '标识', field: 'menuPerms', required: true },
+          //   isCreate: true,
+          // },
           {
             schema: {
               label: '父级菜单',
@@ -192,7 +180,7 @@ export default () => {
                   uncheckedText="禁用"
                   onChange={(e) => {
                     showMessage(() =>
-                      menuAPI.update({
+                      clientMenuAPI.update({
                         ...(omit(row, 'children') as any),
                         menuStatus: e ? '0' : '1',
                       }))

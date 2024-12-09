@@ -137,7 +137,7 @@ export function formatDate(date: string, defaultDate?: dayjs.ConfigType) {
   if (!date && !defaultDate) {
     return '-'
   }
-  return dayjs(date || defaultDate).format('YYYY-MM-DD HH:mm').replace(`${new Date().getFullYear()}-`, '')
+  return dayjs(date || defaultDate).format('YYYY年MM月DD日 HH:mm').replace(`${new Date().getFullYear()}年`, '')
 }
 
 export function isProd() {

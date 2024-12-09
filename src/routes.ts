@@ -256,6 +256,10 @@ export const routes: IRoute[] = [
         name: 'admin.account.menu',
         key: 'admin/account/menu',
       },
+      {
+        name: 'admin.account.clientMenu',
+        key: 'admin/account/clientMenu',
+      },
     ],
   },
   {

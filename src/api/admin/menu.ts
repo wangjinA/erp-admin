@@ -16,6 +16,21 @@ export const menuAPI = {
   },
 }
 
+export const clientMenuAPI = {
+  list(body: Partial<MenuItem> & IPageParams) {
+    return baseAxios.post<APIListResponse<MenuItem>>('/api/tenantry/menu/list', body)
+  },
+  create(body: MenuItem) {
+    return baseAxios.post('/api/tenantry/menu/insert', body)
+  },
+  update(body: MenuItem) {
+    return baseAxios.post('/api/tenantry/menu/update', body)
+  },
+  remove(id: number) {
+    return baseAxios.get(`/api/tenantry/menu/remove/${id}`)
+  },
+}
+
 export interface MenuItem {
   cacheStatus: string
   createBy: number

@@ -18,7 +18,7 @@ export function listToTree(list: MenuItem[]) {
   }
 
   const res = list
-    .filter(item => item.parentId === '0')
+    .filter(item => String(item.parentId) === '0')
     .map(buildNodeTree)
   return res
 }

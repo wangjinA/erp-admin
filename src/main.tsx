@@ -65,7 +65,6 @@ function Index() {
     })
     try {
       const res = await userAPI.personalCenter()
-      console.log(res)
       store.dispatch({
         type: 'update-userInfo',
         payload: { userInfo: res.data.data, userLoading: false },
