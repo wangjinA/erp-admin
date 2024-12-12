@@ -46,11 +46,15 @@ function Permission() {
         return r.data.data.list
       })
   })
-  const infoHandle = useRequest((id) => {
-    return roleAPI.info(id).then((r: any) => {
+  const infoHandle = useRequest(() => {
+    if (!current?.id) {
+      return null
+    }
+    return roleAPI.info(current.id).then((r: any) => {
       setCheckedKeys(r.data?.data?.menuIds || [])
-      setCurrent(r.data.data)
     })
+  }, {
+    refreshDeps: [current?.id],
   })
 
   return (
@@ -108,7 +112,7 @@ function Permission() {
                   }))}
                   active={current?.id}
                   onActive={(item) => {
-                    infoHandle.run(item.id)
+                    setCurrent(item as any)
                   }}
                 >
                 </List>

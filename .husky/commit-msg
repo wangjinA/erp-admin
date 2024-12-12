@@ -1,8 +1,8 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-# 从 git 暂存区获取提交消息
-commit_msg=$(git log -1 --pretty=%B)
+# 从提交消息文件中读取提交消息
+commit_msg=$(cat "$1")
 
 # 输出调试信息
 echo "Commit message: '$commit_msg'"

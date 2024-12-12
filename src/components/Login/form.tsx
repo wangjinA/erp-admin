@@ -162,17 +162,17 @@ export default function LoginForm() {
         className={styles['login-form']}
         layout="vertical"
         form={form}
-        initialValues={
-          isAdmin()
-            ? {
-                userLoginAccount: 'admin',
-                userLoginPassword: '123456',
-              }
-            : {
-                userLoginAccount: '15279298921',
-                userLoginPassword: '123456',
-              }
-        }
+        // initialValues={
+        //   isAdmin()
+        //     ? {
+        //         userLoginAccount: 'admin',
+        //         userLoginPassword: '123456',
+        //       }
+        //     : {
+        //         userLoginAccount: '15279298921',
+        //         userLoginPassword: '123456',
+        //       }
+        // }
       >
         {!isRegister
           ? (

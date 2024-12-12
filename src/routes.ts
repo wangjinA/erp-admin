@@ -49,16 +49,6 @@ export const routes: IRoute[] = [
   //   ]
   // },
   {
-    name: 'admin.dict',
-    key: 'admin/dict/list',
-    // children: [
-    //   {
-    //     name: 'admin.dict.list',
-    //     key: 'admin/dict/list',
-    //   },
-    // ]
-  },
-  {
     name: 'client.order',
     key: 'client/order',
     requiredPermissions: [],
@@ -283,6 +273,16 @@ export const routes: IRoute[] = [
         key: 'admin/express/returnManage',
       },
     ],
+  },
+  {
+    name: 'admin.dict',
+    key: 'admin/dict/list',
+    // children: [
+    //   {
+    //     name: 'admin.dict.list',
+    //     key: 'admin/dict/list',
+    //   },
+    // ]
   },
   // {
   //   name: 'admin.dashboard',

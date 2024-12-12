@@ -24,7 +24,7 @@ const StoreListSchema: SearchTableSchema[] = [
     },
     control: (
       <div className="flex gap-4 justify-end">
-        <Button
+        {/* <Button
           type="outline"
           icon={(
             <Image
@@ -43,7 +43,7 @@ const StoreListSchema: SearchTableSchema[] = [
           }}
         >
           Shopee跨境店铺授权
-        </Button>
+        </Button> */}
         <Button
           type="outline"
           icon={(
@@ -62,7 +62,7 @@ const StoreListSchema: SearchTableSchema[] = [
             window.open(res.data.data)
           }}
         >
-          Shopee本土店铺授权
+          Shopee店铺授权
         </Button>
       </div>
     ),

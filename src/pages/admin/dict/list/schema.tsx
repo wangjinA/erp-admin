@@ -67,15 +67,15 @@ export const dictFormItemConfigList: SearchTableSchema[] = [
   //   },
   //   isSearch: true,
   // },
-  {
-    schema: {
-      field: 'updateTime',
-      label: '更新时间',
-    },
-    render(r) {
-      return r || '-'
-    },
-  },
+  // {
+  //   schema: {
+  //     field: 'updateTime',
+  //     label: '更新时间',
+  //   },
+  //   render(r) {
+  //     return r || '-'
+  //   },
+  // },
   // {
   //   schema: {
   //     field: 'tableActions',
