@@ -100,6 +100,9 @@ const StoreListSchema: SearchTableSchema[] = [
       label: '授权状态',
       field: 'status',
     },
+    render(e) {
+      return <DictNameFC dictCode="accredit_status" value={e}></DictNameFC>
+    },
   },
   {
     schema: {
