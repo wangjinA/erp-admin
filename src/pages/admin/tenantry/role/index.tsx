@@ -18,8 +18,10 @@ import { useState } from 'react'
 
 import { useSelector } from 'react-redux'
 
+import { useClientMenuTree } from '../../account/menu/hooks'
 import { MenuTypeTag } from '../menu'
 
+import { tenantryUserAPI } from '@/api/admin/tenantry'
 import { Role, roleAPI } from '@/api/client/role'
 import CreateWrap, { ActionsContext } from '@/components/CreateWrap'
 import FilterForm from '@/components/FilterForm'
@@ -43,6 +45,7 @@ function Permission() {
   const [formRef] = useForm()
   const { clientMenuList } = useSelector((state: GlobalState) => state)
 
+  const menuTreeHandle = useClientMenuTree()
   // 获取用户组详情
   const infoHandle = useRequest((id) => {
     if (!id) {
@@ -59,10 +62,13 @@ function Permission() {
 
   // 获取用户组下的用户
   const roleUsersHandle = useRequest(() => {
-    if (!current?.id || !addUserVisible) {
+    if (!addUserVisible) {
       return
     }
-    return roleAPI.getRoleUsers(current.id).then((r: any) => {
+    return tenantryUserAPI.getList({
+      pageNum: 1,
+      pageSize: 30,
+    }).then((r: any) => {
       return r.data.data
     })
   }, {
@@ -81,7 +87,7 @@ function Permission() {
         if (!current) {
           setCurrent(first)
           infoHandle.run(first?.id)
-          setSelectedKeys(first?.roleUserInfoVOList?.map(item => item.userId))
+          setSelectedKeys(first?.roleUserInfoVOList?.map(item => item.userId) || [])
         }
         return r.data.data.list
       })
@@ -108,10 +114,6 @@ function Permission() {
                     添加
                   </Button>
                 </Title>
-                {/* <Input.Search
-              className="mb-4"
-              placeholder="请输入仓库名称"
-            ></Input.Search> */}
                 <List
                   loading={rolesLoading || infoHandle.loading}
                   data={roles?.map(item => ({
@@ -130,38 +132,12 @@ function Permission() {
                   })}
                 >
                 </List>
-                {/*
-                <List>
-                  {roles?.map(item => (
-                    <div
-                      key={item.id}
-                      onClick={() => {
-                        infoHandle.run(item.id)
-                      }}
-                    >
-                      <List.Item.Meta
-                        style={{ height: 76 }}
-                        className={classNames(current?.id === item.id ? 'bg-gray-100 border-b-0' : '', 'hover:bg-gray-100 dark:hover:bg-zinc-500 cursor-pointer px-2 border-b border-neutral-3 rounded')}
-                        avatar={<Avatar>{item.roleName}</Avatar>}
-                        title={item.roleName}
-                        description="系统分组"
-                      >
-                      </List.Item.Meta>
-                    </div>
-                  ))}
-                </List> */}
               </Grid.Col>
 
               <Grid.Col span={9} className="overflow-y-auto h-full border-r border-neutral-3 pr-4 flex flex-col">
-                {/* <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">
-                  <Typography.Title heading={6} className="mb-0">
-                    功能权限
-                  </Typography.Title>
-                </Typography.Paragraph> */}
                 <Title title="功能权限" className="mt-0.5"></Title>
                 <div className="flex overflow-y-auto">
                   <Tree
-                    showLine
                     checkable
                     checkedKeys={checkedKeys}
                     onCheck={(keys, extra) => {
@@ -180,7 +156,7 @@ function Permission() {
                         </div>
                       )
                     }}
-                    treeData={clientMenuList || []}
+                    treeData={menuTreeHandle.data || []}
                   >
                   </Tree>
                 </div>
@@ -277,10 +253,12 @@ function Permission() {
               }}
               onOk={() => {
                 if (selectedKeys.every(id => current.roleUserInfoVOList?.some(item => item.userId === id))) {
+                  console.log('相同抛错')
+
                   return null
                 }
                 return showMessage(() => roleAPI
-                  .saveRoleUser({
+                  .saveRoleUserByAdmin({
                     roleId: current.id,
                     userIdList: selectedKeys,
                   }))
@@ -291,8 +269,8 @@ function Permission() {
               <div className="flex justify-center">
                 <Transfer
                   dataSource={roleUsersHandle.data?.list.map(item => ({
-                    key: item.userId,
-                    value: item.userName,
+                    key: item.id,
+                    value: item.tenantryName,
                   })) || []}
                   targetKeys={selectedKeys || []}
                   // targetKeys={current?.roleUserInfoVOList?.map(item => item.userId as any)}

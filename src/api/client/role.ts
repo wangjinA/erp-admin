@@ -65,4 +65,15 @@ export const roleAPI = {
   }) {
     return baseAxios.post<APIResponse>('/api/tenantry/role/user/save/or/update', body)
   },
+
+  /**
+   * 保存角色用户 by admin
+   */
+  saveRoleUserByAdmin(body: {
+    roleId: number
+    userIdList: number[]
+  }) {
+    return baseAxios.post<APIResponse>('/api/tenantry/role/save/or/update/user', body)
+  },
+
 }

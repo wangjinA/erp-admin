@@ -1,7 +1,7 @@
 import { useRequest } from 'ahooks'
 import { groupBy } from 'lodash'
 
-import { MenuItem, menuAPI } from '@/api/admin/menu'
+import { MenuItem, clientMenuAPI, menuAPI } from '@/api/admin/menu'
 
 export const MenuSize = 200
 
@@ -26,6 +26,17 @@ export function listToTree(list: MenuItem[]) {
 export function useMenuTree() {
   return useRequest(() => {
     return menuAPI.list({
+      pageNum: 1,
+      pageSize: MenuSize,
+    }).then((r) => {
+      return listToTree(r.data.data.list)
+    })
+  })
+}
+
+export function useClientMenuTree() {
+  return useRequest(() => {
+    return clientMenuAPI.list({
       pageNum: 1,
       pageSize: MenuSize,
     }).then((r) => {

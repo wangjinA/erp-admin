@@ -70,6 +70,11 @@ const i18n = {
     'admin.express.rejection': '拒收管理',
     'admin.express.returnManage': '退件管理',
 
+    'admin.tenantry': '店铺管理',
+    'admin.tenantry.users': '店铺用户',
+    'admin.tenantry.role': '店铺角色',
+    'admin.tenantry.menu': '店铺菜单',
+
     'admin.dashboard': '仪表盘',
     'admin.list': '列表页',
     'admin.result': '结果页',

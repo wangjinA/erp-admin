@@ -4,8 +4,8 @@ import { useRequest } from 'ahooks'
 import { omit } from 'lodash'
 import React, { useState } from 'react'
 
-import { MenuTypeOptipns } from '../menu'
-import { MenuSize, listToTree } from '../menu/hooks'
+import { MenuTypeOptipns } from '../../account/menu'
+import { MenuSize, listToTree } from '../../account/menu/hooks'
 
 import { clientMenuAPI } from '@/api/admin/menu'
 import { expressAPI } from '@/api/client/express'

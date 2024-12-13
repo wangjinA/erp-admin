@@ -246,10 +246,6 @@ export const routes: IRoute[] = [
         name: 'admin.account.menu',
         key: 'admin/account/menu',
       },
-      {
-        name: 'admin.account.clientMenu',
-        key: 'admin/account/clientMenu',
-      },
     ],
   },
   {
@@ -271,6 +267,24 @@ export const routes: IRoute[] = [
       {
         name: 'admin.express.returnManage',
         key: 'admin/express/returnManage',
+      },
+    ],
+  },
+  {
+    name: 'admin.tenantry',
+    key: 'admin/tenantry',
+    children: [
+      {
+        name: 'admin.tenantry.users',
+        key: 'admin/tenantry/users',
+      },
+      {
+        name: 'admin.tenantry.menu',
+        key: 'admin/tenantry/menu',
+      },
+      {
+        name: 'admin.tenantry.role',
+        key: 'admin/tenantry/role',
       },
     ],
   },
