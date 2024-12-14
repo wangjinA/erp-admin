@@ -27,6 +27,7 @@ import {
   ShowFormType,
   ShowFormTypeMap,
 } from '@/constants'
+import { showMessage } from '@/utils'
 
 function Permission() {
   const allExpandedKeys = ['0-0', '0-1', '0-0-2']
@@ -35,6 +36,7 @@ function Permission() {
   const [current, setCurrent] = useState<Role>(null)
   const [formRef] = useForm()
   const menuTreeHandle = useMenuTree()
+  const [editCurrent, setEditCurrent] = useState<Role>(null)
   const { data: roles, loading: rolesLoading, run } = useRequest(() => {
     return roleAPI
       .get({
@@ -42,7 +44,9 @@ function Permission() {
         pageSize: 30,
       })
       .then((r) => {
-        setCurrent(r.data.data.list[0])
+        if (!current) {
+          setCurrent(r.data.data.list[0])
+        }
         return r.data.data.list
       })
   })
@@ -55,6 +59,18 @@ function Permission() {
     })
   }, {
     refreshDeps: [current?.id],
+  })
+
+  const removeHandle = useRequest((id) => {
+    return showMessage(() => roleAPI.remove(id), '删除').then(() => {
+      if (current?.id === id) {
+        setCurrent(roles?.[0])
+      }
+      run()
+    },
+    )
+  }, {
+    manual: true,
   })
 
   return (
@@ -81,39 +97,20 @@ function Permission() {
                     添加
                   </Button>
                 </Typography.Paragraph>
-                {/* <Input.Search
-              className="mb-4"
-              placeholder="请输入仓库名称"
-            ></Input.Search> */}
-                {/* <List>
-                  {roles?.map(item => (
-                    <div
-                      key={item.id}
-                      onClick={() => {
-                        infoHandle.run(item.id)
-                      }}
-                    >
-                      <List.Item.Meta
-                        style={{ height: 76 }}
-                        className={classNames({ 'bg-gray-100': current?.id === item.id }, 'hover:bg-gray-100 dark:hover:bg-zinc-500 cursor-pointer px-2 border-b border-neutral-3')}
-                        avatar={<Avatar>{item.roleName}</Avatar>}
-                        title={item.roleName}
-                        description="系统分组"
-                      >
-                      </List.Item.Meta>
-                    </div>
-                  ))}
-                </List> */}
                 <List
                   loading={rolesLoading || infoHandle.loading}
-                  data={roles?.map(item => ({
-                    name: item.roleName,
-                    id: item.id,
-                  }))}
+                  data={roles}
+                  titleKey="roleName"
                   active={current?.id}
+                  onUpdate={(item) => {
+                    console.log(item)
+                    setEditCurrent(item as any)
+                    setShowType(ShowFormType.edit)
+                  }}
                   onActive={(item) => {
                     setCurrent(item as any)
                   }}
+                  onDelete={item => removeHandle.run(item.id)}
                 >
                 </List>
               </Grid.Col>
@@ -126,6 +123,7 @@ function Permission() {
                 </Typography.Paragraph>
                 <Tree
                   checkable
+                  autoExpandParent={false}
                   checkedKeys={checkedKeys}
                   onCheck={(keys, extra) => {
                     console.log(keys, extra)
@@ -171,9 +169,11 @@ function Permission() {
               </Grid.Col>
             </Grid.Row>
             <Modal
+              unmountOnExit={true}
               {...FormModalCommonProps}
               confirmLoading={createAction?.loading}
               onCancel={() => {
+                setEditCurrent(null)
                 setShowType(null)
                 formRef.resetFields()
               }}
@@ -183,17 +183,15 @@ function Permission() {
                   createAction.run(formData)
                 }
                 else {
-                  // await updateEntrepot({
-                  //   ...formData,
-                  //   id: activeEntrepot.id,
-                  // });
+                  await updateAction.run(formData)
+                  setEditCurrent(null)
                 }
               }}
               visible={!!showType}
               title={`${ShowFormTypeMap[showType]}用户组`}
             >
               <FilterForm
-                // initialValues={createInitialValue}
+                initialValues={editCurrent}
                 form={formRef}
                 labelLength={8}
                 span={24}

@@ -3,6 +3,7 @@ import {
   Grid,
   Modal,
   Space,
+  Spin,
   Tag,
   Transfer,
   Tree,
@@ -125,8 +126,8 @@ function Permission() {
                   onDelete={item => showMessage(() => roleAPI.remove(item.id), '删除').then(() => {
                     if (current?.id === item.id) {
                       setCurrent(roles?.[0])
-                      run()
                     }
+                    run()
                   })}
                 >
                 </List>
@@ -153,17 +154,13 @@ function Permission() {
               </Grid.Col>
 
               <Grid.Col span={9} className="overflow-y-auto h-full border-r border-neutral-3 pr-4 flex flex-col">
-                {/* <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">
-                  <Typography.Title heading={6} className="mb-0">
-                    功能权限
-                  </Typography.Title>
-                </Typography.Paragraph> */}
                 <Title title="功能权限" className="mt-0.5"></Title>
                 <div className="flex overflow-y-auto">
                   <Tree
                     showLine
                     checkable
                     checkedKeys={checkedKeys}
+                    autoExpandParent={false}
                     onCheck={(keys, extra) => {
                       console.log(keys, extra)
                       setCheckedKeys(keys)
@@ -288,11 +285,12 @@ function Permission() {
               visible={addUserVisible}
               title={`编辑 ${current?.roleName} 成员`}
             >
-              <div className="flex justify-center">
+              <Spin loading={roleUsersHandle.loading} className="flex justify-center">
                 <Transfer
+                  simple={{ retainSelectedItems: true }}
                   dataSource={roleUsersHandle.data?.list.map(item => ({
-                    key: item.userId,
-                    value: item.userName,
+                    key: item.id,
+                    value: item.tenantryName,
                   })) || []}
                   targetKeys={selectedKeys || []}
                   // targetKeys={current?.roleUserInfoVOList?.map(item => item.userId as any)}
@@ -301,7 +299,7 @@ function Permission() {
                   }}
                   titleTexts={['用户列表', '已添加']}
                 />
-              </div>
+              </Spin>
             </Modal>
           </div>
         )}

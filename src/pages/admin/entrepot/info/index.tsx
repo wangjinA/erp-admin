@@ -77,6 +77,7 @@ export default () => {
     removeEntrepot,
     removeEntrepotLoading,
   } = entrepotInfoHandle
+  console.log(showTypeRacks)
 
   return (
     <div className="bg-white p-4 pb-6">

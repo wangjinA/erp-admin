@@ -66,6 +66,8 @@ export default function store(state = initialState, action) {
     }
     case 'set-login-info': {
       const { loginInfo } = action.payload
+      console.log(loginInfo)
+
       return {
         ...state,
         loginInfo,

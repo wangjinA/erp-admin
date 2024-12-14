@@ -5,14 +5,13 @@ import classNames from 'classnames'
 import styles from './index.module.less'
 
 interface DataItem {
-  id: any
-  name: string
   avatar?: string
-  description?: string
 }
 
 interface ListProps<T> {
   data: (T & DataItem)[]
+  titleKey?: string
+  descriptionKey?: string
   active?: any
   rowKey?: string
   loading?: boolean
@@ -22,7 +21,7 @@ interface ListProps<T> {
 }
 
 function List<T>(props: ListProps<T>) {
-  const { data, active, loading, onUpdate, onDelete, onActive, rowKey = 'id' } = props
+  const { data, active, loading, titleKey = 'name', descriptionKey = 'description', onUpdate, onDelete, onActive, rowKey = 'id' } = props
   return (
     <Spin className="block" loading={loading}>
       <Space className={styles['syb-list']} direction="vertical" size="small">
@@ -48,11 +47,11 @@ function List<T>(props: ListProps<T>) {
                   }}
                   size={28}
                 >
-                  {item.avatar || item.name[0]}
+                  {item.avatar || item[titleKey]?.[0]}
                 </Avatar>
                 <Space direction="vertical" size="mini">
-                  <Typography.Text className="syb-list-name">{item.name}</Typography.Text>
-                  <Typography.Text className="text-sm" type="secondary">{item.description}</Typography.Text>
+                  <Typography.Text className="syb-list-name">{item[titleKey]}</Typography.Text>
+                  <Typography.Text className="text-sm" type="secondary">{item[descriptionKey]}</Typography.Text>
                 </Space>
               </Space>
               <div onClick={(e) => {

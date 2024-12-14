@@ -3,6 +3,7 @@ import {
   Grid,
   Modal,
   Space,
+  Spin,
   Tag,
   Transfer,
   Tree,
@@ -94,7 +95,7 @@ function Permission() {
   })
 
   return (
-    <CreateWrap formRef={formRef} createRequest={roleAPI.create} updateRequest={roleAPI.saveRoleMenu} refreshRequest={run}>
+    <CreateWrap formRef={formRef} createRequest={roleAPI.create} updateRequest={roleAPI.saveRoleMenuByAdmin} refreshRequest={run}>
       <ActionsContext.Consumer>
         {({ showType, setShowType, createAction, updateAction }) => (
           <div className="bg-white p-4 h-[var(--syb-content-height)] test-1">
@@ -266,8 +267,9 @@ function Permission() {
               visible={addUserVisible}
               title={`编辑 ${current?.roleName} 成员`}
             >
-              <div className="flex justify-center">
+              <Spin loading={roleUsersHandle.loading} className="flex justify-center">
                 <Transfer
+                  simple={{ retainSelectedItems: true }}
                   dataSource={roleUsersHandle.data?.list.map(item => ({
                     key: item.id,
                     value: item.tenantryName,
@@ -279,7 +281,7 @@ function Permission() {
                   }}
                   titleTexts={['用户列表', '已添加']}
                 />
-              </div>
+              </Spin>
             </Modal>
           </div>
         )}

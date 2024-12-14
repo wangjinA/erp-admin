@@ -76,4 +76,11 @@ export const roleAPI = {
     return baseAxios.post<APIResponse>('/api/tenantry/role/save/or/update/user', body)
   },
 
+  saveRoleMenuByAdmin(body: {
+    roleId: number
+    menuIdList: number[]
+  }) {
+    return baseAxios.post<APIResponse>('/api/tenantry/role/save/or/update/menu', body)
+  },
+
 }
