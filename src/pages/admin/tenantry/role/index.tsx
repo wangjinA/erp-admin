@@ -1,6 +1,7 @@
 import {
   Button,
   Grid,
+  Message,
   Modal,
   Space,
   Spin,
@@ -43,6 +44,7 @@ function Permission() {
   const [selectedKeys, setSelectedKeys] = useState([])
   const [current, setCurrent] = useState<Role>(null)
   const [addUserVisible, setAddUserVisible] = useState(false)
+  const [addUserLoading, setAddUserLoading] = useState(false)
   const [formRef] = useForm()
   const { clientMenuList } = useSelector((state: GlobalState) => state)
 
@@ -248,21 +250,27 @@ function Permission() {
                 width: '700px',
               }}
               unmountOnExit={true}
-              confirmLoading={createAction?.loading}
+              confirmLoading={addUserLoading}
               onCancel={() => {
                 setAddUserVisible(false)
               }}
               onOk={() => {
                 if (selectedKeys.every(id => current.roleUserInfoVOList?.some(item => item.userId === id))) {
-                  console.log('相同抛错')
-
+                  Message.info('暂无变更')
                   return null
                 }
+                setAddUserLoading(true)
                 return showMessage(() => roleAPI
                   .saveRoleUserByAdmin({
                     roleId: current.id,
                     userIdList: selectedKeys,
-                  }))
+                  })).then(() => {
+                  infoHandle.run(current.id)
+                  setAddUserVisible(false)
+                })
+                  .finally(() => {
+                    setAddUserLoading(false)
+                  })
               }}
               visible={addUserVisible}
               title={`编辑 ${current?.roleName} 成员`}
