@@ -21,6 +21,9 @@ export const tenantryUserAPI = {
   getList(body?: Partial<Tenantry & IPageParams>) {
     return baseAxios.post<APIListResponse<Tenantry>>('/api/tenantry/list', body)
   },
+  getDPList(body?: Partial<Tenantry & IPageParams>) {
+    return baseAxios.post<APIListResponse<Tenantry>>('/api/tenantry/list/user', body)
+  },
   get(id: number) {
     return baseAxios.get<APIResponse<Tenantry>>(`/api/tenantry/info/\${id}`)
   },

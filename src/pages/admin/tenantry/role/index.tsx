@@ -44,6 +44,7 @@ function Permission() {
   const [selectedKeys, setSelectedKeys] = useState([])
   const [current, setCurrent] = useState<Role>(null)
   const [addUserVisible, setAddUserVisible] = useState(false)
+  const [editCurrent, setEditCurrent] = useState(null)
   const [addUserLoading, setAddUserLoading] = useState(false)
   const [formRef] = useForm()
   const { clientMenuList } = useSelector((state: GlobalState) => state)
@@ -63,12 +64,14 @@ function Permission() {
     manual: true,
   })
 
+  console.log(selectedKeys)
+
   // 获取用户组下的用户
   const roleUsersHandle = useRequest(() => {
     if (!addUserVisible) {
       return
     }
-    return tenantryUserAPI.getList({
+    return tenantryUserAPI.getDPList({
       pageNum: 1,
       pageSize: 30,
     }).then((r: any) => {
@@ -127,11 +130,18 @@ function Permission() {
                   onActive={(item) => {
                     infoHandle.run(item.id)
                   }}
+                  onUpdate={(item) => {
+                    setEditCurrent(item)
+                    setShowType(ShowFormType.edit)
+                    // showMessage(() => roleAPI.update(item), '修改').then(() => {
+                    //   run()
+                    // })
+                  }}
                   onDelete={item => showMessage(() => roleAPI.remove(item.id), '删除').then(() => {
                     if (current?.id === item.id) {
                       setCurrent(roles?.[0])
-                      run()
                     }
+                    run()
                   })}
                 >
                 </List>
@@ -227,7 +237,7 @@ function Permission() {
               title={`${ShowFormTypeMap[showType]}用户组`}
             >
               <FilterForm
-                // initialValues={createInitialValue}
+                initialValues={editCurrent}
                 form={formRef}
                 labelLength={8}
                 span={24}
@@ -255,7 +265,9 @@ function Permission() {
                 setAddUserVisible(false)
               }}
               onOk={() => {
-                if (selectedKeys.every(id => current.roleUserInfoVOList?.some(item => item.userId === id))) {
+                console.log(selectedKeys.every(id => current.roleUserInfoVOList?.some(item => item.userId === id)))
+
+                if (selectedKeys.length && selectedKeys.every(id => current.roleUserInfoVOList?.some(item => item.userId === id))) {
                   Message.info('暂无变更')
                   return null
                 }
@@ -280,7 +292,7 @@ function Permission() {
                   simple={{ retainSelectedItems: true }}
                   dataSource={roleUsersHandle.data?.list.map(item => ({
                     key: item.id,
-                    value: item.tenantryName,
+                    value: item.userLoginAccount,
                   })) || []}
                   targetKeys={selectedKeys || []}
                   // targetKeys={current?.roleUserInfoVOList?.map(item => item.userId as any)}
