@@ -214,6 +214,7 @@ function Permission() {
                   loading={roleUsersHandle.loading}
                   icon={<IconPlus></IconPlus>}
                   onClick={() => {
+                    setSelectedKeys(current?.roleUserInfoVOList?.map(item => item.userId) || [])
                     setAddUserVisible(true)
                   }}
                 >
@@ -272,9 +273,9 @@ function Permission() {
                 setAddUserVisible(false)
               }}
               onOk={() => {
-                if (selectedKeys.length && current.roleUserInfoVOList?.every(({ userId }) => selectedKeys?.some(id => userId === id))) {
-                  return null
-                }
+                // if (selectedKeys.length && current.roleUserInfoVOList?.every(({ userId }) => selectedKeys?.some(id => userId === id))) {
+                //   return null
+                // }
                 return showMessage(() => roleAPI
                   .saveRoleUser({
                     roleId: current.id,

@@ -1,7 +1,6 @@
 import {
   Button,
   Grid,
-  Message,
   Modal,
   Result,
   Space,
@@ -221,6 +220,7 @@ function Permission() {
                             loading={roleUsersHandle.loading}
                             icon={<IconPlus></IconPlus>}
                             onClick={() => {
+                              setSelectedKeys(current?.roleUserInfoVOList?.map(item => item.userId) || [])
                               setAddUserVisible(true)
                             }}
                           >
@@ -283,10 +283,6 @@ function Permission() {
                 setAddUserVisible(false)
               }}
               onOk={() => {
-                if (selectedKeys.length && current.roleUserInfoVOList?.every(({ userId }) => selectedKeys?.some(id => userId === id))) {
-                  Message.info('暂无变更')
-                  return null
-                }
                 setAddUserLoading(true)
                 return showMessage(() => roleAPI
                   .saveRoleUserByAdmin({

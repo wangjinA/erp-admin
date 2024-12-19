@@ -39,7 +39,7 @@ export const userAPI = {
     return baseAxios.get('/api/tenantry/user/enable', { params })
   },
   removeUser(id) {
-    return baseAxios.get(`/api/tenantry/user/remove${id}`)
+    return baseAxios.get(`/api/tenantry/user/remove/${id}`)
   },
   updateUser(body: Partial<ClientUserInfo>) {
     return baseAxios.post('/api/tenantry/user/update', body)
