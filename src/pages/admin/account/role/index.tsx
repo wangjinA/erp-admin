@@ -103,7 +103,6 @@ function Permission() {
                   titleKey="roleName"
                   active={current?.id}
                   onUpdate={(item) => {
-                    console.log(item)
                     setEditCurrent(item as any)
                     setShowType(ShowFormType.edit)
                   }}
@@ -126,7 +125,6 @@ function Permission() {
                   autoExpandParent={false}
                   checkedKeys={checkedKeys}
                   onCheck={(keys, extra) => {
-                    console.log(keys, extra)
                     setCheckedKeys(keys)
                   }}
                   fieldNames={{

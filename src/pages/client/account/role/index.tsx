@@ -273,13 +273,13 @@ function Permission() {
                 setAddUserVisible(false)
               }}
               onOk={() => {
-                if (selectedKeys.every(id => current.roleUserInfoVOList?.some(item => item.userId === id))) {
+                if (selectedKeys.length && current.roleUserInfoVOList.every(({ userId }) => selectedKeys?.some(id => userId === id))) {
                   return null
                 }
                 return showMessage(() => roleAPI
                   .saveRoleUser({
                     roleId: current.id,
-                    userIdList: selectedKeys,
+                    userIdList: selectedKeys.map(i => Number(i)),
                   }))
               }}
               visible={addUserVisible}
@@ -289,8 +289,8 @@ function Permission() {
                 <Transfer
                   simple={{ retainSelectedItems: true }}
                   dataSource={roleUsersHandle.data?.list.map(item => ({
-                    key: item.id,
-                    value: item.tenantryName,
+                    key: item.userId,
+                    value: item.userName,
                   })) || []}
                   targetKeys={selectedKeys || []}
                   // targetKeys={current?.roleUserInfoVOList?.map(item => item.userId as any)}

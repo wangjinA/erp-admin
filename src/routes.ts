@@ -562,6 +562,8 @@ function useRoute(): [IRoute[], DefaultRouteMap] {
     if (!loginInfo) {
       return
     }
+    console.log(loginInfo)
+
     // const newRoutes = routes
     const newRoutes = loginInfo?.sysUser?.isAdmin
       ? routes

@@ -17,6 +17,7 @@ export interface Role {
   roleCode: string
   roleName: string
   systemAcquiesce: number
+  backStatus: boolean
   tenantryId: number
   updateBy: number
   updateTime: string

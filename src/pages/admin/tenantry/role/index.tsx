@@ -3,6 +3,7 @@ import {
   Grid,
   Message,
   Modal,
+  Result,
   Space,
   Spin,
   Tag,
@@ -64,8 +65,6 @@ function Permission() {
     manual: true,
   })
 
-  console.log(selectedKeys)
-
   // 获取用户组下的用户
   const roleUsersHandle = useRequest(() => {
     if (!addUserVisible) {
@@ -125,6 +124,8 @@ function Permission() {
                   data={roles?.map(item => ({
                     name: item.roleName,
                     id: item.id,
+                    _HideDelete: item.systemAcquiesce === 1 && item.backStatus,
+                    _HideEdit: item.systemAcquiesce === 1 && item.backStatus,
                   }))}
                   active={current?.id}
                   onActive={(item) => {
@@ -192,26 +193,43 @@ function Permission() {
               </Grid.Col>
               <Grid.Col span={9} className="overflow-y-auto h-full">
                 <Title title="成员列表" className="mt-0.5"></Title>
-                <Space size={[16, 16]}>
-                  {
-                    current?.roleUserInfoVOList?.map(item => (
-                      <Tag key={item.userId} checkable={true} color="arcoblue" checked={true}>
-                        {item.userName}
-                      </Tag>
-                    ))
-                  }
-                </Space>
-                <Button
-                  type="primary"
-                  size="small"
-                  loading={roleUsersHandle.loading}
-                  icon={<IconPlus></IconPlus>}
-                  onClick={() => {
-                    setAddUserVisible(true)
-                  }}
-                >
-                  添加
-                </Button>
+                {
+                  current?.systemAcquiesce === 1 && current?.backStatus
+                    ? (
+                        <Result
+                          className="mt-20"
+                          status="success"
+                          title="全部店铺用户"
+                          subTitle="无法编辑，默认用户拥有的菜单权限"
+                        >
+                        </Result>
+                      )
+                    : (
+                        <>
+                          <Space size={[16, 16]}>
+                            {
+                              current?.roleUserInfoVOList?.map(item => (
+                                <Tag key={item.userId} checkable={true} color="arcoblue" checked={true}>
+                                  {item.userName}
+                                </Tag>
+                              ))
+                            }
+                          </Space>
+                          <Button
+                            type="primary"
+                            size="small"
+                            loading={roleUsersHandle.loading}
+                            icon={<IconPlus></IconPlus>}
+                            onClick={() => {
+                              setAddUserVisible(true)
+                            }}
+                          >
+                            添加
+                          </Button>
+                        </>
+                      )
+                }
+
               </Grid.Col>
             </Grid.Row>
             <Modal
@@ -266,8 +284,7 @@ function Permission() {
               }}
               onOk={() => {
                 console.log(selectedKeys.every(id => current.roleUserInfoVOList?.some(item => item.userId === id)))
-
-                if (selectedKeys.length && selectedKeys.every(id => current.roleUserInfoVOList?.some(item => item.userId === id))) {
+                if (selectedKeys.length && current.roleUserInfoVOList.every(({ userId }) => selectedKeys?.some(id => userId === id))) {
                   Message.info('暂无变更')
                   return null
                 }

@@ -6,6 +6,8 @@ import styles from './index.module.less'
 
 interface DataItem {
   avatar?: string
+  _HideDelete?: boolean
+  _HideEdit?: boolean
 }
 
 interface ListProps<T> {
@@ -54,49 +56,53 @@ function List<T>(props: ListProps<T>) {
                   <Typography.Text className="text-sm" type="secondary">{item[descriptionKey]}</Typography.Text>
                 </Space>
               </Space>
-              <div onClick={(e) => {
-                e.stopPropagation()
-              }}
-              >
-
-                <Dropdown
-                  droplist={(
-                    <Menu onClickMenuItem={(e) => {
-                      if (e === 'update') {
-                        onUpdate?.(item)
-                      }
-                      else if (e === 'delete') {
-                        onDelete?.(item)
-                      }
+              {(item._HideEdit && item._HideDelete) || (!onUpdate && !onDelete)
+                ? null
+                : (
+                    <div onClick={(e) => {
+                      e.stopPropagation()
                     }}
                     >
-                      {onUpdate
-                        ? (
-                            <Menu.Item key="update">
-                              <IconEdit />
-                              <Typography.Text className="ml-2">修改</Typography.Text>
 
-                            </Menu.Item>
-                          )
-                        : null }
-                      {onDelete
-                        ? (
-                            <Menu.Item key="delete">
-                              <IconDelete />
-                              <Typography.Text className="ml-2">删除</Typography.Text>
-                            </Menu.Item>
-                          )
-                        : null }
-                    </Menu>
+                      <Dropdown
+                        droplist={(
+                          <Menu onClickMenuItem={(e) => {
+                            if (e === 'update') {
+                              onUpdate?.(item)
+                            }
+                            else if (e === 'delete') {
+                              onDelete?.(item)
+                            }
+                          }}
+                          >
+                            {onUpdate && !item._HideEdit
+                              ? (
+                                  <Menu.Item key="update">
+                                    <IconEdit />
+                                    <Typography.Text className="ml-2">修改</Typography.Text>
+
+                                  </Menu.Item>
+                                )
+                              : null }
+                            {onDelete && (!item._HideDelete)
+                              ? (
+                                  <Menu.Item key="delete">
+                                    <IconDelete />
+                                    <Typography.Text className="ml-2">删除</Typography.Text>
+                                  </Menu.Item>
+                                )
+                              : null }
+                          </Menu>
+                        )}
+                        trigger="click"
+                        position="br"
+                      >
+                        <Link>
+                          <IconMore />
+                        </Link>
+                      </Dropdown>
+                    </div>
                   )}
-                  trigger="click"
-                  position="br"
-                >
-                  <Link>
-                    <IconMore />
-                  </Link>
-                </Dropdown>
-              </div>
             </Space>
           </Card>
         ))}
