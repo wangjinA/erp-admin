@@ -1,7 +1,7 @@
 import defaultSettings from '../settings.json'
 
 import { UserInfo } from '@/api/admin/user'
-import { MenuItem } from '@/api/client/menu'
+import { MenuItem } from '@/api/menu'
 import { getEndType } from '@/routes'
 import { LoginResponse } from '@/types/user'
 
@@ -66,8 +66,6 @@ export default function store(state = initialState, action) {
     }
     case 'set-login-info': {
       const { loginInfo } = action.payload
-      console.log(loginInfo)
-
       return {
         ...state,
         loginInfo,

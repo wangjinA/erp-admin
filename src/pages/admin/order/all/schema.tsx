@@ -29,6 +29,7 @@
 // trackingNo	快递单号
 
 import { CreateFormItemType } from '@/components/CreateFormItem'
+import { TimeRangeDisabledDateProps } from '@/constants'
 
 export const OrderFilter: CreateFormItemType[] = [
   {
@@ -50,10 +51,19 @@ export const OrderFilter: CreateFormItemType[] = [
   },
   {
     schema: {
+      field: 'selectLogisticsOrderVO.createAt',
+      label: '创建时间',
+    },
+    control: 'datePickerRange',
+    controlProps: TimeRangeDisabledDateProps,
+  },
+  {
+    schema: {
       field: 'selectLogisticsOrderVO.packTimes',
       label: '打包时间',
     },
     control: 'datePickerRange',
+    controlProps: TimeRangeDisabledDateProps,
   },
   {
     schema: {
@@ -61,6 +71,7 @@ export const OrderFilter: CreateFormItemType[] = [
       label: '出库时间',
     },
     control: 'datePickerRange',
+    controlProps: TimeRangeDisabledDateProps,
     // (props: any) => (
     //   <DatePicker.RangePicker {...TimeRangeDefaultProps} {...props} />
     // ),

@@ -1,7 +1,7 @@
 import { DatePicker } from '@arco-design/web-react'
 import React from 'react'
 
-import { TimeRangeDefaultProps } from '..'
+import { TimeRangeDefaultProps, TimeRangeDisabledDateProps } from '..'
 
 import { CreateFormItemType } from '@/components/CreateFormItem'
 
@@ -80,6 +80,15 @@ export const OrderFilter: CreateFormItemType[] = [
       label: '卖家手机',
     },
     control: 'input',
+  },
+  {
+    schema: {
+      field: 'timeType91',
+      label: '创建时间',
+    },
+    control: (props: any) => (
+      <DatePicker.RangePicker {...TimeRangeDefaultProps} {...props} {...TimeRangeDisabledDateProps} />
+    ),
   },
   {
     schema: {

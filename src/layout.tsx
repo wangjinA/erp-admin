@@ -312,7 +312,7 @@ function PageLayout() {
                       })}
                       {Object.values(EndType).map(endKey => (
                         <Route exact path={`/${endKey}`} key={endKey}>
-                          <Redirect to={`/${defaultRoute}`} />
+                          {defaultRoute ? <Redirect to={`/${defaultRoute}`} /> : null}
                         </Route>
                       ))}
                       <Route

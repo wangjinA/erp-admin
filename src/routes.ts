@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from 'react'
 
 import { useSelector } from 'react-redux'
 
+import { MenuItem } from './api/menu'
 import { GlobalState } from './store'
-import { SysMenuTenantryVo } from './types/user'
 
 import { AuthParams } from '@/utils/authentication'
 
@@ -516,11 +516,49 @@ export function toLoginPage() {
 type DefaultRouteMap = Partial<Record<EndType, string>>
 
 function useRoute(): [IRoute[], DefaultRouteMap] {
-  const { loginInfo } = useSelector((state: GlobalState) => state)
+  const { loginInfo, clientMenuList } = useSelector((state: GlobalState) => state)
+  // const filterRoute = (params: {
+  //   routes: IRoute[]
+  //   arr: any[]
+  //   menus?: SysMenuTenantryVo[]
+  //   parentPath?: string
+  // }): IRoute[] => {
+  //   const { routes, arr, menus, parentPath = '' } = params
+  //   if (!routes.length) {
+  //     return []
+  //   }
+  //   for (const route of routes) {
+  //     const { key } = route
+  //     const targetMenu = menus?.find((item) => {
+  //       return `${parentPath + item.menuPath}` === `/${key}`
+  //     })
+
+  //     if (!targetMenu) {
+  //       continue
+  //     }
+  //     if (route.children && route.children.length) {
+  //       const newRoute = { ...route, children: [] }
+  //       filterRoute({
+  //         routes: route.children,
+  //         arr: newRoute.children,
+  //         menus: targetMenu?.childDataList,
+  //         parentPath: targetMenu.menuPath,
+  //       })
+  //       if (newRoute.children.length) {
+  //         arr.push(newRoute)
+  //       }
+  //     }
+  //     else {
+  //       arr.push({ ...route })
+  //     }
+  //   }
+
+  //   return arr
+  // }
   const filterRoute = (params: {
     routes: IRoute[]
     arr: any[]
-    menus?: SysMenuTenantryVo[]
+    menus?: MenuItem[]
     parentPath?: string
   }): IRoute[] => {
     const { routes, arr, menus, parentPath = '' } = params
@@ -532,7 +570,6 @@ function useRoute(): [IRoute[], DefaultRouteMap] {
       const targetMenu = menus?.find((item) => {
         return `${parentPath + item.menuPath}` === `/${key}`
       })
-
       if (!targetMenu) {
         continue
       }
@@ -541,7 +578,7 @@ function useRoute(): [IRoute[], DefaultRouteMap] {
         filterRoute({
           routes: route.children,
           arr: newRoute.children,
-          menus: targetMenu?.childDataList,
+          menus: targetMenu.children,
           parentPath: targetMenu.menuPath,
         })
         if (newRoute.children.length) {
@@ -556,25 +593,22 @@ function useRoute(): [IRoute[], DefaultRouteMap] {
     return arr
   }
 
-  const [permissionRoute, setPermissionRoute] = useState(routes)
+  const [permissionRoute, setPermissionRoute] = useState([])
 
   useEffect(() => {
     if (!loginInfo) {
       return
     }
-    console.log(loginInfo)
-
     // const newRoutes = routes
-    const newRoutes = loginInfo?.sysUser?.isAdmin
+    const newRoutes = loginInfo?.sysUser?.isAdmin || isAdmin()
       ? routes
       : filterRoute({
         routes,
         arr: [],
-        menus: loginInfo.sysMenuTenantryVoList,
+        menus: clientMenuList,
       })
-
     setPermissionRoute(newRoutes)
-  }, [JSON.stringify(loginInfo)])
+  }, [JSON.stringify(loginInfo), JSON.stringify(clientMenuList)])
 
   const defaultRouteMap = useMemo(() => {
     return Object.values(EndType).reduce<DefaultRouteMap>((pre, endKey) => {
@@ -585,7 +619,7 @@ function useRoute(): [IRoute[], DefaultRouteMap] {
       }
       return pre
     }, {})
-  }, [permissionRoute])
+  }, [JSON.stringify(permissionRoute)])
 
   return [permissionRoute, defaultRouteMap]
 }

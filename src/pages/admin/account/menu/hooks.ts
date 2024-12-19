@@ -1,7 +1,8 @@
 import { useRequest } from 'ahooks'
 import { groupBy } from 'lodash'
 
-import { MenuItem, clientMenuAPI, menuAPI } from '@/api/admin/menu'
+import { clientMenuAPI, menuAPI } from '@/api/admin/menu'
+import { MenuItem } from '@/api/menu'
 
 export const MenuSize = 200
 

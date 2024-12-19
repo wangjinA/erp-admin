@@ -19,7 +19,7 @@ import TrackingNumber from '@/components/TrackingNumber'
 import { EmitTypes, bus } from '@/hooks/useEventBus'
 import { isAdmin } from '@/routes'
 import { Order, OrderResponseItem } from '@/types/order'
-import { showMessage, showModal } from '@/utils'
+import { showMessage, showModal, stringToMasked } from '@/utils'
 
 export function useColumns(props: OrderTablePorps) {
   const { dictCode } = props
@@ -83,10 +83,10 @@ export function useColumns(props: OrderTablePorps) {
           render(c, row) {
             return (
               <div className="border-r h-full p-2">
-                <LabelValue label="买家" value={row.buyerUsername}></LabelValue>
-                <LabelValue label="收货人" value={row.recipients}></LabelValue>
-                <LabelValue label="收货电话" value={row.mobileNumber}></LabelValue>
-                <LabelValue label="收货地址" value={row.detailedAddress}></LabelValue>
+                <LabelValue label="买家" value={stringToMasked(row.buyerUsername)}></LabelValue>
+                <LabelValue label="收货人" value={stringToMasked(row.recipients)}></LabelValue>
+                <LabelValue label="收货电话" value={stringToMasked(row.mobileNumber)}></LabelValue>
+                <LabelValue label="收货地址" value={stringToMasked(row.detailedAddress)}></LabelValue>
               </div>
             )
           },

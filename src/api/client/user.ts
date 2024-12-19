@@ -38,10 +38,8 @@ export const userAPI = {
   }) {
     return baseAxios.get('/api/tenantry/user/enable', { params })
   },
-  removeUser(params: {
-    id: number
-  }) {
-    return baseAxios.get('/api/tenantry/user/remove', { params })
+  removeUser(id) {
+    return baseAxios.get(`/api/tenantry/user/remove${id}`)
   },
   updateUser(body: Partial<ClientUserInfo>) {
     return baseAxios.post('/api/tenantry/user/update', body)

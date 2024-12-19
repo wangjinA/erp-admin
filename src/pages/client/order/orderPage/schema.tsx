@@ -2,6 +2,7 @@ import { OrderPageType } from '.'
 
 import { SearchTableSchema } from '@/components/SearchTable'
 import ShopRadio from '@/components/Selectors/ShopRadio'
+import { TimeRangeDisabledDateProps } from '@/constants'
 import { isClient } from '@/routes'
 import { showObj } from '@/utils'
 
@@ -40,10 +41,19 @@ export const getOrderFilter: (params: OrderPageParams) => SearchTableSchema[] = 
     },
     {
       schema: {
+        field: 'selectLogisticsOrderVO.createAt',
+        label: '创建时间',
+      },
+      control: 'datePickerRange',
+      controlProps: TimeRangeDisabledDateProps,
+    },
+    {
+      schema: {
         field: 'selectLogisticsOrderVO.packTimes',
         label: '打包时间',
       },
       control: 'datePickerRange',
+      controlProps: TimeRangeDisabledDateProps,
     },
     {
       schema: {
@@ -51,6 +61,7 @@ export const getOrderFilter: (params: OrderPageParams) => SearchTableSchema[] = 
         label: '出库时间',
       },
       control: 'datePickerRange',
+      controlProps: TimeRangeDisabledDateProps,
     },
     {
       schema: {
@@ -58,6 +69,7 @@ export const getOrderFilter: (params: OrderPageParams) => SearchTableSchema[] = 
         label: '申请面单时间',
       },
       control: 'datePickerRange',
+      controlProps: TimeRangeDisabledDateProps,
     },
     {
       schema: {

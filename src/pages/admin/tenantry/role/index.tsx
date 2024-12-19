@@ -283,8 +283,7 @@ function Permission() {
                 setAddUserVisible(false)
               }}
               onOk={() => {
-                console.log(selectedKeys.every(id => current.roleUserInfoVOList?.some(item => item.userId === id)))
-                if (selectedKeys.length && current.roleUserInfoVOList.every(({ userId }) => selectedKeys?.some(id => userId === id))) {
+                if (selectedKeys.length && current.roleUserInfoVOList?.every(({ userId }) => selectedKeys?.some(id => userId === id))) {
                   Message.info('暂无变更')
                   return null
                 }

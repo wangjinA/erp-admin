@@ -37,7 +37,6 @@ import { showMessage } from '@/utils'
 function Permission() {
   const allExpandedKeys = ['0-0', '0-1', '0-0-2']
   const [checkedKeys, setCheckedKeys] = useState([])
-  const [expandedKeys, setExpandedKeys] = useState(allExpandedKeys)
   const [selectedKeys, setSelectedKeys] = useState([])
   const [current, setCurrent] = useState<Role>(null)
   const [addUserVisible, setAddUserVisible] = useState(false)
@@ -273,7 +272,7 @@ function Permission() {
                 setAddUserVisible(false)
               }}
               onOk={() => {
-                if (selectedKeys.length && current.roleUserInfoVOList.every(({ userId }) => selectedKeys?.some(id => userId === id))) {
+                if (selectedKeys.length && current.roleUserInfoVOList?.every(({ userId }) => selectedKeys?.some(id => userId === id))) {
                   return null
                 }
                 return showMessage(() => roleAPI

@@ -59,10 +59,6 @@ function Index() {
         payload: { loginInfo: JSON.parse(localLoginInfo) },
       })
     }
-    store.dispatch({
-      type: 'set-login-info',
-      payload: { loginInfo: JSON.parse(localStorage.getItem(requestEndInfo.loginInfoKey) || '') },
-    })
     try {
       const res = await userAPI.personalCenter()
       store.dispatch({

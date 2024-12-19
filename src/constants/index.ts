@@ -62,6 +62,12 @@ export const TimeRangeDefaultProps: RangePickerProps = {
   shortcutsPlacementLeft: true,
 }
 
+export const TimeRangeDisabledDateProps: RangePickerProps = {
+  disabledDate: (current) => {
+    return current.isAfter(dayjs().endOf('day')) || current.isBefore(dayjs().subtract(3, 'month'))
+  },
+}
+
 export const TimeDefaultProps = {
   format: 'YYYY-MM-DD HH:mm:ss',
   className: 'w-full',

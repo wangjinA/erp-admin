@@ -143,3 +143,17 @@ export function formatDate(date: string, defaultDate?: dayjs.ConfigType) {
 export function isProd() {
   return process.env.NODE_ENV === 'production'
 }
+
+/**
+ * 字符串脱敏
+ */
+export function stringToMasked(str: string, symbol = '*') {
+  if (!str) {
+    return ''
+  }
+  const len = str.length
+  const first = str[0]
+  const last = str[len - 1]
+  const middle = str.slice(1, len - 1)
+  return `${first}${middle.replace(/./g, symbol)}${last}`
+}
