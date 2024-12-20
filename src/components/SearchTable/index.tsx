@@ -36,7 +36,7 @@ import PopconfirmDelete from '../PopconfirmDelete'
 
 import { useSearchParam } from './hooks'
 
-import { APIListResponse, APIResponse, IPageParams } from '@/api/type'
+import { APIListResponse, APIResponse, IPageParams, ListResponse } from '@/api/type'
 import {
   FormModalCommonProps,
   ShowFormType,
@@ -71,6 +71,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
       updateRequest,
       removeRequest,
       editTransform,
+      onDataChange,
     } = props
     const [formRef] = Form.useForm()
     const [searchFromRef] = Form.useForm()
@@ -103,6 +104,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
             setPageNum(pageNum - 1)
             return
           }
+          onDataChange?.(result)
           return result
         })
       },
@@ -395,6 +397,7 @@ interface SearchTableProps {
   removeRequest?: (id) => Promise<AxiosResponse<APIResponse>>
   updateRequest?: (id) => Promise<AxiosResponse<APIResponse>>
   onView?: (record) => void
+  onDataChange?: (data: ListResponse) => void
 }
 
 export type SearchTableSchema = CreateFormItemType &

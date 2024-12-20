@@ -31,12 +31,15 @@ export function showMessage<T>(fn: () => Promise<AxiosResponse<APIResponse<T>>>,
       return resp
     }
     else {
+      console.log(resp.data)
+
       const errMsg = resp.data.msg || `${message}失败`
       throw new Error(errMsg)
     }
   }).catch((error) => {
+    const msg = error?.response?.data?.msg || error?.message || ''
     Message.error({
-      content: `${message}失败${error.message ? `，${error.message}` : ''}`,
+      content: `${message}失败${msg}`,
       duration: 3000,
     })
     throw error

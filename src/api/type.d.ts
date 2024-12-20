@@ -1,18 +1,20 @@
 export interface IPageParams {
-  pageNum: number;
-  pageSize: number;
+  pageNum: number
+  pageSize: number
 }
 
 export interface APIResponse<T = null> {
-  code: number;
-  msg: string;
-  data: T;
+  code: number
+  msg: string
+  data: T
+}
+
+export interface ListResponse<T = null> {
+  list: T[]
+  pageNum: number
+  pageSize: number
+  total: number
 }
 
 export interface APIListResponse<T = null>
-  extends APIResponse<{
-    list: T[];
-    pageNum: number;
-    pageSize: number;
-    total: number;
-  }> {}
+  extends APIResponse<ListResponse<T>> {}
