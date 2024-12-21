@@ -1,0 +1,1 @@
+import{d,j as t,p as r}from"./vendor.446b4cc8.js";import{s as c,M as i}from"./item.fd9c895c.js";function l(e){const{data:s=[]}=e;return d("div",{className:c["message-list"],children:[s.map(a=>t(i,{data:a},a.id)),!s.length&&t(r,{status:"404"})]})}export{l as default};
