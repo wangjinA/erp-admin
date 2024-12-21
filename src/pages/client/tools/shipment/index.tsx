@@ -78,7 +78,7 @@ const StoreList: React.FC<StoreListProps> = (props) => {
             },
             render(col, row) {
               const percent = Number(processInfo?.progress?.[row.id]?.replace('%', '') || 0)
-              const errorMsg = processInfo.error ? `,修改出错:${processInfo.error}` : ''
+              const errorMsg = processInfo?.error ? `,修改出错:${processInfo?.error}` : ''
               return (
                 <div className="flex flex-col items-center">
                   <Button
