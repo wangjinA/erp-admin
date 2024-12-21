@@ -21,7 +21,7 @@ export function tryFn<T>(fn: () => Promise<T>, message: string = '请求失败')
 
 export function showMessage<T>(fn: () => Promise<AxiosResponse<APIResponse<T>>>, message: string = '操作', showSuccessMessage = true): Promise<AxiosResponse<APIResponse<T>>> {
   return fn().then((resp: AxiosResponse<APIResponse<T>>) => {
-    if (resp.data.code === SuccessCode) {
+    if ([SuccessCode, 0].includes(resp.data.code)) {
       if (showSuccessMessage) {
         Message.success({
           content: `${message}成功`,

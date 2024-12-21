@@ -8,17 +8,20 @@ import { useSelector } from 'react-redux'
 import StoreListSchema from '../../store/list/schema'
 
 import { ShopStore, shopStoreAPI } from '@/api/client/shopStore'
-import { shipmentAPI } from '@/api/shopeeUtils/shipment'
+import { ProcessInfo, shipmentAPI } from '@/api/shopeeUtils/shipment'
 import FilterForm from '@/components/FilterForm'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
+import StatusTag from '@/components/StatusTag'
 import { GlobalState } from '@/store'
 import { showMessage } from '@/utils'
+import { secondsToDateString } from '@/utils/date'
 
 interface StoreListProps {}
 const StoreList: React.FC<StoreListProps> = (props) => {
   const { userInfo } = useSelector((state: GlobalState) => state)
   const ref = useRef<SearchTableRef>()
   const [current, setCurrent] = useState<ShopStore>()
+  const [processInfo, setProcessInfo] = useState<ProcessInfo>(null)
   const [list, setList] = useState<ShopStore[]>([])
   const [form] = Form.useForm()
   const { run, loading } = useRequest(async () => {
@@ -34,26 +37,27 @@ const StoreList: React.FC<StoreListProps> = (props) => {
     manual: true,
   })
 
-  const { data: processList, run: getProcessList } = useRequest(() => {
-    const ids = list?.map(item => item.id) || []
-    if (!ids.length)
-      return
-    return shipmentAPI.getProcess({
-      userLoginAccount: userInfo.userLoginAccount,
-      shopIds: list.map(item => item.id),
-    }).then(r => r.data.data)
-  }, {
-    manual: true,
-  })
-
   useEffect(() => {
-    const timer = setInterval(() => {
-      getProcessList()
-    }, 1000)
-    return () => {
-      clearInterval(timer)
+    let timer
+    function fn() {
+      const ids = list?.map(item => item.id) || []
+      if (!ids.length)
+        return
+      return shipmentAPI.getProcess({
+        userLoginAccount: userInfo.userLoginAccount,
+        shopIds: list.map(item => item.id),
+      }).then((r) => {
+        setProcessInfo(r.data.data)
+      }).finally(() => {
+        timer = setTimeout(fn, 1500)
+      })
     }
-  }, [])
+    fn()
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [JSON.stringify(list),
+  ])
 
   return (
     <div className="p-4 bg-white">
@@ -66,16 +70,17 @@ const StoreList: React.FC<StoreListProps> = (props) => {
           }
         }
         formItemConfigList={[
-          ...StoreListSchema,
+          ...StoreListSchema.filter(e => !['region', 'storeType'].includes(e.schema.field)),
           {
             schema: {
               label: '操作',
               field: 'actions',
             },
             render(col, row) {
-              const percent = Number(processList?.[row.id]?.replace('%', '') || 0)
+              const percent = Number(processInfo?.progress?.[row.id]?.replace('%', '') || 0)
+              const errorMsg = processInfo.error ? `,修改出错:${processInfo.error}` : ''
               return (
-                <div className="flex flex-col gap-2 items-center">
+                <div className="flex flex-col items-center">
                   <Button
                     type="text"
                     className="-ml-4"
@@ -86,7 +91,22 @@ const StoreList: React.FC<StoreListProps> = (props) => {
                   >
                     修改出货天数
                   </Button>
-                  {percent ? <Progress percent={percent}></Progress> : null}
+                  <div className="pl-4">
+                    {percent ? <Progress className="mb-1" percent={percent}></Progress> : null}
+                    {processInfo?.duration
+                      ? (
+                          <StatusTag
+                            tagInfos={[{
+                              text: `商品数量：${processInfo.goodsTotal}，时长：${secondsToDateString(processInfo.duration)}${errorMsg}`,
+                              value: 0,
+                              color: errorMsg ? 'red' : 'green',
+                            }]}
+                            value={0}
+                          >
+                          </StatusTag>
+                        )
+                      : null}
+                  </div>
                 </div>
               )
             },

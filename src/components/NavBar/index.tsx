@@ -24,6 +24,8 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import Settings from '../Settings'
 
+import StatusTag from '../StatusTag'
+
 import IconButton from './IconButton'
 
 import styles from './style/index.module.less'
@@ -34,7 +36,7 @@ import Logo from '@/assets/logo.svg'
 import MessageBox from '@/components/MessageBox'
 import { GlobalContext } from '@/context'
 import defaultLocale from '@/locale'
-import { generatePermission, toLoginPage } from '@/routes'
+import { generatePermission, isAdmin, toLoginPage } from '@/routes'
 import { GlobalState } from '@/store'
 import useLocale from '@/utils/useLocale'
 
@@ -166,6 +168,23 @@ function Navbar({ show }: { show: boolean }) {
         <div className={styles.logo}>
           <Logo />
           <div className={styles['logo-name']}>速运宝 - 新一代电商货代平台</div>
+          <Divider type="vertical"></Divider>
+          <StatusTag
+            value={Number(isAdmin())}
+            tagInfos={[
+              {
+                text: '店铺端',
+                value: 0,
+                color: 'green',
+              },
+              {
+                text: '物流端',
+                value: 1,
+                color: 'blue',
+              },
+            ]}
+          >
+          </StatusTag>
         </div>
       </div>
       <ul className={styles.right}>

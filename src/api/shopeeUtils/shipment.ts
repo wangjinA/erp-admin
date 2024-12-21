@@ -17,8 +17,19 @@ export const shipmentAPI = {
     shopIds: any[]
     userLoginAccount: string
   }) {
-    return shopeeUtilsAxios.post<APIResponse<Record<string, string>>>('/shipment/process', body)
+    return shopeeUtilsAxios.post<APIResponse<ProcessInfo>>('/shipment/process', body)
   },
+}
+
+export interface ProcessInfo {
+  userLoginAccount: string
+  erpToken: string
+  progress: Record<string, string>
+  storeId: number
+  accessToken: string
+  error: string
+  duration: number
+  goodsTotal: number
 }
 
 export interface ShipmentUpdateBody {

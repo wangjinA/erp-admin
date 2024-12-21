@@ -73,6 +73,7 @@ const StoreListSchema: SearchTableSchema[] = [
       label: '店铺名称',
       field: 'shopName',
     },
+    width: 300,
   },
   // {
   //   schema: {

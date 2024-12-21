@@ -9,7 +9,7 @@ export interface TagInfoMap {
 
 interface StatusTagProps {
   tagInfos: TagInfoMap[]
-  value: string
+  value: any
 }
 
 const StatusTag: React.FC<StatusTagProps> = (props) => {
