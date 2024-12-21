@@ -12,17 +12,19 @@ interface RequestEndTypeInfo {
 }
 
 const AdminRequestEndInfo: RequestEndTypeInfo = {
-  baseUrl: import.meta.env.DEV
-    ? '/prod-admin'
-    : 'https://logistics.suyunbaoo.com/prod-admin',
+  baseUrl: '/prod-admin',
+  // import.meta.env.DEV
+  //   ? '/prod-admin'
+  //   : 'https://logistics.suyunbaoo.com/prod-admin',
   tokenKey: 'erp-admin-token',
   loginInfoKey: 'lg-admin-if',
 }
 
 const ClientRequestEndInfo: RequestEndTypeInfo = {
-  baseUrl: import.meta.env.DEV
-    ? '/prod-user'
-    : 'https://logistics.suyunbaoo.com/prod-user',
+  baseUrl: '/prod-user',
+  // import.meta.env.DEV
+  //   ? '/prod-user'
+  //   : 'https://logistics.suyunbaoo.com/prod-user',
   tokenKey: 'erp-user-token',
   loginInfoKey: 'lg-client-if',
 }
