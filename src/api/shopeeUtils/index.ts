@@ -5,7 +5,7 @@ import { isProd } from '@/utils'
 const timeout = 20 * 1000
 
 const shopeeUtilsAxios = axios.create({
-  baseURL: isProd() ? 'http://81.71.146.181:3001/shopeeUtils' : 'http://localhost:3001/shopeeUtils',
+  baseURL: isProd() ? 'https://logistics.suyunbaoo.com/shopeeUtils' : 'http://localhost:3001/shopeeUtils',
   timeout,
 })
 
