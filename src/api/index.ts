@@ -13,7 +13,7 @@ interface RequestEndTypeInfo {
 const AdminRequestEndInfo: RequestEndTypeInfo = {
   baseUrl: import.meta.env.DEV
     ? '/prod-admin'
-    : 'https://logistics.drcstudio.cn/prod-admin',
+    : 'https://logistics.suyunbaoo.com/prod-admin',
   tokenKey: 'erp-admin-token',
   loginInfoKey: 'lg-admin-if',
 }
@@ -21,7 +21,7 @@ const AdminRequestEndInfo: RequestEndTypeInfo = {
 const ClientRequestEndInfo: RequestEndTypeInfo = {
   baseUrl: import.meta.env.DEV
     ? '/prod-user'
-    : 'https://logistics.drcstudio.cn/prod-user',
+    : 'https://logistics.suyunbaoo.com/prod-user',
   tokenKey: 'erp-user-token',
   loginInfoKey: 'lg-client-if',
 }
