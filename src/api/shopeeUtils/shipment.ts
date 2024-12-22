@@ -24,12 +24,16 @@ export const shipmentAPI = {
 export interface ProcessInfo {
   userLoginAccount: string
   erpToken: string
-  progress: Record<string, string>
-  storeId: number
   accessToken: string
-  error: string
+  storeId: string
+  progress: Record<string, ProgressInfo>
+}
+
+export interface ProgressInfo {
   duration: number
   goodsTotal: number
+  error?: string
+  value: string
 }
 
 export interface ShipmentUpdateBody {

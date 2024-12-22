@@ -77,8 +77,9 @@ const StoreList: React.FC<StoreListProps> = (props) => {
               field: 'actions',
             },
             render(col, row) {
-              const percent = Number(processInfo?.progress?.[row.id]?.replace('%', '') || 0)
-              const errorMsg = processInfo?.error ? `,修改出错:${processInfo?.error}` : ''
+              const targetProgressInfo = processInfo?.progress?.[row.id]
+              const percent = Number(targetProgressInfo?.value?.replace('%', '') || 0)
+              const errorMsg = targetProgressInfo?.error ? `,修改出错:${targetProgressInfo?.error}` : ''
               return (
                 <div className="flex flex-col items-center">
                   <Button
@@ -91,22 +92,26 @@ const StoreList: React.FC<StoreListProps> = (props) => {
                   >
                     修改出货天数
                   </Button>
-                  <div className="pl-4">
-                    {percent ? <Progress className="mb-1" percent={percent}></Progress> : null}
-                    {processInfo?.duration
-                      ? (
-                          <StatusTag
-                            tagInfos={[{
-                              text: `商品数量：${processInfo.goodsTotal}，时长：${secondsToDateString(processInfo.duration)}${errorMsg}`,
-                              value: 0,
-                              color: errorMsg ? 'red' : 'green',
-                            }]}
-                            value={0}
-                          >
-                          </StatusTag>
-                        )
-                      : null}
-                  </div>
+                  {(percent || errorMsg)
+                    ? (
+                        <div className="pl-4">
+                          <Progress className="mb-1" percent={percent}></Progress>
+                          {(targetProgressInfo?.duration || errorMsg)
+                            ? (
+                                <StatusTag
+                                  tagInfos={[{
+                                    text: `商品数量：${targetProgressInfo.goodsTotal}，时长：${secondsToDateString(targetProgressInfo.duration)}${errorMsg}`,
+                                    value: 0,
+                                    color: errorMsg ? 'red' : 'green',
+                                  }]}
+                                  value={0}
+                                >
+                                </StatusTag>
+                              )
+                            : null}
+                        </div>
+                      )
+                    : null}
                 </div>
               )
             },
@@ -137,6 +142,10 @@ const StoreList: React.FC<StoreListProps> = (props) => {
               required: true,
             },
             control: 'number',
+            controlProps: {
+              max: 30,
+              min: 2,
+            },
           }]}
         >
         </FilterForm>
