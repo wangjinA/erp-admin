@@ -79,7 +79,7 @@ const StoreList: React.FC<StoreListProps> = (props) => {
             render(col, row) {
               const targetProgressInfo = processInfo?.progress?.[row.id]
               const percent = Number(targetProgressInfo?.value?.replace('%', '') || 0)
-              const errorMsg = targetProgressInfo?.error ? `,修改出错:${targetProgressInfo?.error}` : ''
+              const errorMsg = targetProgressInfo?.error ? `,修改出错: ${targetProgressInfo?.error}` : ''
               return (
                 <div className="flex flex-col items-center">
                   <Button
@@ -98,15 +98,29 @@ const StoreList: React.FC<StoreListProps> = (props) => {
                           <Progress className="mb-1" percent={percent}></Progress>
                           {(targetProgressInfo?.duration || errorMsg)
                             ? (
-                                <StatusTag
-                                  tagInfos={[{
-                                    text: `商品数量：${targetProgressInfo.goodsTotal}，时长：${secondsToDateString(targetProgressInfo.duration)}${errorMsg}`,
-                                    value: 0,
-                                    color: errorMsg ? 'red' : 'green',
-                                  }]}
-                                  value={0}
-                                >
-                                </StatusTag>
+
+                                errorMsg
+                                  ? (
+                                      <div
+                                        className="text-sm max-w-[600px]"
+                                        style={{
+                                          color: 'red',
+                                        }}
+                                      >
+                                        {`商品数量：${targetProgressInfo.goodsTotal}，时长：${secondsToDateString(targetProgressInfo.duration)}${errorMsg}`}
+                                      </div>
+                                    )
+                                  : (
+                                      <StatusTag
+                                        tagInfos={[{
+                                          text: `商品数量：${targetProgressInfo.goodsTotal}，时长：${secondsToDateString(targetProgressInfo.duration)}`,
+                                          value: 0,
+                                          color: 'green',
+                                        }]}
+                                        value={0}
+                                      >
+                                      </StatusTag>
+                                    )
                               )
                             : null}
                         </div>
