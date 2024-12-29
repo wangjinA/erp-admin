@@ -1,0 +1,20 @@
+.remark-com {
+  min-width: 50px;
+
+  :global {
+    .remark-com-icon {
+      display: none;
+      color: rgb(var(--primary-6));
+      margin-left: 3px;
+      cursor: pointer;
+    }
+  }
+
+  &:hover {
+    :global {
+      .remark-com-icon {
+        display: inline-block;
+      }
+    }
+  }
+}

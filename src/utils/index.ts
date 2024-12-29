@@ -1,12 +1,13 @@
 import { Message, Modal } from '@arco-design/web-react'
 import { ConfirmProps } from '@arco-design/web-react/es/Modal/confirm'
+import { SorterInfo } from '@arco-design/web-react/es/Table/interface'
 import { AxiosResponse } from 'axios'
 import dayjs from 'dayjs'
 import { isArray } from 'lodash'
 import * as XLSX from 'xlsx'
 
 import { SuccessCode } from '@/api'
-import { APIResponse } from '@/api/type'
+import { APIResponse, SorterReq } from '@/api/type'
 
 export function toArray(value) {
   return isArray(value) ? value : [value]
@@ -19,9 +20,13 @@ export function tryFn<T>(fn: () => Promise<T>, message: string = '请求失败')
   })
 }
 
+export function isSuccessCode(code: number) {
+  return [SuccessCode, 0].includes(code)
+}
+
 export function showMessage<T>(fn: () => Promise<AxiosResponse<APIResponse<T>>>, message: string = '操作', showSuccessMessage = true): Promise<AxiosResponse<APIResponse<T>>> {
   return fn().then((resp: AxiosResponse<APIResponse<T>>) => {
-    if ([SuccessCode, 0].includes(resp.data.code)) {
+    if (isSuccessCode(resp.data.code)) {
       if (showSuccessMessage) {
         Message.success({
           content: `${message}成功`,
@@ -159,4 +164,34 @@ export function stringToMasked(str: string, symbol = '*') {
   const last = str[len - 1]
   const middle = str.slice(1, len - 1)
   return `${first}${middle.replace(/./g, symbol)}${last}`
+}
+
+/**
+ * 获取过期状态
+ */
+export function getExpiredStatus(expiredDate: string): '' | 'red' | 'warning' {
+  if (!expiredDate) {
+    return ''
+  }
+  return (dayjs(expiredDate).isBefore(dayjs()))
+    ? 'red'
+    : (dayjs(expiredDate).isBefore(dayjs().add(10, 'day'))) ? 'warning' : ''
+}
+
+export function sorterToRequestInfo(sorter: SorterInfo): {
+  sorter?: SorterReq
+} {
+  if (!sorter?.direction) {
+    return {}
+  }
+  const sortMap = {
+    ascend: 'ASC',
+    descend: 'DESC',
+  }
+  return {
+    sorter: {
+      field: sorter.field as string,
+      order: sortMap[sorter.direction] as any,
+    },
+  }
 }

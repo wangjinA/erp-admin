@@ -2,6 +2,7 @@ import { Modal } from '@arco-design/web-react'
 import axios from 'axios'
 import { debounce } from 'lodash'
 
+import { WhitePathList } from '@/constants/login'
 import { EndType, getEndType, isLoginPage, toLoginPage } from '@/routes'
 
 interface RequestEndTypeInfo {
@@ -63,7 +64,7 @@ baseAxios.interceptors.request.use((config) => {
 })
 
 const loginModal = debounce((msg) => {
-  if (!isLoginPage()) {
+  if (!isLoginPage() && !WhitePathList.includes(location.pathname)) {
     Modal.confirm({
       title: '温馨提示',
       content: msg || '登录失效！',

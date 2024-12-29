@@ -286,6 +286,10 @@ export const routes: IRoute[] = [
         name: 'admin.tenantry.role',
         key: 'admin/tenantry/role',
       },
+      {
+        name: 'admin.tenantry.consumer',
+        key: 'admin/tenantry/consumer',
+      },
     ],
   },
   {
@@ -620,6 +624,7 @@ function useRoute(): [IRoute[], DefaultRouteMap] {
       return pre
     }, {})
   }, [JSON.stringify(permissionRoute)])
+  console.log(defaultRouteMap)
 
   return [permissionRoute, defaultRouteMap]
 }

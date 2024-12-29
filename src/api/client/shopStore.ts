@@ -1,4 +1,5 @@
 import baseAxios from '..'
+import { ConsumerInfo } from '../shopeeUtils/shipment'
 import { APIListResponse, APIResponse, IPageParams } from '../type'
 
 export const shopStoreAPI = {
@@ -27,7 +28,7 @@ export interface ShopStore {
   createBy: number // 创建人
   createTime: string // 创建时间(date-time)
   deleteStatus: number // 状态：默认为0；删除为1
-  id: number // 主键
+  id: string // 主键
   mainAccountId: string // 开发者的主账号
   platformShopId: number // 平台id
   refreshToken: string // 刷新凭证
@@ -40,4 +41,6 @@ export interface ShopStore {
   tenantryNo: string // 卖家标识
   updateBy: number // 更新人
   updateTime: string // 更新时间(date-time)
+
+  consumerInfo?: ConsumerInfo
 }

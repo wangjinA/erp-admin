@@ -13,17 +13,19 @@ import { createStore } from 'redux'
 import { requestEndInfo } from './api'
 import { userAPI } from './api/admin/user'
 import { menuAPI } from './api/client/menu'
+import { AuthShopeePath, WhitePathList } from './constants/login'
 import { GlobalContext } from './context'
 import PageLayout from './layout'
 import { listToTree } from './pages/admin/account/menu/hooks'
 import AdminLogin from './pages/admin/login'
 import ClientLogin from './pages/client/login'
+import AuthShopee from './pages/common/auth/shopee'
 import { isClient, isLoginPage, toLoginPage } from './routes'
 import rootReducer from './store'
 import './style/global.less'
 import changeTheme from './utils/changeTheme'
 import checkLogin from './utils/checkLogin'
-import './utils/index'
+import { isSuccessCode } from './utils/index'
 import useStorage from './utils/useStorage'
 
 dayjs.extend(duration)
@@ -92,7 +94,7 @@ function Index() {
       // });
     }
     catch (error) {
-      if (!isLoginPage()) {
+      if (!isLoginPage() && !WhitePathList.includes(window.location.pathname)) {
         Message.error('登录失效')
       }
       toLoginPage()
@@ -106,11 +108,13 @@ function Index() {
   async function fetchClientMenuList() {
     if (isClient()) {
       const res = await menuAPI.list()
-      const list = listToTree(res.data.data.list)
-      store.dispatch({
-        type: 'set-client-menu-list',
-        payload: { clientMenuList: list },
-      })
+      if (isSuccessCode(res.data.code)) {
+        const list = listToTree(res.data.data.list)
+        store.dispatch({
+          type: 'set-client-menu-list',
+          payload: { clientMenuList: list },
+        })
+      }
     }
   }
 
@@ -157,6 +161,7 @@ function Index() {
         <Provider store={store}>
           <GlobalContext.Provider value={contextValue}>
             <Switch>
+              <Route path={AuthShopeePath} component={AuthShopee} />
               <Route path="/admin/login" component={AdminLogin} />
               <Route path="/client/login" component={ClientLogin} />
               <Route path="/" component={PageLayout} />

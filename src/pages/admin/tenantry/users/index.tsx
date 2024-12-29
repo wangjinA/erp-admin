@@ -1,29 +1,23 @@
+import { Button, Drawer, Space } from '@arco-design/web-react'
+import { IconEye } from '@arco-design/web-react/icon'
 import { useRequest } from 'ahooks'
 import { omit } from 'lodash'
 import React, { useState } from 'react'
 
 import { tenantryUserAPI } from '@/api/admin/tenantry'
-import { expressAPI } from '@/api/client/express'
+import Remark from '@/components/Remark'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
-import { showMessage, showModal } from '@/utils'
+import StoreListSchema from '@/pages/client/store/list/schema'
+import { showMessage } from '@/utils'
 
 export default () => {
   const [current, setCurrent] = useState<any>()
   const ref = React.useRef<SearchTableRef>()
 
-  const { run, loading } = useRequest(
+  const { run, data, loading } = useRequest(
     async (row) => {
-      await showModal({
-        content: '确定取消？',
-        okButtonProps: {
-          status: 'warning',
-        },
-      })
       setCurrent(row)
-      await showMessage(() =>
-        expressAPI.cancelReject(row.id),
-      )
-      ref.current.refreshSearchTable()
+      return tenantryUserAPI.getUserStoreList({ id: row.id }).then(r => r.data.data.list)
     },
     {
       manual: true,
@@ -88,18 +82,29 @@ export default () => {
               type: 'password',
             },
           },
-          // {
-          //   schema: { label: '用户组', field: 'roleIdList' },
-          //   isCreate: true,
-          //   control: 'role',
-          //   controlProps: {
-          //     mode: 'multiple',
-          //   },
-          // },
           {
             schema: { label: '电话', field: 'tenantryPhone' },
             isCreate: true,
             isSearch: true,
+          },
+          {
+            schema: { label: '备注', field: 'remarks' },
+            render(v, row) {
+              return (
+                <Remark
+                  value={v}
+                  onChange={(v) => {
+                    return showMessage(() => tenantryUserAPI.setRemark({
+                      id: row.id,
+                      remarks: v,
+                    })).then(() => {
+                      ref.current.refreshSearchTable()
+                    })
+                  }}
+                >
+                </Remark>
+              )
+            },
           },
           {
             schema: { label: '状态', field: 'userStatus' },
@@ -115,35 +120,45 @@ export default () => {
               // )
             },
           },
-          // {
-          //   title: '操作',
-          //   dataIndex: 'operator',
-          //   render() {
-          //     return (
-          //       <Space>
-          //         <Button
-          //           icon={<IconEdit></IconEdit>}
-          //           type="primary"
-          //           size="mini"
-          //         >
-          //           编辑
-          //         </Button>
-          //         <PopconfirmDelete
-          //           onOk={() => {
-          //             Message.success('删除成功')
-          //           }}
-          //           buttonProps={{
-          //             size: 'mini',
-          //           }}
-          //         >
-          //         </PopconfirmDelete>
-          //       </Space>
-          //     )
-          //   },
-          // },
+          {
+            schema: {
+              label: '操作',
+              field: 'operator',
+            },
+            render(c, row) {
+              return (
+                <Space>
+                  <Button
+                    icon={<IconEye></IconEye>}
+                    type="primary"
+                    size="mini"
+                    onClick={() => run(row)}
+                  >
+                    查看店铺
+                  </Button>
+                </Space>
+              )
+            },
+          },
         ]}
       >
       </SearchTable>
+      <Drawer
+        width="75%"
+        title={`查看店铺${current?.remarks ? `（${current?.remarks}）` : ''}`}
+        visible={Boolean(current)}
+        onCancel={() => setCurrent(undefined)}
+        onOk={() => setCurrent(undefined)}
+        unmountOnExit={true}
+      >
+        <SearchTable
+          showActions={false}
+          getListRequest={() => tenantryUserAPI.getUserStoreList({ id: current.id })}
+          name="店铺列表"
+          formItemConfigList={StoreListSchema.map(item => omit(item, 'isSearch')) as any}
+        >
+        </SearchTable>
+      </Drawer>
     </div>
   )
 }

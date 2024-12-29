@@ -18,3 +18,8 @@ export interface ListResponse<T = null> {
 
 export interface APIListResponse<T = null>
   extends APIResponse<ListResponse<T>> {}
+
+export interface SorterReq {
+  field: string
+  order: 'ASC' | 'DESC'
+}

@@ -1,3 +1,4 @@
+import { ShopStore } from '../client/shopStore'
 import baseAxios from '../index'
 import { APIListResponse, APIResponse, IPageParams } from '../type'
 
@@ -36,4 +37,33 @@ export const tenantryUserAPI = {
   remove(id: number) {
     return baseAxios.get<APIResponse>(`/api/tenantry/remove/${id}`)
   },
+  /**
+   * 获取用户店铺列表
+   */
+  getUserStoreList: cache((params: { id: any }) => {
+    return baseAxios.get<APIListResponse<ShopStore>>('/api/tenantry/list/store', { params })
+  }),
+
+  /**
+   * 设置备注
+   */
+  setRemark(body: {
+    id: any
+    remarks: string
+  }) {
+    return baseAxios.post('/api/tenantry/set/remark', body)
+  },
+}
+
+export function cache<T extends (...args: any[]) => any>(fn: T): T {
+  const cache = new Map()
+  return ((...args: any[]) => {
+    const key = JSON.stringify(args)
+    if (cache.has(key)) {
+      return cache.get(key)
+    }
+    const result = fn(...args)
+    cache.set(key, result)
+    return result
+  }) as T
 }

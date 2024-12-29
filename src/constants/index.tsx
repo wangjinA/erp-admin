@@ -1,4 +1,4 @@
-import { ModalProps, RangePickerProps } from '@arco-design/web-react'
+import { ModalProps, RangePickerProps, Tag } from '@arco-design/web-react'
 import dayjs from 'dayjs'
 
 const timeRangeShortcuts: any[] = [
@@ -49,6 +49,29 @@ const timeRangeShortcuts: any[] = [
       dayjs().startOf('day').subtract(3, 'month'),
       dayjs(),
     ],
+  },
+]
+
+export const shortcuts = [
+  {
+    text: '1个月',
+    value: () => dayjs().add(1, 'month'),
+  },
+  {
+    text: '3个月',
+    value: () => dayjs().add(3, 'month'),
+  },
+  {
+    text: '半年',
+    value: () => dayjs().add(6, 'month'),
+  },
+  {
+    text: '1年',
+    value: () => dayjs().add(1, 'year'),
+  },
+  {
+    text: '永久',
+    value: () => dayjs().add(99, 'year'),
   },
 ]
 
@@ -116,3 +139,7 @@ export const FormModalCommonProps: ModalProps = {
     width: '900px',
   },
 }
+
+export const KFWX = ['GZD882882', 'twwl9898']
+
+export const KF = KFWX.map(kf => <Tag className="mx-1" color="blue" key={kf}>{kf}</Tag>)

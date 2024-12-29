@@ -1,25 +1,25 @@
-import { Tag } from '@arco-design/web-react'
+import { Tag, TagProps } from '@arco-design/web-react'
 import React from 'react'
 
 export interface TagInfoMap {
   value: any
-  text: string
+  text: any
   color?: string
 }
 
-interface StatusTagProps {
+interface StatusTagProps extends TagProps {
   tagInfos: TagInfoMap[]
   value: any
 }
 
 const StatusTag: React.FC<StatusTagProps> = (props) => {
-  const { tagInfos, value } = props
+  const { tagInfos, value, ...rest } = props
   const target = tagInfos.find(item => item.value === value) || {
     color: '#000',
     text: value,
   }
   return (
-    <Tag bordered={true} color={target.color}>
+    <Tag bordered={true} color={target.color} {...rest}>
       {target.text}
     </Tag>
   )
