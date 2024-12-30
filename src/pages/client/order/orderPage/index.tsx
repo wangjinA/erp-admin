@@ -82,8 +82,9 @@ export default (props: OrderPageProps) => {
           ...formData.selectOrderProductVO,
         },
         selectLogisticsOrderVO: {
-          ...formData.selectLogisticsOrderVO,
+          ...omit(formData.selectLogisticsOrderVO, ['createdTimes', 'stockRemovalTimes', 'packTimes']),
           ...timeArrToObject(formData.selectLogisticsOrderVO.packTimes, 'packStartTime', 'packEndTime'),
+          ...timeArrToObject(formData.selectLogisticsOrderVO.createdTimes, 'createStartTime', 'createEndTime'),
           ...timeArrToObject(
             formData.selectLogisticsOrderVO.stockRemovalTimes,
             'stockRemovalStartTime',

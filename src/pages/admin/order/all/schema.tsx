@@ -51,7 +51,7 @@ export const OrderFilter: CreateFormItemType[] = [
   },
   {
     schema: {
-      field: 'selectLogisticsOrderVO.createAt',
+      field: 'selectLogisticsOrderVO.createdTimes',
       label: '创建时间',
     },
     control: 'datePickerRange',

@@ -26,6 +26,21 @@ export const userAPI = {
       body,
     )
   },
+
+  /**
+   * 忘记密码
+   */
+  forgetPassword(body: {
+    password: string
+    tenantryPhone: string
+    verificationCode: string
+  }) {
+    return baseAxios.post<APIResponse<any>>(
+      '/api/tenantry/user/forget/password',
+      body,
+    )
+  },
+
   insertUser(body: Partial<ClientUserInfo>) {
     return baseAxios.post<APIResponse<any>>(
       '/api/tenantry/user/insert',

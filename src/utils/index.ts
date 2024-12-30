@@ -44,7 +44,7 @@ export function showMessage<T>(fn: () => Promise<AxiosResponse<APIResponse<T>>>,
   }).catch((error) => {
     const msg = error?.response?.data?.msg || error?.message || ''
     Message.error({
-      content: `${message}失败${msg}`,
+      content: `${message}失败${msg ? `，${msg}` : ''}`,
       duration: 3000,
     })
     throw error

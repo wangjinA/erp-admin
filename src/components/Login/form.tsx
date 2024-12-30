@@ -11,11 +11,13 @@ import { IconLock, IconSafe, IconUser } from '@arco-design/web-react/icon'
 
 import { useLocalStorageState, useRequest } from 'ahooks'
 
+import classNames from 'classnames'
 import { random } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import { useDispatch } from 'react-redux'
 
+import Forget from './forget'
 import locale from './locale'
 import Register from './register'
 import styles from './style/index.module.less'
@@ -40,6 +42,7 @@ export default function LoginForm() {
   const [form] = Form.useForm()
   const [errorMessage, setErrorMessage] = useState('')
   const [isRegister, setIsRegister] = useState(false)
+  const [isForget, setIsForget] = useState(false)
   const [loginParams, setLoginParams, removeLoginParams]
     = useStorage('loginParams')
   const dispatch = useDispatch()
@@ -84,6 +87,7 @@ export default function LoginForm() {
       manual: true,
     },
   )
+
   const {
     run: registerHandler,
     loading: registerLoading,
@@ -96,6 +100,20 @@ export default function LoginForm() {
       manual: true,
     },
   )
+
+  const {
+    run: forgetHandler,
+    loading: forgetLoading,
+  } = useRequest(
+    async (params) => {
+      await showMessage(() => userAPI.forgetPassword(params), '修改')
+      setIsForget(false)
+    },
+    {
+      manual: true,
+    },
+  )
+
   useEffect(() => {
     localStorage.removeItem(requestEndInfo.tokenKey)
   }, [])
@@ -134,12 +152,15 @@ export default function LoginForm() {
 
   function onSubmitClick() {
     form.validate().then((values) => {
-      if (isRegister && isClient()) {
-        registerHandler(values)
+      if (isClient()) {
+        if (isRegister) {
+          return registerHandler(values)
+        }
+        else if (isForget) {
+          return forgetHandler(values)
+        }
       }
-      else {
-        loginHandler(values)
-      }
+      loginHandler(values)
     })
   }
 
@@ -152,6 +173,12 @@ export default function LoginForm() {
       form.setFieldsValue(parseParams)
     }
   }, [loginParams])
+
+  const actionName = isRegister
+    ? '注册'
+    : isForget
+      ? '确认修改'
+      : '登录'
 
   return (
     <div className={styles['login-form-wrapper']}>
@@ -174,7 +201,7 @@ export default function LoginForm() {
         //       }
         // }
       >
-        {!isRegister
+        {!isRegister && !isForget
           ? (
               <>
                 <Form.Item
@@ -232,6 +259,9 @@ export default function LoginForm() {
         {
           isRegister && isClient() ? <Register form={form}></Register> : null
         }
+        {
+          isForget && isClient() ? <Forget form={form}></Forget> : null
+        }
         <Space size={16} direction="vertical">
           {/* <div className={styles['login-form-password-actions']}>
             <Checkbox checked={rememberPassword} onChange={setRememberPassword}>
@@ -241,21 +271,40 @@ export default function LoginForm() {
           </div> */}
           <Button type="primary" long onClick={onSubmitClick} loading={loading}>
             {/* {t['login.form.login']} */}
-            {isRegister ? '注册' : '登录'}
+            {actionName}
           </Button>
           {
             isClient()
               ? (
-                  <Button
-                    type="text"
-                    long
-                    className={styles['login-form-register-btn']}
-                    onClick={() => {
-                      setIsRegister(!isRegister)
-                    }}
-                  >
-                    {isRegister ? '返回登录' : '注册'}
-                  </Button>
+                  <div className="w-full flex">
+                    {
+                      !isForget
+                        ? (
+                            <Button
+                              type="text"
+                              className={classNames(styles['login-form-register-btn'], 'flex-1')}
+                              onClick={() => {
+                                setIsForget(false)
+                                setIsRegister(!isRegister)
+                              }}
+                            >
+                              {isRegister ? '返回登录' : '注册'}
+                            </Button>
+                          )
+                        : null
+                    }
+                    {/* 忘记密码 */}
+                    <Button
+                      type="text"
+                      className={classNames(styles['login-form-register-btn'], 'flex-1')}
+                      onClick={() => {
+                        setIsRegister(false)
+                        setIsForget(!isForget)
+                      }}
+                    >
+                      {isForget ? '返回登录' : '忘记密码'}
+                    </Button>
+                  </div>
                 )
               : null
           }
