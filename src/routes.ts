@@ -624,7 +624,6 @@ function useRoute(): [IRoute[], DefaultRouteMap] {
       return pre
     }, {})
   }, [JSON.stringify(permissionRoute)])
-  console.log(defaultRouteMap)
 
   return [permissionRoute, defaultRouteMap]
 }

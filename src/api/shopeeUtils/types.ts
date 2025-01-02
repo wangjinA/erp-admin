@@ -1,4 +1,3 @@
-export type MiniDetail = Pick<ItemDetail, 'item_id' | 'item_name'>
 export interface UpdateItemResult {
   status: 'error' | 'notChange' | 'success'
   msg: string
@@ -19,6 +18,7 @@ export interface ProgressInfo {
   errorMsg?: string
   list: UpdateItemResult[]
   value: string
+  categoryAttributes?: CategoryAttributes[]
 }
 
 export interface ShipmentUpdateBody {
@@ -105,4 +105,44 @@ interface Attributevaluelist {
   value_id: number
   original_value_name: string
   value_unit: string
+}
+
+export interface AttributeItem {
+  attribute_id: number
+  original_attribute_name: string
+  display_attribute_name: string
+  is_mandatory: boolean
+  input_validation_type: string
+  format_type: string
+  input_type: string
+  attribute_unit: any[]
+  attribute_value_list: Attributevaluelist[]
+  max_input_value_number: number
+  support_search_value: boolean
+}
+
+interface Attributevaluelist {
+  value_id: number
+  original_value_name: string
+  display_value_name: string
+}
+
+export interface CategoryItem {
+  category_id: number
+  parent_category_id: number
+  original_category_name: string
+  display_category_name: string
+  has_children: boolean
+  debug_message: any
+}
+
+export type CategoryAttributes = CategoryItem & {
+  attribute_list: AttributeItem[]
+}
+
+export type MiniDetail = Pick<
+  ItemDetail,
+  'item_id' | 'item_name' | 'category_id'
+> & {
+  categoryInfo: CategoryItem
 }

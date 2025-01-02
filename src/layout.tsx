@@ -131,6 +131,7 @@ function PageLayout() {
   const [collapsed, setCollapsed] = useState<boolean>(false)
   const [selectedKeys, setSelectedKeys]
     = useState<string[]>(defaultSelectedKeys)
+
   const [openKeys, setOpenKeys] = useState<string[]>(defaultOpenKeys)
 
   const routeMap = useRef<Map<string, React.ReactNode[]>>(new Map())
@@ -217,6 +218,7 @@ function PageLayout() {
 
   function updateMenuStatus() {
     const pathKeys = pathname.split('/')
+
     const newSelectedKeys: string[] = []
     const newOpenKeys: string[] = [...openKeys]
     while (pathKeys.length > 0) {
@@ -231,15 +233,19 @@ function PageLayout() {
       }
       pathKeys.pop()
     }
+
     setSelectedKeys(newSelectedKeys)
     setOpenKeys(newOpenKeys)
   }
 
   useEffect(() => {
-    const routeConfig = routeMap.current.get(pathname)
-    setBreadCrumb(routeConfig || [])
-    updateMenuStatus()
-  }, [pathname])
+    setTimeout(() => {
+      const routeConfig = routeMap.current.get(pathname)
+      setBreadCrumb(routeConfig || [])
+      updateMenuStatus()
+    }, 1000)
+  }, [pathname, defaultRouteKeyMap])
+
   return (
     <Layout className={styles.layout}>
       <div

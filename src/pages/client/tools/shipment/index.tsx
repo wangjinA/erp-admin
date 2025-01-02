@@ -1,15 +1,16 @@
-import { Button, Form, Image, Modal, Progress, Space, Spin } from '@arco-design/web-react'
+import { Button, Drawer, Form, Image, Modal, Progress, Space, Spin } from '@arco-design/web-react'
 import { IconEdit, IconSend } from '@arco-design/web-react/icon'
 import { useRequest } from 'ahooks'
 import React, { useEffect, useRef, useState } from 'react'
 
 import { useSelector } from 'react-redux'
 
+import ErrorPage from './ErrorPage'
 import StoreListUtilsSchema from './schema'
 
 import { ShopStore, shopStoreAPI } from '@/api/client/shopStore'
 import { shipmentAPI } from '@/api/shopeeUtils/shipment'
-import { ProcessInfo } from '@/api/shopeeUtils/types'
+import { ProcessInfo, ProgressInfo } from '@/api/shopeeUtils/types'
 import KF1 from '@/assets/wx/kf1.png'
 import KF2 from '@/assets/wx/kf2.png'
 
@@ -29,6 +30,8 @@ const StoreList: React.FC<StoreListProps> = (props) => {
   const [current, setCurrent] = useState<ShopStore>()
   const [applyCurrent, setApplyCurrent] = useState<ShopStore>()
   const [processInfo, setProcessInfo] = useState<ProcessInfo>(null)
+  const [currentErrorProgressInfo, setCurrentErrorProgressInfo] = useState<ProgressInfo>()
+  const [errorTitle, setErrorTitle] = useState<string>()
   const [list, setList] = useState<ShopStore[]>([])
   const [form] = Form.useForm()
   const { run, loading } = useRequest(async () => {
@@ -108,8 +111,10 @@ const StoreList: React.FC<StoreListProps> = (props) => {
             },
             render(col, row) {
               const targetProgressInfo = processInfo?.progress?.[row.id]
+              const errList = targetProgressInfo?.list?.filter(item => item.status === 'error') || []
+
               const percent = Number(targetProgressInfo?.value?.replace('%', '') || 0)
-              const errorMsg = targetProgressInfo?.errorMsg ? `,修改出错: ${targetProgressInfo?.errorMsg}` : ''
+              const errorMsg = errList.length ? `,修改出错: ${errList.length}个` : ''
               return (
                 <div className="flex gap-2">
                   <div className="flex flex-col items-center">
@@ -160,6 +165,18 @@ const StoreList: React.FC<StoreListProps> = (props) => {
                                           }}
                                         >
                                           {`商品数量：${targetProgressInfo.goodsTotal}，时长：${secondsToDateString(targetProgressInfo.duration)}${errorMsg}`}
+                                          <Button
+                                            type="primary"
+                                            className="mt-2"
+                                            status="danger"
+                                            size="mini"
+                                            onClick={() => {
+                                              setErrorTitle(`${row.shopName} - 修改出错列表`)
+                                              setCurrentErrorProgressInfo(targetProgressInfo)
+                                            }}
+                                          >
+                                            查看错误
+                                          </Button>
                                         </div>
                                       )
                                     : (
@@ -257,6 +274,18 @@ const StoreList: React.FC<StoreListProps> = (props) => {
         >
         </FilterForm>
       </Modal>
+      <Drawer
+        title={errorTitle}
+        width="80%"
+        visible={!!currentErrorProgressInfo}
+        onCancel={() => setCurrentErrorProgressInfo(null)}
+        unmountOnExit={true}
+        onOk={
+          () => setCurrentErrorProgressInfo(null)
+        }
+      >
+        <ErrorPage data={currentErrorProgressInfo}></ErrorPage>
+      </Drawer>
     </div>
   )
 }
