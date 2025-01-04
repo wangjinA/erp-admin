@@ -1,12 +1,18 @@
 import { Button, Checkbox, Divider, Form, Grid, Link, Radio, Table, Typography } from '@arco-design/web-react'
 
 import { IconLeft, IconThunderbolt } from '@arco-design/web-react/icon'
-import { useLocalStorageState } from 'ahooks'
+import { useLocalStorageState, useRequest } from 'ahooks'
 import { uniqBy } from 'lodash'
 import { useState } from 'react'
 
+import { useSelector } from 'react-redux'
+
+import { UpdateAttributeItem, shipmentAPI } from '@/api/shopeeUtils/shipment'
 import { ProgressInfo } from '@/api/shopeeUtils/types'
 import FilterForm from '@/components/FilterForm'
+
+import { GlobalState } from '@/store'
+import { showMessage } from '@/utils'
 
 interface IProps {
   data: ProgressInfo
@@ -14,10 +20,13 @@ interface IProps {
 export default ({ data }: IProps) => {
   const [searchFromData, setSearchFromData] = useState<Record<string, any>>({})
   const [processingError, setProcessingError] = useState<boolean>(true)
+  const userInfo = useSelector((state: GlobalState) => state.userInfo)
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
-  const [categortyAttributeFillInfo, setCategortyAttributeFillInfo] = useLocalStorageState('categortyAttributeFillInfo', {
+  const [categortyAttributeFillInfo, setCategortyAttributeFillInfo] = useLocalStorageState<Record<string, UpdateAttributeItem[]>>('categortyAttributeFillInfo', {
     defaultValue: {},
   })
+  console.log(categortyAttributeFillInfo)
+
   const errorList = data?.list.filter(item => item.status === 'error') || []
 
   const list = errorList.filter((item) => {
@@ -42,6 +51,19 @@ export default ({ data }: IProps) => {
     ).length}个)`,
     value: item.detail?.categoryInfo.category_id,
   }))
+
+  const saveHandler = useRequest(async (data) => {
+    if (!userInfo.userLoginAccount) {
+      return
+    }
+    await showMessage(() => shipmentAPI.saveCategortyAttribute({
+      userLoginAccount: userInfo.userLoginAccount,
+      data,
+    }), '保存')
+  }, {
+    manual: true,
+    debounceWait: 300,
+  })
 
   return (
     <div className="pr-4">
@@ -175,6 +197,9 @@ export default ({ data }: IProps) => {
                                 label: item.display_value_name,
                                 value: item.value_id,
                               }))
+                              const value = categortyAttributeFillInfo[item.category_id]
+                                ?.find(k => k.attribute_id === oitem.attribute_id)?.attribute_value_list
+                                ?.find(item => item.original_value_name === oitem.original_attribute_name)
                               return (
                                 <div key={oitem.attribute_id}>
                                   <Form.Item
@@ -183,22 +208,25 @@ export default ({ data }: IProps) => {
                                     wrapperCol={{ span: 20 }}
                                   >
                                     <Radio.Group
-                                      value={
-                                        categortyAttributeFillInfo[item.category_id]?.find(k => k.original_attribute_name === oitem.original_attribute_name)?.value_id
-                                      }
+                                      value={value}
                                       onChange={
                                         (value_id) => {
-                                          setCategortyAttributeFillInfo({
+                                          const saveData = {
                                             ...categortyAttributeFillInfo,
                                             [item.category_id]: [
                                               ...(categortyAttributeFillInfo[item.category_id] || [])
-                                                .filter(k => k.original_attribute_name !== oitem.original_attribute_name),
+                                                .filter(k => k.attribute_id !== oitem.attribute_id),
                                               {
-                                                original_attribute_name: oitem.original_attribute_name,
-                                                value_id,
+                                                attribute_id: oitem.attribute_id,
+                                                attibute_value_list: {
+                                                  original_value_name: oitem.original_attribute_name,
+                                                  value_id,
+                                                },
                                               },
                                             ],
-                                          })
+                                          }
+                                          setCategortyAttributeFillInfo(saveData)
+                                          saveHandler.run(saveData)
                                         }
                                       }
                                       options={options}

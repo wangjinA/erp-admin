@@ -5,6 +5,7 @@ import { useLocation } from 'react-router-dom'
 
 import ActionHistory from './ActionHistory'
 import DeliveryButton from './DeliveryButton'
+import OrderDetailButton from './OrderDetailButton'
 import SendCargoInfo from './SendCargoInfo'
 
 import ShipmentButton from './ShipmentButton'
@@ -189,6 +190,39 @@ export function useColumns(props: OrderTablePorps) {
             return (
               <div className="h-full p-2 flex justify-center">
                 <Space direction="vertical" size={4}>
+                  <OrderDetailButton
+                    buttonProps={{ size: 'small' }}
+                    orderItem={row}
+                  >
+                  </OrderDetailButton>
+                  <DeliveryButton
+                    sendWarehouse={row.sendWarehouse}
+                    shrimpOrderNo={row.shrimpOrderNo}
+                    onSuccess={() => {
+                      bus.emit(EmitTypes.refreshOrderPage)
+                    }}
+                    buttonProps={{ size: 'small', disabled: row.orderStatus !== '2' }}
+                  />
+                  <ShipmentButton
+                    orderItem={row}
+                    sendWarehouse={row.sendWarehouse}
+                    shrimpOrderNo={row.shrimpOrderNo}
+                    onSuccess={() => {
+                      bus.emit(EmitTypes.refreshOrderPage)
+                    }}
+                    buttonProps={{
+                      size: 'small',
+                      //  disabled: !row.needFill
+                    }}
+                  />
+                  <ActionHistory
+                    buttonProps={{
+                      type: 'text',
+                      icon: null,
+                    }}
+                    id={row.id}
+                  >
+                  </ActionHistory>
                   <Button
                     type="text"
                     size="small"
@@ -208,36 +242,6 @@ export function useColumns(props: OrderTablePorps) {
                   >
                     取消订单
                   </Button>
-                  <DeliveryButton
-                    sendWarehouse={row.sendWarehouse}
-                    trackingNo={row.trackingNo}
-                    shrimpOrderNo={row.shrimpOrderNo}
-                    onSuccess={() => {
-                      bus.emit(EmitTypes.refreshOrderPage)
-                    }}
-                    buttonProps={{ size: 'small', disabled: row.orderStatus !== '2' }}
-                  />
-                  <ShipmentButton
-                    orderItem={row}
-                    sendWarehouse={row.sendWarehouse}
-                    trackingNo={row.trackingNo}
-                    shrimpOrderNo={row.shrimpOrderNo}
-                    onSuccess={() => {
-                      bus.emit(EmitTypes.refreshOrderPage)
-                    }}
-                    buttonProps={{
-                      size: 'small',
-                      //  disabled: !row.needFill
-                    }}
-                  />
-                  <ActionHistory
-                    buttonProps={{
-                      type: 'text',
-                      icon: null,
-                    }}
-                    id={row.id}
-                  >
-                  </ActionHistory>
                 </Space>
               </div>
             )

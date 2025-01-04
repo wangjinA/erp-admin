@@ -14,7 +14,7 @@ interface ActionHistoryProps {
 }
 export default (props: ActionHistoryProps) => {
   const { buttonProps, id } = props
-  const [visiable, setVisiable] = useState(false)
+  const [visible, setVisible] = useState(false)
 
   const logHandle = useRequest(
     async () => {
@@ -30,7 +30,7 @@ export default (props: ActionHistoryProps) => {
         icon={<IconFile />}
         onClick={() => {
           logHandle.run()
-          setVisiable(true)
+          setVisible(true)
         }}
         {...buttonProps}
       >
@@ -39,12 +39,12 @@ export default (props: ActionHistoryProps) => {
 
       <Modal
         title="操作记录"
-        visible={visiable}
-        onCancel={() => setVisiable(false)}
+        visible={visible}
+        onCancel={() => setVisible(false)}
         cancelText="关闭"
         unmountOnExit={true}
         onOk={async () => {
-          setVisiable(false)
+          setVisible(false)
         }}
       >
         <Spin

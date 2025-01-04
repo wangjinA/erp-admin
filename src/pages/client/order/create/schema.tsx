@@ -140,6 +140,7 @@ export const OrderCreateSchema2: CreateFormItemType[] = [
     schema: {
       field: 'deliveryMethod',
       label: '发货方式',
+      required: true,
     },
     control: <DictSelector dictCode="delivery_method"></DictSelector>,
   },

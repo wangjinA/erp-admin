@@ -1,33 +1,21 @@
 import { Button, Form, FormInstance, Input } from '@arco-design/web-react'
 import { IconLock, IconSafe, IconUser } from '@arco-design/web-react/icon'
-import { useLocalStorageState, useRequest } from 'ahooks'
+import { useRequest } from 'ahooks'
 
-import { useEffect } from 'react'
+import useCode from './codeHook'
 
 import { userAPI } from '@/api/client/user'
 import { showMessage } from '@/utils'
 
 export default (props: { form: FormInstance }) => {
   const { form } = props
-  const [codeTime, setCodeTime] = useLocalStorageState('registerCodeTime', {
-    defaultValue: 0,
-  })
-
-  useEffect(() => {
-    function tick() {
-      if (codeTime > 0) {
-        setCodeTime(codeTime - 1)
-      }
-    }
-    const timerId = setInterval(tick, 1000)
-    return () => clearInterval(timerId)
-  }, [codeTime])
+  const { time, resetTime } = useCode()
 
   const { run: sendCode, loading: sendCodeLoading } = useRequest(() => {
     return showMessage(() => userAPI.sendCode({
       tenantryPhone: form.getFieldValue('tenantryPhone'),
     }), '发送').then(() => {
-      setCodeTime(60)
+      resetTime()
     })
   }, {
     manual: true,
@@ -78,7 +66,7 @@ export default (props: { form: FormInstance }) => {
               placeholder="请输入验证码"
               suffix={(
                 <Button
-                  disabled={codeTime > 0}
+                  disabled={!!time}
                   className="-mr-[12px]"
                   loading={sendCodeLoading}
                   status="warning"
@@ -88,7 +76,7 @@ export default (props: { form: FormInstance }) => {
                 >
                   发送验证码
                   {' '}
-                  {codeTime > 0 ? `${codeTime}s` : ''}
+                  {time > 0 ? `${time}s` : ''}
                 </Button>
               )}
             // onPressEnter={onSubmitClick}

@@ -114,7 +114,7 @@ const StoreList: React.FC<StoreListProps> = (props) => {
               const errList = targetProgressInfo?.list?.filter(item => item.status === 'error') || []
 
               const percent = Number(targetProgressInfo?.value?.replace('%', '') || 0)
-              const errorMsg = errList.length ? `,修改出错: ${errList.length}个` : ''
+              const errorMsg = targetProgressInfo?.errorMsg
               return (
                 <div className="flex gap-2">
                   <div className="flex flex-col items-center">

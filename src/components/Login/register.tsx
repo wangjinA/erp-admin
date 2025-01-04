@@ -1,37 +1,34 @@
-import { Button, Form, FormInstance, Input } from '@arco-design/web-react'
+import { Button, Form, FormInstance, Input, Message } from '@arco-design/web-react'
 import { IconLock, IconSafe, IconUser } from '@arco-design/web-react/icon'
-import { useLocalStorageState, useRequest } from 'ahooks'
+import { useRequest } from 'ahooks'
 
-import { useEffect } from 'react'
+import useCode from './codeHook'
 
 import { userAPI } from '@/api/client/user'
 import { showMessage } from '@/utils'
 
+const TIME = 60
+
 export default (props: { form: FormInstance }) => {
   const { form } = props
-  const [codeTime, setCodeTime] = useLocalStorageState('registerCodeTime', {
-    defaultValue: 0,
-  })
 
-  useEffect(() => {
-    function tick() {
-      if (codeTime > 0) {
-        setCodeTime(codeTime - 1)
-      }
-    }
-    const timerId = setInterval(tick, 1000)
-    return () => clearInterval(timerId)
-  }, [codeTime])
+  const { time, resetTime } = useCode()
 
   const { run: sendCode, loading: sendCodeLoading } = useRequest(() => {
+    const tenantryPhone = form.getFieldValue('tenantryPhone')
+    if (!tenantryPhone) {
+      Message.warning('请输入手机号')
+      return
+    }
     return showMessage(() => userAPI.sendCode({
-      tenantryPhone: form.getFieldValue('tenantryPhone'),
+      tenantryPhone,
     }), '发送').then(() => {
-      setCodeTime(60)
+      resetTime()
     })
   }, {
     manual: true,
   })
+
   return (
     <>
       <Form.Item
@@ -78,7 +75,7 @@ export default (props: { form: FormInstance }) => {
               placeholder="请输入验证码"
               suffix={(
                 <Button
-                  disabled={codeTime > 0}
+                  disabled={!!time}
                   className="-mr-[12px]"
                   loading={sendCodeLoading}
                   status="warning"
@@ -88,7 +85,7 @@ export default (props: { form: FormInstance }) => {
                 >
                   发送验证码
                   {' '}
-                  {codeTime > 0 ? `${codeTime}s` : ''}
+                  {time ? `${time}s` : ''}
                 </Button>
               )}
             // onPressEnter={onSubmitClick}

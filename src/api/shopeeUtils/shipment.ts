@@ -35,6 +35,24 @@ export const shipmentAPI = {
   refuse(body: { userLoginAccount, shopId }) {
     return shopeeUtilsAxios.post<APIResponse>('/consumer/refuse', body)
   },
+  updateShipmentByError(body: ShipmentUpdateBody) {
+    return shopeeUtilsAxios.post<APIResponse>('/shipment/updateShipmentByError', body)
+  },
+  saveCategortyAttribute(params: SaveCategortyAttributeParams) {
+    return shopeeUtilsAxios.post<APIResponse>('/shipment/saveCategortyAttribute', params)
+  },
+}
+
+interface SaveCategortyAttributeParams {
+  userLoginAccount: string
+
+  data: Record<
+    string,
+    {
+      original_attribute_name: string
+      value_id: number
+    }[]
+  >
 }
 
 export interface ConsumerInfo {
@@ -56,4 +74,15 @@ export interface ConsumerInfo {
   status: string // 0 未激活 1 激活 2 过期
 
   remark: string
+}
+
+export interface UpdateAttributeItem {
+  attribute_id: number
+  attribute_value_list: UpdateAttributeValueItem[]
+}
+
+export interface UpdateAttributeValueItem {
+  value_id: number
+  original_value_name?: string
+  value_unit?: string // kg; - 属性值的单位 （仅限 quantitative 属性）。
 }

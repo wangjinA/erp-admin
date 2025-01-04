@@ -1,7 +1,7 @@
-import Login from '@/components/Login';
+import Login from '@/components/Login'
 
-const AdminLogin = () => {
-  return <Login />;
-};
+function AdminLogin() {
+  return <Login />
+}
 
-export default AdminLogin;
+export default AdminLogin
