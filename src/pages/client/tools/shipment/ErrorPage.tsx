@@ -1,6 +1,6 @@
-import { Button, Checkbox, Divider, Form, Grid, Link, Radio, Table, Typography } from '@arco-design/web-react'
+import { Alert, Button, Checkbox, Divider, Form, Grid, Link, Message, Radio, Table, Typography } from '@arco-design/web-react'
 
-import { IconLeft, IconThunderbolt } from '@arco-design/web-react/icon'
+import { IconEdit, IconLeft } from '@arco-design/web-react/icon'
 import { useLocalStorageState, useRequest } from 'ahooks'
 import { uniqBy } from 'lodash'
 import { useState } from 'react'
@@ -12,20 +12,24 @@ import { ProgressInfo } from '@/api/shopeeUtils/types'
 import FilterForm from '@/components/FilterForm'
 
 import { GlobalState } from '@/store'
-import { showMessage } from '@/utils'
+import { showMessage, showModal } from '@/utils'
 
 interface IProps {
   data: ProgressInfo
+  shopId: any
 }
-export default ({ data }: IProps) => {
+
+const RepeatText = 'Product is duplicate with another product in the same shop'
+
+export default ({ data, shopId }: IProps) => {
   const [searchFromData, setSearchFromData] = useState<Record<string, any>>({})
-  const [processingError, setProcessingError] = useState<boolean>(true)
+  const [processingError, setProcessingError] = useState<boolean>(false)
   const userInfo = useSelector((state: GlobalState) => state.userInfo)
+  const [selectedCategorys, setSelectedCategorys] = useState([])
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const [categortyAttributeFillInfo, setCategortyAttributeFillInfo] = useLocalStorageState<Record<string, UpdateAttributeItem[]>>('categortyAttributeFillInfo', {
     defaultValue: {},
   })
-  console.log(categortyAttributeFillInfo)
 
   const errorList = data?.list.filter(item => item.status === 'error') || []
 
@@ -37,6 +41,9 @@ export default ({ data }: IProps) => {
       return false
     }
     if (searchFromData.item_id && String(item.detail.item_id) !== searchFromData.item_id) {
+      return false
+    }
+    if (searchFromData.repeat && (searchFromData.repeat === 1 ? !item.msg.includes(RepeatText) : item.msg.includes(RepeatText))) {
       return false
     }
     return true
@@ -65,6 +72,40 @@ export default ({ data }: IProps) => {
     debounceWait: 300,
   })
 
+  const changeCategortyHandler = useRequest(async () => {
+    if (!selectedRowKeys?.length) {
+      return Message.warning('请选择商品')
+    }
+    await showModal({
+      content: '在类目属性出现问题，影响修改出货时间时，再使用此操作！（如果错误类型是：【商品重复】，请移步删除操作）',
+      okText: '确认修改',
+    })
+    await showMessage(() => shipmentAPI.changeCategorty({
+      userLoginAccount: userInfo.userLoginAccount,
+      shopId,
+      itemIds: selectedRowKeys,
+    }), '设置')
+  }, {
+    manual: true,
+  })
+
+  const deleteHandler = useRequest(async () => {
+    if (!selectedRowKeys?.length) {
+      return Message.warning('请选择商品')
+    }
+    await showModal({
+      content: `确认删除${selectedRowKeys.length}个商品`,
+      okText: '确认删除',
+    })
+    await showMessage(() => shipmentAPI.deleteItems({
+      userLoginAccount: userInfo.userLoginAccount,
+      shopId,
+      itemIds: selectedRowKeys,
+    }), '删除')
+  }, {
+    manual: true,
+  })
+
   return (
     <div className="pr-4">
       {
@@ -72,6 +113,9 @@ export default ({ data }: IProps) => {
           ? (
               <FilterForm
                 className="mb-4 mt-2"
+                initialValues={{
+                  repeat: 0,
+                }}
                 formItemConfigList={[
                   {
                     schema: {
@@ -93,6 +137,29 @@ export default ({ data }: IProps) => {
                     control: 'select',
                     controlProps: {
                       options: categorys,
+                    },
+                  },
+                  {
+                    schema: {
+                      label: '商品重复',
+                      field: 'repeat',
+                    },
+                    control: 'radio',
+                    controlProps: {
+                      options: [
+                        {
+                          label: '全部',
+                          value: 0,
+                        },
+                        {
+                          label: '是',
+                          value: 1,
+                        },
+                        {
+                          label: '否',
+                          value: 2,
+                        },
+                      ],
                     },
                   },
                 ]}
@@ -121,17 +188,44 @@ export default ({ data }: IProps) => {
                 </div>
               )
             : (
-                <Button
-                  icon={<IconThunderbolt />}
-                  className="ml-auto mb-4"
-                  type="primary"
-                  status="danger"
-                  onClick={() => {
-                    setProcessingError(true)
-                  }}
+                <div
+                  className="w-full mb-4 flex gap-4"
                 >
-                  处理错误
-                </Button>
+                  <Button
+                    type="primary"
+                    status="warning"
+                    loading={changeCategortyHandler.loading}
+                    onClick={() => {
+                      changeCategortyHandler.run()
+                    }}
+                  >
+                    设置类目为：其他
+                    {' '}
+                    {selectedRowKeys.length ? `(${selectedRowKeys.length})个` : ''}
+                  </Button>
+                  <Button
+                    type="primary"
+                    status="danger"
+                    loading={changeCategortyHandler.loading}
+                    onClick={() => {
+                      deleteHandler.run()
+                    }}
+                  >
+                    删除商品
+                    {' '}
+                    {selectedRowKeys.length ? `(${selectedRowKeys.length})个` : ''}
+                  </Button>
+                  <Button
+                    icon={<IconEdit />}
+                    className="ml-auto"
+                    type="primary"
+                    onClick={() => {
+                      setProcessingError(true)
+                    }}
+                  >
+                    编辑属性
+                  </Button>
+                </div>
               )
         }
       </div>
@@ -139,8 +233,11 @@ export default ({ data }: IProps) => {
         processingError
           ? (
               <div>
+                <Alert title="保存成功后可前往【修改出货天数】，重新发起修改" type="info" className="mb-4"></Alert>
+                <Typography.Title heading={6}>修改出错商品类目(不包含重复的商品出错类目)</Typography.Title>
                 <Checkbox.Group
-                  value={selectedRowKeys}
+                  className="w-full"
+                  value={selectedCategorys}
                   onChange={(v: any[]) => {
                     if (categorys.every(item => v.includes(item.value))) {
                       v.push('all')
@@ -148,7 +245,7 @@ export default ({ data }: IProps) => {
                     else if (v.includes('all')) {
                       v.splice(v.indexOf('all'), 1)
                     }
-                    setSelectedRowKeys(v)
+                    setSelectedCategorys(v)
                   }}
                 >
                   <Grid.Row>
@@ -161,10 +258,10 @@ export default ({ data }: IProps) => {
                         value="all"
                         onChange={(checked) => {
                           if (checked) {
-                            setSelectedRowKeys([...categorys.map(item => item.value), 'all'])
+                            setSelectedCategorys([...categorys.map(item => item.value), 'all'])
                           }
                           else {
-                            setSelectedRowKeys([])
+                            setSelectedCategorys([])
                           }
                         }}
                       >
@@ -186,7 +283,7 @@ export default ({ data }: IProps) => {
                 </Checkbox.Group>
                 <Divider />
                 {
-                  data?.categoryAttributes?.map((item) => {
+                  data?.categoryAttributes?.filter(oitem => selectedCategorys.includes(oitem.category_id)).map((item) => {
                     return (
                       <div key={item.category_id}>
                         <Typography.Title heading={6}>{item.display_category_name}</Typography.Title>
@@ -199,7 +296,8 @@ export default ({ data }: IProps) => {
                               }))
                               const value = categortyAttributeFillInfo[item.category_id]
                                 ?.find(k => k.attribute_id === oitem.attribute_id)?.attribute_value_list
-                                ?.find(item => item.original_value_name === oitem.original_attribute_name)
+                                ?.find(item => item.original_value_name === oitem.original_attribute_name)?.value_id
+
                               return (
                                 <div key={oitem.attribute_id}>
                                   <Form.Item
@@ -218,10 +316,10 @@ export default ({ data }: IProps) => {
                                                 .filter(k => k.attribute_id !== oitem.attribute_id),
                                               {
                                                 attribute_id: oitem.attribute_id,
-                                                attibute_value_list: {
+                                                attribute_value_list: [{
                                                   original_value_name: oitem.original_attribute_name,
                                                   value_id,
-                                                },
+                                                }],
                                               },
                                             ],
                                           }
@@ -251,11 +349,32 @@ export default ({ data }: IProps) => {
         !processingError
           ? (
               <Table
+
+                rowSelection={
+                  {
+                    type: 'checkbox',
+                    selectedRowKeys,
+                    onChange: (selectedRowKeys) => {
+                      setSelectedRowKeys(selectedRowKeys)
+                    },
+                    onSelectAll: (selected) => {
+                      if (selected) {
+                        setSelectedRowKeys(list.map(item => item.detail.item_id))
+                      }
+                      else {
+                        setSelectedRowKeys([])
+                      }
+                    },
+                  }
+                }
                 data={list}
-                rowKey="detail.item_id"
+                rowKey={c => c.detail.item_id}
+                pagePosition="tr"
                 pagination={{
                   sizeOptions: [15, 20, 50, 100],
                   defaultPageSize: 15,
+                  showTotal: true,
+
                 }}
                 columns={[
                   {
@@ -266,6 +385,7 @@ export default ({ data }: IProps) => {
                   {
                     title: '商品名称',
                     dataIndex: 'item_name',
+                    width: 600,
                     render(col, item, index) {
                       return (
                         <span>
@@ -274,9 +394,11 @@ export default ({ data }: IProps) => {
 
                             {/* <IconEdit></IconEdit> */}
                           </Link>
+                          {/* <p> */}
                           （
                           {item.detail.item_id}
                           ）
+                          {/* </p> */}
                         </span>
                       )
                     },
@@ -284,6 +406,15 @@ export default ({ data }: IProps) => {
                   {
                     title: '错误原因',
                     dataIndex: 'msg',
+                    render(msg) {
+                      const translatedMsg = msg?.replace(RepeatText, '商品重复').replace('please check and update', '请检查后再更新')
+                        .replace('is mandatory required', '是必填项').replace('Attribute', '属性')
+                      return (
+                        <div>
+                          {translatedMsg}
+                        </div>
+                      )
+                    },
                   },
                   {
                     title: '类目',

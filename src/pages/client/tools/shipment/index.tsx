@@ -31,7 +31,10 @@ const StoreList: React.FC<StoreListProps> = (props) => {
   const [applyCurrent, setApplyCurrent] = useState<ShopStore>()
   const [processInfo, setProcessInfo] = useState<ProcessInfo>(null)
   const [currentErrorProgressInfo, setCurrentErrorProgressInfo] = useState<ProgressInfo>()
-  const [errorTitle, setErrorTitle] = useState<string>()
+  const [errorInfo, setErrorInfo] = useState<{
+    title: string
+    shopId: any
+  }>()
   const [list, setList] = useState<ShopStore[]>([])
   const [form] = Form.useForm()
   const { run, loading } = useRequest(async () => {
@@ -171,7 +174,10 @@ const StoreList: React.FC<StoreListProps> = (props) => {
                                             status="danger"
                                             size="mini"
                                             onClick={() => {
-                                              setErrorTitle(`${row.shopName} - 修改出错列表`)
+                                              setErrorInfo({
+                                                title: `${row.shopName} - 修改出错列表`,
+                                                shopId: row.id,
+                                              })
                                               setCurrentErrorProgressInfo(targetProgressInfo)
                                             }}
                                           >
@@ -275,7 +281,7 @@ const StoreList: React.FC<StoreListProps> = (props) => {
         </FilterForm>
       </Modal>
       <Drawer
-        title={errorTitle}
+        title={errorInfo?.title}
         width="80%"
         visible={!!currentErrorProgressInfo}
         onCancel={() => setCurrentErrorProgressInfo(null)}
@@ -284,7 +290,7 @@ const StoreList: React.FC<StoreListProps> = (props) => {
           () => setCurrentErrorProgressInfo(null)
         }
       >
-        <ErrorPage data={currentErrorProgressInfo}></ErrorPage>
+        <ErrorPage data={currentErrorProgressInfo} shopId={errorInfo?.shopId}></ErrorPage>
       </Drawer>
     </div>
   )

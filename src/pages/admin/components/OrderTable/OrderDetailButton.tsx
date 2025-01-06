@@ -1,14 +1,20 @@
-import { Button, ButtonProps, Descriptions, Divider, Form, InputNumber, Modal, Space, Switch } from '@arco-design/web-react'
+import { Button, ButtonProps, Descriptions, Divider, Form, Image, InputNumber, List, Modal, Space, Switch, Table } from '@arco-design/web-react'
 
+import { useRequest } from 'ahooks'
+import classNames from 'classnames'
+import { pick } from 'lodash'
 import { useState } from 'react'
 
 import SendCargoInfo from './SendCargoInfo'
 
+import { orderAPI } from '@/api/admin/order'
 import FilterForm from '@/components/FilterForm'
 import GoodsInfo from '@/components/GoodsInfo'
 import LabelValue from '@/components/LabelValue'
-import { DictNameFC } from '@/components/Selectors/DictSelector'
+import DictSelector, { DictNameFC } from '@/components/Selectors/DictSelector'
+import { EmitTypes, bus } from '@/hooks/useEventBus'
 import { OrderResponseItem } from '@/types/order'
+import { showMessage } from '@/utils'
 
 interface OrderDetailButtonProps {
   orderItem?: OrderResponseItem
@@ -32,7 +38,7 @@ const columns = [{
   },
 }, {
   title: '收货信息',
-  dataIndex: 'orderProductVOList_1',
+  dataIndex: 'orderProductVOList_2',
   width: 210,
   render(col, row) {
     return (
@@ -45,7 +51,7 @@ const columns = [{
   },
 }, {
   title: '保留库存',
-  dataIndex: 'orderProductVOList_1',
+  dataIndex: 'orderProductVOList_3',
   width: 210,
   render(col, row) {
     return (
@@ -59,6 +65,16 @@ const columns = [{
 function OrderDetailButton(props: OrderDetailButtonProps) {
   const { orderItem, buttonProps } = props
   const [visible, setVisible] = useState(false)
+  const [updatedOrderItem, setUpdatedOrderItem] = useState<OrderResponseItem>()
+  const saveHandler = useRequest(async () => {
+    if (updatedOrderItem) {
+      await showMessage(() => orderAPI.saveOrder(updatedOrderItem))
+    }
+    setVisible(false)
+    bus.emit(EmitTypes.refreshOrderPage)
+  }, {
+    manual: true,
+  })
   return (
     <>
       <Button
@@ -123,6 +139,69 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
                     </main>
                   </div>
                 </main>
+                <Table
+                  data={orderItem.orderProductVOList}
+                  columns={[
+                    {
+                      title: '商品信息',
+                      dataIndex: '0',
+                      width: 550,
+                      render(col, item) {
+                        return (
+                          <div
+                            key={item.id}
+                            className={classNames([
+                              'grid',
+                              'h-[125px]',
+                              // index > 0 ? 'border-t' : '',
+                            ])}
+                          >
+                            <List.Item.Meta
+                              className="!items-center p-2 w-full"
+                              avatar={<Image className="size-24" src={item.productImg[0]} />}
+                              title={item.productName}
+                              description={(
+                                <div>
+                                  <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="单  价" value={item.unitPrice}></LabelValue>
+                                  <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="数  量" value={item.quantity}></LabelValue>
+                                  <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="规格名称" value={item.specificationName}></LabelValue>
+                                  <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="规格SKU" value={item.sku}></LabelValue>
+                                </div>
+                              )}
+                            />
+                          </div>
+                        )
+                      },
+                    },
+                    {
+                      title: '发货信息',
+                      dataIndex: 'fhxx',
+                      width: 550,
+                      render() {
+                        return <SendCargoInfo data={orderItem}></SendCargoInfo>
+                      },
+                    },
+                    {
+                      title: '收货信息',
+                      dataIndex: 'fhxx',
+                      width: 550,
+                      render() {
+                        return (
+                          <Form.Item label="实际数量" layout="vertical" colon={true}>
+                            <InputNumber placeholder="请输入"></InputNumber>
+                          </Form.Item>
+                        )
+                      },
+                    },
+                    {
+                      title: '发货信息',
+                      dataIndex: '保留库存',
+                      width: 550,
+                    },
+                  ]}
+                >
+
+                </Table>
               </div>
               <Divider className="my-4"></Divider>
               <div>
@@ -137,12 +216,20 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
                   className="w-[300px]"
                   size="small"
                   span={24}
+                  initialValues={pick(orderItem, ['parcelType', 'parcelWeight', 'parcelLength', 'parcelWide', 'parcelHigh'])}
+                  onValuesChange={(v) => {
+                    setUpdatedOrderItem({
+                      ...orderItem,
+                      ...v,
+                    })
+                  }}
                   formItemConfigList={[
                     {
                       schema: {
                         label: '包裹类型',
                         field: 'parcelType',
                       },
+                      control: <DictSelector dictCode="parcel_type"></DictSelector>,
                     },
                     {
                       schema: {
@@ -185,15 +272,15 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
                       },
                       {
                         label: '头程费用',
-                        value: '',
+                        value: orderItem.firstLegCost,
                       },
                       {
                         label: '附加费用',
-                        value: '',
+                        value: orderItem.appendCost,
                       },
                       {
                         label: '总费用',
-                        value: '',
+                        value: orderItem.totalCost,
                       },
                     ]}
                     style={{ marginBottom: 20 }}
@@ -212,7 +299,14 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
               >
                 关闭
               </Button>
-              <Button type="primary">保存</Button>
+              <Button
+                type="primary"
+                onClick={() => {
+                  saveHandler.run()
+                }}
+              >
+                保存
+              </Button>
               <Button type="primary" status="warning">交运</Button>
               <Button type="primary" status="danger">出库</Button>
             </Space>

@@ -1,6 +1,8 @@
 import baseAxios from '..'
 import { APIListResponse, APIResponse, IPageParams } from '../type'
 
+import { OrderResponseItem } from '@/types/order'
+
 export const orderAPI = {
   // 获取订单列表
   getList(body: Partial<SearchOrderParams & IPageParams>) {
@@ -49,6 +51,10 @@ export const orderAPI = {
       list: string[]
     }>>(`/api/logistics/order/get/tracking/number/${orderId}`)
   },
+  saveOrder(orderItem: OrderResponseItem) {
+    return baseAxios.post('/api/logistics/order/save/data', orderItem)
+  },
+
 }
 
 interface getShippingParameterRes {

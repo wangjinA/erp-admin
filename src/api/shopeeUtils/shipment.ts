@@ -35,12 +35,25 @@ export const shipmentAPI = {
   refuse(body: { userLoginAccount, shopId }) {
     return shopeeUtilsAxios.post<APIResponse>('/consumer/refuse', body)
   },
-  updateShipmentByError(body: ShipmentUpdateBody) {
-    return shopeeUtilsAxios.post<APIResponse>('/shipment/updateShipmentByError', body)
-  },
+  // updateShipmentByError(body: ShipmentUpdateBody) {
+  //   return shopeeUtilsAxios.post<APIResponse>('/shipment/updateShipmentByError', body)
+  // },
   saveCategortyAttribute(params: SaveCategortyAttributeParams) {
     return shopeeUtilsAxios.post<APIResponse>('/shipment/saveCategortyAttribute', params)
   },
+  changeCategorty(params: {
+    userLoginAccount: string
+    itemIds: number[]
+    shopId: string
+    categoryId?: number
+    isToCurrentCategoryOther?: boolean
+  }) {
+    return shopeeUtilsAxios.post<APIResponse>('/shipment/changeCategorty', params)
+  },
+  deleteItems(params: DeleteItemsParams) {
+    return shopeeUtilsAxios.post<APIResponse>('/shipment/deleteItems', params)
+  },
+
 }
 
 interface SaveCategortyAttributeParams {
@@ -85,4 +98,10 @@ export interface UpdateAttributeValueItem {
   value_id: number
   original_value_name?: string
   value_unit?: string // kg; - 属性值的单位 （仅限 quantitative 属性）。
+}
+
+export interface DeleteItemsParams {
+  userLoginAccount: string
+  itemIds: number[]
+  shopId: string
 }
