@@ -10,7 +10,7 @@ import StoreListUtilsSchema from './schema'
 
 import { ShopStore, shopStoreAPI } from '@/api/client/shopStore'
 import { shipmentAPI } from '@/api/shopeeUtils/shipment'
-import { ProcessInfo, ProgressInfo } from '@/api/shopeeUtils/types'
+import { ProcessInfo } from '@/api/shopeeUtils/types'
 import KF1 from '@/assets/wx/kf1.png'
 import KF2 from '@/assets/wx/kf2.png'
 
@@ -30,7 +30,7 @@ const StoreList: React.FC<StoreListProps> = (props) => {
   const [current, setCurrent] = useState<ShopStore>()
   const [applyCurrent, setApplyCurrent] = useState<ShopStore>()
   const [processInfo, setProcessInfo] = useState<ProcessInfo>(null)
-  const [currentErrorProgressInfo, setCurrentErrorProgressInfo] = useState<ProgressInfo>()
+  const [currentErrorShopId, setCurrentErrorShopId] = useState<any>()
   const [errorInfo, setErrorInfo] = useState<{
     title: string
     shopId: any
@@ -178,7 +178,7 @@ const StoreList: React.FC<StoreListProps> = (props) => {
                                                 title: `${row.shopName} - 修改出错列表`,
                                                 shopId: row.id,
                                               })
-                                              setCurrentErrorProgressInfo(targetProgressInfo)
+                                              setCurrentErrorShopId(row.id)
                                             }}
                                           >
                                             查看错误
@@ -283,14 +283,14 @@ const StoreList: React.FC<StoreListProps> = (props) => {
       <Drawer
         title={errorInfo?.title}
         width="80%"
-        visible={!!currentErrorProgressInfo}
-        onCancel={() => setCurrentErrorProgressInfo(null)}
+        visible={!!currentErrorShopId}
+        onCancel={() => setCurrentErrorShopId(null)}
         unmountOnExit={true}
         onOk={
-          () => setCurrentErrorProgressInfo(null)
+          () => setCurrentErrorShopId(null)
         }
       >
-        <ErrorPage data={currentErrorProgressInfo} shopId={errorInfo?.shopId}></ErrorPage>
+        <ErrorPage data={processInfo?.progress?.[currentErrorShopId]} shopId={errorInfo?.shopId}></ErrorPage>
       </Drawer>
     </div>
   )

@@ -1,6 +1,6 @@
 import { APIListResponse, APIResponse, IPageParams, SorterReq } from '../type'
 
-import { ProcessInfo, ShipmentUpdateBody } from './types'
+import { ProcessInfo, ShipmentUpdateBody, UpdateItemResult } from './types'
 
 import shopeeUtilsAxios from '.'
 
@@ -48,7 +48,7 @@ export const shipmentAPI = {
     categoryId?: number
     isToCurrentCategoryOther?: boolean
   }) {
-    return shopeeUtilsAxios.post<APIResponse>('/shipment/changeCategorty', params)
+    return shopeeUtilsAxios.post<APIResponse<UpdateItemResult[]>>('/shipment/changeCategorty', params)
   },
   deleteItems(params: DeleteItemsParams) {
     return shopeeUtilsAxios.post<APIResponse>('/shipment/deleteItems', params)

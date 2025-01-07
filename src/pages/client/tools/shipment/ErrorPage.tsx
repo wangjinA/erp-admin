@@ -2,7 +2,7 @@ import { Alert, Button, Checkbox, Divider, Form, Grid, Link, Message, Radio, Tab
 
 import { IconEdit, IconLeft } from '@arco-design/web-react/icon'
 import { useLocalStorageState, useRequest } from 'ahooks'
-import { uniqBy } from 'lodash'
+import { uniq, uniqBy } from 'lodash'
 import { useState } from 'react'
 
 import { useSelector } from 'react-redux'
@@ -47,7 +47,7 @@ export default ({ data, shopId }: IProps) => {
       return false
     }
     return true
-  }).map((item, index) => ({
+  }).sort((a, b) => a.detail.item_name.localeCompare(b.detail.item_name, 'zh-Hans-CN')).map((item, index) => ({
     ...item,
     index: index + 1,
   })) || []
@@ -84,7 +84,15 @@ export default ({ data, shopId }: IProps) => {
       userLoginAccount: userInfo.userLoginAccount,
       shopId,
       itemIds: selectedRowKeys,
+      isToCurrentCategoryOther: true,
+    }).then((r) => {
+      const errList = r.data.data?.filter(item => item.status === 'error') || []
+      if (errList.length) {
+        throw new Error(`出错${errList.length}个商品，原因：${uniq(errList.map(o => o.msg).join('、'))}`)
+      }
+      return r
     }), '设置')
+    setSelectedRowKeys([])
   }, {
     manual: true,
   })
@@ -102,6 +110,7 @@ export default ({ data, shopId }: IProps) => {
       shopId,
       itemIds: selectedRowKeys,
     }), '删除')
+    setSelectedRowKeys([])
   }, {
     manual: true,
   })
@@ -206,7 +215,7 @@ export default ({ data, shopId }: IProps) => {
                   <Button
                     type="primary"
                     status="danger"
-                    loading={changeCategortyHandler.loading}
+                    loading={deleteHandler.loading}
                     onClick={() => {
                       deleteHandler.run()
                     }}
@@ -408,7 +417,7 @@ export default ({ data, shopId }: IProps) => {
                     dataIndex: 'msg',
                     render(msg) {
                       const translatedMsg = msg?.replace(RepeatText, '商品重复').replace('please check and update', '请检查后再更新')
-                        .replace('is mandatory required', '是必填项').replace('Attribute', '属性')
+                        .replace('is mandatory required', '是必填项').replace('Attribute', '属性').replace('requests too frequent', '频率过高，重试即可')
                       return (
                         <div>
                           {translatedMsg}
