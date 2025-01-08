@@ -104,6 +104,9 @@ importers:
       react-router-dom:
         specifier: ^5.2.0
         version: 5.3.0(react@17.0.2)
+      react-to-print:
+        specifier: ^3.0.4
+        version: 3.0.4(react@17.0.2)
       redux:
         specifier: ^4.1.2
         version: 4.1.2
@@ -4428,6 +4431,11 @@ packages:
     resolution: {integrity: sha512-lIboRiOtDLFdg1VTemMwud9vRVuOCZmUIT/7lUoZiSpPODiiH1UQlfXy+vPLC/7IWdFYnhRwAyNqA/+I7wnvKQ==}
     peerDependencies:
       react: '>=15'
+
+  react-to-print@3.0.4:
+    resolution: {integrity: sha512-33opQsuskUs0UyK1OLAAN2Ziy1GPneeTLvypRYjT6E9bl2NDxZtEr0KYMOxszcBY0bs+XlWOkGNlyla55GQjuA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ~19
 
   react-transition-group@4.4.2:
     resolution: {integrity: sha512-/RNYfRAMlZwDSr6z4zNKV6xu53/e2BuaBbGhbyYIXTrmgu/bGHzmqOs7mJSJBHy9Ud+ApHx3QjrkKSp1pxvlFg==}
@@ -10831,6 +10839,10 @@ snapshots:
       react-is: 16.13.1
       tiny-invariant: 1.2.0
       tiny-warning: 1.0.3
+
+  react-to-print@3.0.4(react@17.0.2):
+    dependencies:
+      react: 17.0.2
 
   react-transition-group@4.4.2(react-dom@17.0.2(react@17.0.2))(react@17.0.2):
     dependencies:

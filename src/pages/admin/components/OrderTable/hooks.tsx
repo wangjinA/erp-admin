@@ -6,6 +6,7 @@ import { useLocation } from 'react-router-dom'
 import ActionHistory from './ActionHistory'
 import DeliveryButton from './DeliveryButton'
 import OrderDetailButton from './OrderDetailButton'
+import PrintButton from './PrintButton'
 import SendCargoInfo from './SendCargoInfo'
 
 import ShipmentButton from './ShipmentButton'
@@ -215,6 +216,20 @@ export function useColumns(props: OrderTablePorps) {
                       //  disabled: !row.needFill
                     }}
                   />
+                  <PrintButton
+                    orderItem={row}
+                    sendWarehouse={row.sendWarehouse}
+                    shrimpOrderNo={row.shrimpOrderNo}
+                  >
+                    打印出货单
+                  </PrintButton>
+                  <PrintButton
+                    orderItem={row}
+                    sendWarehouse={row.sendWarehouse}
+                    shrimpOrderNo={row.shrimpOrderNo}
+                  >
+                    打印检货单
+                  </PrintButton>
                   <ActionHistory
                     buttonProps={{
                       type: 'text',
