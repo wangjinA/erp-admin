@@ -10,6 +10,9 @@ export default defineConfig({
   resolve: {
     alias: [{ find: '@', replacement: '/src' }],
   },
+  build: {
+    assetsDir: 'erp-assets',
+  },
   plugins: [
     react(),
     svgrPlugin({
