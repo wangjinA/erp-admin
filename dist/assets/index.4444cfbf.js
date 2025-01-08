@@ -1,1 +1,0 @@
-import{d as r,j as e,p as d}from"./vendor.a400a50c.js";import{s as i,M as m}from"./item.ae26ba24.js";function n(t){const{data:s=[]}=t;return r("div",{className:i["message-list"],children:[s.map(a=>e(m,{data:a},a.id)),!s.length&&e(d,{status:"404"})]})}export{n as default};
