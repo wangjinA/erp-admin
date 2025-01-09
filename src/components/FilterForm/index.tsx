@@ -9,7 +9,7 @@ import classNames from 'classnames'
 import { isString, max } from 'lodash'
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react'
 
-import createFormItem, { CreateFormItemType } from '../CreateFormItem'
+import createFormItem, { CreateFormItemType, FormType } from '../CreateFormItem'
 
 import { HideClass } from '@/constants/style'
 
@@ -28,6 +28,7 @@ export type FilterFormProps = FormProps & {
   gutter?: RowProps['gutter']
   span?: number
   labelLength?: number
+  formType?: FormType
 }
 const FilterForm = React.forwardRef(
   (
@@ -40,6 +41,7 @@ const FilterForm = React.forwardRef(
       span = 8,
       labelLength,
       initialValues,
+      formType,
       ...otherFormProps
     }: FilterFormProps,
     ref,
@@ -87,6 +89,7 @@ const FilterForm = React.forwardRef(
         }}
         wrapperCol={{
           className: 'w-0 flex-1',
+          ...(otherFormProps.wrapperCol || {}),
         }}
         onValuesChange={(value) => {
           const values = formRef.current.getFieldsValue()
@@ -127,6 +130,7 @@ const FilterForm = React.forwardRef(
                       initialValues?.[item.schema.field]
                       ?? item.schema.defaultValue,
                         },
+                        formType,
                       })}
                     </Grid.Col>
                   )

@@ -31,6 +31,11 @@ export interface FormSchema
   required?: boolean
 }
 
+export enum FormType {
+  default = 'default',
+  preview = 'preview',
+}
+
 type ControlType =
   | 'input'
   | 'textarea'
@@ -50,6 +55,7 @@ export interface CreateFormItemType {
   control?: ControlType | ReactElement | ((schema: FormSchema) => ReactElement)
   formItemProps?: FormItemProps
   controlProps?: Partial<any>
+  formType?: FormType
   showItemHandle?: (values?: any) => boolean
 }
 export type CreateFormItemParams = (params: CreateFormItemType) => ReactElement
@@ -69,13 +75,118 @@ const wrapperCol: ColProps = {
   //   span: 18,
   // },
 }
-const createFormItem: CreateFormItemParams = ({
-  schema,
-  control,
-  formItemProps,
-  controlProps,
-  ...otherProps
-}) => {
+
+function FormControl(props: Pick<CreateFormItemType, 'schema' | 'control' | 'controlProps' | 'formType'> & {
+  value?: any
+  onChange?: (value: any) => void
+}) {
+  const {
+    schema,
+    control,
+    controlProps,
+    formType,
+    ...restProps
+  } = props
+
+  const {
+    label = '',
+  } = schema
+
+  const {
+    value,
+  } = restProps
+
+  const isPreview = formType === FormType.preview
+
+  if (typeof control === 'function') {
+    return control(schema)
+  }
+  else if (typeof control === 'object') {
+    return control
+  }
+  else {
+    switch (control) {
+      case undefined:
+      case 'input':
+        return (
+          isPreview
+            ? <span>{value || '-'}</span>
+            : (
+                <Input
+                  placeholder={`请输入${label}`}
+                  allowClear={true}
+                  {...controlProps}
+                  {...restProps}
+                />
+              )
+        )
+      case 'radio':
+        return isPreview ? <span>{controlProps?.options?.find(item => item.value === value)?.label || '-'}</span> : <Radio.Group type="button" {...controlProps} {...restProps} />
+      case 'textarea':
+        return isPreview
+          ? <span>{value}</span>
+          : (
+              <Input.TextArea placeholder="请输入" rows={4} {...controlProps} {...restProps} />
+            )
+      case 'switch':
+        return isPreview
+          ? <span>{value ? controlProps?.checkedText || '是' : controlProps?.unCheckedText || '否'}</span>
+          : (
+              <Switch checkedText="是" uncheckedText="否" {...controlProps}{...restProps} checked={restProps.value} />
+            )
+      case 'select':
+        return (
+          <Select
+            allowClear={true}
+            placeholder={`请选择${label}`}
+            {...controlProps}
+            {...restProps}
+          />
+        )
+      case 'upload':
+        return <Upload {...controlProps} {...restProps}></Upload>
+      case 'number':
+        return (
+          isPreview ? <span>{value}</span> : <InputNumber placeholder={`请输入${label}`} {...controlProps} {...restProps} />
+        )
+      case 'datePicker':
+        return isPreview ? <span>{value}</span> : <DatePicker {...TimeDefaultProps} {...controlProps} {...restProps} />
+      case 'datePickerRange':
+        return (
+          isPreview
+            ? <span>{value}</span>
+            : (
+                <DatePicker.RangePicker
+                  className="w-full"
+                  {...TimeRangeDefaultProps}
+                  {...controlProps}
+                  {...restProps}
+                />
+              )
+        )
+      case 'entrepotRadio':
+        return (
+          <EntrepotRadio {...controlProps} {...restProps} />
+        )
+      case 'role':
+        return (
+          <RoleSelector {...controlProps} {...restProps} />
+        )
+      default:
+        return <span>{control}</span>
+    }
+  }
+}
+
+const createFormItem: CreateFormItemParams = (props: CreateFormItemType) => {
+  const {
+    schema,
+    control,
+    formItemProps,
+    controlProps,
+    formType,
+    ...otherProps
+  } = props
   const {
     field,
     label = '',
@@ -86,71 +197,8 @@ const createFormItem: CreateFormItemParams = ({
     required,
   } = schema
 
-  const getFormControl = (s: FormSchema) => {
-    if (typeof control === 'function') {
-      return control(s)
-    }
-    else if (typeof control === 'object') {
-      return control
-    }
-    else {
-      switch (control) {
-        case undefined:
-        case 'input':
-          return (
-            <Input
-              placeholder={`请输入${label}`}
-              allowClear={true}
-              {...controlProps}
-            />
-          )
-        case 'radio':
-          return <Radio.Group type="button" {...controlProps} />
-        case 'textarea':
-          return (
-            <Input.TextArea placeholder="请输入" rows={4} {...controlProps} />
-          )
-        case 'switch':
-          return (
-            <Switch checkedText="是" uncheckedText="否" {...controlProps} />
-          )
-        case 'select':
-          return (
-            <Select
-              allowClear={true}
-              placeholder={`请选择${label}`}
-              {...controlProps}
-            />
-          )
-        case 'upload':
-          return <Upload {...controlProps}></Upload>
-        case 'number':
-          return (
-            <InputNumber placeholder={`请输入${label}`} {...controlProps} />
-          )
-        case 'datePicker':
-          return <DatePicker {...TimeDefaultProps} {...controlProps} />
-        case 'datePickerRange':
-          return (
-            <DatePicker.RangePicker
-              className="w-full"
-              {...TimeRangeDefaultProps}
-              {...controlProps}
-            />
-          )
-        case 'entrepotRadio':
-          return (
-            <EntrepotRadio {...controlProps} />
-          )
-        case 'role':
-          return (
-            <RoleSelector {...controlProps} />
-          )
-        default:
-          return <span>{control}</span>
-      }
-    }
-  }
+  const isPreview = formType === FormType.preview
+
   const defaultValueObj
     = defaultValue !== undefined ? { initialValue: defaultValue } : {}
 
@@ -189,7 +237,8 @@ const createFormItem: CreateFormItemParams = ({
       {...formItemProps}
       {...omit(otherProps, ['render', 'showItemHandle', 'hideTable'])}
     >
-      {getFormControl({ ...schema })}
+      {/* {getFormControl({ ...schema })} */}
+      <FormControl {...props}></FormControl>
     </Form.Item>
   )
 }
