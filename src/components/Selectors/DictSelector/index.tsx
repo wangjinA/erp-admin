@@ -46,9 +46,9 @@ function getDictOptions(params: {
 }
 export function useDictOptions(params: {
   dictCode: string
-  displayName?: string
+  displayName?: string // 用作搜索
 }) {
-  const { dictCode, displayName } = params
+  const { dictCode } = params
   const res = useRequest(
     async () => {
       return getDictOptions(params)
@@ -113,6 +113,7 @@ export function DictNameFC({
 
 const DictSelector: React.FC<DictSelectorProps> = (props) => {
   const { dictCode, type, ...selectProps } = props
+
   const [searchVal, setSearchVal] = useState<string>()
   const { data, loading } = useDictOptions({
     dictCode,

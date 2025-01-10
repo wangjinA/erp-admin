@@ -1,19 +1,34 @@
-import { Input, Modal } from '@arco-design/web-react'
+import { Input, InputNumber, Modal } from '@arco-design/web-react'
 import { IconEdit } from '@arco-design/web-react/icon'
 
 import { useState } from 'react'
 
 import styles from './index.module.less'
 
-export default ({ value, onChange }) => {
+export enum RemarkType {
+  Text = 'text',
+  Number = 'number',
+}
+
+interface RemarkProps {
+  // { value, onChange }
+  value: any
+  onChange: (value: any) => Promise<any>
+  title?: string
+  type?: RemarkType
+}
+
+export default (props: RemarkProps) => {
+  const { value, title = '备注', type = RemarkType.Text, onChange } = props
   const [visible, setVisible] = useState(false)
   const [inputValue, setInputValue] = useState(value)
+  const placeholder = `请输入${title}`
   return (
     <div className={styles['remark-com']}>
-      {value || '-'}
+      {value ?? '-'}
       <IconEdit className="remark-com-icon" onClick={() => setVisible(true)}></IconEdit>
       <Modal
-        title="编辑备注"
+        title={`编辑${title}`}
         visible={visible}
         onCancel={() => setVisible(false)}
         onOk={() => {
@@ -25,7 +40,9 @@ export default ({ value, onChange }) => {
           })
         }}
       >
-        <Input.TextArea value={inputValue} autoFocus onChange={setInputValue} placeholder="请输入备注" rows={5}></Input.TextArea>
+        {type === RemarkType.Text
+          ? <Input.TextArea value={inputValue} autoFocus onChange={setInputValue} placeholder={placeholder} rows={5}></Input.TextArea>
+          : <InputNumber value={inputValue} autoFocus onChange={setInputValue} placeholder={placeholder}></InputNumber>}
       </Modal>
     </div>
   )

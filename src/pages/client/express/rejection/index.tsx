@@ -6,7 +6,6 @@ import React, { useState } from 'react'
 import { expressAPI } from '@/api/client/express'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 import { DictNameFC } from '@/components/Selectors/DictSelector'
-import EntrepotRadio from '@/components/Selectors/EntrepotRadio'
 import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
 import TrackingNo from '@/components/TrackingNo'
 import { DividerSchema } from '@/constants/schema/common'
@@ -66,7 +65,7 @@ export default () => {
               label: '仓库',
               span: 24,
             },
-            control: <EntrepotRadio></EntrepotRadio>,
+            control: 'entrepotRadio',
             isSearch: true,
             isCreate: true,
             render(c) {

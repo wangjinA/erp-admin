@@ -8,7 +8,6 @@ import React from 'react'
 
 import { expressAPI } from '@/api/client/express'
 import FilterForm from '@/components/FilterForm'
-import EntrepotSelector from '@/components/Selectors/EntrepotSelector'
 import { showMessage } from '@/utils'
 
 interface ReturnParcelProps {
@@ -60,7 +59,7 @@ const ReturnParcel: React.FC<ReturnParcelProps> = (props) => {
               field: 'sendWarehouse',
               label: '打包仓库',
             },
-            control: <EntrepotSelector></EntrepotSelector>,
+            control: 'entrepotSelector',
           },
           {
             schema: {

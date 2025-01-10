@@ -1,7 +1,6 @@
 import { OrderPageType } from '.'
 
 import { SearchTableSchema } from '@/components/SearchTable'
-import ShopRadio from '@/components/Selectors/ShopRadio'
 import { TimeRangeDisabledDateProps } from '@/constants'
 import { isClient } from '@/routes'
 import { showObj } from '@/utils'
@@ -12,16 +11,17 @@ interface OrderPageParams {
 
 export const getOrderFilter: (params: OrderPageParams) => SearchTableSchema[] = (params) => {
   const { type } = params
-  return [
-    ...showObj(isClient(), {
-      schema: {
-        field: 'platformShopId',
-        label: '所属店铺',
-        span: 24,
-      },
-      control: <ShopRadio></ShopRadio>,
-      isSearch: true,
-    }),
+  const shopSchema: SearchTableSchema = {
+    schema: {
+      field: 'platformShopId',
+      label: '所属店铺',
+      span: 24,
+    },
+    control: 'shopRadio',
+    isSearch: true,
+  }
+  const list: SearchTableSchema[] = [
+    ...showObj(isClient(), shopSchema),
     {
       schema: {
         field: 'selectLogisticsOrderVO.shrimpOrderNo',
@@ -196,4 +196,5 @@ export const getOrderFilter: (params: OrderPageParams) => SearchTableSchema[] = 
     //   control: 'input',
     // },
   ]
+  return list
 }

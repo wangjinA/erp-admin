@@ -7,6 +7,8 @@ import EntrepotList from '../components/EntrepotList'
 import SenderList from '../components/SenderList'
 import { useEntrepotInfo } from '../info/hooks'
 
+import CostSetting from './CostSetting'
+
 import { FormType } from '@/components/CreateFormItem'
 import FilterForm from '@/components/FilterForm'
 
@@ -18,16 +20,15 @@ export default () => {
   const [isEdit, setIsEdit] = useState(false)
   return (
     <div className="bg-white py-6 px-4">
-
       <Grid.Row gutter={[20, 0]}>
         <Grid.Col span={6} className="border-r border-neutral-3 pr-4">
           <EntrepotList entrepotInfoHandle={entrepotInfoHandle}></EntrepotList>
         </Grid.Col>
 
         <Grid.Col span={18} className="pr-6">
-          <Tabs defaultActiveTab="仓库参数设置">
+          <Tabs defaultActiveTab="费用设置" lazyload={true}>
             <Tabs.TabPane title="费用设置" key="费用设置">
-              费用设置 开发中...
+              <CostSetting entrepotId={activeEntrepot?.id}></CostSetting>
             </Tabs.TabPane>
             <Tabs.TabPane title="人员设置" key="人员设置">
               人员设置 开发中...

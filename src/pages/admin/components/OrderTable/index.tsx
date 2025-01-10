@@ -34,7 +34,6 @@ import PopconfirmDelete from '@/components/PopconfirmDelete'
 import DictSelector, {
   useDictOptions,
 } from '@/components/Selectors/DictSelector'
-import EntrepotSelector from '@/components/Selectors/EntrepotSelector'
 import { ShowFormType } from '@/constants'
 import { EmitTypes, bus, useEventBus } from '@/hooks/useEventBus'
 import { OrderCreateSchema2 } from '@/pages/client/order/create/schema'
@@ -470,7 +469,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
               formItemProps: {
                 // disabled: true,
               },
-              control: <EntrepotSelector></EntrepotSelector>,
+              control: 'entrepotSelector',
             },
             {
               schema: {

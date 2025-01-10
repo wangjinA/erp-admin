@@ -5,8 +5,6 @@ import { TimeRangeDefaultProps, TimeRangeDisabledDateProps } from '..'
 
 import { CreateFormItemType } from '@/components/CreateFormItem'
 
-import DictSelector from '@/components/Selectors/DictSelector'
-
 export const OrderFilter: CreateFormItemType[] = [
   {
     schema: {
@@ -23,7 +21,10 @@ export const OrderFilter: CreateFormItemType[] = [
       field: 'orderType',
       label: '订单类型',
     },
-    control: <DictSelector dictCode="order_type"></DictSelector>,
+    control: 'dictSelector',
+    controlProps: {
+      dictCode: 'order_type',
+    },
   },
   {
     schema: {
@@ -65,7 +66,10 @@ export const OrderFilter: CreateFormItemType[] = [
       field: 'timeType6',
       label: '订单状态',
     },
-    control: <DictSelector dictCode="order_status"></DictSelector>,
+    control: 'dictSelector',
+    controlProps: {
+      dictCode: 'order_status',
+    },
   },
   {
     schema: {

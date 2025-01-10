@@ -3,7 +3,6 @@ import React from 'react'
 import { entrepotAPI } from '@/api/admin/entrepot'
 import SearchTable from '@/components/SearchTable'
 import { DictNameFC } from '@/components/Selectors/DictSelector'
-import EntrepotRadio from '@/components/Selectors/EntrepotRadio'
 import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
 import { DividerSchema } from '@/constants/schema/common'
 
@@ -20,7 +19,7 @@ export default () => {
               label: '所属仓库',
               span: 24,
             },
-            control: <EntrepotRadio></EntrepotRadio>,
+            control: 'entrepotRadio',
             render(c) {
               return <EntrepotNameFC value={c}></EntrepotNameFC>
             },

@@ -13,8 +13,12 @@ import { omit } from 'lodash'
 import React, { ReactElement, ReactNode } from 'react'
 
 import LabelWithTips, { LabelWithTipsProps } from '../LabelWithTips'
+import DictSelector from '../Selectors/DictSelector'
 import EntrepotRadio from '../Selectors/EntrepotRadio'
+import EntrepotSelector from '../Selectors/EntrepotSelector'
+import RegionSelector from '../Selectors/RegionSelector'
 import RoleSelector from '../Selectors/RoleSelector'
+import ShopRadio from '../Selectors/ShopRadio'
 import Upload from '../Upload'
 
 import { TimeDefaultProps, TimeRangeDefaultProps } from '@/constants'
@@ -48,7 +52,11 @@ type ControlType =
   | 'datePicker'
   | 'datePickerRange'
   | 'entrepotRadio'
+  | 'entrepotSelector'
   | 'role'
+  | 'dictSelector'
+  | 'regionSelector'
+  | 'shopRadio'
 
 export interface CreateFormItemType {
   schema: FormSchema
@@ -99,7 +107,10 @@ function FormControl(props: Pick<CreateFormItemType, 'schema' | 'control' | 'con
   const isPreview = formType === FormType.preview
 
   if (typeof control === 'function') {
-    return control(schema)
+    return control({
+      ...schema,
+      ...restProps,
+    })
   }
   else if (typeof control === 'object') {
     return control
@@ -168,10 +179,19 @@ function FormControl(props: Pick<CreateFormItemType, 'schema' | 'control' | 'con
         return (
           <EntrepotRadio {...controlProps} {...restProps} />
         )
-      case 'role':
+      case 'entrepotSelector':
         return (
-          <RoleSelector {...controlProps} {...restProps} />
+          <EntrepotSelector {...controlProps} {...restProps} />
         )
+      case 'role':
+        return <RoleSelector {...controlProps} {...restProps} />
+      case 'dictSelector':
+        return <DictSelector {...controlProps as any} {...restProps} />
+
+      case 'regionSelector':
+        return <RegionSelector {...controlProps as any} {...restProps} />
+      case 'shopRadio':
+        return <ShopRadio {...controlProps as any} {...restProps} />
       default:
         return <span>{control}</span>
     }

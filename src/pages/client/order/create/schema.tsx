@@ -1,8 +1,4 @@
-import React from 'react'
-
 import { CreateFormItemType } from '@/components/CreateFormItem'
-import DictSelector from '@/components/Selectors/DictSelector'
-import EntrepotSelector from '@/components/Selectors/EntrepotSelector'
 
 export const OrderCreateSchema1: CreateFormItemType[] = [
   {
@@ -10,14 +6,20 @@ export const OrderCreateSchema1: CreateFormItemType[] = [
       field: 'platformType',
       label: '平台类型',
     },
-    control: <DictSelector dictCode="platform_type"></DictSelector>,
+    control: 'dictSelector',
+    controlProps: {
+      dictCode: 'platform_type',
+    },
   },
   {
     schema: {
       field: 'orderType',
       label: '订单类型',
     },
-    control: <DictSelector dictCode="order_type"></DictSelector>,
+    control: 'dictSelector',
+    controlProps: {
+      dictCode: 'order_type',
+    },
   },
   {
     schema: {
@@ -46,14 +48,20 @@ export const OrderCreateSchema1: CreateFormItemType[] = [
       field: 'transportType',
       label: '运输类型',
     },
-    control: <DictSelector dictCode="transport_type"></DictSelector>,
+    control: 'dictSelector',
+    controlProps: {
+      dictCode: 'transport_type',
+    },
   },
   {
     schema: {
       field: 'shippingCarrier',
       label: '物流渠道',
     },
-    control: <DictSelector dictCode="logistics_channel"></DictSelector>,
+    control: 'dictSelector',
+    controlProps: {
+      dictCode: 'logistics_channel',
+    },
   },
   {
     schema: {
@@ -75,7 +83,7 @@ export const OrderCreateSchema1: CreateFormItemType[] = [
       field: 'sendWarehouse',
       label: '送往仓库',
     },
-    control: <EntrepotSelector />,
+    control: 'entrepotSelector',
   },
   {
     schema: {
@@ -142,7 +150,10 @@ export const OrderCreateSchema2: CreateFormItemType[] = [
       label: '发货方式',
       required: true,
     },
-    control: <DictSelector dictCode="delivery_method"></DictSelector>,
+    control: 'dictSelector',
+    controlProps: {
+      dictCode: 'delivery_method',
+    },
   },
   {
     schema: {
@@ -186,7 +197,10 @@ export const OrderCreateSchema3: CreateFormItemType[] = [
       field: 'region',
       label: '地区',
     },
-    control: <DictSelector dictCode="region"></DictSelector>,
+    control: 'dictSelector',
+    controlProps: {
+      dictCode: 'region',
+    },
   },
   {
     schema: {

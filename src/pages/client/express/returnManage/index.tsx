@@ -9,7 +9,6 @@ import ReturnParcel from '@/components/ReturnParcel'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 
 import { DictNameFC } from '@/components/Selectors/DictSelector'
-import EntrepotRadio from '@/components/Selectors/EntrepotRadio'
 import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
 import { DividerSchema } from '@/constants/schema/common'
 import { TagColors } from '@/pages/admin/components/OrderTable/SendCargoInfo'
@@ -71,7 +70,7 @@ export default () => {
               label: '仓库',
               span: 24,
             },
-            control: <EntrepotRadio></EntrepotRadio>,
+            control: 'entrepotRadio',
             isSearch: true,
             render(col) {
               return <EntrepotNameFC value={String(col)} />

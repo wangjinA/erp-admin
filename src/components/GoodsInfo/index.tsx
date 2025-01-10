@@ -1,11 +1,10 @@
-import { Image, List, Switch } from '@arco-design/web-react'
+import { Image, List } from '@arco-design/web-react'
 import classNames from 'classnames'
 import React, { useRef } from 'react'
 
 import FilterForm from '../FilterForm'
 
 import LabelValue from '../LabelValue'
-import DictSelector from '../Selectors/DictSelector'
 
 import styles from './index.module.less'
 
@@ -69,13 +68,11 @@ export default (props: GoodsInfoProps) => {
                             field: 'deliveryMethod',
                             span: 16,
                           },
-                          control: (
-                            <DictSelector
-                              dictCode="transport_type"
-                              type="radio"
-                            >
-                            </DictSelector>
-                          ),
+                          control: 'dictSelector',
+                          controlProps: {
+                            dictCode: 'delivery_method',
+                            type: 'radio',
+                          },
                         },
                         {
                           schema: {
@@ -86,13 +83,11 @@ export default (props: GoodsInfoProps) => {
                           formItemProps: {
                             triggerPropName: 'checked',
                           },
-                          control: (
-                            <Switch
-                              checkedText="缺货打包"
-                              uncheckedText="缺货打包"
-                            >
-                            </Switch>
-                          ),
+                          control: 'switch',
+                          controlProps: {
+                            checkedText: '缺货打包',
+                            uncheckedText: '缺货打包',
+                          },
                         },
                         {
                           schema: {

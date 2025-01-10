@@ -11,7 +11,7 @@ import { orderAPI } from '@/api/admin/order'
 import FilterForm from '@/components/FilterForm'
 import GoodsInfo from '@/components/GoodsInfo'
 import LabelValue from '@/components/LabelValue'
-import DictSelector, { DictNameFC } from '@/components/Selectors/DictSelector'
+import { DictNameFC } from '@/components/Selectors/DictSelector'
 import { EmitTypes, bus } from '@/hooks/useEventBus'
 import { OrderResponseItem } from '@/types/order'
 import { showMessage } from '@/utils'
@@ -229,7 +229,10 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
                         label: '包裹类型',
                         field: 'parcelType',
                       },
-                      control: <DictSelector dictCode="parcel_type"></DictSelector>,
+                      control: 'dictSelector',
+                      controlProps: {
+                        dictCode: 'parcel_type',
+                      },
                     },
                     {
                       schema: {

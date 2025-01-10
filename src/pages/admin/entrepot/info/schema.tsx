@@ -1,8 +1,8 @@
-import { CreateFormItemType } from '@/components/CreateFormItem';
-import DictSelector from '@/components/Selectors/DictSelector';
-import RegionSelector from '@/components/Selectors/RegionSelector';
-import { WhetherBooleanOptions, WhetherOptions } from '@/constants';
-import { Checkbox, Radio } from '@arco-design/web-react';
+import { Checkbox, Radio } from '@arco-design/web-react'
+
+import { CreateFormItemType } from '@/components/CreateFormItem'
+import DictSelector from '@/components/Selectors/DictSelector'
+import { WhetherBooleanOptions, WhetherOptions } from '@/constants'
 
 export const CreateEntrepotSchema: CreateFormItemType[] = [
   {
@@ -34,9 +34,10 @@ export const CreateEntrepotSchema: CreateFormItemType[] = [
       label: '支持库存',
       span: 8,
     },
-    control: (props: any) => (
-      <Radio.Group {...props} options={WhetherOptions}></Radio.Group>
-    ),
+    controlProps: {
+      options: WhetherOptions,
+    },
+    control: 'radio',
   },
   {
     formItemProps: {
@@ -65,7 +66,8 @@ export const CreateEntrepotSchema: CreateFormItemType[] = [
             value: 1,
           },
         ]}
-      ></Radio.Group>
+      >
+      </Radio.Group>
     ),
   },
   {
@@ -95,7 +97,8 @@ export const CreateEntrepotSchema: CreateFormItemType[] = [
             value: 1,
           },
         ]}
-      ></Checkbox.Group>
+      >
+      </Checkbox.Group>
     ),
   },
   {
@@ -144,7 +147,7 @@ export const CreateEntrepotSchema: CreateFormItemType[] = [
       field: 'deliveryAddress',
       label: '收货地址',
     },
-    control: <RegionSelector></RegionSelector>,
+    control: 'regionSelector',
   },
   {
     formItemProps: {
@@ -205,7 +208,7 @@ export const CreateEntrepotSchema: CreateFormItemType[] = [
       <Radio.Group {...props} options={WhetherOptions}></Radio.Group>
     ),
   },
-];
+]
 
 export const CreateRacksSchema: CreateFormItemType[] = [
   {
@@ -224,7 +227,10 @@ export const CreateRacksSchema: CreateFormItemType[] = [
       span: 24,
       required: true,
     },
-    control: <Radio.Group options={WhetherBooleanOptions} />,
+    control: 'radio',
+    controlProps: {
+      options: WhetherBooleanOptions,
+    },
   },
   {
     schema: {
@@ -239,8 +245,9 @@ export const CreateRacksSchema: CreateFormItemType[] = [
           {...props}
           type="radio"
           dictCode="storage_racks_type"
-        ></DictSelector>
-      );
+        >
+        </DictSelector>
+      )
     },
   },
   {
@@ -284,4 +291,4 @@ export const CreateRacksSchema: CreateFormItemType[] = [
     },
     control: 'number',
   },
-];
+]

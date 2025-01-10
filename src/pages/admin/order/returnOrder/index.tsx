@@ -1,9 +1,10 @@
-import React from 'react';
-import FilterForm from '@/components/FilterForm';
-import EntrepotRadio from '@/components/Selectors/EntrepotRadio';
-import { DividerSchema } from '@/constants/schema/common';
-import { DatePicker, Table } from '@arco-design/web-react';
-import { TimeRangeDefaultProps } from '@/constants';
+import { DatePicker, Table } from '@arco-design/web-react'
+import React from 'react'
+
+import FilterForm from '@/components/FilterForm'
+import { TimeRangeDefaultProps } from '@/constants'
+import { DividerSchema } from '@/constants/schema/common'
+
 export default () => {
   return (
     <div className="p-4 bg-white">
@@ -20,7 +21,7 @@ export default () => {
                 label: '所属仓库',
                 span: 24,
               },
-              control: <EntrepotRadio></EntrepotRadio>,
+              control: 'entrepotRadio',
             },
             DividerSchema,
             {
@@ -78,7 +79,8 @@ export default () => {
               ),
             },
           ]}
-        ></FilterForm>
+        >
+        </FilterForm>
       </div>
       <Table
         className="mt-4"
@@ -131,7 +133,8 @@ export default () => {
             operatorName: '张三',
           },
         ]}
-      ></Table>
+      >
+      </Table>
     </div>
-  );
-};
+  )
+}

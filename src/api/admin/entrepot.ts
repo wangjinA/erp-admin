@@ -170,6 +170,50 @@ export const scanAPI = {
   },
 }
 
+export const costAPI = {
+  /** 更新-添加仓库费用设置 */
+  setConfig(body: { cost: number }) {
+    return baseAxios.post<APIResponse<Partial<Cost>>>('/api/logistics/cost/config/update/or/insert', body)
+  },
+
+  /* 查询仓库费用设置详情 */
+  getConfig(body: {
+    entrepotId: number
+    feeType: string
+    membershipLevel: string
+    platform: string
+    region: string
+  }) {
+    return baseAxios.post<APIResponse<Cost>>('/api/logistics/cost/config/info', body)
+  },
+
+  /** 查询仓库费用设置列表 */
+  getSetting(body: { entrepotId: number }) {
+    return baseAxios.post<APIListResponse<Cost>>('/api/logistics/cost/setting/list', body)
+  },
+
+  /** 修改仓库费用设置 */
+  setSetting(body: Partial<Cost>) {
+    return baseAxios.post<APIResponse<Partial<Cost>>>('/api/logistics/cost/setting/update/or/insert', body)
+  },
+
+}
+
+export interface Cost {
+  createBy: number
+  createTime: string
+  entrepotId: number
+  expense: number
+  feeType: string
+  id: number
+  membershipLevel: string
+  platform: string
+  region: string
+  settingItemValue: string
+  updateBy: number
+  updateTime: string
+}
+
 interface Sender {
   createBy: number
   createTime: string
