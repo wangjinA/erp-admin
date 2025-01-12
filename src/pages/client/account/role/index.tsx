@@ -199,7 +199,7 @@ function Permission() {
               </Grid.Col>
               <Grid.Col span={9} className="overflow-y-auto h-full">
                 <Title title="成员列表" className="mt-0.5"></Title>
-                <Space size={[16, 16]}>
+                <Space size={[10]}>
                   {
                     current?.roleUserInfoVOList?.map(item => (
                       <Tag key={item.userId} checkable={true} color="arcoblue" checked={true}>
@@ -207,19 +207,20 @@ function Permission() {
                       </Tag>
                     ))
                   }
+
+                  <Button
+                    type="primary"
+                    size="small"
+                    loading={roleUsersHandle.loading}
+                    icon={<IconPlus></IconPlus>}
+                    onClick={() => {
+                      setSelectedKeys(current?.roleUserInfoVOList?.map(item => item.userId) || [])
+                      setAddUserVisible(true)
+                    }}
+                  >
+                    添加
+                  </Button>
                 </Space>
-                <Button
-                  type="primary"
-                  size="small"
-                  loading={roleUsersHandle.loading}
-                  icon={<IconPlus></IconPlus>}
-                  onClick={() => {
-                    setSelectedKeys(current?.roleUserInfoVOList?.map(item => item.userId) || [])
-                    setAddUserVisible(true)
-                  }}
-                >
-                  添加
-                </Button>
               </Grid.Col>
             </Grid.Row>
             <Modal

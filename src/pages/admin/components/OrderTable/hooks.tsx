@@ -20,8 +20,8 @@ import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
 import TrackingNumber from '@/components/TrackingNumber'
 import { EmitTypes, bus } from '@/hooks/useEventBus'
 import { isAdmin } from '@/routes'
-import { Order, OrderResponseItem } from '@/types/order'
-import { showMessage, showModal, stringToMasked } from '@/utils'
+import { OrderResponseItem } from '@/types/order'
+import { showMessage, showModal } from '@/utils'
 
 export function useColumns(props: OrderTablePorps) {
   const { dictCode } = props
@@ -77,23 +77,23 @@ export function useColumns(props: OrderTablePorps) {
         )
       },
     },
-    ...(showMj
-      ? [{
-          title: '买家信息',
-          dataIndex: 'seller',
-          width: 180,
-          render(c, row) {
-            return (
-              <div className="border-r h-full p-2">
-                <LabelValue label="买家" value={stringToMasked(row.buyerUsername)}></LabelValue>
-                <LabelValue label="收货人" value={stringToMasked(row.recipients)}></LabelValue>
-                <LabelValue label="收货电话" value={stringToMasked(row.mobileNumber)}></LabelValue>
-                <LabelValue label="收货地址" value={stringToMasked(row.detailedAddress)}></LabelValue>
-              </div>
-            )
-          },
-        }]
-      : []),
+    // ...(showMj
+    //   ? [{
+    //       title: '买家信息',
+    //       dataIndex: 'seller',
+    //       width: 180,
+    //       render(c, row) {
+    //         return (
+    //           <div className="border-r h-full p-2">
+    //             <LabelValue label="买家" value={stringToMasked(row.buyerUsername)}></LabelValue>
+    //             <LabelValue label="收货人" value={stringToMasked(row.recipients)}></LabelValue>
+    //             <LabelValue label="收货电话" value={stringToMasked(row.mobileNumber)}></LabelValue>
+    //             <LabelValue label="收货地址" value={stringToMasked(row.detailedAddress)}></LabelValue>
+    //           </div>
+    //         )
+    //       },
+    //     }]
+    //   : []),
     {
       title: '打包信息',
       dataIndex: 'db',
@@ -108,23 +108,23 @@ export function useColumns(props: OrderTablePorps) {
         )
       },
     },
-    ...(showMj
-      ? [{
-          title: '卖家信息',
-          dataIndex: '卖家信息',
-          width: 180,
-          render(c, row: Order) {
-            return (
-              <div className="border-r h-full p-2">
-                <LabelValue label="打包仓库" value={<EntrepotNameFC value={row.sendWarehouse} />}></LabelValue>
-                {/* <LabelValue label="卖家标识" value="row"></LabelValue> */}
-                <LabelValue label="卖家备注" value={row.remark}></LabelValue>
-                <LabelValue label="仓库备注" value={row.entrepotRemark}></LabelValue>
-              </div>
-            )
-          },
-        }]
-      : []),
+    // ...(showMj
+    //   ? [{
+    //       title: '卖家信息',
+    //       dataIndex: '卖家信息',
+    //       width: 180,
+    //       render(c, row: Order) {
+    //         return (
+    //           <div className="border-r h-full p-2">
+    //             <LabelValue label="打包仓库" value={<EntrepotNameFC value={row.sendWarehouse} />}></LabelValue>
+    //             {/* <LabelValue label="卖家标识" value="row"></LabelValue> */}
+    //             <LabelValue label="卖家备注" value={row.remark}></LabelValue>
+    //             <LabelValue label="仓库备注" value={row.entrepotRemark}></LabelValue>
+    //           </div>
+    //         )
+    //       },
+    //     }]
+    //   : []),
     {
       title: '订单金额',
       dataIndex: 'fee',

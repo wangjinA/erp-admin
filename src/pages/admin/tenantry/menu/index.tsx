@@ -68,7 +68,7 @@ export default () => {
             console.log(e)
           },
         }}
-        name="物流菜单"
+        name="店铺菜单"
         getListRequest={(params) => {
           return clientMenuAPI.list({
             ...params,
@@ -76,8 +76,6 @@ export default () => {
             pageSize: MenuSize,
           }).then((r) => {
             r.data.data.list = listToTree(r.data.data.list)
-            console.log(r.data.data.list)
-
             r.data.data.pageSize = 1
             r.data.data.total = r.data.data.list.length
 

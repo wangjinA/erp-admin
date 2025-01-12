@@ -18,7 +18,7 @@ import EntrepotRadio from '../Selectors/EntrepotRadio'
 import EntrepotSelector from '../Selectors/EntrepotSelector'
 import RegionSelector from '../Selectors/RegionSelector'
 import RoleSelector from '../Selectors/RoleSelector'
-import ShopRadio from '../Selectors/ShopRadio'
+import ShopRadio, { ShopSelector } from '../Selectors/ShopRadio'
 import Upload from '../Upload'
 
 import { TimeDefaultProps, TimeRangeDefaultProps } from '@/constants'
@@ -57,6 +57,7 @@ type ControlType =
   | 'dictSelector'
   | 'regionSelector'
   | 'shopRadio'
+  | 'shopSelector'
 
 export interface CreateFormItemType {
   schema: FormSchema
@@ -94,7 +95,7 @@ function FormControl(props: Pick<CreateFormItemType, 'schema' | 'control' | 'con
     controlProps,
     formType,
     ...restProps
-  } = props
+  } = omit(props, ['formItemProps', 'hideTable']) // 避免加入dom attribute
 
   const {
     label = '',
@@ -192,6 +193,8 @@ function FormControl(props: Pick<CreateFormItemType, 'schema' | 'control' | 'con
         return <RegionSelector {...controlProps as any} {...restProps} />
       case 'shopRadio':
         return <ShopRadio {...controlProps as any} {...restProps} />
+      case 'shopSelector':
+        return <ShopSelector {...controlProps as any} {...restProps} />
       default:
         return <span>{control}</span>
     }

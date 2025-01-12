@@ -22,7 +22,7 @@ const cacheData: Record<
   Promise<AxiosResponse<APIListResponse<DictChild>>>
 > = {}
 
-function getDictOptions(params: {
+export function getDictOptions(params: {
   dictCode: string
   displayName?: string
 }): Promise<DictOptions[]> {
@@ -134,6 +134,7 @@ const DictSelector: React.FC<DictSelectorProps> = (props) => {
       return (
         <Select
           placeholder="请选择"
+          allowClear={true}
           {...selectProps}
           loading={loading}
           options={data}

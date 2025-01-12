@@ -97,10 +97,18 @@ function Permission() {
       })
   })
 
+  // 获取用户组列表
+  const { loading: updateRoleInfoLoading, run: updateRoleInfoRun } = useRequest((data, resetAndRefreshHandle) => {
+    return showMessage(() => roleAPI
+      .update(data), '修改').then(r => resetAndRefreshHandle())
+  }, {
+    manual: true,
+  })
+
   return (
     <CreateWrap formRef={formRef} createRequest={roleAPI.create} updateRequest={roleAPI.saveRoleMenuByAdmin} refreshRequest={run}>
       <ActionsContext.Consumer>
-        {({ showType, setShowType, createAction, updateAction }) => (
+        {({ showType, setShowType, createAction, updateAction, resetAndRefreshHandle }) => (
           <div className="bg-white p-4 h-[var(--syb-content-height)] test-1">
             <Grid.Row gutter={[20, 0]} className="h-full">
               <Grid.Col span={6} className="overflow-y-auto h-full border-r border-neutral-3 pr-4">
@@ -154,7 +162,6 @@ function Permission() {
                     checkable
                     checkedKeys={checkedKeys}
                     onCheck={(keys, extra) => {
-                      console.log(keys, extra)
                       setCheckedKeys(keys)
                     }}
                     fieldNames={{
@@ -173,6 +180,7 @@ function Permission() {
                   >
                   </Tree>
                 </div>
+                {/* 修改菜单 */}
                 <div className="mt-10 gap-4 flex justify-end">
                   <Button
                     type="primary"
@@ -205,7 +213,7 @@ function Permission() {
                       )
                     : (
                         <>
-                          <Space size={[16, 16]}>
+                          <Space size={[10]} wrap>
                             {
                               current?.roleUserInfoVOList?.map(item => (
                                 <Tag key={item.userId} checkable={true} color="arcoblue" checked={true}>
@@ -213,28 +221,29 @@ function Permission() {
                                 </Tag>
                               ))
                             }
+                            <Button
+                              type="primary"
+                              size="small"
+                              loading={roleUsersHandle.loading}
+                              icon={<IconPlus></IconPlus>}
+                              onClick={() => {
+                                setSelectedKeys(current?.roleUserInfoVOList?.map(item => item.userId) || [])
+                                setAddUserVisible(true)
+                              }}
+                            >
+                              添加
+                            </Button>
                           </Space>
-                          <Button
-                            type="primary"
-                            size="small"
-                            loading={roleUsersHandle.loading}
-                            icon={<IconPlus></IconPlus>}
-                            onClick={() => {
-                              setSelectedKeys(current?.roleUserInfoVOList?.map(item => item.userId) || [])
-                              setAddUserVisible(true)
-                            }}
-                          >
-                            添加
-                          </Button>
                         </>
                       )
                 }
 
               </Grid.Col>
             </Grid.Row>
+            {/* 编辑和创建用户组 */}
             <Modal
               {...FormModalCommonProps}
-              confirmLoading={createAction?.loading}
+              confirmLoading={updateRoleInfoLoading || createAction.loading}
               onCancel={() => {
                 setShowType(null)
                 formRef.resetFields()
@@ -245,17 +254,21 @@ function Permission() {
                   createAction.run(formData)
                 }
                 else {
-                  // await updateEntrepot({
-                  //   ...formData,
-                  //   id: activeEntrepot.id,
-                  // });
+                  updateRoleInfoRun({
+                    ...formData,
+                    id: editCurrent.id,
+                  }, resetAndRefreshHandle)
                 }
               }}
               visible={!!showType}
               title={`${ShowFormTypeMap[showType]}用户组`}
+              unmountOnExit={true}
             >
               <FilterForm
-                initialValues={editCurrent}
+                initialValues={{
+                  ...editCurrent,
+                  roleName: editCurrent?.name,
+                }}
                 form={formRef}
                 labelLength={8}
                 span={24}

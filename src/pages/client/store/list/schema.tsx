@@ -86,6 +86,9 @@ const StoreListSchema: SearchTableSchema[] = [
       label: '地区',
       field: 'region',
     },
+    render(c) {
+      return <DictNameFC value={c} dictCode="region" />
+    },
   },
   {
     schema: {

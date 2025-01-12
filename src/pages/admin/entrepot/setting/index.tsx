@@ -17,6 +17,8 @@ export default () => {
     isPureList: true,
   })
   const { activeEntrepot } = entrepotInfoHandle
+  console.log(activeEntrepot)
+
   const [isEdit, setIsEdit] = useState(false)
   return (
     <div className="bg-white py-6 px-4">

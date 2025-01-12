@@ -13,6 +13,7 @@ interface ChildrenParams {
   setShowType?: (type: ShowFormType) => void
   createAction?: Result<any, any>
   updateAction?: Result<any, any>
+  resetAndRefreshHandle: () => void
 }
 
 export interface CreateWrapProps {
@@ -29,14 +30,19 @@ const CreateWrap: React.FC<CreateWrapProps> = (props) => {
   const { formRef, children, createRequest, updateRequest, refreshRequest }
     = props
   const [showType, setShowType] = useState<ShowFormType>(null)
+
+  function resetAndRefreshHandle() {
+    formRef?.resetFields?.()
+    setShowType(null)
+    refreshRequest?.()
+  }
+
   const createAction = useRequest(
     async (params) => {
       // return tryFn(async () => {
       if (createRequest) {
         await showMessage(() => createRequest(params))
-        formRef?.resetFields()
-        setShowType(null)
-        refreshRequest?.()
+        resetAndRefreshHandle()
       }
       // });
     },
@@ -49,9 +55,7 @@ const CreateWrap: React.FC<CreateWrapProps> = (props) => {
       // return tryFn(async () => {
       if (updateRequest) {
         await showMessage(() => updateRequest(params))
-        formRef?.resetFields()
-        setShowType(null)
-        refreshRequest?.()
+        resetAndRefreshHandle()
       }
       // });
     },
@@ -67,6 +71,7 @@ const CreateWrap: React.FC<CreateWrapProps> = (props) => {
         setShowType,
         createAction,
         updateAction,
+        resetAndRefreshHandle,
       }}
     >
       {children}

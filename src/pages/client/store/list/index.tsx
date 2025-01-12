@@ -1,4 +1,4 @@
-import { Button, Message } from '@arco-design/web-react'
+import { Button } from '@arco-design/web-react'
 import { IconEdit } from '@arco-design/web-react/icon'
 import { useRequest } from 'ahooks'
 import React, { useRef } from 'react'
@@ -15,6 +15,13 @@ const StoreList: React.FC<StoreListProps> = (props) => {
   const { run: unbindRun, loading: unbindLoading } = useRequest(async (id) => {
     await showMessage(() => shopStoreAPI.unbind(id), '解绑')
     ref.current.refreshSearchTable()
+  }, {
+    manual: true,
+  })
+  const { run: reAuthRun, loading: reAuthLoading } = useRequest(async () => {
+    const res = await shopStoreAPI.reAuth()
+    window.open(res.data.data)
+    // ref.current.refreshSearchTable()
   }, {
     manual: true,
   })
@@ -46,8 +53,9 @@ const StoreList: React.FC<StoreListProps> = (props) => {
                     type="text"
                     status="warning"
                     icon={<IconEdit />}
+                    loading={reAuthLoading}
                     onClick={() => {
-                      Message.info('开发中...')
+                      reAuthRun()
                     }}
                   >
                     重新授权

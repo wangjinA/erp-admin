@@ -152,6 +152,33 @@ export const routes: IRoute[] = [
       // },
     ],
   },
+
+  {
+    name: 'client.stock',
+    key: 'client/stock',
+    children: [
+      {
+        name: 'client.stock.products',
+        key: 'client/stock/products',
+      },
+      {
+        name: 'client.stock.stockList',
+        key: 'client/stock/stockList',
+      },
+      {
+        name: 'client.stock.stockLog',
+        key: 'client/stock/stockLog',
+      },
+      {
+        name: 'client.stock.warehouseList',
+        key: 'client/stock/warehouseList',
+      },
+      {
+        name: 'client.stock.warehousing',
+        key: 'client/stock/warehousing',
+      },
+    ],
+  },
   {
     name: 'admin.business',
     key: 'admin/business',

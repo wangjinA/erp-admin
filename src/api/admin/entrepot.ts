@@ -188,7 +188,7 @@ export const costAPI = {
   },
 
   /** 查询仓库费用设置列表 */
-  getSetting(body: { entrepotId: number }) {
+  getSetting(body: Partial<CostSetting>) {
     return baseAxios.post<APIListResponse<Cost>>('/api/logistics/cost/setting/list', body)
   },
 
@@ -197,6 +197,14 @@ export const costAPI = {
     return baseAxios.post<APIResponse<Partial<Cost>>>('/api/logistics/cost/setting/update/or/insert', body)
   },
 
+}
+
+export interface CostSetting {
+  entrepotId: number
+  feeType: string
+  membershipLevel: string
+  platform: string
+  region: string
 }
 
 export interface Cost {

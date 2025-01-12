@@ -14,20 +14,6 @@ const timeRangeShortcuts: any[] = [
     ],
   },
   {
-    text: '最近一周',
-    value: () => [dayjs().startOf('week'), dayjs()],
-  },
-  {
-    text: '上周',
-    value: () => [
-      dayjs()
-        .subtract(1, 'week')
-        .startOf('week')
-        .add(1, 'day'),
-      dayjs().subtract(1, 'week').endOf('week').add(1, 'day'),
-    ],
-  },
-  {
     text: '最近一个月',
     value: () => [
       dayjs().startOf('day').subtract(1, 'month'),
@@ -39,8 +25,8 @@ const timeRangeShortcuts: any[] = [
     value: () => [
       dayjs()
         .subtract(1, 'month')
-        .startOf('day'),
-      dayjs().subtract(1, 'month').endOf('day'),
+        .startOf('month'),
+      dayjs().subtract(1, 'month').endOf('month'),
     ],
   },
   {

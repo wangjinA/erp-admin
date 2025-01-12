@@ -17,6 +17,9 @@ export const shopStoreAPI = {
   unbind(id) {
     return baseAxios.get<APIResponse<string>>(`/api/tenantry/store/remove/${id}`)
   },
+  reAuth() {
+    return baseAxios.post<APIResponse<string>>(`/api/tenantry/store/update`)
+  },
 }
 
 export interface ShopStore {

@@ -1,4 +1,4 @@
-import { Image, List } from '@arco-design/web-react'
+import { List } from '@arco-design/web-react'
 import classNames from 'classnames'
 import React, { useRef } from 'react'
 
@@ -33,28 +33,30 @@ export default (props: GoodsInfoProps) => {
           <div
             key={item.id}
             className={classNames([
-              'grid',
-              'h-[125px]',
+              'grid h-[105px] overflow-hidden',
               { 'grid-cols-2': isEdit },
               index > 0 ? 'border-t' : '',
             ])}
           >
-            <List.Item.Meta
-              className="!items-center p-2 w-full"
-              avatar={<Image className="size-24" src={item.productImg[0]} />}
-              title={item.productName}
-              description={(
-                <div>
+            <div className="p-2 w-full flex items-center">
+              <img
+                className="size-24"
+                src={item.productImg[0]}
+                alt=""
+              />
+              <div className="ml-2 flex-1 w-0">
+                <div className="truncate">{item.productName}</div>
+                <div className="text-sm text-gray-500">
                   <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="单  价" value={item.unitPrice}></LabelValue>
                   <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="数  量" value={item.quantity}></LabelValue>
                   <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="规格名称" value={item.specificationName}></LabelValue>
                   <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="规格SKU" value={item.sku}></LabelValue>
                 </div>
-              )}
-            />
+              </div>
+            </div>
             {isEdit
               ? (
-                  <div className="border-l pl-2">
+                  <div className="border-l pl-2 pt-2">
                     <FilterForm
                       initialValues={item}
                       onChange={(_, v: any) => {

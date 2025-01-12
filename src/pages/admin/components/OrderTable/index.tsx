@@ -55,8 +55,8 @@ export interface OrderTablePorps extends StyleProps {
   onSelect?: (ids: number[]) => void
 }
 
-export const labelClass = 'arco-descriptions-item-label w-auto pb-0'
-export const valueClass = 'arco-descriptions-item-value w-auto pb-0'
+export const labelClass = 'arco-descriptions-item-label !w-auto !pb-0'
+export const valueClass = 'arco-descriptions-item-value !w-auto !pb-0'
 
 const OrderTable: React.FC<OrderTablePorps> = (props) => {
   const { className, style, dictCode, loading, run, data, pagination, onSelect } = props

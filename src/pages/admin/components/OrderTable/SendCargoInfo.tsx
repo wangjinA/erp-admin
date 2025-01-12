@@ -217,7 +217,7 @@ const SkuList: React.FC<SendCargoInfoProps> = (props) => {
       {data.orderProductVOList?.map((item, i) => (
         <div
           key={i}
-          className={classNames('h-[125px] border-r', i > 0 ? 'border-t' : '')}
+          className={classNames('h-[105px] border-r', i > 0 ? 'border-t' : '')}
         >
           <div className="h-full p-2">
             <LabelValue

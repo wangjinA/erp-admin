@@ -1,4 +1,4 @@
-import { Button, Radio, Spin } from '@arco-design/web-react'
+import { Button, Radio, Select, SelectProps, Spin } from '@arco-design/web-react'
 import { useRequest } from 'ahooks'
 import React from 'react'
 
@@ -27,10 +27,10 @@ export default (props) => {
     ? (
         <Spin></Spin>
       )
-    : res.data
+    : res.data?.length
       ? (
           <Radio.Group {...props}>
-            {res.data?.map((item) => {
+            {res.data.map((item) => {
               return (
                 <Radio className="pl-0" key={item.value} value={item.value}>
                   {({ checked }) => {
@@ -57,5 +57,12 @@ export default (props) => {
 export function ShopNameFC(props: { value: number }) {
   const { value } = props
   const { data: options } = useShopOptions()
-  return <>{options?.find(item => item.value === value)?.label}</>
+  return <>{options?.find(item => item.value === value)?.label || '-'}</>
+}
+
+export function ShopSelector(props: SelectProps) {
+  const { data: options, loading } = useShopOptions()
+  return (
+    <Select placeholder="请选择店铺" loading={loading} options={options} {...props} />
+  )
 }

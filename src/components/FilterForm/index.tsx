@@ -71,7 +71,7 @@ const FilterForm = React.forwardRef(
       = labelLength
       || max(
         formItemConfigList.map(item =>
-          isString(item.schema.label) ? item.schema.label.length : 0,
+          isString(item.schema.label) ? (item.schema.label as string).length : 0,
         ),
       ) + 2 + requiredWidth
 

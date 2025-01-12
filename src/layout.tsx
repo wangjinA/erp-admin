@@ -10,6 +10,7 @@ import {
   IconList,
   IconMenuFold,
   IconMenuUnfold,
+  IconPublic,
   IconSettings,
   IconUser,
   IconUserGroup,
@@ -59,6 +60,8 @@ function getIconFromKey(key) {
       return <IconCommon className={styles.icon} />
     case 'client/store':
       return <IconArchive className={styles.icon} />
+    case 'client/stock':
+      return <IconPublic className={styles.icon} />
     case 'list':
       return <IconList className={styles.icon} />
     case 'form':

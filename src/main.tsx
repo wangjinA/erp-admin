@@ -2,7 +2,9 @@ import { ConfigProvider, Message } from '@arco-design/web-react'
 import enUS from '@arco-design/web-react/es/locale/en-US'
 import zhCN from '@arco-design/web-react/es/locale/zh-CN'
 import dayjs from 'dayjs'
+import 'dayjs/locale/zh-cn'
 import duration from 'dayjs/plugin/duration'
+import weekday from 'dayjs/plugin/weekday'
 import React, { useEffect } from 'react'
 
 import ReactDOM from 'react-dom'
@@ -29,6 +31,8 @@ import { isSuccessCode } from './utils/index'
 import useStorage from './utils/useStorage'
 
 dayjs.extend(duration)
+dayjs.extend(weekday)
+dayjs().locale('zh-cn')
 
 const store = createStore(rootReducer)
 function Index() {

@@ -4,6 +4,8 @@ import { useRequest } from 'ahooks'
 import { useEffect, useState } from 'react'
 
 import { orderAPI } from '@/api/admin/order'
+import { orderAPI as clientOrderAPI } from '@/api/client/order'
+import { isClient } from '@/routes'
 import { OrderResponseItem } from '@/types/order'
 import { showMessage } from '@/utils'
 
@@ -19,10 +21,15 @@ export default ({ orderItem, buttonProps }: {
   const { run, loading } = useRequest(async () => {
     let url = orderItem?.orderPackageList?.reduce<string>((pre, cur) => pre || cur.documentUrl, '')
     if (!url) {
-      const list = await showMessage(() => orderAPI.createShellOrder(orderItem.id), '查看面单').then((r) => {
-        return r.data.data?.list
-      })
-      url = list?.[0]
+      if (isClient()) {
+        await showMessage(() => clientOrderAPI.getSheet(orderItem.id), '查看面单')
+      }
+      else {
+        const list = await showMessage(() => orderAPI.createShellOrder(orderItem.id), '查看面单').then((r) => {
+          return r.data.data?.list
+        })
+        url = list?.[0]
+      }
     }
     setSrc(url)
   }, {
