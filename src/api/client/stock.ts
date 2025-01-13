@@ -55,6 +55,100 @@ export const StockAPI = {
   updateGoodsInfo(body: Partial<ProductInfo>) {
     return baseAxios.post<APIResponse<any>>('/api/logistics/product/update', body)
   },
+  getLogs(body: Partial<StockLogItem> & IPageParams) {
+    return baseAxios.post<APIResponse<any>>('/api/stock/log/list', body)
+  },
+}
+
+/**
+ * 入库申请API
+ */
+export const WarehousingApplyAPI = {
+  getList(body: Partial<WarehousingApply> & IPageParams) {
+    return baseAxios.post<APIListResponse<WarehousingApply>>('/api/stock/apply/list', body)
+  },
+}
+
+// 库存列表接口
+export const StockListAPI = {
+// /api/stock/product/list
+// /api/stock/product/remove/{id}
+// /api/stock/product/info/{id}
+  getList(body: Partial<StockItem> & IPageParams) {
+    return baseAxios.post<APIListResponse<StockItem>>('/api/stock/product/list', body)
+  },
+  remove(id: string) {
+    return baseAxios.get<APIResponse<any>>(`/api/stock/product/remove/${id}`)
+  },
+  info(id: string) {
+    return baseAxios.get<APIResponse<any>>(`/api/stock/product/info/${id}`)
+  },
+
+}
+
+export interface StockLogItem {
+  changeQuantity: number
+  createBy: number
+  createTime: string
+  deleteStatus: number
+  id: number
+  logType: string
+  pageNum: number
+  pageSize: number
+  productCode: string
+  productCost: number
+  productImg: string
+  productName: string
+  remark: string
+  sendWarehouse: number
+  sku: string
+  surplusStock: number
+  tenantryId: number
+  unitPrice: number
+  updateBy: number
+  updateTime: string
+}
+
+export interface StockItem {
+  applyProductId: number
+  chargingPeriodUnitQuantity: number
+  createBy: number
+  createTime: string
+  deleteStatus: number
+  freezeQuantity: number
+  id: number
+  lastCheckInTime: string
+  lastFeeDeductionAmount: number
+  lastFeeDeductionTime: string
+  logisticsProductId: number
+  productStorageId: number
+  quantity: number
+  seatCode: string
+  seatId: number
+  sendWarehouse: number
+  tenantryId: number
+  updateBy: number
+  updateTime: string
+}
+
+export interface WarehousingApply {
+  auditStatus: number
+  createBy: number
+  createTime: string
+  deleteStatus: number
+  expressNo: string
+  id: number
+  pageNum: number
+  pageSize: number
+  productName: string
+  sendWarehouse: number
+  serviceCharge: number
+  storageCode: string
+  storageStatus: number
+  tenantryId: number
+  updateBy: number
+  updateTime: string
+  whetherAllStatus: boolean
 }
 
 export interface ProductInfo {

@@ -10,7 +10,7 @@ export const dictFormItemConfigList: SearchTableSchema[] = [
     },
     isSearch: true,
     isCreate: true,
-    width: 100,
+    width: 200,
   },
   // {
   //   schema: {

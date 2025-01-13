@@ -11,7 +11,7 @@ import FilterForm from '@/components/FilterForm'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 import { showMessage } from '@/utils'
 
-const ModalWidth = 600
+export const ModalWidth = 600
 
 export default () => {
   const [syncVisible, setSyncVisible] = useState(false)
