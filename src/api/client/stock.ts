@@ -11,14 +11,14 @@ export const StockAPI = {
   /**
    * 新增商品信息
    */
-  addGoodsInfo(body: Partial<ProductInfo>) {
+  addGoodsInfo(body: Partial<ProductItem>) {
     return baseAxios.post<APIResponse<any>>('/api/logistics/product/insert', body)
   },
   /**
    * 查询商品
    */
-  getProductList(body: Partial<ProductInfo> & IPageParams) {
-    return baseAxios.post<APIListResponse<ProductInfo>>('/api/logistics/product/list', body)
+  getProductList(body: Partial<ProductItem> & IPageParams) {
+    return baseAxios.post<APIListResponse<ProductItem>>('/api/logistics/product/list', body)
   },
 
   /**
@@ -52,7 +52,7 @@ export const StockAPI = {
   /**
    * 修改商品信息
    */
-  updateGoodsInfo(body: Partial<ProductInfo>) {
+  updateGoodsInfo(body: Partial<ProductItem>) {
     return baseAxios.post<APIResponse<any>>('/api/logistics/product/update', body)
   },
   getLogs(body: Partial<StockLogItem> & IPageParams) {
@@ -67,6 +67,11 @@ export const WarehousingApplyAPI = {
   getList(body: Partial<WarehousingApply> & IPageParams) {
     return baseAxios.post<APIListResponse<WarehousingApply>>('/api/stock/apply/list', body)
   },
+
+  insert(body: Partial<StockApplyInsert>) {
+    return baseAxios.post('/api/stock/apply/insert', body)
+  },
+
 }
 
 // 库存列表接口
@@ -84,6 +89,39 @@ export const StockListAPI = {
     return baseAxios.get<APIResponse<any>>(`/api/stock/product/info/${id}`)
   },
 
+}
+
+export interface StockStorageApplyProductList {
+  createBy: number
+  createTime: string
+  deleteStatus: number
+  id: number
+  logisticsProductId: number
+  productStorageId: number
+  receiveProductCount: number
+  remark: string
+  sendProductCount: number
+  tenantryId: number
+  updateBy: number
+  updateTime: string
+}
+
+export interface StockApplyInsert {
+  auditStatus: number
+  createBy: number
+  createTime: string
+  deleteStatus: number
+  expressNo: string
+  id: number
+  sendWarehouse: number
+  serviceCharge: number
+  stockStorageApplyProductList: StockStorageApplyProductList[]
+  storageCode: string
+  storageStatus: number
+  tenantryId: number
+  updateBy: number
+  updateTime: string
+  whetherAllStatus: boolean
 }
 
 export interface StockLogItem {
@@ -151,7 +189,7 @@ export interface WarehousingApply {
   whetherAllStatus: boolean
 }
 
-export interface ProductInfo {
+export interface ProductItem {
   createBy: number
   createTime: string
   currency: string

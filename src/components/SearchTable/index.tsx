@@ -1,8 +1,10 @@
 import {
   Button,
+  ButtonProps,
   Form,
   FormProps,
   Modal,
+  ModalProps,
   Space,
   Table,
   TableProps,
@@ -17,6 +19,7 @@ import {
   IconRefresh,
   IconSearch,
 } from '@arco-design/web-react/icon'
+
 import {
   useLocalStorageState,
   useRequest,
@@ -31,7 +34,7 @@ import React, { CSSProperties, forwardRef, useImperativeHandle } from 'react'
 
 import { CreateFormItemType } from '../CreateFormItem'
 import CreateWrap, { ActionsContext, CreateWrapProps } from '../CreateWrap'
-import FilterForm from '../FilterForm'
+import FilterForm, { FilterFormProps } from '../FilterForm'
 import PopconfirmDelete from '../PopconfirmDelete'
 
 import { useSearchParam } from './hooks'
@@ -62,6 +65,10 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
       initialValues = {},
       createInitialValue = {},
       showActions = true,
+      createText = '新建',
+      createButtonProps = {},
+      formModalProps = {},
+      filterFormProps = {},
       requestQueryTransform,
       leftTool,
       onView,
@@ -151,7 +158,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
               {showHeaderSection
                 ? (
                     <div className={classNames('flex justify-between pr-2', showSearchSection ? 'py-6' : 'pb-6')}>
-                      <Space size={20}>
+                      <Space size={16}>
                         {(createRequest || createHandle) && (
                           <Button
                             type="primary"
@@ -164,8 +171,9 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                               }
                             }}
                             icon={<IconPlus></IconPlus>}
+                            {...createButtonProps}
                           >
-                            新建
+                            {createText}
                           </Button>
                         )}
                         {leftTool?.()}
@@ -173,7 +181,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
 
                       {showSearchSection
                         ? (
-                            <Space size={20}>
+                            <Space size={16}>
                               <Button
                                 type="default"
                                 loading={loading}
@@ -213,7 +221,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                 pagination={{
                   pageSize,
                   current: pageNum,
-                  total: data?.total,
+                  total: data?.total || tableProps?.data?.length,
                   showTotal: true,
                   sizeCanChange: true,
                   onChange(pageNumber, pageSize) {
@@ -311,6 +319,8 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                 }}
                 visible={!!showType}
                 title={`${ShowFormTypeMap[showType]}${name}`}
+                unmountOnExit={true}
+                {...formModalProps}
               >
                 <FilterForm
                   initialValues={createInitialValue}
@@ -333,6 +343,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                       },
                     },
                   ]}
+                  {...filterFormProps}
                 >
                 </FilterForm>
               </Modal>
@@ -386,6 +397,10 @@ interface SearchTableProps {
   initialValues?: any
   createInitialValue?: any
   showActions?: boolean
+  createText?: string
+  formModalProps?: ModalProps
+  createButtonProps?: ButtonProps
+  filterFormProps?: Partial<FilterFormProps>
   editTransform?: (params: any) => any
   requestQueryTransform?: (params: any) => any
   leftTool?: () => React.ReactNode

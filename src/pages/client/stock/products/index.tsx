@@ -1,5 +1,5 @@
 // 商品管理
-import { Button, Form, Modal, Space } from '@arco-design/web-react'
+import { Button, Form, Modal } from '@arco-design/web-react'
 
 import { useRequest } from 'ahooks'
 import { useRef, useState } from 'react'
@@ -51,29 +51,47 @@ export default () => {
   }, {
     manual: true,
   })
-  const addHandler = useRequest(async () => {
-    const formData = await addForm.validate()
-    // ! 待确认
-    return showMessage(() => StockAPI.addGoodsInfo(formData), '同步商品').then(() => {
-      setAddVisible(false)
-      ref.current.refreshSearchTable()
-    })
-  }, {
-    manual: true,
-  })
 
   return (
     <div
       className="bg-white p-4"
-
     >
       <SearchTable
         name="商品管理"
         getListRequest={StockAPI.getProductList}
         removeRequest={StockAPI.deleteGoodsInfo}
+        updateRequest={StockAPI.updateGoodsInfo}
+        createRequest={StockAPI.addGoodsInfo}
+        createText="新增商品"
+        createButtonProps={{
+          status: 'success',
+        }}
+        filterFormProps={{
+          span: 24,
+        }}
         ref={ref}
         formItemConfigList={[
-        // 商品编码
+          {
+            schema: {
+              label: '图片',
+              field: 'productImg',
+            },
+            control: 'upload',
+            controlProps: {
+              limit: 1,
+            },
+            isCreate: true,
+            hideTable: true,
+          },
+          {
+            schema: {
+              label: '商品名称',
+              field: 'productName',
+              required: true,
+            },
+            isCreate: true,
+            hideTable: true,
+          },
           {
             schema: {
               label: '商品编码',
@@ -87,8 +105,8 @@ export default () => {
               label: '商品信息',
               field: 'goodsInfo',
             },
-            render(c) {
-              return <ProductInfo></ProductInfo>
+            render(c, row) {
+              return <ProductInfo data={row}></ProductInfo>
             },
           },
           {
@@ -97,6 +115,7 @@ export default () => {
               field: 'sku',
             },
             isSearch: true,
+            isCreate: true,
           },
           {
             schema: {
@@ -119,22 +138,30 @@ export default () => {
               label: '成本',
               field: 'productCost',
             },
+            isCreate: true,
           },
           {
             schema: {
               label: '商品价格',
               field: 'unitPrice',
             },
+            isCreate: true,
           },
           {
             schema: {
               label: '备注',
               field: 'remark',
             },
+            isCreate: true,
           },
         ]}
+        formModalProps={{
+          style: {
+            width: ModalWidth,
+          },
+        }}
         leftTool={() => (
-          <Space>
+          <>
             <Button
               type="primary"
               onClick={() => {
@@ -151,16 +178,7 @@ export default () => {
             >
               同步指定商品
             </Button>
-            <Button
-              type="primary"
-              status="success"
-              onClick={() => {
-                setAddVisible(true)
-              }}
-            >
-              新增商品
-            </Button>
-          </Space>
+          </>
         )}
       >
 
@@ -199,6 +217,9 @@ export default () => {
                 // required: true,
               },
               control: 'shopSelector',
+              controlProps: {
+                mode: 'multiple',
+              },
             },
             {
               schema: {
@@ -255,70 +276,6 @@ export default () => {
               },
               controlProps: {
                 placeholder: '请输入商品ID, 多个商品ID用逗号隔开',
-              },
-            },
-          ]}
-        >
-
-        </FilterForm>
-      </Modal>
-      <Modal
-        style={{
-          width: ModalWidth,
-        }}
-        visible={addVisible}
-        title="添加商品"
-        onCancel={() => setAddVisible(false)}
-        onOk={() => {
-          addHandler.run()
-        }}
-        confirmLoading={addHandler.loading}
-        unmountOnExit={true}
-      >
-        <FilterForm
-          form={addForm}
-          span={24}
-          formItemConfigList={[
-            {
-              schema: {
-                label: '图片',
-                field: 'productImg',
-              },
-              control: 'upload',
-            },
-            {
-              schema: {
-                label: '商品名称',
-                field: 'productName',
-                required: true,
-              },
-            },
-            {
-              schema: {
-                label: 'SKU',
-                field: 'sku',
-                required: true,
-              },
-            },
-            {
-              schema: {
-                label: '成本',
-                field: 'productCost',
-                required: true,
-              },
-              control: 'number',
-            },
-            {
-              schema: {
-                label: '商品价格',
-                field: 'unitPrice',
-              },
-              control: 'number',
-            },
-            {
-              schema: {
-                label: '备注',
-                field: 'remark',
               },
             },
           ]}

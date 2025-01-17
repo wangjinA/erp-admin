@@ -1,27 +1,25 @@
+import { ProductItem } from '@/api/client/stock'
+import LabelValue from '@/components/LabelValue'
+
 interface IProductInfo {
-  // productImg: string[]
-  // productName: string
-  // unitPrice: number
-  // quantity: number
-  // specificationName: string
+  data: Partial<ProductItem>
 }
 
 export default (props: IProductInfo) => {
+  const { data } = props
   return (
     <div className="p-2 w-full flex items-center">
-      {/* <img
-        className="size-24"
-        src={item.productImg[0]}
-        alt=""
+      <img
+        className="size-16"
+        src={data.productImg}
       />
       <div className="ml-2 flex-1 w-0">
-        <div className="truncate">{item.productName}</div>
         <div className="text-sm text-gray-500">
-          <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="商品编码" value={item.unitPrice}></LabelValue>
-          <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="商品名称" value={item.quantity}></LabelValue>
-          <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="平台商品ID" value={item.specificationName}></LabelValue>
+          <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="商品编码" value={data.productCode}></LabelValue>
+          <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="商品名称" value={data.productName}></LabelValue>
+          {data?.platformItemId ? <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="平台商品ID" value={data.platformItemId}></LabelValue> : null}
         </div>
-      </div> */}
+      </div>
     </div>
   )
 }

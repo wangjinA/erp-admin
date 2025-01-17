@@ -1,16 +1,39 @@
-import { Button, Modal } from '@arco-design/web-react'
+import { Button, Form, Modal } from '@arco-design/web-react'
 
+import { useRequest } from 'ahooks'
 import { useState } from 'react'
 
-import { ModalWidth } from '../products'
+import ProductInfo from '../components/ProductInfo'
 
 import { WarehousingApplyAPI } from '@/api/client/stock'
 import FilterForm from '@/components/FilterForm'
 import SearchTable from '@/components/SearchTable'
+import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
+import { FormModalCommonProps } from '@/constants'
+import { showMessage } from '@/utils'
 
 // 入库管理
 export default () => {
   const [visible, setVisible] = useState(false)
+  const [form] = Form.useForm()
+
+  const { run, loading } = useRequest(async () => {
+    const formData = await form.validate()
+
+    return showMessage(() => WarehousingApplyAPI.insert({
+      ...formData,
+      expressNo: formData.expressNo?.toString(),
+      stockStorageApplyProductList: formData.stockStorageApplyProductList.map(item => ({
+        logisticsProductId: item.platformItemId,
+        sendProductCount: item.num, // 发货数量
+      })),
+    })).then(() => {
+      setVisible(false)
+    })
+  }, {
+    manual: true,
+  })
+
   return (
     <div className="bg-white p-4">
       <SearchTable
@@ -33,20 +56,26 @@ export default () => {
           {
             schema: {
               label: '入库编码',
-              field: 'warehousingCode',
+              field: 'storageCode',
             },
             isSearch: true,
           },
           {
             schema: {
               label: '发往仓库',
-              field: 'warehouse',
+              field: 'sendWarehouse',
+            },
+            render(c) {
+              return <EntrepotNameFC value={c}></EntrepotNameFC>
             },
           },
           {
             schema: {
               label: '商品信息',
               field: 'goodsInfo',
+            },
+            render(c, row) {
+              return <ProductInfo data={row}></ProductInfo>
             },
           },
           {
@@ -61,31 +90,40 @@ export default () => {
           {
             schema: {
               label: '快递单号',
-              field: 'expressNumber',
+              field: 'expressNo',
             },
             isSearch: true,
           },
           {
             schema: {
               label: '发货/收货数量',
-              field: 'quantity',
+              field: 'sendProductCount',
+            },
+            render(c, row) {
+              return <div>{`${row.sendProductCount || 0}/${row.receiveProductCount || 0}`}</div>
             },
           },
           {
             schema: {
               label: '上架服务费',
-              field: 'shelfServiceCharge',
+              field: 'serviceCharge',
             },
           },
           {
             schema: {
               label: '状态',
-              field: 'status',
+              field: 'storageStatus',
             },
             isSearch: true,
             control: 'dictSelector',
             controlProps: {
               dictCode: 'storage_status',
+            },
+          },
+          {
+            schema: {
+              label: '创建时间',
+              field: 'createTime',
             },
           },
           {
@@ -114,36 +152,46 @@ export default () => {
 
       </SearchTable>
       <Modal
-        style={{
-          width: ModalWidth,
-        }}
+        {...FormModalCommonProps}
         visible={visible}
         title="入库申请"
         onCancel={() => setVisible(false)}
-        onOk={() => {
+        confirmLoading={loading}
+        onOk={async () => {
+          run()
         }}
       >
         <FilterForm
+          form={form}
           span={24}
           formItemConfigList={[
             {
               schema: {
                 label: '送往仓库',
-                field: 'warehouse',
+                field: 'sendWarehouse',
+                required: true,
               },
               control: 'entrepotSelector',
             },
             {
               schema: {
                 label: '快递单号',
-                field: 'expressNumber',
+                field: 'expressNo',
+              },
+              control: 'select',
+              controlProps: {
+                allowCreate: true,
+                mode: 'multiple',
+                placeholder: '输入后按回车键',
               },
             },
             {
               schema: {
                 label: '选择商品',
-                field: 'goodsInfo',
+                field: 'stockStorageApplyProductList',
+                required: true,
               },
+              control: 'productSelector',
             },
           ]}
         >

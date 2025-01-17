@@ -16,6 +16,7 @@ import LabelWithTips, { LabelWithTipsProps } from '../LabelWithTips'
 import DictSelector from '../Selectors/DictSelector'
 import EntrepotRadio from '../Selectors/EntrepotRadio'
 import EntrepotSelector from '../Selectors/EntrepotSelector'
+import ProductSelector from '../Selectors/ProductSelector'
 import RegionSelector from '../Selectors/RegionSelector'
 import RoleSelector from '../Selectors/RoleSelector'
 import ShopRadio, { ShopSelector } from '../Selectors/ShopRadio'
@@ -58,6 +59,7 @@ type ControlType =
   | 'regionSelector'
   | 'shopRadio'
   | 'shopSelector'
+  | 'productSelector'
 
 export interface CreateFormItemType {
   schema: FormSchema
@@ -195,6 +197,8 @@ function FormControl(props: Pick<CreateFormItemType, 'schema' | 'control' | 'con
         return <ShopRadio {...controlProps as any} {...restProps} />
       case 'shopSelector':
         return <ShopSelector {...controlProps as any} {...restProps} />
+      case 'productSelector':
+        return <ProductSelector {...controlProps as any} {...restProps} />
       default:
         return <span>{control}</span>
     }
