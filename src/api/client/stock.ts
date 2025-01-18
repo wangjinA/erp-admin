@@ -72,6 +72,31 @@ export const WarehousingApplyAPI = {
     return baseAxios.post('/api/stock/apply/insert', body)
   },
 
+  remove(id) {
+    return baseAxios.get(`/api/stock/apply/remove/${id}`)
+  },
+
+  logs(id) {
+    return baseAxios.get(`/api/stock/apply/log/list/${id}`)
+  },
+  /**
+   * 入库
+   */
+  warehousing(body: Partial<{
+    applyId: number
+    putStorageProductVOS: [
+      {
+        id: number
+        logisticsProductId: number
+        productStorageId: number
+        receiveProductCount: 0
+      },
+    ]
+    sendWarehouse: number
+    serviceCharge: number
+  }>) {
+    return baseAxios.post('/api/stock/apply/put/storage', body)
+  },
 }
 
 // 库存列表接口
@@ -88,7 +113,6 @@ export const StockListAPI = {
   info(id: string) {
     return baseAxios.get<APIResponse<any>>(`/api/stock/product/info/${id}`)
   },
-
 }
 
 export interface StockStorageApplyProductList {
@@ -113,7 +137,7 @@ export interface StockApplyInsert {
   deleteStatus: number
   expressNo: string
   id: number
-  sendWarehouse: number
+  sendWarehouse: string
   serviceCharge: number
   stockStorageApplyProductList: StockStorageApplyProductList[]
   storageCode: string
@@ -187,6 +211,10 @@ export interface WarehousingApply {
   updateBy: number
   updateTime: string
   whetherAllStatus: boolean
+  selectApplyUser: {
+    account: string // 申请人
+    number: string // 用户标识
+  }
 }
 
 export interface ProductItem {

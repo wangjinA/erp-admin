@@ -43,6 +43,9 @@ export interface EntrepotStorageRacks {
 
 // 仓库
 export const entrepotAPI = {
+  setDefualt(entrepotId: any) {
+    return baseAxios.get(`/api/tenantry/default/entrepot/insert/data/${entrepotId}`)
+  },
   getList(body: Partial<Entrepot & IPageParams>) {
     return baseAxios.post<APIListResponse<Entrepot>>('/api/entrepot/list', {
       entrepotType: 1,

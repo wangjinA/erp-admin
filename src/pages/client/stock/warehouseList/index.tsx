@@ -2,14 +2,27 @@
 
 import { Button, Image } from '@arco-design/web-react'
 
+import { useRequest } from 'ahooks'
+
+import { useRef } from 'react'
+
 import { entrepotAPI } from '@/api/admin/entrepot'
 import LabelValue from '@/components/LabelValue'
-import SearchTable from '@/components/SearchTable'
+import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 import { DictNameFC } from '@/components/Selectors/DictSelector'
+import StatusTag from '@/components/StatusTag'
+import { showMessage } from '@/utils'
 
 export default () => {
+  const ref = useRef<SearchTableRef>()
+  const setDefaultHandler = useRequest((id) => {
+    return showMessage((() => entrepotAPI.setDefualt(id))).then(() => ref.current.refreshSearchTable())
+  }, {
+    manual: true,
+  })
   return (
     <SearchTable
+      ref={ref}
       name="仓库列表"
       className="bg-white p-4"
       getListRequest={entrepotAPI.getList}
@@ -20,6 +33,28 @@ export default () => {
             field: 'entrepotName',
           },
           isSearch: true,
+          render(c, row) {
+            return (
+              <div>
+                <div>{c}</div>
+                {row.defaultFlag
+                  ? (
+                      <StatusTag
+                        tagInfos={[
+                          {
+                            text: '默认仓库',
+                            value: 1,
+                            color: 'red',
+                          },
+                        ]}
+                        value={1}
+                      >
+                      </StatusTag>
+                    )
+                  : ''}
+              </div>
+            )
+          },
         },
         {
           schema: {
@@ -70,8 +105,18 @@ export default () => {
             field: 'actions',
           },
           render(c, row) {
+            if (row.defaultFlag) {
+              return '-'
+            }
             return (
-              <Button type="text" size="small">
+              <Button
+                loading={setDefaultHandler.loading}
+                type="text"
+                size="small"
+                onClick={() => {
+                  setDefaultHandler.run(row.id)
+                }}
+              >
                 设为默认
               </Button>
             )

@@ -1,27 +1,29 @@
-import { Button, Empty, Form, Modal, Spin, Timeline } from '@arco-design/web-react'
+import { Button, Divider, Empty, Form, Modal, Spin, Tag, Timeline } from '@arco-design/web-react'
 
 import { useRequest } from 'ahooks'
 import { useRef, useState } from 'react'
 
-import ApplyWarehousingModal from '../components/ApplyWarehousingModal'
 import ProductInfo from '../components/ProductInfo'
 
-import { WarehousingApplyAPI } from '@/api/client/stock'
+import { StockApplyInsert, WarehousingApplyAPI } from '@/api/client/stock'
+import FilterForm from '@/components/FilterForm'
+import LabelValue from '@/components/LabelValue'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
 import { formatDate, showMessage } from '@/utils'
 
-// 入库管理
+// 入库订单
 export default () => {
   const [visible, setVisible] = useState(false)
   const [logsCurrent, setLogsCurrent] = useState<any>()
+  const [warehouseingCurrent, setWarehouseingCurrent] = useState<StockApplyInsert>()
 
   const [form] = Form.useForm()
   const ref = useRef<SearchTableRef>()
   const { run, loading } = useRequest(async () => {
     const formData = await form.validate()
 
-    return showMessage(() => WarehousingApplyAPI.insert({
+    return showMessage(() => WarehousingApplyAPI.warehousing({
       ...formData,
       expressNo: formData.expressNo?.toString(),
       stockStorageApplyProductList: formData.stockStorageApplyProductList.map(item => ({
@@ -49,31 +51,39 @@ export default () => {
         ref={ref}
         name="入库申请"
         getListRequest={WarehousingApplyAPI.getList}
-        removeRequest={WarehousingApplyAPI.remove}
-        leftTool={() => (
-          <div>
-            <Button
-              type="primary"
-              onClick={() => {
-                setVisible(true)
-              }}
-              status="warning"
-            >
-              入库申请
-            </Button>
-          </div>
-        )}
+        // leftTool={() => (
+        //   <div>
+        //     <Button
+        //       type="primary"
+        //       onClick={() => {
+        //         setVisible(true)
+        //       }}
+        //       status="warning"
+        //     >
+        //       入库申请
+        //     </Button>
+        //   </div>
+        // )}
         formItemConfigList={[
           {
             schema: {
-              label: '入库编码',
+              label: '申请信息',
               field: 'storageCode',
             },
             isSearch: true,
+            render(c, row) {
+              return (
+                <div>
+                  <LabelValue label="编码" value={row.storageCode}></LabelValue>
+                  <LabelValue label="申请人" value={row.selectApplyUser?.account}></LabelValue>
+                  <LabelValue label="用户标识" value={row.selectApplyUser?.number}></LabelValue>
+                </div>
+              )
+            },
           },
           {
             schema: {
-              label: '发往仓库',
+              label: '所属仓库',
               field: 'sendWarehouse',
             },
             render(c) {
@@ -149,6 +159,17 @@ export default () => {
                   <Button
                     type="text"
                     size="small"
+                    status="default"
+                    loading={logsLoading}
+                    onClick={() => {
+                      setWarehouseingCurrent(row)
+                    }}
+                  >
+                    入库
+                  </Button>
+                  <Button
+                    type="text"
+                    size="small"
                     status="warning"
                     loading={logsLoading}
                     onClick={() => {
@@ -166,20 +187,51 @@ export default () => {
       >
 
       </SearchTable>
-      <ApplyWarehousingModal
-        form={form}
-        modalProps={{
-          visible,
-          title: '入库申请',
-          onCancel: () => setVisible(false),
-          confirmLoading: loading,
-          onOk: async () => {
-            run()
-          },
-
-        }}
+      <Modal
+        {
+          ...{
+            visible: !!warehouseingCurrent,
+            title: '入库申请',
+            onCancel: () => setWarehouseingCurrent(null),
+            confirmLoading: loading,
+            onOk: async () => {
+              run()
+            },
+            okText: '入库',
+          }
+        }
       >
-      </ApplyWarehousingModal>
+        <div>
+          <div>
+            <LabelValue label="仓库名称" value={<EntrepotNameFC value={warehouseingCurrent?.sendWarehouse}></EntrepotNameFC>}></LabelValue>
+            <LabelValue
+              label="快递单号"
+              value={
+                warehouseingCurrent?.expressNo?.split(',').map(o => <Tag color="blue" key={o}>{o}</Tag>)
+              }
+            >
+            </LabelValue>
+          </div>
+          <Divider></Divider>
+          <FilterForm
+            span={24}
+            formItemConfigList={[
+              {
+                schema: {
+                  label: '上架服务费',
+                  field: 'serviceCharge',
+                },
+                control: 'number',
+                controlProps: {
+                  suffix: '元',
+                },
+              },
+
+            ]}
+          >
+          </FilterForm>
+        </div>
+      </Modal>
       <Modal
         title="操作记录"
         visible={logsCurrent}

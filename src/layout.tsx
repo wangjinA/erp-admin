@@ -61,6 +61,7 @@ function getIconFromKey(key) {
     case 'client/store':
       return <IconArchive className={styles.icon} />
     case 'client/stock':
+    case 'admin/stock':
       return <IconPublic className={styles.icon} />
     case 'list':
       return <IconList className={styles.icon} />

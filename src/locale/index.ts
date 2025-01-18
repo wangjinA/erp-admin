@@ -43,10 +43,15 @@ const i18n = {
 
     'client.stock': '库存管理',
     'client.stock.products': '商品管理',
-    'client.stock.stockList': '现有库存',
-    'client.stock.stockLog': '库存日志',
+    'client.stock.list': '现有库存',
+    'client.stock.logs': '库存日志',
     'client.stock.warehousing': '入库管理',
     'client.stock.warehouseList': '仓库列表',
+
+    'admin.stock': '库存管理',
+    'admin.stock.list': '现有库存',
+    'admin.stock.logs': '库存日志',
+    'admin.stock.management': '入库订单',
 
     'client.tools': '快捷工具',
     'client.tools.shipment': '出货修改',

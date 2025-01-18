@@ -162,12 +162,12 @@ export const routes: IRoute[] = [
         key: 'client/stock/products',
       },
       {
-        name: 'client.stock.stockList',
-        key: 'client/stock/stockList',
+        name: 'client.stock.list',
+        key: 'client/stock/list',
       },
       {
-        name: 'client.stock.stockLog',
-        key: 'client/stock/stockLog',
+        name: 'client.stock.logs',
+        key: 'client/stock/logs',
       },
       {
         name: 'client.stock.warehouseList',
@@ -228,6 +228,24 @@ export const routes: IRoute[] = [
       {
         name: 'admin.order.deliveryHistory',
         key: 'admin/order/deliveryHistory',
+      },
+    ],
+  },
+  {
+    name: 'admin.stock',
+    key: 'admin/stock',
+    children: [
+      {
+        name: 'admin.stock.management',
+        key: 'admin/stock/management',
+      },
+      {
+        name: 'admin.stock.list',
+        key: 'admin/stock/list',
+      },
+      {
+        name: 'admin.stock.logs',
+        key: 'admin/stock/logs',
       },
     ],
   },
