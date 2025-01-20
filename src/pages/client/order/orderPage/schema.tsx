@@ -13,7 +13,7 @@ export const getOrderFilter: (params: OrderPageParams) => SearchTableSchema[] = 
   const { type } = params
   const shopSchema: SearchTableSchema = {
     schema: {
-      field: 'platformShopId',
+      field: 'selectLogisticsOrderVO.platformShopId',
       label: '所属店铺',
       span: 24,
     },

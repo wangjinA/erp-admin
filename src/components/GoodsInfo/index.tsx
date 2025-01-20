@@ -1,4 +1,4 @@
-import { List } from '@arco-design/web-react'
+import { List, Space } from '@arco-design/web-react'
 import classNames from 'classnames'
 import React, { useRef } from 'react'
 
@@ -38,7 +38,7 @@ export default (props: GoodsInfoProps) => {
               index > 0 ? 'border-t' : '',
             ])}
           >
-            <div className="p-2 w-full flex items-center">
+            <div className="p-2 w-full flex items-start">
               <img
                 className="size-24"
                 src={item.productImg[0]}
@@ -47,8 +47,10 @@ export default (props: GoodsInfoProps) => {
               <div className="ml-2 flex-1 w-0">
                 <div className="truncate">{item.productName}</div>
                 <div className="text-sm text-gray-500">
-                  <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="单  价" value={item.unitPrice}></LabelValue>
-                  <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="数  量" value={item.quantity}></LabelValue>
+                  <Space size={30}>
+                    <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="单  价" value={item.unitPrice}></LabelValue>
+                    <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="数  量" value={item.quantity}></LabelValue>
+                  </Space>
                   <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="规格名称" value={item.specificationName}></LabelValue>
                   <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="规格SKU" value={item.sku}></LabelValue>
                 </div>

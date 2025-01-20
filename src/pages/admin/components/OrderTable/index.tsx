@@ -30,7 +30,6 @@ import { orderAPI } from '@/api/client/order'
 import { APIListResponse } from '@/api/type'
 import FilterForm from '@/components/FilterForm'
 import GoodsInfo from '@/components/GoodsInfo'
-import PopconfirmDelete from '@/components/PopconfirmDelete'
 import DictSelector, {
   useDictOptions,
 } from '@/components/Selectors/DictSelector'
@@ -265,7 +264,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                                 申请预刷
                               </Button>
                               <ActionHistory id={item.id}></ActionHistory>
-                              <PopconfirmDelete
+                              {/* <PopconfirmDelete
                                 title="删除订单"
                                 content="确认删除订单？操作不可逆！"
                                 isModal={true}
@@ -274,7 +273,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                                   run()
                                 }}
                               >
-                              </PopconfirmDelete>
+                              </PopconfirmDelete> */}
                             </Button.Group>
                             {/* <div className="flex items-center ml-auto">
                 <span className={labelClass}>订单编号：</span>
@@ -343,7 +342,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                     <span className={valueClass}>{item.createTime || '-'}</span>
                   </div> */}
                     </div>
-                    <div className="ml-auto">
+                    <div className="ml-auto flex">
                       <span className={labelClass}>备注：</span>
                       <span className={valueClass}>
                         {(isClient() ? item.remark : item.entrepotRemark) || '暂无'}
@@ -352,6 +351,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                         type="text"
                         size="mini"
                         onClick={() => {
+                          setActionType(ShowFormType.edit)
                           setCurrentOrder({
                             ...item,
                             logisticsOrderProductList: item.orderProductVOList,
@@ -374,6 +374,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
               <Pagination
                 className="mt-4 flex justify-end"
                 total={data?.total}
+                showTotal={true}
                 onChange={(pageNumber: number, pageSize: number) => {
                   pagination.changePageSize(pageSize)
                   pagination.changeCurrent(pageNumber)

@@ -1,36 +1,39 @@
-import { Button, Divider, Empty, Form, Modal, Spin, Tag, Timeline } from '@arco-design/web-react'
+import { Button, Divider, Empty, Form, InputNumber, Message, Modal, Space, Spin, Table, Tag, Timeline } from '@arco-design/web-react'
 
 import { useRequest } from 'ahooks'
 import { useRef, useState } from 'react'
 
 import ProductInfo from '../components/ProductInfo'
 
-import { StockApplyInsert, WarehousingApplyAPI } from '@/api/client/stock'
-import FilterForm from '@/components/FilterForm'
+import { StockApplyAdmin, WarehousingApplyAPI, WarehousingBody } from '@/api/client/stock'
 import LabelValue from '@/components/LabelValue'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
+import { ModalWidth } from '@/pages/client/stock/products'
 import { formatDate, showMessage } from '@/utils'
-
 // 入库订单
 export default () => {
   const [visible, setVisible] = useState(false)
   const [logsCurrent, setLogsCurrent] = useState<any>()
-  const [warehouseingCurrent, setWarehouseingCurrent] = useState<StockApplyInsert>()
+  const [warehouseingCurrent, setWarehouseingCurrent] = useState<StockApplyAdmin>()
+  const [warehousingData, setWarehousingData] = useState<WarehousingBody>()
 
   const [form] = Form.useForm()
   const ref = useRef<SearchTableRef>()
   const { run, loading } = useRequest(async () => {
-    const formData = await form.validate()
-
-    return showMessage(() => WarehousingApplyAPI.warehousing({
-      ...formData,
-      expressNo: formData.expressNo?.toString(),
-      stockStorageApplyProductList: formData.stockStorageApplyProductList.map(item => ({
-        logisticsProductId: item.id,
-        sendProductCount: item.num, // 发货数量
-      })),
-    })).then(() => {
+    if (warehousingData?.serviceCharge === undefined) {
+      return Message.error({
+        content: '请填写上架服务费',
+        duration: 2500,
+      })
+    }
+    else if (warehousingData?.putStorageProductVOS.every(item => !item.receiveProductCount)) {
+      return Message.error({
+        content: '请至少输入一个收货数量',
+        duration: 2500,
+      })
+    }
+    return showMessage(() => WarehousingApplyAPI.warehousing(warehousingData)).then(() => {
       setVisible(false)
       ref.current.refreshSearchTable()
     })
@@ -162,6 +165,17 @@ export default () => {
                     status="default"
                     loading={logsLoading}
                     onClick={() => {
+                      setWarehousingData({
+                        applyId: row.id,
+                        putStorageProductVOS: row.logisticsProductList.map(item => ({
+                          id: item.id,
+                          logisticsProductId: item.logisticsProductId,
+                          productStorageId: item.productStorageId,
+                          receiveProductCount: item.receiveProductCount || 0,
+                        })),
+                        sendWarehouse: row.sendWarehouse,
+                        serviceCharge: undefined,
+                      })
                       setWarehouseingCurrent(row)
                     }}
                   >
@@ -190,6 +204,9 @@ export default () => {
       <Modal
         {
           ...{
+            style: {
+              width: ModalWidth,
+            },
             visible: !!warehouseingCurrent,
             title: '入库申请',
             onCancel: () => setWarehouseingCurrent(null),
@@ -202,7 +219,7 @@ export default () => {
         }
       >
         <div>
-          <div>
+          <Space direction="vertical">
             <LabelValue label="仓库名称" value={<EntrepotNameFC value={warehouseingCurrent?.sendWarehouse}></EntrepotNameFC>}></LabelValue>
             <LabelValue
               label="快递单号"
@@ -211,25 +228,74 @@ export default () => {
               }
             >
             </LabelValue>
-          </div>
+            <LabelValue
+              className="flex"
+              label="上架服务费"
+              value={(
+                <InputNumber
+                  size="mini"
+                  placeholder="请输入"
+                  suffix="元"
+                  onChange={(e) => {
+                    setWarehousingData((draft) => {
+                      draft.serviceCharge = e
+                      return draft
+                    })
+                  }}
+                >
+                </InputNumber>
+              )}
+            >
+            </LabelValue>
+
+          </Space>
           <Divider></Divider>
-          <FilterForm
-            span={24}
-            formItemConfigList={[
+
+          <Table
+            size="small"
+            data={warehouseingCurrent?.logisticsProductList}
+            columns={[
               {
-                schema: {
-                  label: '上架服务费',
-                  field: 'serviceCharge',
-                },
-                control: 'number',
-                controlProps: {
-                  suffix: '元',
+                title: '商品信息',
+                dataIndex: 'goodsInfo',
+                width: 250,
+                render(c, row) {
+                  return <ProductInfo data={row}></ProductInfo>
                 },
               },
-
+              {
+                width: 120,
+                title: '商品数量',
+                dataIndex: 'sendProductCount',
+              },
+              {
+                title: '收货数量',
+                dataIndex: 'receiveProductCount',
+                render(c, row, index) {
+                  return (
+                    <InputNumber
+                      placeholder="请输入"
+                      defaultValue={c}
+                      suffix="件"
+                      onChange={(e) => {
+                        setWarehousingData((darft) => {
+                          darft.putStorageProductVOS[index].receiveProductCount = e
+                          return darft
+                        })
+                      }}
+                    >
+                    </InputNumber>
+                  )
+                },
+              },
+            // {
+            //   title: '仓位',
+            //   dataIndex: 'warehousePosition',
+            // }
             ]}
           >
-          </FilterForm>
+
+          </Table>
         </div>
       </Modal>
       <Modal

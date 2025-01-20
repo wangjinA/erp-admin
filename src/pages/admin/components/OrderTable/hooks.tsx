@@ -103,7 +103,9 @@ export function useColumns(props: OrderTablePorps) {
           <div className="border-r h-full p-2">
             <LabelValue label="打包仓库" value={<EntrepotNameFC value={row.sendWarehouse} />}></LabelValue>
             <LabelValue label="仓库备注" value={row.entrepotRemark}></LabelValue>
-            <LabelValue label="卖家备注" value={row.remark}></LabelValue>
+            {
+              isAdmin() ? <LabelValue label="卖家备注" value={row.remark}></LabelValue> : null
+            }
           </div>
         )
       },

@@ -12,10 +12,15 @@ const StoreListSchema: SearchTableSchema[] = [
       field: 'commercePlatform',
       span: 16,
     },
+    control: 'dictSelector',
+    controlProps: {
+      dictCode: 'platform_type',
+    },
     isSearch: true,
     render(c) {
       return <DictNameFC value={c} dictCode="platform_type" />
     },
+
   },
   {
     schema: {

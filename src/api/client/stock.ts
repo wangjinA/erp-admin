@@ -82,21 +82,23 @@ export const WarehousingApplyAPI = {
   /**
    * 入库
    */
-  warehousing(body: Partial<{
-    applyId: number
-    putStorageProductVOS: [
-      {
-        id: number
-        logisticsProductId: number
-        productStorageId: number
-        receiveProductCount: 0
-      },
-    ]
-    sendWarehouse: number
-    serviceCharge: number
-  }>) {
+  warehousing(body: WarehousingBody) {
     return baseAxios.post('/api/stock/apply/put/storage', body)
   },
+}
+
+export interface WarehousingBody {
+  applyId: number
+  putStorageProductVOS: [
+    {
+      id: number
+      logisticsProductId: number
+      productStorageId: number
+      receiveProductCount: number
+    },
+  ]
+  sendWarehouse: number
+  serviceCharge: number
 }
 
 // 库存列表接口
@@ -236,4 +238,22 @@ export interface ProductItem {
   unitPrice: number
   updateBy: number
   updateTime: string
+}
+
+export interface StockApplyAdmin {
+  auditStatus: number
+  createBy: number
+  createTime: string
+  deleteStatus: number
+  expressNo: string
+  id: number
+  sendWarehouse: string
+  serviceCharge: number
+  logisticsProductList: ProductItem[]
+  storageCode: string
+  storageStatus: number
+  tenantryId: number
+  updateBy: number
+  updateTime: string
+  whetherAllStatus: boolean
 }

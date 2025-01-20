@@ -2,6 +2,7 @@
 import { Button, Form, Modal } from '@arco-design/web-react'
 
 import { useRequest } from 'ahooks'
+import dayjs from 'dayjs'
 import { useRef, useState } from 'react'
 
 import ProductInfo from '../components/ProductInfo'
@@ -25,10 +26,9 @@ export default () => {
 
   const syncHandler = useRequest(async () => {
     const formData = await syncForm.validate()
-    // ! 待确认
     return showMessage(() => StockAPI.synchronousGoods({
-      productUpdateEndTime: formData.date[1],
-      productUpdateStartTime: formData.date[0],
+      productUpdateEndTime: dayjs(formData.date[1]).format('YYYY-MM-DD'),
+      productUpdateStartTime: dayjs(formData.date[0]).format('YYYY-MM-DD'),
       storeId: formData.storeId,
     }), '同步商品').then(() => {
       setSyncVisible(false)
@@ -78,7 +78,7 @@ export default () => {
             },
             control: 'upload',
             controlProps: {
-              limit: 1,
+              limit: 3,
             },
             isCreate: true,
             hideTable: true,
@@ -138,6 +138,7 @@ export default () => {
               label: '成本',
               field: 'productCost',
             },
+            control: 'number',
             isCreate: true,
           },
           {
@@ -145,6 +146,7 @@ export default () => {
               label: '商品价格',
               field: 'unitPrice',
             },
+            control: 'number',
             isCreate: true,
           },
           {
@@ -268,6 +270,9 @@ export default () => {
                 // required: true,
               },
               control: 'shopSelector',
+              controlProps: {
+                // mode: 'multiple',
+              },
             },
             {
               schema: {

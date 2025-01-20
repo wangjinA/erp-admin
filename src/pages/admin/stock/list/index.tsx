@@ -8,6 +8,7 @@ import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
 import { DividerSchema } from '@/constants/schema/common'
 
 export default () => {
+  return '开发中...'
   return (
     <SearchTable
       className="bg-white p-4"

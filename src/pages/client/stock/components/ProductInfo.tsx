@@ -11,7 +11,7 @@ export default (props: IProductInfo) => {
     <div className="p-2 w-full flex items-center">
       <img
         className="size-16"
-        src={data.productImg}
+        src={data.productImg?.[0]}
       />
       <div className="ml-2 flex-1 w-0">
         <div className="text-sm text-gray-500">

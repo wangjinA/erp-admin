@@ -21,7 +21,7 @@ export default () => {
 
   const [isEdit, setIsEdit] = useState(false)
   return (
-    <div className="bg-white py-6 px-4">
+    <div className="bg-white p-4">
       <Grid.Row gutter={[20, 0]}>
         <Grid.Col span={6} className="border-r border-neutral-3 pr-4">
           <EntrepotList entrepotInfoHandle={entrepotInfoHandle}></EntrepotList>
