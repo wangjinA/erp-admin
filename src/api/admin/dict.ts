@@ -57,7 +57,29 @@ const cacheMap = new Map<
   Promise<AxiosResponse<APIResponse<DictChild>>>
 >()
 
+const dictListCacheMap = new Map<
+  string,
+  Promise<AxiosResponse<APIResponse<{ list: DictChild[] }>>>
+>()
+
 export const dictChildAPI = {
+  // 获取多个子集列表
+  getListByDictCode(dictCodeList: string[]) {
+    const dictCodeKey = dictCodeList.join(',')
+    dictListCacheMap.set(
+      dictCodeKey,
+      dictListCacheMap.get(dictCodeKey)
+      || baseAxios.get<APIResponse<{ list: DictChild[] }>>(
+        '/api/dict/child/list/code',
+        {
+          params: {
+            dictCodeList: dictCodeKey,
+          },
+        },
+      ),
+    )
+    return dictListCacheMap.get(dictCodeKey)
+  },
   getList(body?: Partial<DictChild & IPageParams>) {
     return baseAxios.post<APIListResponse<DictChild>>(
       '/api/dict/child/list',

@@ -65,7 +65,18 @@ export const orderAPI = {
   },
 
   syncOrder(body: SyncOrderParams) {
-    return baseAxios.post('/api/logistics/order/synchronous/order', body)
+    const key = JSON.stringify(body.storeId)
+    const gapTime = 10 * 60 * 1000 // 10分钟
+    const sessionKey = 'SyncTimeCache'
+    const SyncTimeCache = sessionStorage.getItem(sessionKey) ? JSON.parse(sessionStorage.getItem(sessionKey)) : {}
+    const cacheTime = SyncTimeCache[key]
+    const now = Date.now()
+    if (!cacheTime || ((now - cacheTime) > gapTime)) {
+      SyncTimeCache[key] = now
+      sessionStorage.setItem(sessionKey, JSON.stringify(SyncTimeCache))
+      return baseAxios.post('/api/logistics/order/synchronous/orde1', body)
+    }
+    throw new Error('10分钟内不可重复操作')
   },
 }
 

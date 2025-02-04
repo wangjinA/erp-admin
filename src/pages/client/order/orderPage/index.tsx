@@ -160,11 +160,20 @@ export default (props: OrderPageProps) => {
     if (!shopOptions.data?.length) {
       return Message.error('未获取到店铺信息')
     }
-    await showMessage(() => orderAPI.syncOrder({
-      orderUpdateStartTime: dayjs().subtract(15, 'day').format('YYYY-MM-DD HH:mm:ss'),
-      orderUpdateEndTime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-      storeId: shopOptions.data.map(item => item.value),
-    }), '同步订单')
+    try {
+      orderAPI.syncOrder({
+        orderUpdateStartTime: dayjs().subtract(15, 'day').format('YYYY-MM-DD HH:mm:ss'),
+        orderUpdateEndTime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+        storeId: shopOptions.data.map(item => item.value),
+      })
+      Message.success({
+        content: '同步订单任务已提交，请稍后刷新查看',
+        duration: 2000,
+      })
+    }
+    catch (error) {
+      Message.error(error.message)
+    }
   }, {
     manual: true,
   })

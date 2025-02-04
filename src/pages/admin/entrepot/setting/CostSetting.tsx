@@ -2,8 +2,9 @@ import { Divider, Modal, Spin, Table } from '@arco-design/web-react'
 
 import { ColumnProps } from '@arco-design/web-react/es/Table'
 import { useLocalStorageState, useRequest } from 'ahooks'
-import { useMemo } from 'react'
+import { useCallback } from 'react'
 
+import { dictChildAPI } from '@/api/admin/dict'
 import { costAPI } from '@/api/admin/entrepot'
 import FilterForm from '@/components/FilterForm'
 import Remark, { RemarkType } from '@/components/Remark'
@@ -18,6 +19,7 @@ interface CostSetting {
 // membership_level        会员等级
 // billing_mode      计费方式
 // charge_classification    收费分类
+
 // base_packing   基础打包-费用设置
 // entry_charge   进店费用-费用设置
 // first_air_freight  头程空运费用-费用设置
@@ -50,11 +52,12 @@ export default (props: CostSetting) => {
     dictCode: 'base_packing',
   })
 
-  // const dictInfos = useRequest(()=>{
-  //   const res = await getDictOptions
-  // }, {
-  //   manual: false,
-  // })
+  const { data: dictList, loading } = useRequest(() => {
+    return dictChildAPI.getListByDictCode(Object.values(CostDictMap)).then(r => r.data.data.list)
+  }, {
+    manual: false,
+    refreshDeps: [entrepotId, JSON.stringify(costFilter)],
+  })
 
   // 会员等级
   const { data: membershipLevels } = useDictOptions({
@@ -67,6 +70,9 @@ export default (props: CostSetting) => {
   })
 
   const settingConfigHandler = useRequest(() => {
+    if (!entrepotId) {
+      return null
+    }
     return costAPI.getSetting({
       entrepotId,
       ...costFilter,
@@ -85,11 +91,11 @@ export default (props: CostSetting) => {
   //   manual: true,
   // })
 
-  const membershipLevelsColumns = useMemo(() => {
+  const getMembershipLevelsColumns = useCallback((feeType: string) => {
     return membershipLevels
-      ? membershipLevels.map<ColumnProps>(item => ({
-        title: item.label,
-        dataIndex: item.value,
+      ? membershipLevels.map<ColumnProps>(membership => ({
+        title: membership.label,
+        dataIndex: membership.value,
         render: (value, row) => (
           <Remark
             title="价格编辑"
@@ -100,9 +106,9 @@ export default (props: CostSetting) => {
                 ...costFilter,
                 expense: newVal,
                 entrepotId,
-                feeType: row.feeTypeValue,
-                membershipLevel: item.value,
-                settingItemValue: '0',
+                feeType,
+                membershipLevel: membership.value,
+                settingItemValue: row.settingItemValue,
               })
             }}
           >
@@ -145,7 +151,7 @@ export default (props: CostSetting) => {
         >
         </FilterForm>
         {
-          costSetting?.map(item => (
+          costSetting?.map((item, i) => (
             <div key={item.value}>
               <Divider orientation="left">
                 {item.label}
@@ -159,11 +165,11 @@ export default (props: CostSetting) => {
                     title: '收费类目',
                     dataIndex: 'feeType',
                   },
-                  ...membershipLevelsColumns,
+                  ...getMembershipLevelsColumns(CostDictMap[i]),
                 ]}
-                data={basePacking?.map(item => ({
-                  feeType: item.label,
-                  feeTypeValue: item.value,
+                data={dictList?.filter(o => o.dictCode === CostDictMap[i])?.map(item => ({
+                  feeType: item.displayName,
+                  settingItemValue: item.dictValue,
                   // ...item.membershipLevels.reduce((acc, cur) => {
                   //   acc[cur.level] = cur.fee
                   //   return acc

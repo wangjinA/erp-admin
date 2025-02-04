@@ -66,54 +66,6 @@ export default (props: {
           </Button>
         </Title>
       </Typography.Paragraph>
-      {/* <Input.Search
-            className="mb-4"
-            placeholder="请输入仓库名称"
-          ></Input.Search> */}
-      {/* <List>
-        {entrepotList?.map(item => (
-          <div
-            key={item.id}
-            onClick={() => {
-              setActiveEntrepot(item)
-            }}
-          >
-            <List.Item.Meta
-              style={{ height: 76 }}
-              className={classNames(
-                activeEntrepot?.id === item.id
-                  ? 'bg-gray-100 dark:bg-zinc-500'
-                  : '',
-                'hover:bg-gray-100 dark:hover:bg-zinc-500 cursor-pointer px-2 border-b border-neutral-3',
-              )}
-              avatar={<Avatar>{item.consignee[0]}</Avatar>}
-              title={item.entrepotName}
-              description={item.detailedAddress}
-            >
-            </List.Item.Meta>
-            <div>
-              <Button
-                type="primary"
-                onClick={() => {
-                  setShowTypeEntrepot(ShowFormType.edit)
-                  formEntrepotRef.setFieldsValue(item)
-                }}
-              >
-                编辑
-              </Button>
-              <PopconfirmDelete
-                onOk={() => {
-                  removeEntrepot(item.id)
-                }}
-                buttonProps={{
-                  loading: removeEntrepotLoading,
-                }}
-              >
-              </PopconfirmDelete>
-            </div>
-          </div>
-        ))}
-      </List> */}
 
       <List<Entrepot>
         loading={entrepotLoading}
