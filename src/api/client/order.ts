@@ -74,7 +74,15 @@ export const orderAPI = {
     if (!cacheTime || ((now - cacheTime) > gapTime)) {
       SyncTimeCache[key] = now
       sessionStorage.setItem(sessionKey, JSON.stringify(SyncTimeCache))
-      return baseAxios.post('/api/logistics/order/synchronous/orde1', body)
+      return baseAxios.post('/api/logistics/order/synchronous/order', body, {
+        timeout: 1000 * 60 * 5,
+      })
+        .then(r => r)
+        .catch((e) => {
+          SyncTimeCache[key] = 0
+          sessionStorage.setItem(sessionKey, JSON.stringify(SyncTimeCache))
+          throw new Error(e.response.data.message)
+        })
     }
     throw new Error('10分钟内不可重复操作')
   },

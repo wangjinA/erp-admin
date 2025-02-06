@@ -8,7 +8,7 @@ import { expressAPI } from '@/api/client/express'
 import { menuAPI } from '@/api/client/menu'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 import { colors } from '@/constants/statusTag'
-import { MenuSize, listToTree } from '@/pages/admin/account/menu/hooks'
+import { listToTree } from '@/pages/admin/account/menu/hooks'
 import { formatDate, showMessage, showModal, timeArrToObject } from '@/utils'
 
 const MenuTypeOptipns = [
@@ -29,11 +29,13 @@ const MenuTypeOptipns = [
 function SelectParentMenu(props: { menuType: string }) { // 动态选择
   const { menuType, ...otherProps } = props
   const handle = useRequest(async () => {
-    const res = await menuAPI.list({
-      pageNum: 1,
-      pageSize: MenuSize,
-      menuType: menuType === 'C' ? 'M' : 'C',
-    })
+    const res = await menuAPI.list(
+    //   {
+    //   pageNum: 1,
+    //   pageSize: MenuSize,
+    //   menuType: menuType === 'C' ? 'M' : 'C',
+    // }
+    )
     return res.data.data.list.map(item => ({
       label: item.menuName,
       value: item.menuId,
@@ -83,11 +85,13 @@ export default () => {
         }}
         name="菜单管理"
         getListRequest={(params) => {
-          return menuAPI.list({
-            ...params,
-            pageNum: 1,
-            pageSize: MenuSize,
-          }).then((r) => {
+          return menuAPI.list(
+          //   {
+          //   ...params,
+          //   pageNum: 1,
+          //   pageSize: MenuSize,
+          // }
+          ).then((r) => {
             r.data.data.list = listToTree(r.data.data.list)
             return r
           })

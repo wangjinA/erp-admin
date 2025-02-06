@@ -1,5 +1,6 @@
 import {
   Button,
+  Modal,
   Typography,
 } from '@arco-design/web-react'
 
@@ -9,10 +10,13 @@ import {
 
 import { useEntrepotInfo } from '../info/hooks'
 
+import { CreateEntrepotSchema } from '../info/schema'
+
 import { Entrepot } from '@/api/admin/entrepot'
+import FilterForm from '@/components/FilterForm'
 import List from '@/components/List'
 import Title from '@/components/Title'
-import { ShowFormType } from '@/constants'
+import { FormModalCommonProps, ShowFormType, ShowFormTypeMap } from '@/constants'
 import { showModal } from '@/utils'
 
 export default (props: {
@@ -20,35 +24,22 @@ export default (props: {
 }) => {
   const { entrepotInfoHandle } = props
   const {
-    showTypeRacks,
-    setShowTypeRacks,
-    showTypeEntrepot,
     setShowTypeEntrepot,
     formEntrepotRef,
-    formRacksRef,
     activeEntrepot,
     setActiveEntrepot,
-    racksList,
-    rackLoading,
-    getRacksList,
     createEntrepotHandler,
     createEntrepotLoading,
-    getEntrepotList,
     entrepotList,
     entrepotLoading,
-    activeRacks,
-    setActiveRacks,
-    createRacksLoading,
-    createRacksHandler,
-    removeRacks,
-    removeRacksLoading,
-    updateRacks,
-    updateRacksLoading,
-    updateEntrepot,
+    updateEntrepotHandler,
     updateEntrepotLoading,
-    removeEntrepot,
-    removeEntrepotLoading,
+    removeEntrepotHandler,
+    showTypeEntrepot,
+    updateEntrepotData,
+    setUpdateEntrepotData,
   } = entrepotInfoHandle
+
   return (
     <>
       <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">
@@ -82,8 +73,8 @@ export default (props: {
           }))
         }
         onUpdate={(item) => {
+          setUpdateEntrepotData(item)
           setShowTypeEntrepot(ShowFormType.edit)
-          formEntrepotRef.setFieldsValue(item)
         }}
         onDelete={async (item) => {
           await showModal({
@@ -91,10 +82,43 @@ export default (props: {
             content: `是否删除仓库：${item.entrepotName}`,
             okText: '删除',
           })
-          removeEntrepot(item.id)
+          removeEntrepotHandler(item.id)
         }}
       >
       </List>
+
+      <Modal
+        {...FormModalCommonProps}
+        confirmLoading={createEntrepotLoading || updateEntrepotLoading}
+        onCancel={() => {
+          setUpdateEntrepotData(null)
+          setShowTypeEntrepot(null)
+        }}
+        onOk={async () => {
+          const formData = await formEntrepotRef.validate()
+          if (showTypeEntrepot === ShowFormType.create) {
+            createEntrepotHandler(formData)
+          }
+          else {
+            updateEntrepotHandler({
+              ...formData,
+              id: updateEntrepotData.id,
+            })
+          }
+        }}
+        unmountOnExit={true}
+        visible={!!showTypeEntrepot}
+        title={`${ShowFormTypeMap[showTypeEntrepot]}仓库`}
+      >
+        <FilterForm
+          initialValues={updateEntrepotData}
+          form={formEntrepotRef}
+          labelLength={8}
+          span={24}
+          formItemConfigList={CreateEntrepotSchema}
+        >
+        </FilterForm>
+      </Modal>
     </>
   )
 }

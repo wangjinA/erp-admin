@@ -1,7 +1,8 @@
-import { Checkbox, Radio } from '@arco-design/web-react'
+import { Checkbox, Form, Radio } from '@arco-design/web-react'
 
 import { CreateFormItemType } from '@/components/CreateFormItem'
 import DictSelector from '@/components/Selectors/DictSelector'
+import { regionFormItemProps } from '@/components/Selectors/RegionSelector'
 import { WhetherBooleanOptions, WhetherOptions } from '@/constants'
 
 export const CreateEntrepotSchema: CreateFormItemType[] = [
@@ -102,6 +103,32 @@ export const CreateEntrepotSchema: CreateFormItemType[] = [
     ),
   },
   {
+    schema: {
+      label: '支持地区',
+      field: 'supportArea',
+      span: 24,
+    },
+
+    formItemProps: {
+      noStyle: true,
+    },
+    showItemHandle(formData) {
+      return formData?.storeType?.includes(1)
+    },
+    control: (
+      <Form.Item
+        rules={[{
+          required: true,
+          message: '请选择',
+        }]}
+        field="supportArea"
+        label="支持地区"
+      >
+        <DictSelector type="checkbox" dictCode="region"></DictSelector>
+      </Form.Item>
+    ),
+  },
+  {
     // 收货人
     formItemProps: {
       rules: [
@@ -128,7 +155,7 @@ export const CreateEntrepotSchema: CreateFormItemType[] = [
       ],
     },
     schema: {
-      field: 'phone',
+      field: 'telephone',
       label: '电话',
       span: 12,
     },
@@ -136,10 +163,11 @@ export const CreateEntrepotSchema: CreateFormItemType[] = [
   },
   {
     formItemProps: {
+      ...regionFormItemProps,
       rules: [
         {
-          required: true,
-          message: '请输入收货地址',
+          // required: true,
+          message: '请选择收货地址',
         },
       ],
     },

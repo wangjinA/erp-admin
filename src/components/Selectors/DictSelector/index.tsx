@@ -1,4 +1,4 @@
-import { Radio, Select } from '@arco-design/web-react'
+import { Checkbox, Radio, Select } from '@arco-design/web-react'
 import { SelectProps } from '@arco-design/web-react/lib'
 import { useRequest } from 'ahooks'
 import { AxiosResponse } from 'axios'
@@ -9,7 +9,7 @@ import { APIListResponse } from '@/api/type'
 
 type DictSelectorProps = SelectProps & {
   dictCode: string
-  type?: 'select' | 'radio'
+  type?: 'select' | 'radio' | 'checkbox'
 }
 
 export interface DictOptions {
@@ -128,6 +128,14 @@ const DictSelector: React.FC<DictSelectorProps> = (props) => {
           onChange={selectProps.onChange as any}
         >
         </Radio.Group>
+      )
+    case 'checkbox':
+      return (
+        <Checkbox.Group
+          options={data}
+          onChange={selectProps.onChange as any}
+        >
+        </Checkbox.Group>
       )
     case 'select':
     default:

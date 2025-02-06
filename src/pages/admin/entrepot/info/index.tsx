@@ -1,7 +1,6 @@
 import {
   Button,
   Grid,
-  Modal,
   Space,
   Typography,
 } from '@arco-design/web-react'
@@ -10,31 +9,16 @@ import { IconCheck, IconDelete, IconPlus } from '@arco-design/web-react/icon'
 import EntrepotList from '../components/EntrepotList'
 
 import { useEntrepotInfo } from './hooks'
-import { CreateEntrepotSchema, CreateRacksSchema } from './schema'
+import { CreateRacksSchema } from './schema'
 
 import FilterForm from '@/components/FilterForm'
 import List from '@/components/List'
 import PopconfirmDelete from '@/components/PopconfirmDelete'
 import {
-  FormModalCommonProps,
   ShowFormType,
   ShowFormTypeMap,
 } from '@/constants'
 import { showModal } from '@/utils'
-
-const createInitialValue = {
-  entrepotName: '测试111',
-  entrepotType: 0,
-  storeType: [0],
-  consignee: '老吴头',
-  phone: '15270848188',
-  deliveryAddress: '省市区',
-  detailedAddress: '详细地址哈哈哈',
-  openUser: 1,
-  inventoryStatus: 1,
-  qrCode:
-    'https://g-search3.alicdn.com/img/bao/uploaded/i4/i2/2206469993218/O1CN01GgZIv21ZdtGVU5hF1_!!0-item_pic.jpg_.webp',
-}
 
 const createRacksInitialValue = {
   storageRacksName: '',
@@ -49,35 +33,18 @@ export default () => {
   const entrepotInfoHandle = useEntrepotInfo({})
   const {
     showTypeRacks,
-    setShowTypeRacks,
-    showTypeEntrepot,
-    setShowTypeEntrepot,
-    formEntrepotRef,
     formRacksRef,
     activeEntrepot,
-    setActiveEntrepot,
     racksList,
     rackLoading,
-    getRacksList,
-    createEntrepotHandler,
-    createEntrepotLoading,
-    getEntrepotList,
-    entrepotList,
-    entrepotLoading,
     activeRacks,
     setActiveRacks,
     createRacksLoading,
     createRacksHandler,
-    removeRacks,
+    removeRacksHandler,
     removeRacksLoading,
-    updateRacks,
-    updateRacksLoading,
-    updateEntrepot,
-    updateEntrepotLoading,
-    removeEntrepot,
-    removeEntrepotLoading,
+    updateRacksHandler,
   } = entrepotInfoHandle
-  console.log(showTypeRacks)
 
   return (
     <div className="bg-white p-4 pb-6">
@@ -137,7 +104,7 @@ export default () => {
                       content: `是否删除货架：${item.storageRacksName}`,
                       okText: '删除',
                     })
-                    removeRacks(item.id)
+                    removeRacksHandler(item.id)
                   }}
                 >
                 </List>
@@ -187,7 +154,7 @@ export default () => {
                     loading={createRacksLoading}
                     onClick={async () => {
                       const formData = await formRacksRef.validate()
-                      await updateRacks({
+                      updateRacksHandler({
                         ...formData,
                         id: activeRacks.id,
                       })
@@ -198,7 +165,7 @@ export default () => {
                   <PopconfirmDelete
                     buttonProps={{ loading: removeRacksLoading }}
                     onOk={() => {
-                      removeRacks(activeRacks.id)
+                      removeRacksHandler(activeRacks.id)
                     }}
                   >
                   </PopconfirmDelete>
@@ -214,38 +181,6 @@ export default () => {
           </Grid.Col>
         )}
       </Grid.Row>
-      <Modal
-        {...FormModalCommonProps}
-        confirmLoading={createEntrepotLoading || updateEntrepotLoading}
-        onCancel={() => {
-          setShowTypeEntrepot(null)
-          formEntrepotRef.resetFields()
-        }}
-        onOk={async () => {
-          const formData = await formEntrepotRef.validate()
-          if (showTypeEntrepot === ShowFormType.create) {
-            await createEntrepotHandler(formData)
-          }
-          else {
-            await updateEntrepot({
-              ...formData,
-              id: activeEntrepot.id,
-            })
-          }
-          setShowTypeEntrepot(null)
-        }}
-        visible={!!showTypeEntrepot}
-        title={`${ShowFormTypeMap[showTypeEntrepot]}仓库`}
-      >
-        <FilterForm
-          initialValues={createInitialValue}
-          form={formEntrepotRef}
-          labelLength={8}
-          span={24}
-          formItemConfigList={CreateEntrepotSchema}
-        >
-        </FilterForm>
-      </Modal>
     </div>
   )
 }

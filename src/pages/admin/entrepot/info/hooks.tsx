@@ -24,6 +24,7 @@ export function useEntrepotInfo(params: {
   const [formEntrepotRef] = useForm()
   const [formRacksRef] = useForm()
   const [activeEntrepot, setActiveEntrepot] = useState<Entrepot>(null)
+  const [updateEntrepotData, setUpdateEntrepotData] = useState<Entrepot>(null)
   const [activeRacks, setActiveRacks] = useState<EntrepotStorageRacks>(null)
   const {
     data: racksList,
@@ -85,11 +86,7 @@ export function useEntrepotInfo(params: {
   const { run: createEntrepotHandler, loading: createEntrepotLoading }
     = useRequest(
       async (formData) => {
-        await showMessage(() => entrepotAPI.insert({
-          ...formData,
-          // storeType: formData.storeType[0],
-        }))
-        formEntrepotRef.resetFields()
+        await showMessage(() => entrepotAPI.insert(formData))
         setShowTypeEntrepot(null)
         getEntrepotList()
       },
@@ -97,6 +94,17 @@ export function useEntrepotInfo(params: {
         manual: true,
       },
     )
+
+  const { run: updateEntrepotHandler, loading: updateEntrepotLoading } = useRequest(
+    async (params) => {
+      await showMessage(() => entrepotAPI.update(params))
+      setShowTypeEntrepot(null)
+      getEntrepotList()
+    },
+    {
+      manual: true,
+    },
+  )
 
   const { run: createRacksHandler, loading: createRacksLoading } = useRequest(
     async (formData) => {
@@ -114,7 +122,7 @@ export function useEntrepotInfo(params: {
     },
   )
 
-  const { run: removeRacks, loading: removeRacksLoading } = useRequest(
+  const { run: removeRacksHandler, loading: removeRacksLoading } = useRequest(
     async (racksId) => {
       await showMessage(() => racksAPI.remove(racksId))
       setActiveRacks(null)
@@ -128,36 +136,24 @@ export function useEntrepotInfo(params: {
     },
   )
 
-  const { run: removeEntrepot, loading: removeEntrepotLoading } = useRequest(
+  const { run: removeEntrepotHandler, loading: removeEntrepotLoading } = useRequest(
     async (racksId) => {
       await showMessage(() => entrepotAPI.remove(racksId))
       setActiveEntrepot(null)
-      await getEntrepotList()
+      getEntrepotList()
     },
     {
       manual: true,
     },
   )
 
-  const { run: updateRacks, loading: updateRacksLoading } = useRequest(
+  const { run: updateRacksHandler, loading: updateRacksLoading } = useRequest(
     async (params) => {
       await showMessage(() => racksAPI.update(params))
-      await getRacksList({
+      setActiveRacks(null)
+      getRacksList({
         entrepotId: activeEntrepot.id,
       })
-    },
-    {
-      manual: true,
-    },
-  )
-
-  const { run: updateEntrepot, loading: updateEntrepotLoading } = useRequest(
-    async (params) => {
-      await showMessage(() => entrepotAPI.update({
-        ...params,
-        storeType: params.storeType[0],
-      }))
-      await getEntrepotList()
     },
     {
       manual: true,
@@ -172,6 +168,13 @@ export function useEntrepotInfo(params: {
       setShowTypeRacks(ShowFormType.create)
     }
   }, [activeRacks])
+
+  useEffect(() => {
+    if (!showTypeEntrepot) {
+      setUpdateEntrepotData(null)
+      formEntrepotRef.clearFields()
+    }
+  }, [showTypeEntrepot, formEntrepotRef])
 
   return {
     showTypeEntrepot,
@@ -194,13 +197,15 @@ export function useEntrepotInfo(params: {
     setActiveRacks,
     createRacksLoading,
     createRacksHandler,
-    removeRacks,
+    removeRacksHandler,
     removeRacksLoading,
-    updateRacks,
+    updateRacksHandler,
     updateRacksLoading,
-    updateEntrepot,
+    updateEntrepotHandler,
     updateEntrepotLoading,
-    removeEntrepot,
+    removeEntrepotHandler,
     removeEntrepotLoading,
+    updateEntrepotData,
+    setUpdateEntrepotData,
   }
 }

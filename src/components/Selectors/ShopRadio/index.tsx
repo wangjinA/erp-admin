@@ -63,6 +63,6 @@ export function ShopNameFC(props: { value: number }) {
 export function ShopSelector(props: SelectProps) {
   const { data: options, loading } = useShopOptions()
   return (
-    <Select placeholder="请选择店铺" loading={loading} options={options} {...props} />
+    <Select placeholder="请选择店铺" loading={loading} allowClear={true} options={options} {...props} />
   )
 }

@@ -9,7 +9,6 @@ import {
 } from '@arco-design/web-react'
 import { IconExport, IconRefresh, IconSearch } from '@arco-design/web-react/icon'
 import { useLocalStorageState, usePagination, useRequest, useResetState } from 'ahooks'
-import dayjs from 'dayjs'
 import { omit } from 'lodash'
 import React, { useState } from 'react'
 
@@ -25,6 +24,7 @@ import { useShopOptions } from '@/components/Selectors/ShopRadio'
 import { EmitTypes, bus, useEventBus } from '@/hooks/useEventBus'
 import OrderTable from '@/pages/admin/components/OrderTable'
 import RefreshButton from '@/pages/admin/components/OrderTable/RefreshButton'
+import SyncOrderButton from '@/pages/admin/components/OrderTable/SyncOrderButton'
 import { isAdmin } from '@/routes'
 import { showMessage, showModal, timeArrToObject } from '@/utils'
 
@@ -156,28 +156,6 @@ export default (props: OrderPageProps) => {
     refresh()
   })
 
-  const syncOrderHandle = useRequest(async () => {
-    if (!shopOptions.data?.length) {
-      return Message.error('未获取到店铺信息')
-    }
-    try {
-      orderAPI.syncOrder({
-        orderUpdateStartTime: dayjs().subtract(15, 'day').format('YYYY-MM-DD HH:mm:ss'),
-        orderUpdateEndTime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-        storeId: shopOptions.data.map(item => item.value),
-      })
-      Message.success({
-        content: '同步订单任务已提交，请稍后刷新查看',
-        duration: 2000,
-      })
-    }
-    catch (error) {
-      Message.error(error.message)
-    }
-  }, {
-    manual: true,
-  })
-
   return (
     <div className="bg-white p-4">
       <FilterForm
@@ -285,16 +263,7 @@ export default (props: OrderPageProps) => {
                 )
               : (
                   <>
-                    <Button
-                      type="outline"
-                      icon={<IconExport />}
-                      loading={syncOrderHandle.loading}
-                      onClick={() => {
-                        syncOrderHandle.run()
-                      }}
-                    >
-                      同步订单
-                    </Button>
+                    <SyncOrderButton></SyncOrderButton>
                     <Button
                       type="outline"
                       icon={<IconExport />}
