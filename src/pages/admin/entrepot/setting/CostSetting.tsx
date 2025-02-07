@@ -98,7 +98,7 @@ export default (props: CostSetting) => {
         dataIndex: membership.value,
         render: (value, row) => (
           <Remark
-            title="价格编辑"
+            title="价格"
             value={value || 0}
             type={RemarkType.Number}
             onChange={(newVal) => {

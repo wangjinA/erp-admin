@@ -5,6 +5,8 @@ import { useState } from 'react'
 
 import styles from './index.module.less'
 
+import { showMessage } from '@/utils'
+
 export enum RemarkType {
   Text = 'text',
   Number = 'number',
@@ -35,7 +37,7 @@ export default (props: RemarkProps) => {
           if (inputValue === value) {
             return setVisible(false)
           }
-          onChange(inputValue).then(() => {
+          showMessage(() => onChange(inputValue), title).then(() => {
             setVisible(false)
           })
         }}
