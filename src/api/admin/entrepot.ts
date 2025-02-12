@@ -117,6 +117,12 @@ export const entrepotAPI = {
       defaultStatus,
     })
   },
+  users({ entrepotId }) {
+    return baseAxios.get<APIListResponse<any>>(`/api/setting/list/${entrepotId}`)
+  },
+  addUser(body: { entrepotId: number, sysUserIdList: number }) {
+    return baseAxios.post<APIResponse>('/api/setting/insert', body)
+  },
 }
 
 // 仓位

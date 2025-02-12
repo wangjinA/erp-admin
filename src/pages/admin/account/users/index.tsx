@@ -6,6 +6,7 @@ import React, { useState } from 'react'
 import { userAPI } from '@/api/admin/user'
 import { expressAPI } from '@/api/client/express'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
+import { RoleNameFC } from '@/components/Selectors/RoleSelector'
 import UserAvatar from '@/components/UserAvatar'
 import { showMessage, showModal } from '@/utils'
 
@@ -115,6 +116,9 @@ export default () => {
             control: 'role',
             controlProps: {
               mode: 'multiple',
+            },
+            render(c) {
+              return <RoleNameFC value={c}></RoleNameFC>
             },
           },
           {

@@ -2,13 +2,12 @@ import { Divider, Modal, Spin, Table } from '@arco-design/web-react'
 
 import { ColumnProps } from '@arco-design/web-react/es/Table'
 import { useLocalStorageState, useRequest } from 'ahooks'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import { dictChildAPI } from '@/api/admin/dict'
 import { costAPI } from '@/api/admin/entrepot'
 import FilterForm from '@/components/FilterForm'
 import Remark, { RemarkType } from '@/components/Remark'
-import { useDictOptions } from '@/components/Selectors/DictSelector'
 
 interface CostSetting {
   entrepotId: any
@@ -47,27 +46,23 @@ export default (props: CostSetting) => {
     },
   })
 
-  // 基础打包
-  const { data: basePacking } = useDictOptions({
-    dictCode: 'base_packing',
-  })
-
   const { data: dictList, loading } = useRequest(() => {
-    return dictChildAPI.getListByDictCode(Object.values(CostDictMap)).then(r => r.data.data.list)
+    return dictChildAPI.getListByDictCode([
+      ...Object.values(CostDictMap),
+      'cost_setting',
+      'membership_level',
+    ]).then(r => r.data.data.list)
   }, {
     manual: false,
     refreshDeps: [entrepotId, JSON.stringify(costFilter)],
   })
 
-  // 会员等级
-  const { data: membershipLevels } = useDictOptions({
-    dictCode: 'membership_level',
-  })
-
-  // 费用类型
-  const { data: costSetting } = useDictOptions({
-    dictCode: 'cost_setting',
-  })
+  const membershipLevels = useMemo(() => {
+    return dictList?.filter(item => item.dictCode === 'membership_level')?.map(item => ({
+      label: item.displayName,
+      value: item.dictValue,
+    }))
+  }, [JSON.stringify(dictList)])
 
   const settingConfigHandler = useRequest(() => {
     if (!entrepotId) {
@@ -151,10 +146,10 @@ export default (props: CostSetting) => {
         >
         </FilterForm>
         {
-          costSetting?.map((item, i) => (
-            <div key={item.value}>
+          dictList?.filter(o => o.dictCode === 'cost_setting')?.map((item, i) => (
+            <div key={item.dictValue}>
               <Divider orientation="left">
-                {item.label}
+                {item.displayName}
               </Divider>
               <Table
                 borderCell={true}

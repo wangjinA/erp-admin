@@ -25,19 +25,20 @@ export default (props: RemarkProps) => {
   const [visible, setVisible] = useState(false)
   const [inputValue, setInputValue] = useState(value)
   const placeholder = `请输入${title}`
+  const allTitle = `编辑${title}`
   return (
     <div className={styles['remark-com']}>
       {value ?? '-'}
       <IconEdit className="remark-com-icon" onClick={() => setVisible(true)}></IconEdit>
       <Modal
-        title={`编辑${title}`}
+        title={allTitle}
         visible={visible}
         onCancel={() => setVisible(false)}
         onOk={() => {
           if (inputValue === value) {
             return setVisible(false)
           }
-          showMessage(() => onChange(inputValue), title).then(() => {
+          showMessage(() => onChange(inputValue), allTitle).then(() => {
             setVisible(false)
           })
         }}

@@ -75,11 +75,11 @@ export default function LoginForm() {
           afterLoginSuccess(params)
         }
         else {
-          Message.error(res.data.msg || t['login.form.login.errMsg'])
           throw new Error(res.data.msg)
         }
       }
       catch (error) {
+        Message.error(error.message || t['login.form.login.errMsg'])
         setRandomStr(random(1, 99999))
       }
     },

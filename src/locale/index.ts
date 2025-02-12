@@ -65,7 +65,7 @@ const i18n = {
 
     'admin.entrepot': '仓库管理',
     'admin.entrepot.info': '仓库信息',
-    'admin.entrepot.list': '仓库列表',
+    'admin.entrepot.racks': '仓位列表',
     'admin.entrepot.setting': '仓库设置',
 
     'admin.account': '账户管理',

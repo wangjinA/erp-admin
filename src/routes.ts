@@ -258,8 +258,8 @@ export const routes: IRoute[] = [
         key: 'admin/entrepot/info',
       },
       {
-        name: 'admin.entrepot.list',
-        key: 'admin/entrepot/list',
+        name: 'admin.entrepot.racks',
+        key: 'admin/entrepot/racks',
       },
       {
         name: 'admin.entrepot.setting',

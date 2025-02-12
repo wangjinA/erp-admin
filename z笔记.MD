@@ -1,3 +1,6 @@
+http://localhost:3000/admin/account/users编辑报错
+
+
 1.拿个店铺测试一下同步商品逻辑是否正常，目前接口同步了但是没有数据（汪锦）
 
 

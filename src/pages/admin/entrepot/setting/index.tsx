@@ -4,6 +4,7 @@ import { IconEdit, IconSave } from '@arco-design/web-react/icon'
 import { useState } from 'react'
 
 import EntrepotList from '../components/EntrepotList'
+import EntrepotUsers from '../components/EntrepotUsers'
 import SenderList from '../components/SenderList'
 import { useEntrepotInfo } from '../info/hooks'
 
@@ -33,7 +34,7 @@ export default () => {
               <CostSetting entrepotId={activeEntrepot?.id}></CostSetting>
             </Tabs.TabPane>
             <Tabs.TabPane title="人员设置" key="人员设置">
-              人员设置 开发中...
+              <EntrepotUsers entrepotId={activeEntrepot?.id}></EntrepotUsers>
             </Tabs.TabPane>
             <Tabs.TabPane title="寄件人姓名" key="寄件人姓名">
               {activeEntrepot ? <SenderList entrepotId={activeEntrepot.id}></SenderList> : null}

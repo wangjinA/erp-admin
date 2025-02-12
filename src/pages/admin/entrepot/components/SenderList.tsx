@@ -31,6 +31,11 @@ export default ({
       createInitialValue={{
         isDefault: false,
       }}
+      filterFormProps={{
+        onChange(e) {
+          console.log(e)
+        },
+      }}
       formItemConfigList={[
         {
           schema: {
