@@ -92,10 +92,12 @@ const FilterForm = React.forwardRef(
           ...(otherFormProps.wrapperCol || {}),
         }}
         onValuesChange={(value) => {
-          const values = formRef.current.getFieldsValue()
-          // 因为去除筛选条件后，少了一个formItem，此时需要再获取一遍最新数据
-          onValuesChange?.(value, values)
-          setFormData(values)
+          const values = formRef.current?.getFieldsValue()
+          if (values) {
+            // 因为去除筛选条件后，少了一个formItem，此时需要再获取一遍最新数据
+            onValuesChange?.(value, values)
+            setFormData(values)
+          }
         }}
         initialValues={initialValues}
         {...otherFormProps}

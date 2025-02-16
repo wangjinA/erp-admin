@@ -1,4 +1,4 @@
-import { Checkbox, Form, Radio } from '@arco-design/web-react'
+import { Form, Radio } from '@arco-design/web-react'
 
 import { CreateFormItemType } from '@/components/CreateFormItem'
 import DictSelector from '@/components/Selectors/DictSelector'
@@ -86,20 +86,7 @@ export const CreateEntrepotSchema: CreateFormItemType[] = [
       span: 8,
     },
     control: (props: any) => (
-      <Checkbox.Group
-        {...props}
-        options={[
-          {
-            label: '跨境店',
-            value: 0,
-          },
-          {
-            label: '本土店',
-            value: 1,
-          },
-        ]}
-      >
-      </Checkbox.Group>
+      <DictSelector type="checkbox" dictCode="store_type" {...props} />
     ),
   },
   {
@@ -113,7 +100,7 @@ export const CreateEntrepotSchema: CreateFormItemType[] = [
       noStyle: true,
     },
     showItemHandle(formData) {
-      return formData?.storeType?.includes(1)
+      return formData?.storeType?.includes('1')
     },
     control: (
       <Form.Item

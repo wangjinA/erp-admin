@@ -20,6 +20,11 @@ export const shopStoreAPI = {
   reAuth() {
     return baseAxios.post<APIResponse<string>>(`/api/tenantry/store/update`)
   },
+
+  editAlias(body: { storeId, anotherName }) {
+    return baseAxios.post<APIResponse<string>>(`/api/tenantry/store/edit/alias`, body)
+  },
+
 }
 
 export interface ShopStore {

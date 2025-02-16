@@ -16,7 +16,6 @@ import { OrderTablePorps } from '.'
 import { orderAPI } from '@/api/admin/order'
 import GoodsInfo from '@/components/GoodsInfo'
 import LabelValue from '@/components/LabelValue'
-import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
 import TrackingNumber from '@/components/TrackingNumber'
 import { EmitTypes, bus } from '@/hooks/useEventBus'
 import { isAdmin } from '@/routes'
@@ -94,22 +93,22 @@ export function useColumns(props: OrderTablePorps) {
     //       },
     //     }]
     //   : []),
-    {
-      title: '打包信息',
-      dataIndex: 'db',
-      width: 150,
-      render(c, row) {
-        return (
-          <div className="border-r h-full p-2">
-            <LabelValue label="打包仓库" value={<EntrepotNameFC value={row.sendWarehouse} />}></LabelValue>
-            <LabelValue label="仓库备注" value={row.entrepotRemark}></LabelValue>
-            {
-              isAdmin() ? <LabelValue label="卖家备注" value={row.remark}></LabelValue> : null
-            }
-          </div>
-        )
-      },
-    },
+    // {
+    //   title: '打包信息',
+    //   dataIndex: 'db',
+    //   width: 150,
+    //   render(c, row) {
+    //     return (
+    //       <div className="border-r h-full p-2">
+    //         <LabelValue label="打包仓库" value={<EntrepotNameFC value={row.sendWarehouse} />}></LabelValue>
+    //         <LabelValue label="仓库备注" value={row.entrepotRemark}></LabelValue>
+    //         {
+    //           isAdmin() ? <LabelValue label="卖家备注" value={row.remark}></LabelValue> : null
+    //         }
+    //       </div>
+    //     )
+    //   },
+    // },
     // ...(showMj
     //   ? [{
     //       title: '卖家信息',

@@ -269,8 +269,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                                   status="warning"
                                   icon={<IconEdit />}
                                   onClick={() => {
-                                    setShowType(ShowFormType.edit)
-                                    formRef.setFieldsValue(editTransform ? editTransform(record) : record)
+                                    setShowType(ShowFormType.edit, record)
                                   }}
                                 >
                                   编辑
@@ -299,7 +298,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
 
               <Modal
                 {...FormModalCommonProps}
-                confirmLoading={createAction?.loading || updateAction.loading}
+                confirmLoading={createAction?.loading || updateAction?.loading}
                 onCancel={() => {
                   setShowType(null)
                   formRef.resetFields()

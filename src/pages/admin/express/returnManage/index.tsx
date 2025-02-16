@@ -44,8 +44,8 @@ export default () => {
         getListRequest={expressAPI.getReturnList}
         requestQueryTransform={formData => ({
           ...omit(formData, 'applyTime'),
-          applyStartTime: formData.applyTime[0],
-          applyEndTime: formData.applyTime[1],
+          applyStartTime: formData.applyTime?.[0],
+          applyEndTime: formData.applyTime?.[1],
         })}
         formItemConfigList={[
           {
@@ -80,7 +80,7 @@ export default () => {
           {
             schema: {
               label: '收件人信息',
-              field: 'recipients',
+              field: 'recipients11',
             },
           },
           // {

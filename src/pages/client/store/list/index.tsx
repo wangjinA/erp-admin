@@ -3,7 +3,7 @@ import { IconEdit } from '@arco-design/web-react/icon'
 import { useRequest } from 'ahooks'
 import React, { useRef } from 'react'
 
-import StoreListSchema from './schema'
+import getStoreListSchema from './schema'
 
 import { shopStoreAPI } from '@/api/client/shopStore'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
@@ -40,7 +40,7 @@ const StoreList: React.FC<StoreListProps> = (props) => {
         //   loading,
         // }}
         formItemConfigList={[
-          ...StoreListSchema,
+          ...getStoreListSchema(() => ref.current.refreshSearchTable()),
           {
             schema: {
               label: '操作',

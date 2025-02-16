@@ -2,10 +2,11 @@ import { Divider, Modal, Spin, Table } from '@arco-design/web-react'
 
 import { ColumnProps } from '@arco-design/web-react/es/Table'
 import { useLocalStorageState, useRequest } from 'ahooks'
+import { pick } from 'lodash'
 import { useCallback, useMemo } from 'react'
 
 import { dictChildAPI } from '@/api/admin/dict'
-import { costAPI } from '@/api/admin/entrepot'
+import { Cost, costAPI } from '@/api/admin/entrepot'
 import FilterForm from '@/components/FilterForm'
 import Remark, { RemarkType } from '@/components/Remark'
 
@@ -46,12 +47,32 @@ export default (props: CostSetting) => {
     },
   })
 
-  const { data: dictList, loading } = useRequest(() => {
+  const settingConfigHandler = useRequest(async (feeTypes) => {
+    if (!entrepotId) {
+      return null
+    }
+    const res = await Promise.all<Cost[][]>(
+      feeTypes.map(feeType => costAPI.getSetting({
+        entrepotId,
+        feeType,
+        ...costFilter,
+      }).then(r => r.data.data.list)),
+    )
+    return res
+  }, {
+    manual: true,
+    // refreshDeps: [entrepotId, JSON.stringify(costFilter)],
+  })
+
+  const { data: dictList, loading: dictLoadig } = useRequest(() => {
     return dictChildAPI.getListByDictCode([
       ...Object.values(CostDictMap),
       'cost_setting',
       'membership_level',
-    ]).then(r => r.data.data.list)
+    ]).then(r => r.data.data.list).then((r) => {
+      settingConfigHandler.run(r.filter(o => o.dictCode === 'cost_setting').map(o => o.dictValue))
+      return r
+    })
   }, {
     manual: false,
     refreshDeps: [entrepotId, JSON.stringify(costFilter)],
@@ -64,119 +85,114 @@ export default (props: CostSetting) => {
     }))
   }, [JSON.stringify(dictList)])
 
-  const settingConfigHandler = useRequest(() => {
-    if (!entrepotId) {
-      return null
-    }
-    return costAPI.getSetting({
-      entrepotId,
-      ...costFilter,
-    })
-  }, {
-    manual: false,
-    refreshDeps: [entrepotId, JSON.stringify(costFilter)],
-  })
-
-  // const setSettingConfigHandler = useRequest((data: Partial<Cost>) => {
-  //   return costAPI.setSetting({
-  //     ...data,
-  //     entrepotId,
-  //   })
-  // }, {
-  //   manual: true,
-  // })
-
   const getMembershipLevelsColumns = useCallback((feeType: string) => {
     return membershipLevels
       ? membershipLevels.map<ColumnProps>(membership => ({
         title: membership.label,
-        dataIndex: membership.value,
+        dataIndex: `${membership.value}.expense`,
         render: (value, row) => (
           <Remark
             title="价格"
             value={value || 0}
             type={RemarkType.Number}
+            notRefres={true}
             onChange={(newVal) => {
-              return costAPI.setSetting({
+              const p: any = {
                 ...costFilter,
                 expense: newVal,
                 entrepotId,
                 feeType,
                 membershipLevel: membership.value,
                 settingItemValue: row.settingItemValue,
-              })
+              }
+              const expenseInfo = row[membership.value]
+              if (expenseInfo?.id) {
+                p.id = expenseInfo.id
+              }
+              return costAPI.setSetting(p)
             }}
           >
           </Remark>
         ),
       }))
       : []
-  }, [entrepotId, JSON.stringify(costFilter), JSON.stringify(membershipLevels)])
+  }, [entrepotId, JSON.stringify(costFilter), JSON.stringify(membershipLevels), entrepotId])
 
   return (
-    <Spin loading={settingConfigHandler.loading}>
-      <div className={className}>
-        <FilterForm
-          initialValues={costFilter}
-          formItemConfigList={[
-            {
-              schema: {
-                label: '平台',
-                field: 'platform',
-              },
-              control: 'dictSelector',
-              controlProps: {
-                dictCode: 'platform_type',
-              },
+    <Spin className={className} loading={settingConfigHandler.loading || dictLoadig}>
+      <FilterForm
+        initialValues={costFilter}
+        formItemConfigList={[
+          {
+            schema: {
+              label: '平台',
+              field: 'platform',
             },
-            {
-              schema: {
-                label: '区域',
-                field: 'region',
-              },
-              control: 'dictSelector',
-              controlProps: {
-                dictCode: 'region',
-              },
+            control: 'dictSelector',
+            controlProps: {
+              dictCode: 'platform_type',
             },
-          ]}
-          onChange={(v, vv: any) => {
-            setCostFilter(vv)
-          }}
-        >
-        </FilterForm>
-        {
-          dictList?.filter(o => o.dictCode === 'cost_setting')?.map((item, i) => (
-            <div key={item.dictValue}>
-              <Divider orientation="left">
-                {item.displayName}
-              </Divider>
-              <Table
-                borderCell={true}
-                rowKey="feeType"
-                pagination={false}
-                columns={[
-                  {
-                    title: '收费类目',
-                    dataIndex: 'feeType',
-                  },
-                  ...getMembershipLevelsColumns(CostDictMap[i]),
-                ]}
-                data={dictList?.filter(o => o.dictCode === CostDictMap[i])?.map(item => ({
+          },
+          {
+            schema: {
+              label: '区域',
+              field: 'region',
+            },
+            control: 'dictSelector',
+            controlProps: {
+              dictCode: 'region',
+            },
+          },
+        ]}
+        onChange={(v, vv: any) => {
+          setCostFilter(vv)
+        }}
+      >
+      </FilterForm>
+      {
+        dictList?.filter(o => o.dictCode === 'cost_setting')?.map((feeTypeItem, i) => (
+          <div key={`${entrepotId}-${feeTypeItem.dictValue}`}>
+            <Divider orientation="left">
+              {feeTypeItem.displayName}
+            </Divider>
+            <Table
+              borderCell={true}
+              rowKey="feeType"
+              pagination={false}
+              columns={[
+                {
+                  title: '收费类目',
+                  dataIndex: 'feeType',
+                },
+                ...getMembershipLevelsColumns(feeTypeItem.dictValue),
+              ]}
+              data={dictList?.filter(o => o.dictCode === CostDictMap[i])?.map((item) => {
+                const rowObj = membershipLevels.reduce((acc, cur) => {
+                  const expenseInfo = settingConfigHandler.data?.[i].find(o =>
+                  // vip等级和费用项
+                    o.membershipLevel === cur.value && o.settingItemValue === item.dictValue)
+                  // 费用类型
+                  acc[cur.value] = expenseInfo
+                    ? pick(expenseInfo, ['expense', 'id'])
+                    : {
+                        value: 0,
+                        id: null,
+                      }
+                  return acc
+                }, {})
+                return ({
                   feeType: item.displayName,
                   settingItemValue: item.dictValue,
-                  // ...item.membershipLevels.reduce((acc, cur) => {
-                  //   acc[cur.level] = cur.fee
-                  //   return acc
-                  // }, {}),
-                }))}
-              >
-              </Table>
-            </div>
-          ))
-        }
+                  ...rowObj,
+                })
+              })}
+            >
+            </Table>
+          </div>
+        ))
+      }
 
-        {/* <Divider orientation="left">打包附加收费</Divider>
+      {/* <Divider orientation="left">打包附加收费</Divider>
         <Table columns={[
           {
             title: '收费类目',
@@ -215,49 +231,48 @@ export default (props: CostSetting) => {
         ]}
         >
         </Table> */}
-        <Modal visible={false}>
-          <FilterForm formItemConfigList={[
-            {
-              schema: {
-                field: 'feeType',
-                label: '收费类目',
-              },
+      <Modal visible={false}>
+        <FilterForm formItemConfigList={[
+          {
+            schema: {
+              field: 'feeType',
+              label: '收费类目',
             },
-            {
-              schema: {
-                field: 'membershipLevel',
-                label: '会员等级',
-              },
-              control: 'dictSelector',
-              controlProps: {
-                dictCode: 'membership_level',
-              },
+          },
+          {
+            schema: {
+              field: 'membershipLevel',
+              label: '会员等级',
             },
-            {
-              schema: {
-                field: 'fee',
-                label: '收费金额',
-              },
+            control: 'dictSelector',
+            controlProps: {
+              dictCode: 'membership_level',
             },
-            {
-              schema: {
-                field: 'status',
-                label: '状态',
-              },
+          },
+          {
+            schema: {
+              field: 'fee',
+              label: '收费金额',
             },
-            {
-              schema: {
-                field: 'action',
-                label: '操作',
-              },
+          },
+          {
+            schema: {
+              field: 'status',
+              label: '状态',
             },
+          },
+          {
+            schema: {
+              field: 'action',
+              label: '操作',
+            },
+          },
 
-          ]}
-          >
+        ]}
+        >
 
-          </FilterForm>
-        </Modal>
-      </div>
+        </FilterForm>
+      </Modal>
     </Spin>
   )
 }

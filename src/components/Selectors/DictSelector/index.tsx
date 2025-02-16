@@ -132,6 +132,7 @@ const DictSelector: React.FC<DictSelectorProps> = (props) => {
     case 'checkbox':
       return (
         <Checkbox.Group
+          {...(selectProps as any)}
           options={data}
           onChange={selectProps.onChange as any}
         >

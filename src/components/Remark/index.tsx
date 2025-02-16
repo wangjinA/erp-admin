@@ -1,7 +1,7 @@
 import { Input, InputNumber, Modal } from '@arco-design/web-react'
 import { IconEdit } from '@arco-design/web-react/icon'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import styles from './index.module.less'
 
@@ -18,17 +18,26 @@ interface RemarkProps {
   onChange: (value: any) => Promise<any>
   title?: string
   type?: RemarkType
+  notRefres?: boolean
 }
 
 export default (props: RemarkProps) => {
-  const { value, title = '备注', type = RemarkType.Text, onChange } = props
+  const { value, title = '备注', type = RemarkType.Text, notRefres, onChange } = props
   const [visible, setVisible] = useState(false)
   const [inputValue, setInputValue] = useState(value)
+  const [newValue, setNewValue] = useState()
   const placeholder = `请输入${title}`
   const allTitle = `编辑${title}`
+
+  useEffect(() => {
+    if (visible) {
+      setInputValue(newValue ?? value)
+    }
+  }, [visible])
+
   return (
     <div className={styles['remark-com']}>
-      {value ?? '-'}
+      {newValue || (value ?? '-')}
       <IconEdit className="remark-com-icon" onClick={() => setVisible(true)}></IconEdit>
       <Modal
         title={allTitle}
@@ -40,6 +49,9 @@ export default (props: RemarkProps) => {
           }
           showMessage(() => onChange(inputValue), allTitle).then(() => {
             setVisible(false)
+            if (notRefres) {
+              setNewValue(inputValue)
+            }
           })
         }}
       >

@@ -1,10 +1,13 @@
-import SearchTable, { SearchTableSchema } from '@/components/SearchTable';
-import { Dict, dictAPI, dictChildAPI } from '@/api/admin/dict';
-import { Button, Drawer } from '@arco-design/web-react';
-import { useState } from 'react';
-import { dictChildFormItemConfigList, dictFormItemConfigList } from './schema';
+import { Drawer } from '@arco-design/web-react'
+import { useState } from 'react'
+
+import { dictChildFormItemConfigList, dictFormItemConfigList } from './schema'
+
+import { Dict, dictAPI, dictChildAPI } from '@/api/admin/dict'
+import SearchTable from '@/components/SearchTable'
+
 export default () => {
-  const [record, setRecord] = useState<Dict>();
+  const [record, setRecord] = useState<Dict>()
   return (
     <div className="p-4 bg-white">
       <SearchTable
@@ -15,7 +18,8 @@ export default () => {
         removeRequest={dictAPI.remove}
         updateRequest={dictAPI.update}
         onView={setRecord}
-      ></SearchTable>
+      >
+      </SearchTable>
       <Drawer
         width="80%"
         visible={!!record}
@@ -32,7 +36,7 @@ export default () => {
           }}
           isSearchParams={false}
           formItemConfigList={dictChildFormItemConfigList}
-          createRequest={(data)=>dictChildAPI.create({
+          createRequest={data => dictChildAPI.create({
             ...data,
             // dictId: record?.id,
             dictCode: record?.dictCode,
@@ -41,8 +45,9 @@ export default () => {
           removeRequest={dictChildAPI.remove}
           updateRequest={dictChildAPI.update}
           onView={setRecord}
-        ></SearchTable>
+        >
+        </SearchTable>
       </Drawer>
     </div>
-  );
-};
+  )
+}

@@ -31,7 +31,7 @@ export default () => {
         <Grid.Col span={18} className="pr-6">
           <Tabs defaultActiveTab="费用设置" lazyload={true}>
             <Tabs.TabPane title="费用设置" key="费用设置">
-              <CostSetting entrepotId={activeEntrepot?.id}></CostSetting>
+              <CostSetting className="!block px-4" entrepotId={activeEntrepot?.id}></CostSetting>
             </Tabs.TabPane>
             <Tabs.TabPane title="人员设置" key="人员设置">
               <EntrepotUsers entrepotId={activeEntrepot?.id}></EntrepotUsers>

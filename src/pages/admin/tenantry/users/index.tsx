@@ -7,12 +7,13 @@ import React, { useState } from 'react'
 import { tenantryUserAPI } from '@/api/admin/tenantry'
 import Remark from '@/components/Remark'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
-import StoreListSchema from '@/pages/client/store/list/schema'
+import getStoreListSchema from '@/pages/client/store/list/schema'
 import { showMessage } from '@/utils'
 
 export default () => {
   const [current, setCurrent] = useState<any>()
   const ref = React.useRef<SearchTableRef>()
+  const storeListRef = React.useRef<SearchTableRef>()
 
   const { run, data, loading } = useRequest(
     async (row) => {
@@ -152,10 +153,11 @@ export default () => {
         unmountOnExit={true}
       >
         <SearchTable
+          ref={storeListRef}
           showActions={false}
           getListRequest={() => tenantryUserAPI.getUserStoreList({ id: current.id })}
           name="店铺列表"
-          formItemConfigList={StoreListSchema.map(item => omit(item, 'isSearch')) as any}
+          formItemConfigList={getStoreListSchema(() => storeListRef.current.refreshSearchTable()).map(item => omit(item, 'isSearch')) as any}
         >
         </SearchTable>
       </Drawer>
