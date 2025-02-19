@@ -61,6 +61,9 @@ export default () => {
               label: '地区',
               field: 'region',
             },
+            render(c) {
+              return <DictNameFC value={c} dictCode="region"></DictNameFC>
+            },
           },
           {
             schema: {
