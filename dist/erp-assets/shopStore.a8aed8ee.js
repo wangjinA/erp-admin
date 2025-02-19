@@ -1,1 +1,0 @@
-import{b as t}from"./index.76707136.js";const n={getList(e){return t.post("/api/tenantry/store/list",e)},getAuthLink(){return t.post("/api/tenantry/store/create/accredit/url")},unbind(e){return t.get(`/api/tenantry/store/remove/${e}`)},reAuth(){return t.post("/api/tenantry/store/update")}};export{n as s};
