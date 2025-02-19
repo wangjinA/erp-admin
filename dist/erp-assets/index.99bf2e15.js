@@ -1,0 +1,1 @@
+import e from"./index.a4d4505a.js";import{j as r}from"./vendor.a27d1a64.js";/* empty css               */import"./index.a9b92500.js";import"./entrepot.b1e1023d.js";import"./index.f0a84ea1.js";var m=()=>r("div",{children:r(e,{})});export{m as default};
