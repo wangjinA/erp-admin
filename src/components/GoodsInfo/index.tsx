@@ -2,6 +2,7 @@ import { List, Space } from '@arco-design/web-react'
 import classNames from 'classnames'
 import React, { useRef } from 'react'
 
+import CopyText from '../CopyText'
 import FilterForm from '../FilterForm'
 
 import LabelValue from '../LabelValue'
@@ -52,7 +53,18 @@ export default (props: GoodsInfoProps) => {
                     <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="数  量" value={item.quantity}></LabelValue>
                   </Space>
                   <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="规格名称" value={item.specificationName}></LabelValue>
-                  <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="规格SKU" value={item.sku}></LabelValue>
+                  <LabelValue
+                    className="!mb-0"
+                    labelClassName="!text-sm !pr-1 !align-baseline"
+                    valueClassName="!text-sm"
+                    label="规格SKU"
+                    value={(
+                      <CopyText value={item.sku}>
+                        {item.sku}
+                      </CopyText>
+                    )}
+                  >
+                  </LabelValue>
                 </div>
               </div>
             </div>

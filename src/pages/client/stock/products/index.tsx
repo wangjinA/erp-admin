@@ -116,6 +116,9 @@ export default () => {
             },
             isSearch: true,
             isCreate: true,
+            render(c) {
+              return c || '未填写'
+            },
           },
           {
             schema: {
@@ -155,6 +158,9 @@ export default () => {
               field: 'remark',
             },
             isCreate: true,
+            render(c) {
+              return c || '-'
+            },
           },
         ]}
         formModalProps={{

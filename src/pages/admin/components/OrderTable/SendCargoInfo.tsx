@@ -7,6 +7,7 @@ import React, { useState } from 'react'
 import styles from './index.module.less'
 
 import { expressAPI } from '@/api/client/express'
+import CopyText from '@/components/CopyText'
 import LabelValue from '@/components/LabelValue'
 import MyBadge from '@/components/MyBadge'
 import PopconfirmDelete from '@/components/PopconfirmDelete'
@@ -224,10 +225,15 @@ const SkuList: React.FC<SendCargoInfoProps> = (props) => {
               label="快递"
               value={item.trackingNo
                 ? (
-                    <TrackingNo
+                    <CopyText
                       value={item.trackingNo}
+                      gap={1}
                     >
-                    </TrackingNo>
+                      <TrackingNo
+                        value={item.trackingNo}
+                      >
+                      </TrackingNo>
+                    </CopyText>
                   )
                 : <Tag>未填</Tag>}
             >

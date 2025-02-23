@@ -154,11 +154,15 @@ function PageLayout() {
 
   function onClickMenuItem(key) {
     const currentRoute = flattenRoutes.find(r => r.key === key)
+    const path = currentRoute.path ? currentRoute.path : `/${key}`
+    if (location.pathname === path) {
+      return
+    }
     const component = currentRoute.component
     const preload = component.preload()
     NProgress.start()
     preload.then(() => {
-      history.push(currentRoute.path ? currentRoute.path : `/${key}`)
+      history.push(path)
       NProgress.done()
     })
   }
@@ -243,11 +247,9 @@ function PageLayout() {
   }
 
   useEffect(() => {
-    setTimeout(() => {
-      const routeConfig = routeMap.current.get(pathname)
-      setBreadCrumb(routeConfig || [])
-      updateMenuStatus()
-    }, 1000)
+    const routeConfig = routeMap.current.get(pathname)
+    setBreadCrumb(routeConfig || [])
+    updateMenuStatus()
   }, [pathname, defaultRouteKeyMap])
 
   return (

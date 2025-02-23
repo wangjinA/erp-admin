@@ -14,20 +14,20 @@ export default ({ buttonProps }: {
   const [showSyncOrder, setShowSyncOrder] = useState(false)
 
   const { run, loading } = useRequest(async () => {
-    const { storeId } = await syncForm.validate()
+    const { storeId, orderUpdateTime } = await syncForm.validate()
     if (!storeId.length) {
       return Message.error('未获取到店铺信息')
     }
     try {
       orderAPI.syncOrder({
-        orderUpdateStartTime: dayjs().subtract(15, 'day').format('YYYY-MM-DD HH:mm:ss'),
-        orderUpdateEndTime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+        orderUpdateStartTime: dayjs(orderUpdateTime[0]).format('YYYY-MM-DD HH:mm:ss'),
+        orderUpdateEndTime: dayjs(orderUpdateTime[1]).format('YYYY-MM-DD HH:mm:ss'),
         storeId,
       })
       setShowSyncOrder(false)
-      Message.success({
-        content: '同步订单任务已提交，请稍后刷新查看',
-        duration: 2000,
+      Modal.success({
+        title: '操作成功',
+        content: '同步任务已提交，请稍后刷新页面查看',
       })
     }
     catch (error) {
@@ -53,7 +53,7 @@ export default ({ buttonProps }: {
       <Modal
         title="选择店铺"
         visible={showSyncOrder}
-        style={{ width: 800 }}
+        style={{ width: 600 }}
         onCancel={() => {
           setShowSyncOrder(false)
         }}
@@ -76,6 +76,14 @@ export default ({ buttonProps }: {
               controlProps: {
                 mode: 'multiple',
               },
+            },
+            {
+              schema: {
+                label: '时间范围',
+                field: 'orderUpdateTime',
+                required: true,
+              },
+              control: 'datePickerRange',
             },
           ]}
         >

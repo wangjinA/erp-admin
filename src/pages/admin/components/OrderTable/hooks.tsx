@@ -55,7 +55,13 @@ export function useColumns(props: OrderTablePorps) {
         return (
           <div className="border-r h-full p-2">
             {/* <LabelValue label="尾程物流" value={<DictNameFC value={row.orderPackageList[0]?.shippingCarrier} dictCode="logistics_channel"></DictNameFC>}></LabelValue> */}
-            <LabelValue label="尾程物流" value={row.orderPackageList[0]?.shippingCarrier}></LabelValue>
+            <LabelValue
+              label="尾程物流"
+              value={
+                row.orderPackageList?.[0]?.shippingCarrier || row.logisticsOrderPackageList?.[0]?.shippingCarrier
+              }
+            >
+            </LabelValue>
             <LabelValue label="物流单号" value={<TrackingNumber orderItem={row}></TrackingNumber>}></LabelValue>
             {row.shippingTime ? <LabelValue label="出货时间" value={row.shippingTime}></LabelValue> : null}
             {/* <LabelValue

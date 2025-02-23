@@ -3,6 +3,7 @@ import {
   Button,
   Form,
   Message,
+  Radio,
   Space,
   Tabs,
   Tag,
@@ -20,7 +21,6 @@ import { orderAPI } from '@/api/client/order'
 import FilterForm from '@/components/FilterForm'
 
 import { useDictOptions } from '@/components/Selectors/DictSelector'
-import { useShopOptions } from '@/components/Selectors/ShopRadio'
 import { EmitTypes, bus, useEventBus } from '@/hooks/useEventBus'
 import OrderTable from '@/pages/admin/components/OrderTable'
 import RefreshButton from '@/pages/admin/components/OrderTable/RefreshButton'
@@ -47,6 +47,7 @@ export default (props: OrderPageProps) => {
   const [activeTab, setActiveTab] = useLocalStorageState<string>(location.pathname)
   const [countMap, setCountMap] = useState<Record<string, number>>()
   const [selectIds, setSelectIds] = useState([])
+  const [sortType, setSortType] = useState(1)
   const [formData, _setFormData, restFormData] = useResetState<any>({
     selectLogisticsOrderVO: {},
     selectOrderProductVO: {},
@@ -54,7 +55,7 @@ export default (props: OrderPageProps) => {
   })
   const [filterForm] = Form.useForm()
 
-  const shopOptions = useShopOptions()
+  // const shopOptions = useShopOptions()
 
   function setFormData(values) {
     _setFormData({
@@ -71,7 +72,10 @@ export default (props: OrderPageProps) => {
   }
 
   const { data, run, pagination, loading, refresh } = usePagination(
-    async (params) => {
+    async (params = {
+      pageSize: 10,
+      current: 1,
+    }) => {
       bus.emit(EmitTypes.clearSelectOrderList)
       if (!shrimpStatus?.length) {
         return null
@@ -82,6 +86,7 @@ export default (props: OrderPageProps) => {
           ...formData.selectOrderProductVO,
         },
         selectLogisticsOrderVO: {
+          sortType,
           ...omit(formData.selectLogisticsOrderVO, ['createdTimes', 'stockRemovalTimes', 'packTimes']),
           ...timeArrToObject(formData.selectLogisticsOrderVO.packTimes, 'packStartTime', 'packEndTime'),
           ...timeArrToObject(formData.selectLogisticsOrderVO.createdTimes, 'createStartTime', 'createEndTime'),
@@ -104,6 +109,7 @@ export default (props: OrderPageProps) => {
         pageSize: params?.pageSize || pagination.pageSize,
       }
       const res = await orderAPI.getList(body)
+      // 打包订单
       if (type === OrderPageType.PACK_ORDER) {
         orderAPI.getPackCount({
           ...omit(body, ['selectLogisticsOrderVO']),
@@ -132,7 +138,7 @@ export default (props: OrderPageProps) => {
       defaultPageSize: 10,
       defaultCurrent: 1,
       manual: false,
-      refreshDeps: [activeTab, shrimpStatus],
+      refreshDeps: [activeTab, shrimpStatus, sortType],
     },
   )
 
@@ -323,6 +329,29 @@ export default (props: OrderPageProps) => {
         className="mb-4"
         activeTab={activeTab}
         onChange={v => setActiveTab(v)}
+        extra={(
+          <>
+            <Radio.Group
+              type="button"
+              value={sortType}
+              onChange={(e) => {
+                setSortType(e)
+              }}
+              options={[
+                {
+                  label: '按打包时间排序',
+                  value: 0,
+                },
+                {
+                  label: '按紧急程度排序',
+                  value: 1,
+                },
+              ]}
+            >
+
+            </Radio.Group>
+          </>
+        )}
       >
         {shrimpStatus?.map((x, i) => (
           <Tabs.TabPane

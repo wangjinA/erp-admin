@@ -28,6 +28,7 @@ import { useColumns } from './hooks'
 
 import { orderAPI } from '@/api/client/order'
 import { APIListResponse } from '@/api/type'
+import CopyText from '@/components/CopyText'
 import FilterForm from '@/components/FilterForm'
 import GoodsInfo from '@/components/GoodsInfo'
 import DictSelector, {
@@ -60,7 +61,6 @@ export const valueClass = 'arco-descriptions-item-value !w-auto !pb-0'
 const OrderTable: React.FC<OrderTablePorps> = (props) => {
   const { className, style, dictCode, loading, run, data, pagination, onSelect } = props
 
-  const [record, setRecord] = useState(false)
   const [currentOrder, setCurrentOrder] = useState<any>()
   const [selectList, setSelectList] = useState<number[]>([])
 
@@ -180,7 +180,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
             {data?.list?.map((item) => {
               const orderStatusText = orderStatusOptions?.find(
                 oitem => oitem.value === item.orderStatus,
-              )?.label || '无'
+              )?.label || '待打包'
               return (
                 <div className="border" key={item.id}>
                   {
@@ -286,8 +286,8 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                         )
                       : null
                   }
-                  <header className="gap-12 pl-1 pr-4 py-2 border-b grid grid-cols-[340px_240px_600px_1fr]">
-                    <div className="flex">
+                  <header className="gap-12 pl-1 pr-4 py-2 border-b flex">
+                    <div className="flex w-[320px] items-baseline">
                       {onSelect
                         ? (
                             <Checkbox
@@ -314,7 +314,11 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                         </Tag>
                       </Tooltip>
                       <span className={labelClass}>订单编号：</span>
-                      <span className={classNames(valueClass, 'truncate')}>{item.shrimpOrderNo}</span>
+                      <span className={classNames(valueClass, 'truncate')}>
+                        <CopyText value={item.shrimpOrderNo}>
+                          {item.shrimpOrderNo}
+                        </CopyText>
+                      </span>
                     </div>
                     <OrderHeaderStatusInfo data={item}></OrderHeaderStatusInfo>
                   </header>
@@ -332,18 +336,26 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                     ))}
                   </main>
                   <footer className="flex border-t py-2 px-4">
-                    <div className="gap-12 grid grid-cols-[240px_280px]">
+                    <div className="gap-12 grid grid-cols-[200px_280px]">
                       <div>
-                        <span className={labelClass}>创建时间：</span>
-                        <span className={valueClass}>{item.createTime || '-'}</span>
+                        <span className={labelClass}>下单：</span>
+                        <span className={valueClass}>{item.orderTime || '-'}</span>
                       </div>
+                      {item.packTime
+                        ? (
+                            <div>
+                              <span className={labelClass}>提交：</span>
+                              <span className={valueClass}>{item.packTime || '-'}</span>
+                            </div>
+                          )
+                        : null}
                       {/* <div>
                     <span className={labelClass}>最后发货时间：</span>
                     <span className={valueClass}>{item.createTime || '-'}</span>
                   </div> */}
                     </div>
                     <div className="ml-auto flex">
-                      <span className={labelClass}>备注：</span>
+                      <span className={labelClass}>我的备注：</span>
                       <span className={valueClass}>
                         {(isClient() ? item.remark : item.entrepotRemark) || '暂无'}
                       </span>

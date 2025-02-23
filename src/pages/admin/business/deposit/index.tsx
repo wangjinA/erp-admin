@@ -1,6 +1,8 @@
-import { Alert, Spin } from '@arco-design/web-react'
+import { Alert, Link, Spin } from '@arco-design/web-react'
 import { useRequest } from 'ahooks'
 import React, { useState } from 'react'
+
+import { useHistory } from 'react-router-dom'
 
 import OrderTable from '../../components/OrderTable'
 import ScanCommon from '../ScanCommon'
@@ -111,10 +113,11 @@ function ShowAlert(props: {
 }
 
 export default () => {
-  const { run, data, loading } = useRequest(
+  const history = useHistory()
+  const { run, data, loading, error } = useRequest(
     async (params: ScanParams) => {
       const res = await showMessage(() => scanAPI.scanPut(params))
-      return res.data.data
+      return res.data?.data
     },
     {
       manual: true,
@@ -122,6 +125,7 @@ export default () => {
   )
 
   const [trackingNo, setTrackingNo] = useState<string>()
+  console.log(error, loading)
 
   return (
     <div className="bg-white py-6 px-4">
@@ -132,7 +136,7 @@ export default () => {
         }}
       >
       </ScanCommon>
-      {trackingNo
+      {trackingNo && !error
         ? (
             <Spin loading={loading} className="block text-center pt-10">
               {data
@@ -166,6 +170,32 @@ export default () => {
             </Spin>
           )
         : null}
+      {
+        error
+          ? (
+              <Alert
+                className="mt-4"
+                type="error"
+                title={(
+                  <div>
+                    {error.message}
+                    <Link
+                      className="ml-4"
+                      onClick={() => {
+                        history.push('/admin/entrepot/info')
+                      }}
+                    >
+                      {' '}
+                      仓库设置
+                    </Link>
+                  </div>
+                )}
+              >
+
+              </Alert>
+            )
+          : null
+      }
     </div>
   )
 }

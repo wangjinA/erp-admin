@@ -47,7 +47,7 @@ export function showMessage<T>(fn: () => Promise<AxiosResponse<APIResponse<T>>>,
       content: `${message}失败${msg ? `，${msg}` : ''}`,
       duration: 3000,
     })
-    throw error
+    throw new Error(msg)
   })
 }
 

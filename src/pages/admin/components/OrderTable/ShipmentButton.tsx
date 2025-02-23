@@ -1,4 +1,4 @@
-import { Button, Form, Modal } from '@arco-design/web-react'
+import { Button, Form, Message, Modal } from '@arco-design/web-react'
 import { ButtonProps } from '@arco-design/web-react/lib'
 import { useRequest } from 'ahooks'
 
@@ -65,7 +65,11 @@ export default (props: ShipmentButtonButtonProps) => {
     setInitialValues({
       senderRealName: senderList.find(item => item.isDefault)?.details || senderList[0]?.details || '',
     })
-    setFormItemConfigList(shippingRes?.data?.data?.infoNeeded?.dropoff?.map(o => InfoNeededMap[o]) || [])
+    const ls = shippingRes?.data?.data?.infoNeeded?.dropoff?.map(o => InfoNeededMap[o]) || []
+    setFormItemConfigList(ls)
+    if (!ls.length) {
+      Message.error('相关信息获取失败！')
+    }
   }, {
     manual: true,
   })
