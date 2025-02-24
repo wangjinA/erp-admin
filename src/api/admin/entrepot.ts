@@ -123,6 +123,12 @@ export const entrepotAPI = {
   addUser(body: { entrepotId: number, sysUserIdList: number }) {
     return baseAxios.post<APIResponse>('/api/setting/insert', body)
   },
+  getEntrepotParams(entrepotId: any) {
+    return baseAxios.get<APIResponse<EntrepotParams>>(`/api/entrepot/config/info/${entrepotId}`)
+  },
+  setEntrepotParams(params: EntrepotParams) {
+    return baseAxios.post<APIResponse>('/api/entrepot/config/insert/or/update', params)
+  },
 }
 
 // 仓位
@@ -206,6 +212,40 @@ export const costAPI = {
     return baseAxios.post<APIResponse<Partial<Cost>>>('/api/logistics/cost/setting/update/or/insert', body)
   },
 
+}
+export interface EntrepotParams {
+  airTransportSetup: string // 空运设置  字典值
+  autoApplyForm: number // 装袋自动申请面单
+  autoFeeDeduction: number // 待扣头程费用自动扣费
+  bagNumberPrintTemplate: string // 袋号打印模版  字典值
+  baggingWarningWeight: string // 装袋预警重量
+  createBy: number // 创建人
+  createTime: string // 创建时间
+  endOfShipment: string // 出货单末
+  entrepotId: number // 仓库id
+  expressSetting: string // 特快设置  字典值
+  id: number // 主键
+  nameDelivery: string // 拿货名称
+  placeOrderfeeDeduction: number // 打包下单扣进店费用
+  printOutSheet: number // 出库打印面单
+  quantityInStorage: number // 入库数量
+  recipientAddress: string // 收件地址
+  recipientName: string // 收件名称
+  recipientPhone: string // 收件手机号
+  scaleLink: number // 秤链接
+  senderAddress: string // 寄件地址
+  senderName: string // 寄件名称
+  senderPhone: string // 寄件手机号
+  shelfServiceCharge: number // 上架服务费
+  shippingNoteWatermarking: string // 出货单水印  字典值
+  shippingOrderPrintingTemplate: string // 出货单打印模版  字典值
+  shippingOrderSet: string // 出货单集
+  shippingOrderVirtualNumber: string // 出货单虚拟号码
+  updateBy: number // 更新人
+  updateTime: string // 更新时间
+  warehousePrintingTemplate: string // 仓库打印模版  字典值
+  whetherDivideSpace: number // 扫码入库是否分仓位
+  whetherPda: number // PDA上架是否入库
 }
 
 export interface CostSetting {
