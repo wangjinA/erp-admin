@@ -37,7 +37,7 @@ const i18n = {
     'workplace.vue': 'Vue Quick Start',
   },
   'zh-CN': {
-    'workplace.welcomeBack': '欢迎回来，',
+    'workplace.welcomeBack': '欢迎您，',
     'workplace.totalOnlyData': '待打包',
     'workplace.contentInMarket': '待入库',
     'workplace.comments': '部分入库',

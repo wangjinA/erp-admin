@@ -1,12 +1,14 @@
 import {
+  Button,
   Card,
   Divider,
   Grid,
+  Message,
   Skeleton,
   Typography,
 } from '@arco-design/web-react'
-import { IconCaretUp } from '@arco-design/web-react/icon'
 
+import { useRequest } from 'ahooks'
 import axios from 'axios'
 import React, { ReactNode, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
@@ -15,10 +17,12 @@ import IconCalendar from './assets/calendar.svg'
 import IconComments from './assets/comments.svg'
 import IconContent from './assets/content.svg'
 import IconIncrease from './assets/increase.svg'
+
 import locale from './locale'
 import styles from './style/overview.module.less'
 
-import LatestNews from '@/pages/admin/user/info/latest-news'
+import moneyIcon from '@/assets/money.png'
+
 import useI18n from '@/utils/useI18n'
 
 const { Row, Col } = Grid
@@ -41,7 +45,7 @@ function StatisticItem(props: StatisticItemType) {
           <div className={styles.title}>{title}</div>
           <div className={styles.count}>
             {count}
-            <span className={styles.unit}>{unit}</span>
+            {/* <span className={styles.unit}>{unit}</span> */}
           </div>
         </Skeleton>
       </div>
@@ -81,12 +85,42 @@ function Overview() {
     fetchData()
   }, [])
 
+  const countDataHandler = useRequest(() => {
+
+  }, {})
+
   return (
     <Card>
-      <Typography.Title heading={5}>
-        {t['workplace.welcomeBack']}
-        {userInfo.userName || userInfo.userLoginAccount}
-      </Typography.Title>
+      <div className="flex items-center mb-4">
+        <Typography.Title heading={5} className="!mb-0">
+          {t['workplace.welcomeBack']}
+          {userInfo.userName || userInfo.userLoginAccount}
+        </Typography.Title>
+        <div className="flex items-center ml-20 gap-2">
+          <img className="size-9 select-none" src={moneyIcon}></img>
+          <div>
+            {/* <span style={{ color: '#333' }}>账户余额：</span> */}
+            <Typography.Text>
+              账户余额：
+            </Typography.Text>
+            <span className="ml-1 font-bold text-orange-600">
+              <span className="text-xs">¥</span>
+              100000
+            </span>
+          </div>
+          <Button
+            type="primary"
+            status="success"
+            size="mini"
+            className="ml-2"
+            onClick={() => {
+              Message.warning('请联系客服进行缴费')
+            }}
+          >
+            立即缴费
+          </Button>
+        </div>
+      </div>
       <Divider />
       <Row>
         <Col flex={1}>
@@ -123,21 +157,11 @@ function Overview() {
           <StatisticItem
             icon={<IconIncrease />}
             title={t['workplace.growth']}
-            count={(
-              <span>
-                {data.growthRate}
-                {' '}
-                <IconCaretUp
-                  style={{ fontSize: 18, color: 'rgb(var(--green-6))' }}
-                />
-              </span>
-            )}
+            count={data.growthRate}
             loading={loading}
           />
         </Col>
       </Row>
-      <Divider />
-      <LatestNews></LatestNews>
     </Card>
   )
 }

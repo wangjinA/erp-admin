@@ -48,6 +48,11 @@ export const routes: IRoute[] = [
   //     },
   //   ]
   // },
+
+  {
+    name: 'client.datav',
+    key: 'client/datav',
+  },
   {
     name: 'client.order',
     key: 'client/order',
@@ -70,10 +75,6 @@ export const routes: IRoute[] = [
         key: 'client/order/create',
       },
     ],
-  },
-  {
-    name: 'client.datav',
-    key: 'client/datav',
   },
   {
     name: 'client.store',

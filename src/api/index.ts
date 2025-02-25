@@ -11,10 +11,13 @@ interface RequestEndTypeInfo {
   loginInfoKey: string
 }
 
+// 域名
+export const Domain = 'https://logistics.suyunbaoo.com'
+
 const AdminRequestEndInfo: RequestEndTypeInfo = {
   baseUrl: import.meta.env.DEV
     ? '/prod-admin'
-    : 'https://logistics.suyunbaoo.com/prod-admin',
+    : `${Domain}/prod-admin`,
   tokenKey: 'erp-admin-token',
   loginInfoKey: 'lg-admin-if',
 }
@@ -22,7 +25,7 @@ const AdminRequestEndInfo: RequestEndTypeInfo = {
 const ClientRequestEndInfo: RequestEndTypeInfo = {
   baseUrl: import.meta.env.DEV
     ? '/prod-user'
-    : 'https://logistics.suyunbaoo.com/prod-user',
+    : `${Domain}/prod-user`,
   tokenKey: 'erp-user-token',
   loginInfoKey: 'lg-client-if',
 }

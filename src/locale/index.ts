@@ -38,7 +38,7 @@ const i18n = {
     'client.express.rejection': '拒收管理',
     'client.express.returnManage': '退件管理',
 
-    'client.datav': '数据大盘',
+    'client.datav': '首页',
 
     'client.store': '店铺管理',
     'client.store.list': '店铺授权',

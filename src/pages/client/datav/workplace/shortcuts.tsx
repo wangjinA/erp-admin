@@ -1,11 +1,10 @@
 import {
   Card,
-  Divider,
-  Link,
   Typography,
 } from '@arco-design/web-react'
 import {
   IconArchive,
+  IconCommon,
   IconFile,
 } from '@arco-design/web-react/icon'
 import React from 'react'
@@ -29,7 +28,7 @@ function Shortcuts() {
     },
     {
       title: t['workplace.contentMgmt1'],
-      icon: <IconFile />,
+      icon: <IconCommon />,
       path: '/client/order/alreadyPacked',
     },
     {
@@ -62,7 +61,7 @@ function Shortcuts() {
         <Typography.Title heading={6}>
           {t['workplace.shortcuts']}
         </Typography.Title>
-        <Link>{t['workplace.seeMore']}</Link>
+        {/* <Link>{t['workplace.seeMore']}</Link> */}
       </div>
       <div className={styles.shortcuts}>
         {shortcuts.map(shortcut => (
@@ -76,7 +75,7 @@ function Shortcuts() {
           </div>
         ))}
       </div>
-      <Divider />
+      {/* <Divider /> */}
       {/* <div className={styles.recent}>{t['workplace.recent']}</div>
       <div className={styles.shortcuts}>
         {recentShortcuts.map(shortcut => (

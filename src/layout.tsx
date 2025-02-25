@@ -5,9 +5,9 @@ import {
   IconBook,
   IconCheckCircle,
   IconCommon,
-  IconDashboard,
   IconExclamationCircle,
   IconFile,
+  IconHome,
   IconList,
   IconMenuFold,
   IconMenuUnfold,
@@ -44,7 +44,7 @@ const Content = Layout.Content
 function getIconFromKey(key) {
   switch (key) {
     case 'client/datav':
-      return <IconDashboard className={styles.icon} />
+      return <IconHome className={styles.icon} />
     case 'admin/business':
       return <IconApps className={styles.icon} />
     case 'admin/order':
