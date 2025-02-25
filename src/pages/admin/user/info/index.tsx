@@ -8,7 +8,7 @@ import {
   Result,
   Skeleton,
 } from '@arco-design/web-react';
-import useLocale from '@/utils/useLocale';
+import useI18n from '@/utils/useI18n';
 import locale from './locale';
 import UserInfoHeader from './header';
 import styles from './style/index.module.less';
@@ -21,7 +21,7 @@ import LatestNews from './latest-news';
 const { Title } = Typography;
 const { Row, Col } = Grid;
 function UserInfo() {
-  const t = useLocale(locale);
+  const t = useI18n(locale);
   const userInfo = useSelector((state: any) => state.userInfo);
   const loading = useSelector((state: any) => state.userLoading);
 

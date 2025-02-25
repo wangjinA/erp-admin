@@ -30,15 +30,15 @@ const i18n = {
     'multiDAnalysis.card.title.todayActivity': '今日转赞评统计',
     'multiDAnalysis.card.title.contentTheme': '内容题材分布',
     'multiDAnalysis.card.title.contentSource': '内容发布来源',
-    'multiDAnalysis.dataOverview.contentProduction': '内容生产量',
-    'multiDAnalysis.dataOverview.contentClicks': '内容点击量',
-    'multiDAnalysis.dataOverview.contextExposure': '内容曝光量',
-    'multiDAnalysis.dataOverview.activeUsers': '活跃用户数',
+    'multiDAnalysis.dataOverview.contentProduction': '待打包',
+    'multiDAnalysis.dataOverview.contentClicks': '待入库',
+    'multiDAnalysis.dataOverview.contextExposure': '部分入库',
+    'multiDAnalysis.dataOverview.activeUsers': '待出库',
     'multiDAnalysis.cardList.userRetentionTrend': '用户留存趋势',
     'multiDAnalysis.cardList.userRetention': '用户留存量',
     'multiDAnalysis.cardList.contentConsumptionTrend': '内容消费趋势',
     'multiDAnalysis.cardList.contentConsumption': '内容消费量',
   },
-};
+}
 
-export default i18n;
+export default i18n

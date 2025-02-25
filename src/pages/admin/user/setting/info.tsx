@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import useLocale from '@/utils/useLocale';
+import useI18n from '@/utils/useI18n';
 import locale from './locale';
 import { GlobalContext } from '@/context';
 import {
@@ -15,7 +15,7 @@ import {
 import { useDispatch } from 'react-redux';
 
 function InfoForm({ loading }: { loading?: boolean }) {
-  const t = useLocale(locale);
+  const t = useI18n(locale);
   const [form] = Form.useForm();
   const { lang } = useContext(GlobalContext);
 

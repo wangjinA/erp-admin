@@ -8,7 +8,7 @@ import {
   Result,
   Tag,
 } from '@arco-design/web-react';
-import useLocale from '../../utils/useLocale';
+import useI18n from '../../utils/useI18n';
 import styles from './style/index.module.less';
 
 export interface MessageItemData {
@@ -38,7 +38,7 @@ interface MessageListProps {
 }
 
 function MessageList(props: MessageListProps) {
-  const t = useLocale();
+  const t = useI18n();
   const { data, unReadData } = props;
 
   function onItemClick(item: MessageItemData, index: number) {

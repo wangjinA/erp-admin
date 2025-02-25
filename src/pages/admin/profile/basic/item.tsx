@@ -1,5 +1,5 @@
 import React, { CSSProperties } from 'react';
-import useLocale from '@/utils/useLocale';
+import useI18n from '@/utils/useI18n';
 import { Descriptions, Card, Skeleton } from '@arco-design/web-react';
 import locale from './locale';
 
@@ -12,7 +12,7 @@ interface ProfileItemProps {
 }
 
 function ProfileItem(props: ProfileItemProps) {
-  const t = useLocale(locale);
+  const t = useI18n(locale);
   const { title, data, type, loading } = props;
   const blockDataList: {
     title: string;

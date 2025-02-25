@@ -1,45 +1,47 @@
 // 数据总览
-import React, { useEffect, useState, useMemo } from 'react';
 import {
   Card,
-  Typography,
   Grid,
-  Statistic,
   Skeleton,
-} from '@arco-design/web-react';
-import axios from 'axios';
+  Statistic,
+  Typography,
+} from '@arco-design/web-react'
 import {
-  IconUser,
   IconEdit,
   IconHeart,
   IconThumbUp,
-} from '@arco-design/web-react/icon';
-import useLocale from '@/utils/useLocale';
-import locale from './locale';
-import styles from './style/data-overview.module.less';
-import MultiAreaLine from '@/components/Chart/multi-area-line';
+  IconUser,
+} from '@arco-design/web-react/icon'
+import axios from 'axios'
+import React, { useEffect, useMemo, useState } from 'react'
 
-const { Title } = Typography;
+import locale from './locale'
+import styles from './style/data-overview.module.less'
+
+import MultiAreaLine from '@/components/Chart/multi-area-line'
+import useI18n from '@/utils/useI18n'
+
+const { Title } = Typography
 export default () => {
-  const t = useLocale(locale);
-  const [overview, setOverview] = useState([]);
-  const [lineData, setLineData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const t = useI18n(locale)
+  const [overview, setOverview] = useState([])
+  const [lineData, setLineData] = useState([])
+  const [loading, setLoading] = useState(false)
 
   const getData = async () => {
-    setLoading(true);
+    setLoading(true)
     const { data } = await axios
       .get('/api/multi-dimension/overview')
-      .finally(() => setLoading(false));
+      .finally(() => setLoading(false))
 
-    const { overviewData, chartData } = data;
-    setLineData(chartData);
-    setOverview(overviewData);
-  };
+    const { overviewData, chartData } = data
+    setLineData(chartData)
+    setOverview(overviewData)
+  }
 
   useEffect(() => {
-    getData();
-  }, []);
+    getData()
+  }, [])
 
   const formatedData = useMemo(() => {
     return [
@@ -71,8 +73,8 @@ export default () => {
         background: 'rgb(var(--purple-1))',
         color: 'rgb(var(--purple-6))',
       },
-    ];
-  }, [t, overview]);
+    ]
+  }, [t, overview])
 
   return (
     <Grid.Row justify="space-between">
@@ -87,15 +89,17 @@ export default () => {
               >
                 {item.icon}
               </div>
-              {loading ? (
-                <Skeleton
-                  animation
-                  text={{ rows: 1, className: styles['skeleton'] }}
-                  style={{ width: '120px' }}
-                />
-              ) : (
-                <Statistic value={item.value} groupSeparator />
-              )}
+              {loading
+                ? (
+                    <Skeleton
+                      animation
+                      text={{ rows: 1, className: styles.skeleton }}
+                      style={{ width: '120px' }}
+                    />
+                  )
+                : (
+                    <Statistic value={item.value} groupSeparator />
+                  )}
             </div>
           </Card>
         </Grid.Col>
@@ -104,5 +108,5 @@ export default () => {
         <MultiAreaLine data={lineData} loading={loading} />
       </Grid.Col>
     </Grid.Row>
-  );
-};
+  )
+}

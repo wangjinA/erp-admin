@@ -9,13 +9,13 @@ import {
   Button,
   Badge,
 } from '@arco-design/web-react';
-import useLocale from '@/utils/useLocale';
+import useI18n from '@/utils/useI18n';
 import locale from './locale';
 import axios from 'axios';
 import styles from './style/index.module.less';
 
 function Verified() {
-  const t = useLocale(locale);
+  const t = useI18n(locale);
   const [data, setData] = useState({
     accountType: '',
     isVerified: true,

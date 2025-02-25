@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Card, Grid, Space } from '@arco-design/web-react';
 import axios from 'axios';
-import useLocale from '@/utils/useLocale';
+import useI18n from '@/utils/useI18n';
 import HorizontalInterval from '@/components/Chart/horizontal-interval';
 import AreaPolar from '@/components/Chart/area-polar';
 import FactMultiPie from '@/components/Chart/fact-multi-pie';
@@ -15,7 +15,7 @@ const { Row, Col } = Grid;
 const { Title } = Typography;
 
 function DataAnalysis() {
-  const t = useLocale(locale);
+  const t = useI18n(locale);
   const [loading, setLoading] = useState(false);
   const [interval, setInterval] = useState([]);
   const [polarLoading, setPolarLoading] = useState(false);

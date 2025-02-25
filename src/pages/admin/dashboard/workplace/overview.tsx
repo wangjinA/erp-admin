@@ -12,7 +12,7 @@ import { IconCaretUp } from '@arco-design/web-react/icon';
 import OverviewAreaLine from '@/components/Chart/overview-area-line';
 import axios from 'axios';
 import locale from './locale';
-import useLocale from '@/utils/useLocale';
+import useI18n from '@/utils/useI18n';
 import styles from './style/overview.module.less';
 import IconCalendar from './assets/calendar.svg';
 import IconComments from './assets/comments.svg';
@@ -59,7 +59,7 @@ type DataType = {
 function Overview() {
   const [data, setData] = useState<DataType>({});
   const [loading, setLoading] = useState(true);
-  const t = useLocale(locale);
+  const t = useI18n(locale);
 
   const userInfo = useSelector((state: any) => state.userInfo || {});
 

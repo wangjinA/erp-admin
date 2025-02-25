@@ -11,7 +11,7 @@ import IconButton from '../NavBar/IconButton'
 import Block from './block'
 import ColorPanel from './color'
 
-import useLocale from '@/utils/useLocale'
+import useI18n from '@/utils/useI18n'
 
 interface SettingProps {
   trigger?: React.ReactElement
@@ -20,7 +20,7 @@ interface SettingProps {
 function Setting(props: SettingProps) {
   const { trigger } = props
   const [visible, setVisible] = useState(false)
-  const locale = useLocale()
+  const locale = useI18n()
   const settings = useSelector((state: GlobalState) => state.settings)
 
   function onCopySettings() {

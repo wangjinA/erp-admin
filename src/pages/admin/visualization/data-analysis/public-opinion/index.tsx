@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import PublicOpinionCard, { PublicOpinionCardProps } from './card';
 import axios from 'axios';
 import { Grid } from '@arco-design/web-react';
-import useLocale from '@/utils/useLocale';
+import useI18n from '@/utils/useI18n';
 import locale from '../locale';
 
 const { Row, Col } = Grid;
@@ -27,7 +27,7 @@ const cardInfo = [
 ];
 
 function PublicOpinion() {
-  const t = useLocale(locale);
+  const t = useI18n(locale);
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<PublicOpinionCardProps[]>(
     cardInfo.map((item) => ({

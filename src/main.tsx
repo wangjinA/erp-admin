@@ -114,6 +114,8 @@ function Index() {
       const res = await menuAPI.list()
       if (isSuccessCode(res.data.code)) {
         const list = listToTree(res.data.data.list)
+        console.log(list)
+
         store.dispatch({
           type: 'set-client-menu-list',
           payload: { clientMenuList: list },

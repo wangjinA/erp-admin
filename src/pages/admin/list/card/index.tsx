@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Tabs, Card, Input, Typography, Grid } from '@arco-design/web-react';
-import useLocale from '@/utils/useLocale';
+import useI18n from '@/utils/useI18n';
 import locale from './locale';
 import styles from './style/index.module.less';
 import CardBlock from './card-block';
@@ -14,7 +14,7 @@ const { Row, Col } = Grid;
 
 const defaultList = new Array(10).fill({});
 export default function ListCard() {
-  const t = useLocale(locale);
+  const t = useI18n(locale);
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState({
     quality: defaultList,

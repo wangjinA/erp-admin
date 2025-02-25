@@ -15,12 +15,12 @@ import {
   IconFile,
   IconDesktop,
 } from '@arco-design/web-react/icon';
-import useLocale from '../../utils/useLocale';
+import useI18n from '../../utils/useI18n';
 import MessageList, { MessageListType } from './list';
 import styles from './style/index.module.less';
 
 function DropContent() {
-  const t = useLocale();
+  const t = useI18n();
   const [loading, setLoading] = useState(false);
   const [groupData, setGroupData] = useState<{
     [key: string]: MessageListType;

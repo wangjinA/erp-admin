@@ -11,13 +11,13 @@ import { GlobalState } from '../../store'
 import styles from './style/color-panel.module.less'
 
 import { getEndType } from '@/routes'
-import useLocale from '@/utils/useLocale'
+import useI18n from '@/utils/useI18n'
 
 function ColorPanel() {
   const theme
     = document.querySelector('body').getAttribute('arco-theme') || 'light'
   const settings = useSelector((state: GlobalState) => state.settings)
-  const locale = useLocale()
+  const locale = useI18n()
   const themeColor = settings.themeColor
   const list = generate(themeColor, { list: true })
   const dispatch = useDispatch()

@@ -1,67 +1,85 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { List, Typography, Skeleton, Avatar } from '@arco-design/web-react';
-import styles from './style/index.module.less';
+import { Image, List, Skeleton, Typography } from '@arco-design/web-react'
+import { useRequest } from 'ahooks'
+import classNames from 'classnames'
+import React from 'react'
 
-const { Paragraph } = Typography;
+import styles from './style/index.module.less'
+
+import { entrepotAPI } from '@/api/admin/entrepot'
+import CopyText from '@/components/CopyText'
+import LabelValue from '@/components/LabelValue'
+
+const { Paragraph } = Typography
 interface INews {
-  title?: string;
-  description?: string;
-  avatar?: string;
+  title?: string
+  description?: string
+  avatar?: string
 }
 
 function LatestNews() {
-  const [data, setData] = useState<INews[]>(new Array(4).fill({}));
-  const [loading, setLoading] = useState(true);
-
-  const getData = async () => {
-    const { data } = await axios
-      .get('/api/user/latestNews')
-      .finally(() => setLoading(false));
-    setData(data);
-  };
-
-  useEffect(() => {
-    getData();
-  }, []);
+  const entrepotListHandler = useRequest(() => {
+    return entrepotAPI
+      .getList({
+        pageNum: 1,
+        pageSize: 100,
+        entrepotType: 1,
+      }).then(r => r.data.data.list)
+  })
 
   return (
     <List
-      dataSource={data}
+      dataSource={entrepotListHandler.data || []}
       render={(item, index) => {
         return (
-          <List.Item key={index} style={{ padding: '24px 20px 24px 0px' }}>
-            {loading ? (
-              <Skeleton
-                animation
-                text={{ width: ['60%', '90%'], rows: 2 }}
-                image={{ shape: 'circle' }}
-              />
-            ) : (
-              <List.Item.Meta
-                className={styles['list-meta-ellipsis']}
-                avatar={
-                  <Avatar size={48}>
-                    <img src={item.avatar} />
-                  </Avatar>
-                }
-                title={item.title}
-                description={
-                  <Paragraph
-                    ellipsis={{ rows: 1 }}
-                    type="secondary"
-                    style={{ fontSize: '12px', margin: 0 }}
-                  >
-                    {item.description}
-                  </Paragraph>
-                }
-              />
-            )}
+          <List.Item key={index} style={{ padding: '12px 20px 12px 0px' }}>
+            {entrepotListHandler.loading
+              ? (
+                  <Skeleton
+                    animation
+                    text={{ width: ['60%', '90%'], rows: 2 }}
+                    image={{ shape: 'circle' }}
+                  />
+                )
+              : (
+                  <div className="flex w-full items-center">
+                    <List.Item.Meta
+                      className={classNames(styles['list-meta-ellipsis'], 'flex-1')}
+                      title={(
+                        <span className="text-lg">
+                          {item.entrepotName}
+                        </span>
+                      )}
+                      description={(
+                      // <Paragraph
+                      //   ellipsis={{ rows: 1 }}
+                      //   type="secondary"
+                      //   style={{ fontSize: '12px', margin: 0 }}
+                      // >
+                      //   {item.description}
+                        <>
+                          <LabelValue label="收货人" value={item.consignee}></LabelValue>
+                          <LabelValue label="联系电话" value={item.telephone}></LabelValue>
+                          <LabelValue
+                            label="收货地址"
+                            value={(
+                              <CopyText value={item.deliveryAddress + item.detailedAddress}>
+                                {item.deliveryAddress + item.detailedAddress}
+                              </CopyText>
+                            )}
+                          >
+                          </LabelValue>
+                        </>
+                      // </Paragraph>
+                      )}
+                    />
+                    <Image width={100} height={100} src={item.qrCode}></Image>
+                  </div>
+                )}
           </List.Item>
-        );
+        )
       }}
     />
-  );
+  )
 }
 
-export default LatestNews;
+export default LatestNews

@@ -38,12 +38,12 @@ import { GlobalContext } from '@/context'
 import defaultLocale from '@/locale'
 import { generatePermission, isAdmin, toLoginPage } from '@/routes'
 import { GlobalState } from '@/store'
-import useLocale from '@/utils/useLocale'
+import useI18n from '@/utils/useI18n'
 
 import useStorage from '@/utils/useStorage'
 
 function Navbar({ show }: { show: boolean }) {
-  const t = useLocale()
+  const t = useI18n()
   const { userInfo, userLoading } = useSelector((state: GlobalState) => state)
   const dispatch = useDispatch()
 

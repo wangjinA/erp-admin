@@ -13,13 +13,13 @@ import {
   Switch,
   Result,
 } from '@arco-design/web-react';
-import useLocale from '@/utils/useLocale';
+import useI18n from '@/utils/useI18n';
 import locale from './locale';
 import styles from './style/index.module.less';
 
 const { Title, Paragraph } = Typography;
 function StepForm() {
-  const t = useLocale(locale);
+  const t = useI18n(locale);
   const [current, setCurrent] = useState(1);
 
   const [form] = Form.useForm();

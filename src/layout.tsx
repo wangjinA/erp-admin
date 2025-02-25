@@ -5,6 +5,7 @@ import {
   IconBook,
   IconCheckCircle,
   IconCommon,
+  IconDashboard,
   IconExclamationCircle,
   IconFile,
   IconList,
@@ -30,7 +31,7 @@ import styles from './style/layout.module.less'
 import getUrlParams from './utils/getUrlParams'
 import { isArray } from './utils/is'
 import lazyload from './utils/lazyload'
-import useLocale from './utils/useLocale'
+import useI18n from './utils/useI18n'
 
 import useRoute, { EndType, IRoute, getPathEndKey } from '@/routes'
 
@@ -42,6 +43,8 @@ const Content = Layout.Content
 
 function getIconFromKey(key) {
   switch (key) {
+    case 'client/datav':
+      return <IconDashboard className={styles.icon} />
     case 'admin/business':
       return <IconApps className={styles.icon} />
     case 'admin/order':
@@ -115,7 +118,7 @@ function PageLayout() {
   const urlParams = getUrlParams()
   const history = useHistory()
   const pathname = history.location.pathname
-  const locale = useLocale()
+  const locale = useI18n()
   const { settings, userLoading } = useSelector(
     (state: GlobalState) => state,
   )

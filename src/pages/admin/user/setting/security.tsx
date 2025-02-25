@@ -2,12 +2,12 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import cs from 'classnames';
 import { Button } from '@arco-design/web-react';
-import useLocale from '@/utils/useLocale';
+import useI18n from '@/utils/useI18n';
 import locale from './locale';
 import styles from './style/index.module.less';
 
 function Security() {
-  const t = useLocale(locale);
+  const t = useI18n(locale);
 
   const userInfo = useSelector((state: any) => {
     return state.userInfo || {};

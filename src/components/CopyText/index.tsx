@@ -7,6 +7,9 @@ function CopyText({ children, value, gap = 4 }) {
   return (
     <span>
       {children}
+      {/* <span
+        className="cursor-pointer"
+      > */}
       <IconCopy
         style={{ cursor: 'pointer', color: 'rgb(22, 93, 255)', marginLeft: gap }}
         onClick={() => {
@@ -15,6 +18,7 @@ function CopyText({ children, value, gap = 4 }) {
         }}
       >
       </IconCopy>
+      {/* </span> */}
     </span>
   )
 }

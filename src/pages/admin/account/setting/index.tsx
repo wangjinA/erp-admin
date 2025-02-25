@@ -2,7 +2,7 @@ import { Card, Tabs } from '@arco-design/web-react'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 
-import useLocale from '@/utils/useLocale'
+import useI18n from '@/utils/useI18n'
 
 import InfoHeader from './header'
 import InfoForm from './info'
@@ -12,7 +12,7 @@ import './mock'
 import { GlobalState } from '@/store'
 
 function UserInfo() {
-  const t = useLocale(locale)
+  const t = useI18n(locale)
   const userInfo = useSelector((state: GlobalState) => state.userInfo)
   const loading = useSelector((state: GlobalState) => state.userLoading)
   const editPassword = useSelector((state: GlobalState) => state.editPassword)

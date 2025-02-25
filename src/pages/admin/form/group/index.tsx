@@ -12,13 +12,13 @@ import {
 } from '@arco-design/web-react';
 import { FormInstance } from '@arco-design/web-react/es/Form';
 import axios from 'axios';
-import useLocale from '@/utils/useLocale';
+import useI18n from '@/utils/useI18n';
 import locale from './locale';
 import styles from './style/index.module.less';
 import './mock';
 
 function GroupForm() {
-  const t = useLocale(locale);
+  const t = useI18n(locale);
   const formRef = useRef<FormInstance>();
   const [loading, setLoading] = useState(false);
 

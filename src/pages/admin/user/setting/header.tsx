@@ -9,7 +9,7 @@ import {
   Link,
 } from '@arco-design/web-react';
 import { IconCamera, IconPlus } from '@arco-design/web-react/icon';
-import useLocale from '@/utils/useLocale';
+import useI18n from '@/utils/useI18n';
 import locale from './locale';
 import styles from './style/header.module.less';
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,7 +21,7 @@ export default function Info({
   userInfo: any;
   loading: boolean;
 }) {
-  const t = useLocale(locale);
+  const t = useI18n(locale);
 
   const [avatar, setAvatar] = useState('');
 

@@ -22,7 +22,7 @@ import {
   IconMore,
 } from '@arco-design/web-react/icon';
 import PermissionWrapper from '@/components/PermissionWrapper';
-import useLocale from '@/utils/useLocale';
+import useI18n from '@/utils/useI18n';
 import locale from './locale';
 import { QualityInspection, BasicCard } from './interface';
 import styles from './style/index.module.less';
@@ -49,7 +49,7 @@ function CardBlock(props: CardBlockType) {
   const [status, setStatus] = useState(card.status);
   const [loading, setLoading] = useState(props.loading);
 
-  const t = useLocale(locale);
+  const t = useI18n(locale);
   const changeStatus = async () => {
     setLoading(true);
     await new Promise((resolve) =>

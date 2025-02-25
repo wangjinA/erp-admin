@@ -72,6 +72,10 @@ export const routes: IRoute[] = [
     ],
   },
   {
+    name: 'client.datav',
+    key: 'client/datav',
+  },
+  {
     name: 'client.store',
     key: 'client/store',
     children: [

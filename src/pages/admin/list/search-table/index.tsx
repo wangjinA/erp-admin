@@ -10,7 +10,7 @@ import {
 import PermissionWrapper from '@/components/PermissionWrapper';
 import { IconDownload, IconPlus } from '@arco-design/web-react/icon';
 import axios from 'axios';
-import useLocale from '@/utils/useLocale';
+import useI18n from '@/utils/useI18n';
 import SearchForm from './form';
 import locale from './locale';
 import styles from './style/index.module.less';
@@ -23,7 +23,7 @@ export const FilterType = ['规则筛选', '人工'];
 export const Status = ['已上线', '未上线'];
 
 function SearchTable() {
-  const t = useLocale(locale);
+  const t = useI18n(locale);
 
   const tableCallback = async (record, type) => {
     console.log(record, type);

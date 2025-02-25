@@ -10,7 +10,7 @@ import {
 } from '@arco-design/web-react';
 import { GlobalContext } from '@/context';
 import locale from './locale';
-import useLocale from '@/utils/useLocale';
+import useI18n from '@/utils/useI18n';
 import { IconRefresh, IconSearch } from '@arco-design/web-react/icon';
 import { ContentType, FilterType, Status } from './constants';
 import styles from './style/index.module.less';
@@ -23,7 +23,7 @@ function SearchForm(props: {
 }) {
   const { lang } = useContext(GlobalContext);
 
-  const t = useLocale(locale);
+  const t = useI18n(locale);
   const [form] = useForm();
 
   const handleSubmit = () => {

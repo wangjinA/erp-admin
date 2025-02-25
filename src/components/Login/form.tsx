@@ -35,7 +35,7 @@ import {
   isClient,
 } from '@/routes'
 import { showMessage } from '@/utils'
-import useLocale from '@/utils/useLocale'
+import useI18n from '@/utils/useI18n'
 import useStorage from '@/utils/useStorage'
 
 export default function LoginForm() {
@@ -48,7 +48,7 @@ export default function LoginForm() {
   const dispatch = useDispatch()
   const [value, setValue] = useLocalStorageState('userInfo')
   const [randomStr, setRandomStr] = useState(random(1, 99999))
-  const t = useLocale(locale)
+  const t = useI18n(locale)
 
   const [rememberPassword, setRememberPassword] = useState(!!loginParams)
 

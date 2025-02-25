@@ -1,12 +1,12 @@
 import React from 'react';
 import { Typography, Result, Button, Link } from '@arco-design/web-react';
 import { IconLink } from '@arco-design/web-react/icon';
-import useLocale from '@/utils/useLocale';
+import useI18n from '@/utils/useI18n';
 import locale from './locale';
 import styles from './style/index.module.less';
 
 function Success() {
-  const t = useLocale(locale);
+  const t = useI18n(locale);
 
   return (
     <div>

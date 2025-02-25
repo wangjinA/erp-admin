@@ -13,12 +13,12 @@ import {
   IconMobile,
   IconFire,
 } from '@arco-design/web-react/icon';
-import useLocale from '@/utils/useLocale';
+import useI18n from '@/utils/useI18n';
 import locale from './locale';
 import styles from './style/shortcuts.module.less';
 
 function Shortcuts() {
-  const t = useLocale(locale);
+  const t = useI18n(locale);
 
   const shortcuts = [
     {

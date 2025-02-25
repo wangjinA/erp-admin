@@ -30,7 +30,7 @@ import PopconfirmDelete from '@/components/PopconfirmDelete'
 import { HideClass } from '@/constants/style'
 import { Order, OrderProductList } from '@/types/order'
 import { showMessage } from '@/utils'
-import useLocale from '@/utils/useLocale'
+import useI18n from '@/utils/useI18n'
 
 export default () => {
   const [formData, setFormData] = useLocalStorageState<Partial<Order>>(
@@ -61,7 +61,7 @@ export default () => {
     })
   }, 300)
 
-  const t = useLocale(locale)
+  const t = useI18n(locale)
   const resetCreateForm = () => {
     ref1.clearFields()
     ref3.clearFields()

@@ -4,12 +4,12 @@ import React from 'react'
 import locale from './locale'
 import styles from './style/index.module.less'
 
-import useLocale from '@/utils/useLocale'
+import useI18n from '@/utils/useI18n'
 
 const Step = Steps.Step
 
 function Success() {
-  const t = useLocale(locale)
+  const t = useI18n(locale)
 
   return (
     <div>
