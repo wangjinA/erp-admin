@@ -145,42 +145,10 @@ function Navbar({ show }: { show: boolean }) {
       <div className={styles.left}>
         <div className={styles.logo}>
           <Logo />
-          <div className={styles['logo-name']}>ERP 系统</div>
+          <div className={styles['logo-name']}>速运宝 - 工具栏</div>
         </div>
       </div>
       <ul className={styles.right}>
-        <li>
-          <Input.Search
-            className={styles.round}
-            placeholder={t['navbar.search.placeholder']}
-          />
-        </li>
-        <li>
-          <Select
-            triggerElement={<IconButton icon={<IconLanguage />} />}
-            options={[
-              { label: '中文', value: 'zh-CN' },
-              { label: 'English', value: 'en-US' },
-            ]}
-            value={lang}
-            triggerProps={{
-              autoAlignPopupWidth: false,
-              autoAlignPopupMinWidth: true,
-              position: 'br',
-            }}
-            trigger="hover"
-            onChange={(value) => {
-              setLang(value);
-              const nextLang = defaultLocale[value];
-              Message.info(`${nextLang['message.lang.tips']}${value}`);
-            }}
-          />
-        </li>
-        <li>
-          <MessageBox>
-            <IconButton icon={<IconNotification />} />
-          </MessageBox>
-        </li>
         <li>
           <Tooltip
             content={
@@ -195,20 +163,6 @@ function Navbar({ show }: { show: boolean }) {
             />
           </Tooltip>
         </li>
-        <Settings />
-        {userInfo && (
-          <li>
-            <Dropdown droplist={droplist} position="br" disabled={userLoading}>
-              <Avatar size={32} style={{ cursor: 'pointer' }}>
-                {userLoading ? (
-                  <IconLoading />
-                ) : (
-                  <img alt="avatar" src={userInfo.avatar} />
-                )}
-              </Avatar>
-            </Dropdown>
-          </li>
-        )}
       </ul>
     </div>
   );

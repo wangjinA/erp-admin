@@ -295,7 +295,7 @@ function PageLayout() {
                 </Switch>
               </Content>
             </div>
-            {showFooter && <Footer />}
+            {/* {showFooter && <Footer />} */}
           </Layout>
         </Layout>
       )}

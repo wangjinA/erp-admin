@@ -59,7 +59,7 @@ const i18n = {
     'navbar.search.placeholder': 'Please search',
   },
   'zh-CN': {
-    'menu.business': '业务操作',
+    'menu.tool-lutian-excel': '文档转换',
     'menu.business.deposit': '扫码入库',
     'menu.business.delivery': '扫码出库',
     'menu.business.signfor': '扫码签收',
@@ -73,26 +73,22 @@ const i18n = {
     'menu.order.returnOrder': '海外仓退件订单',
     'menu.order.deliveryHistory': '订单出库记录',
 
-
     'menu.stash': '仓库管理',
     'menu.stash.info': '仓库信息',
     'menu.stash.list': '仓库列表',
     'menu.stash.setting': '仓库设置',
-    
+
     'menu.account': '账户管理',
     'menu.account.users': '用户管理',
     'menu.account.member': '会员管理',
     'menu.account.setting': '账户设置',
     'menu.account.permission': '权限管理',
-    
+
     'menu.express': '快递管理',
     'menu.express.signforHistory': '签收记录',
     'menu.express.abnormal': '问题包裹',
     'menu.express.rejection': '拒收管理',
     'menu.express.returnManage': '退件管理',
-    
-
-    
 
     'menu.dashboard': '仪表盘',
     'menu.list': '列表页',

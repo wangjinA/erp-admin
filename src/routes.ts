@@ -14,256 +14,38 @@ export type IRoute = AuthParams & {
 
 export const routes: IRoute[] = [
   {
-    name: 'menu.business',
+    name: 'menu.tool-lutian-excel',
     key: 'business',
-    children: [
-      {
-        name: 'menu.business.deposit',
-        key: 'business/deposit',
-      },
-      {
-        name: 'menu.business.delivery',
-        key: 'business/delivery',
-      },
-      {
-        name: 'menu.business.signfor',
-        key: 'business/signfor',
-      },
-      {
-        name: 'menu.business.warehousingAndArchiving',
-        key: 'business/warehousingAndArchiving',
-      },
-      {
-        name: 'menu.business.scanHistory',
-        key: 'business/scanHistory',
-      },
-      {
-        name: 'menu.business.returnToShelves',
-        key: 'business/returnToShelves',
-      },
-      {
-        name: 'menu.business.retention',
-        key: 'business/retention',
-      },
-    ],
-  },
-  {
-    name: 'menu.order',
-    key: 'order',
-    children: [
-      {
-        name: 'menu.order.all',
-        key: 'order/all',
-      },
-      {
-        name: 'menu.order.returnOrder',
-        key: 'order/returnOrder',
-      },
-      {
-        name: 'menu.order.deliveryHistory',
-        key: 'order/deliveryHistory',
-      },
-    ],
-  },
-  {
-    name: 'menu.stash',
-    key: 'stash',
-    children: [
-      {
-        name: 'menu.stash.info',
-        key: 'stash/info',
-      },
-      {
-        name: 'menu.stash.list',
-        key: 'stash/list',
-      },
-      {
-        name: 'menu.stash.setting',
-        key: 'stash/setting',
-      },
-    ],
-  },
-  {
-    name: 'menu.account',
-    key: 'account',
-    children: [
-      {
-        name: 'menu.account.users',
-        key: 'account/users',
-      },
-      {
-        name: 'menu.account.member',
-        key: 'account/member',
-      },
-      {
-        name: 'menu.account.setting',
-        key: 'account/setting',
-      },
-      {
-        name: 'menu.account.permission',
-        key: 'account/permission',
-      },
-    ],
-  },
-  {
-    name: 'menu.express',
-    key: 'express',
-    children: [
-      {
-        name: 'menu.express.signforHistory',
-        key: 'express/signforHistory',
-      },
-      {
-        name: 'menu.express.abnormal',
-        key: 'express/abnormal',
-      },
-      {
-        name: 'menu.express.rejection',
-        key: 'express/rejection',
-      },
-      {
-        name: 'menu.express.returnManage',
-        key: 'express/returnManage',
-      },
-    ],
-  },
-  {
-    name: 'menu.dashboard',
-    key: 'dashboard',
-    children: [
-      {
-        name: 'menu.dashboard.workplace',
-        key: 'dashboard/workplace',
-      },
-      {
-        name: 'menu.dashboard.monitor',
-        key: 'dashboard/monitor',
-        requiredPermissions: [
-          { resource: 'menu.dashboard.monitor', actions: ['write'] },
-        ],
-      },
-    ],
-  },
-  {
-    name: 'menu.visualization',
-    key: 'visualization',
-    children: [
-      {
-        name: 'menu.visualization.dataAnalysis',
-        key: 'visualization/data-analysis',
-        requiredPermissions: [
-          { resource: 'menu.visualization.dataAnalysis', actions: ['read'] },
-        ],
-      },
-      {
-        name: 'menu.visualization.multiDimensionDataAnalysis',
-        key: 'visualization/multi-dimension-data-analysis',
-        requiredPermissions: [
-          {
-            resource: 'menu.visualization.dataAnalysis',
-            actions: ['read', 'write'],
-          },
-          {
-            resource: 'menu.visualization.multiDimensionDataAnalysis',
-            actions: ['write'],
-          },
-        ],
-        oneOfPerm: true,
-      },
-    ],
-  },
-  {
-    name: 'menu.list',
-    key: 'list',
-    children: [
-      {
-        name: 'menu.list.searchTable',
-        key: 'list/search-table',
-      },
-      {
-        name: 'menu.list.cardList',
-        key: 'list/card',
-      },
-    ],
-  },
-  {
-    name: 'menu.form',
-    key: 'form',
-    children: [
-      {
-        name: 'menu.form.group',
-        key: 'form/group',
-        requiredPermissions: [
-          { resource: 'menu.form.group', actions: ['read', 'write'] },
-        ],
-      },
-      {
-        name: 'menu.form.step',
-        key: 'form/step',
-        requiredPermissions: [
-          { resource: 'menu.form.step', actions: ['read'] },
-        ],
-      },
-    ],
-  },
-  {
-    name: 'menu.profile',
-    key: 'profile',
-    children: [
-      {
-        name: 'menu.profile.basic',
-        key: 'profile/basic',
-      },
-    ],
-  },
-
-  {
-    name: 'menu.result',
-    key: 'result',
-    children: [
-      {
-        name: 'menu.result.success',
-        key: 'result/success',
-        breadcrumb: false,
-      },
-      {
-        name: 'menu.result.error',
-        key: 'result/error',
-        breadcrumb: false,
-      },
-    ],
-  },
-  {
-    name: 'menu.exception',
-    key: 'exception',
-    children: [
-      {
-        name: 'menu.exception.403',
-        key: 'exception/403',
-      },
-      {
-        name: 'menu.exception.404',
-        key: 'exception/404',
-      },
-      {
-        name: 'menu.exception.500',
-        key: 'exception/500',
-      },
-    ],
-  },
-  {
-    name: 'menu.user',
-    key: 'user',
-    children: [
-      {
-        name: 'menu.user.info',
-        key: 'user/info',
-      },
-      {
-        name: 'menu.user.setting',
-        key: 'user/setting',
-      },
-    ],
+    // children: [
+    //   {
+    //     name: 'menu.business.deposit',
+    //     key: 'business/deposit',
+    //   },
+    //   {
+    //     name: 'menu.business.delivery',
+    //     key: 'business/delivery',
+    //   },
+    //   {
+    //     name: 'menu.business.signfor',
+    //     key: 'business/signfor',
+    //   },
+    //   {
+    //     name: 'menu.business.warehousingAndArchiving',
+    //     key: 'business/warehousingAndArchiving',
+    //   },
+    //   {
+    //     name: 'menu.business.scanHistory',
+    //     key: 'business/scanHistory',
+    //   },
+    //   {
+    //     name: 'menu.business.returnToShelves',
+    //     key: 'business/returnToShelves',
+    //   },
+    //   {
+    //     name: 'menu.business.retention',
+    //     key: 'business/retention',
+    //   },
+    // ],
   },
 ];
 

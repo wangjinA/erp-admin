@@ -10,7 +10,6 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import rootReducer from './store';
 import PageLayout from './layout';
 import { GlobalContext } from './context';
-import Login from './pages/login';
 import checkLogin from './utils/checkLogin';
 import changeTheme from './utils/changeTheme';
 import useStorage from './utils/useStorage';
@@ -34,45 +33,6 @@ function Index() {
         return zhCN;
     }
   }
-
-  function fetchUserInfo() {
-    const userRole = window.localStorage.getItem('userRole') || 'admin';
-    const userInfo = {
-      name: 'admin',
-      avatar:
-        'https://lf1-xgcdn-tos.pstatp.com/obj/vcloud/vadmin/start.8e0e4855ee346a46ccff8ff3e24db27b.png',
-      email: 'wangliqun@email.com',
-      job: 'frontend',
-      jobName: '前端开发工程师',
-      organization: 'Frontend',
-      organizationName: '前端',
-      location: 'beijing',
-      locationName: '北京',
-      introduction: '王力群并非是一个真实存在的人。',
-      personalWebsite: 'https://www.arco.design',
-      verified: true,
-      phoneNumber: /177[*]{6}[0-9]{2}/,
-      accountId: /[a-z]{4}[-][0-9]{8}/,
-      registrationTime: Mock.Random.datetime('yyyy-MM-dd HH:mm:ss'),
-      permissions: generatePermission(userRole),
-    };
-    store.dispatch({
-      type: 'update-userInfo',
-      payload: { userLoading: true },
-    });
-    store.dispatch({
-      type: 'update-userInfo',
-      payload: { userInfo, userLoading: false },
-    });
-  }
-
-  useEffect(() => {
-    if (checkLogin()) {
-      fetchUserInfo();
-    } else if (window.location.pathname.replace(/\//g, '') !== 'login') {
-      window.location.pathname = '/login';
-    }
-  }, []);
 
   useEffect(() => {
     changeTheme(theme);
@@ -104,7 +64,7 @@ function Index() {
         <Provider store={store}>
           <GlobalContext.Provider value={contextValue}>
             <Switch>
-              <Route path="/login" component={Login} />
+              {/* <Route path="/login" component={Login} /> */}
               <Route path="/" component={PageLayout} />
             </Switch>
           </GlobalContext.Provider>
