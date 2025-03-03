@@ -14,6 +14,18 @@ export const userAPI = {
     )
   },
   /**
+   * 修改密码 发送验证码
+   */
+  forgotSendCode(params: { tenantryPhone: string }) {
+    return baseAxios.get<APIResponse<any>>(
+      '/api/tenantry/forgot/password/short/letter',
+      {
+        params,
+      },
+    )
+  },
+
+  /**
    * 注册
    */
   register(body: {

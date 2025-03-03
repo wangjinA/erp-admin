@@ -7,8 +7,6 @@ import useCode from './codeHook'
 import { userAPI } from '@/api/client/user'
 import { showMessage } from '@/utils'
 
-const TIME = 60
-
 export default (props: { form: FormInstance }) => {
   const { form } = props
 
@@ -20,7 +18,7 @@ export default (props: { form: FormInstance }) => {
       Message.warning('请输入手机号')
       return
     }
-    return showMessage(() => userAPI.sendCode({
+    return showMessage(() => userAPI.forgotSendCode({
       tenantryPhone,
     }), '发送').then(() => {
       resetTime()

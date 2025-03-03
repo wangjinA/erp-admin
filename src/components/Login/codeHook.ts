@@ -2,7 +2,9 @@ import { useLocalStorageState } from 'ahooks'
 import dayjs from 'dayjs'
 import { useEffect, useMemo, useState } from 'react'
 
-const TIME = 10
+import { isProd } from '@/utils'
+
+const TIME = isProd() ? 60 : 10
 
 function useCode() {
   const [codeTime, setCodeTime] = useLocalStorageState('registerCodeTime', {
