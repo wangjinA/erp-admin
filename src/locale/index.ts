@@ -59,7 +59,7 @@ const i18n = {
     'navbar.search.placeholder': 'Please search',
   },
   'zh-CN': {
-    'menu.tool-lutian-excel': '文档转换',
+    'menu.tool-lutian-excel': '数据转换',
     'menu.business.deposit': '扫码入库',
     'menu.business.delivery': '扫码出库',
     'menu.business.signfor': '扫码签收',

@@ -1,6 +1,6 @@
 import React from 'react';
 import { exportToExcel, getExcleData } from '@/utils';
-import { Button, Form, Upload } from '@arco-design/web-react';
+import { Button, Form, Upload, Input } from '@arco-design/web-react';
 import dayjs from 'dayjs';
 
 const acHeaders = [
@@ -49,8 +49,8 @@ const acHeaders = [
 export default () => {
   const [form] = Form.useForm();
   async function submit() {
-    const formData = await form.validate();
-    const file = formData.file[0].originFile;
+    const { files, baseurl } = await form.validate();
+    const file = files[0].originFile;
     console.log(file);
     const fileName = file.name;
     const newName = fileName.split('.')[0] + '_new';
@@ -60,9 +60,9 @@ export default () => {
     const list = [];
     if (res[0].some((i) => ['起標價'].includes(i))) {
       list.push(acHeaders);
-      res.slice(1).forEach((olist) => {
-        const skuInfos = JSON.parse(olist[26]);
-        const skus = Object.entries<{
+      res.slice(1).filter(olist => olist.some(Boolean)).forEach((olist) => {
+        const skuInfos = olist[26] ? JSON.parse(olist[26]) : [];
+        const skus = skuInfos[1] ? Object.entries<{
           specId: string;
           specAttrs: string;
           price: string;
@@ -70,42 +70,67 @@ export default () => {
           skuId: number;
           isPromotionSku: boolean;
           originalQty: string;
-        }>(skuInfos[1]);
+        }>(skuInfos[1]).slice(0, 30) : [];
         const imgs: string[] = olist[11].split('|');
         const htmlPath = olist[2];
+        const title = olist[1].slice(0, 60);
 
         const skuJSON = JSON.stringify({
           SkuProps: [
             {
+              "Name": "skuId",
+              "DisplayName": "规格编号",
+              "Pid": "skuId20200225",
+              "PropValues": null,
+              "ValueType": "System.String",
+              "ColIndex": 0
+            },
+            {
+              "Name": "quantity",
+              "DisplayName": "库存",
+              "Pid": "quantityd20200225",
+              "PropValues": null,
+              "ValueType": "System.Decimal",
+              "ColIndex": 1
+            },
+            {
+              "Name": "price",
+              "DisplayName": "价格",
+              "Pid": "price20200225",
+              "PropValues": null,
+              "ValueType": "System.Decimal",
+              "ColIndex": 2
+            },
+            {
               Name: 'spec',
               DisplayName: '规格',
               Pid: 'spec20200225',
-              PropValues: skus.map(([key, value]) => ({
+              PropValues: skus.map(([key, value], i) => ({
                 GroupName: '规格',
                 ImageInfo: null,
-                Name: key,
-                OriName: key,
-                Vid: value.skuId,
+                Name: key.slice(0, 20),
+                OriName: key.slice(0, 20),
+                Vid: value.skuId || `20200225${i + 1}`,
                 Pid: 'spec20200225',
               })),
               ValueType: 'Models.Common.SkuPropValue',
               ColIndex: 3,
             },
           ],
-          SkuValues: skus.map(([key, value]) => ({
-            skuId: value.skuId,
+          SkuValues: skus.map(([, value], i) => ({
+            skuId: value.skuId || `20200225${i + 1}`,
             quantity: value.originalQty ? Number(value.originalQty) : 0,
             price: value.price,
-            spec: value.skuId,
+            spec: value.skuId || `20200225${i + 1}`,
           })),
         });
 
         list.push([
-          olist[29],
-          olist[1],
+          olist[0],
+          title,
           '',
-          imgs[0], // 待完善路径
-          olist[4],
+          baseurl + imgs[0], // 待完善路径
+          olist[4] || olist[3] || 0,
           '',
           '',
           '',
@@ -114,13 +139,13 @@ export default () => {
           olist[14],
           '', // CategoryName
           '',
-          olist[1],
-          olist[10],
+          title,
+          olist[10] || '台北市',
           '',
           olist[29],
           0,
           '',
-          olist[7],
+          olist[7] || 999,
           '',
           dayjs().format('YYYY/MM/DD HH:mm:ss'), // 2025/2/18 20:22:11
           '', // GroupCategoryId
@@ -132,20 +157,20 @@ export default () => {
             imgs.map((img) => ({
               Id: img.split('\\').pop().split('.')[0],
               OriUri:
-                'https://gcs.rimg.com.tw/g1/9/6f/99/22432263445401_696.jpg', // 待完善，不知道这个图片地址是否重要
+                '', // 待完善，不知道这个图片地址是否重要
               // "CreateTime": "2025-02-18T20:21:31.5482503+08:00",
               CreateTime: dayjs().format('YYYY-MM-DDTHH:mm:ss'),
               Name: 'ruten',
               Suffix: null,
               // "AbsolutePath": "E:\\pchrome\\Spiders\\RutenSpider\\spiderImages\\ruten\\20250218\\7823c06b-8fc5-46dc-aa9e-63a96c434875",
-              AbsolutePath: img, // 待完善全部路径
-              RelativePath: img,
+              AbsolutePath: baseurl + img, // 待完善全部路径
+              RelativePath: baseurl+img,
             }))
           ),
           JSON.stringify({
             ImageUriList: [],
             DescHtml: {
-              Id: htmlPath.split('-')[1].split('.')[0],
+              Id: htmlPath.split('-').pop().split('\\').pop().split('.')[0],
               OriUri:
                 'https://www.ruten.com.tw/item/goods_comments.php?id=22432291491885&k=3912ff49&o=1723209788',
               // "CreateTime": "2025-02-18T20:21:54.1575203+08:00",
@@ -176,9 +201,13 @@ export default () => {
     exportToExcel(list, newName);
   }
   return (
-    <div className="bg-white p-4">
-      <div className="">
-        <Form form={form}>
+    <div className="p-4" style={{
+      background: 'var(--color-menu-light-bg)',
+    }}>
+      <div className="w-1/2 ml-[100px] py-10">
+        <Form form={form} initialValues={{
+          // baseurl: 'N:\\爱够不够采集\\精靈測試導出\\卡夫特'
+        }}>
           <Form.Item
             rules={[
               {
@@ -187,9 +216,21 @@ export default () => {
               },
             ]}
             label="上传文件"
-            field="file"
+            field="files"
           >
-            <Upload></Upload>
+            <Upload drag></Upload>
+          </Form.Item>
+          <Form.Item
+            rules={[
+              {
+                required: true,
+                message: '请输入文件路径',
+              },
+            ]}
+            label="文件路径"
+            field="baseurl"
+          >
+            <Input placeholder='请输入'></Input>
           </Form.Item>
           <Form.Item label=" " field="">
             <Button

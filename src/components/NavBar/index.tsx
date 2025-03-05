@@ -145,7 +145,7 @@ function Navbar({ show }: { show: boolean }) {
       <div className={styles.left}>
         <div className={styles.logo}>
           <Logo />
-          <div className={styles['logo-name']}>速运宝 - 工具栏</div>
+          <div className={styles['logo-name']}>速运宝 - 爱购不购工具箱</div>
         </div>
       </div>
       <ul className={styles.right}>
