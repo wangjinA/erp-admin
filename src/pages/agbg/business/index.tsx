@@ -71,7 +71,7 @@ export default () => {
           isPromotionSku: boolean;
           originalQty: string;
         }>(skuInfos[1]).slice(0, 30) : [];
-        const imgs: string[] = olist[11].split('|');
+        const imgs: string[] = olist[11].split('|').slice(0, 9);
         const htmlPath = olist[2];
         const title = olist[1].slice(0, 60);
 
