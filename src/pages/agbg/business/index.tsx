@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { exportToExcel, getExcleData } from '@/utils';
 import { Button, Form, Upload, Input } from '@arco-design/web-react';
 import dayjs from 'dayjs';
@@ -46,8 +46,108 @@ const acHeaders = [
   'UnCheckedCommand',
 ];
 
-export default () => {
+const jlHeaders = [
+  'ID',
+  '標題',
+  '說明',
+  '起標價',
+  '直購價',
+  '底價',
+  '販售方式',
+  '數量',
+  '天數',
+  '新舊',
+  '所在地',
+  '圖片',
+  '二手',
+  '影片',
+  '類別編號',
+  '運費規定',
+  '自訂分類',
+  '分組',
+  '賣家自用料號',
+  '提前結束',
+  '結束時間',
+  '自動上架次數',
+  '評價總分',
+  '差勁評價',
+  '棄標次數',
+  '醒目標籤',
+  '自訂規格',
+  '備貨狀態',
+  '型式認證碼',
+  '商品編號',
+  'PChomePay支付連現金',
+  'Pi拍錢包X支付連',
+  '全家取貨付款',
+  '萊爾富取貨付款',
+  '萊爾富純取貨',
+  '露天7_11純取貨',
+  '露天7_11取貨付款',
+  '黑貓宅急便',
+  '郵寄寄送',
+  '宅配快遞',
+  '低溫寄送',
+  '離島寄送',
+  '信用卡一次付清',
+  '信用卡分期0利率',
+  '信用卡3期',
+  '信用卡6期',
+  '信用卡12期',
+  '銀行或郵局轉帳',
+  '郵局無摺存款',
+  '郵局快捷貨到付款',
+  '貨到付款',
+  '面交取貨',
+  '面交取貨付款',
+  '便利帶隔日配',
+  'ｉ郵箱',
+  '全家純取貨',
+  '適用合併運費規則',
+  '運費1',
+  '運費2',
+  '運費3',
+  '運費4',
+  '運費5',
+  '運費6',
+  '運費7',
+  '運費8',
+  '運費9',
+  '運費10',
+  '運費11',
+  '運費12',
+  '運費13',
+  '運費14',
+  '運費15',
+  '帳號',
+  '紀錄',
+  '出價數',
+  '點閱數',
+  '追蹤數',
+  '上下架時間',
+  '網址',
+  '選中',
+  '狀態',
+  '修改時間',
+]
+
+async function isToLuTian(file: File) {
+  const excelData = await getExcleData(file);
+  if (excelData[0].some((i) => ['起標價'].includes(i))) {
+    return {
+      toLutian: false,
+      excelData,
+    };
+  }
+  return {
+    toLutian: true,
+    excelData,
+  }
+}
+
+function Business() {
   const [form] = Form.useForm();
+  const [showPath, setShowPath] = useState(false);
   async function submit() {
     const { files, baseurl } = await form.validate();
     const file = files[0].originFile;
@@ -55,12 +155,11 @@ export default () => {
     const fileName = file.name;
     const newName = fileName.split('.')[0] + '_new';
 
-    const res = await getExcleData(file);
-    console.log(res);
     const list = [];
-    if (res[0].some((i) => ['起標價'].includes(i))) {
+    const { excelData, toLutian } = await isToLuTian(file);
+    if (!toLutian) {
       list.push(acHeaders);
-      res.slice(1).filter(olist => olist.some(Boolean)).forEach((olist) => {
+      excelData.slice(1).filter(olist => olist.some(Boolean)).forEach((olist) => {
         const skuInfos = olist[26] ? JSON.parse(olist[26]) : [];
         const skus = skuInfos[1] ? Object.entries<{
           specId: string;
@@ -164,7 +263,7 @@ export default () => {
               Suffix: null,
               // "AbsolutePath": "E:\\pchrome\\Spiders\\RutenSpider\\spiderImages\\ruten\\20250218\\7823c06b-8fc5-46dc-aa9e-63a96c434875",
               AbsolutePath: baseurl + img, // 待完善全部路径
-              RelativePath: baseurl+img,
+              RelativePath: baseurl + img,
             }))
           ),
           JSON.stringify({
@@ -196,9 +295,147 @@ export default () => {
           'PChrome.ButtonClickCommand',
         ]);
       });
+    } else {
+      list.push(jlHeaders);
+      excelData.slice(1).filter(olist => olist.some(Boolean)).forEach((olist) => {
+
+        const imgsStr = olist[25]
+        const imgs = (imgsStr ? JSON.parse(imgsStr) : []).map(oitem => {
+          return oitem.AbsolutePath
+        }).join('|');
+        const targtSku = olist[24] ? JSON.parse(olist[24]) : null;
+        let sku = ''
+        if (targtSku) {
+          //   .SkuValues.reduce((pre, cur) => {
+          //     const target = .SkuProps[3].PropValues.find(o=>o.Vid === cur.skuId);
+          //     return{
+          //         ...pre,
+          //         [target.Name]: {
+          //             originalQty: cur.quantity,
+          //             price: cur.price,
+          //         }
+          //     }
+          //  ...pre,
+          //  [cur.]   
+          // ), {})
+          sku = JSON.stringify([
+            {
+              "dataRows": [
+                {
+                  "name": "规格",
+                  "specValue": targtSku.SkuProps.at(-1).PropValues.map(item => ({
+                    name: item.Name,
+                    id: item.Vid
+                  }))
+                },
+                targtSku.SkuValues.reduce((pre, cur) => {
+                  const target = targtSku.SkuProps.at(-1).PropValues.find(o => o.Vid === cur.skuId);
+                  return {
+                    ...pre,
+                    [target.Name]: {
+                      originalQty: cur.quantity,
+                      price: cur.price,
+                    }
+                  }
+                }, {})
+              ]
+
+            }
+          ])
+
+        }
+
+        list.push([
+          olist[0],
+          olist[1],
+          '', // 说明 HTML
+          olist[4],
+          olist[4],
+          0,
+          '定价贩售',
+          olist[19],
+          7,
+          '全新',
+          '新北市',
+          imgs,
+          '',
+          '',
+          olist[10],
+          '买家自付',
+          '',
+          '',
+          '',
+          'FALSE',
+          23,
+          2,
+          '',
+          '',
+          '',
+          '',
+          sku,
+          '', // 備貨狀態
+          '',
+          '', // 商品编号
+          'TRUE',
+          'FALSE',
+          'TRUE',
+          'TRUE',
+          'TRUE',
+          'FALSE',
+          'TRUE',
+          'FALSE',
+          'FALSE',
+          'TRUE',
+          'FALSE',
+          'FALSE',
+          'FALSE',
+          'FALSE',
+          'FALSE',
+          'FALSE',
+          'FALSE',
+          'FALSE',
+          'FALSE',
+          'FALSE',
+          'TRUE',
+          'FALSE',
+          'FALSE',
+          'FALSE',
+          'FALSE',
+          'FALSE',
+          'FALSE',
+          0,
+          100,
+          0,
+          500,
+          0,
+          60,
+          60,
+          0,
+          130,
+          0,
+          0,
+          0,
+          0,
+          50,
+          0,
+          '', // 账号
+          '',
+          '',
+          '',
+          '',
+          '',
+          '',
+          'FALSE',
+          '',
+          '',
+        ])
+      })
     }
     console.log(list);
     exportToExcel(list, newName);
+    setTimeout(() => {
+      form.resetFields();
+    }, 1000);
   }
   return (
     <div className="p-4" style={{
@@ -207,7 +444,18 @@ export default () => {
       <div className="w-1/2 ml-[100px] py-10">
         <Form form={form} initialValues={{
           // baseurl: 'N:\\爱够不够采集\\精靈測試導出\\卡夫特'
-        }}>
+        }}
+          onChange={async (e) => {
+            console.log(e);
+
+            if(e.files){
+              const { toLutian } = await isToLuTian(e.files[0].originFile);
+              setShowPath(!toLutian)
+            }else {
+              setShowPath(false)
+            }
+          }}
+        >
           <Form.Item
             rules={[
               {
@@ -218,9 +466,9 @@ export default () => {
             label="上传文件"
             field="files"
           >
-            <Upload drag></Upload>
+            <Upload limit={1} drag multiple={false}></Upload>
           </Form.Item>
-          <Form.Item
+          {showPath ? <Form.Item
             rules={[
               {
                 required: true,
@@ -231,7 +479,7 @@ export default () => {
             field="baseurl"
           >
             <Input placeholder='请输入'></Input>
-          </Form.Item>
+          </Form.Item> : null}
           <Form.Item label=" " field="">
             <Button
               type="primary"
@@ -249,3 +497,5 @@ export default () => {
     </div>
   );
 };
+
+export default Business
