@@ -49,7 +49,7 @@ export function MenuTypeTag({ menuType, size }: { menuType: string, size?: TagPr
   return <Tag size={size} color={colors[MenuTypeOptipns.findIndex(o => o.value === menuType)]}>{MenuTypeOptipns.find(o => o.value === menuType)?.label}</Tag>
 }
 
-export default () => {
+export default function Menu() {
   const [current, setCurrent] = useState<any>()
   const ref = React.useRef<SearchTableRef>()
 

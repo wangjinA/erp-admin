@@ -10,7 +10,7 @@ import { RoleNameFC } from '@/components/Selectors/RoleSelector'
 import UserAvatar from '@/components/UserAvatar'
 import { showMessage, showModal } from '@/utils'
 
-export default () => {
+export default function Users() {
   const [current, setCurrent] = useState<any>()
   const ref = React.useRef<SearchTableRef>()
 

@@ -8,7 +8,7 @@ import ScanCommon from '../ScanCommon'
 import { ScanParams, scanAPI } from '@/api/admin/entrepot'
 import { showMessage } from '@/utils'
 
-export default () => {
+export default function Delivery() {
   const { run, data, loading } = useRequest(
     async (params: ScanParams) => {
       const res = await showMessage(() => scanAPI.ScanOut(params))

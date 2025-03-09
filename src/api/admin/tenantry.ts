@@ -16,6 +16,7 @@ export interface Tenantry {
   tenantryNo: string
   tenantryPhone: string
   wechatId: string
+  remarks: string
 }
 
 export const tenantryUserAPI = {

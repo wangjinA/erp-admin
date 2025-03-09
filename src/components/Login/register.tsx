@@ -18,7 +18,7 @@ export default (props: { form: FormInstance }) => {
       Message.warning('请输入手机号')
       return
     }
-    return showMessage(() => userAPI.forgotSendCode({
+    return showMessage(() => userAPI.sendCode({
       tenantryPhone,
     }), '发送').then(() => {
       resetTime()

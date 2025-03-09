@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react'
 
 import { useSelector } from 'react-redux'
 
+import { tenantryUserAPI } from '@/api/admin/tenantry'
 import { ConsumerInfo, shipmentAPI } from '@/api/shopeeUtils/shipment'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 import { DictNameFC } from '@/components/Selectors/DictSelector'
@@ -18,6 +19,13 @@ export default () => {
   const ref = React.useRef<SearchTableRef>()
   const [sorter, setSorter] = useState<SorterInfo>()
   const userInfo = useSelector((state: GlobalState) => state.userInfo)
+
+  const userHandle = useRequest(() => {
+    return tenantryUserAPI.getList({
+      pageNum: 1,
+      pageSize: 1000,
+    }).then(r => r.data.data.list)
+  })
 
   const agreeHandle = useRequest(
     async (row, expiredDate) => {
@@ -96,15 +104,18 @@ export default () => {
             // isSearch: true,
           },
           {
-            schema: { label: '用户备注', field: 'shopName' },
+            schema: { label: '用户备注', field: 'remark' },
             isCreate: true,
             // isSearch: true,
+            render(c, row) {
+              return userHandle.data?.find(o => o.tenantryPhone === row.userLoginAccount)?.remarks || '无'
+            },
           },
-          {
-            schema: { label: '店铺名称', field: 'shopName' },
-            isCreate: true,
-            // isSearch: true,
-          },
+          // {
+          //   schema: { label: '店铺名称', field: 'shopName' },
+          //   isCreate: true,
+          //   // isSearch: true,
+          // },
           {
             schema: { label: '激活时间', field: 'activateDate' },
             render(r) {

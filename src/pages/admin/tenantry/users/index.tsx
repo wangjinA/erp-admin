@@ -8,7 +8,6 @@ import { tenantryUserAPI } from '@/api/admin/tenantry'
 import Remark from '@/components/Remark'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 import getStoreListSchema from '@/pages/client/store/list/schema'
-import { showMessage } from '@/utils'
 
 export default () => {
   const [current, setCurrent] = useState<any>()
@@ -95,11 +94,12 @@ export default () => {
                 <Remark
                   value={v}
                   onChange={(v) => {
-                    return showMessage(() => tenantryUserAPI.setRemark({
+                    return tenantryUserAPI.setRemark({
                       id: row.id,
                       remarks: v,
-                    })).then(() => {
+                    }).then((r) => {
                       ref.current.refreshSearchTable()
+                      return r
                     })
                   }}
                 >

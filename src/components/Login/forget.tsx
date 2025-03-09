@@ -12,7 +12,7 @@ export default (props: { form: FormInstance }) => {
   const { time, resetTime } = useCode()
 
   const { run: sendCode, loading: sendCodeLoading } = useRequest(() => {
-    return showMessage(() => userAPI.sendCode({
+    return showMessage(() => userAPI.forgotSendCode({
       tenantryPhone: form.getFieldValue('tenantryPhone'),
     }), '发送').then(() => {
       resetTime()

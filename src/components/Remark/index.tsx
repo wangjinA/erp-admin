@@ -21,7 +21,7 @@ interface RemarkProps {
   notRefres?: boolean
 }
 
-export default (props: RemarkProps) => {
+export default function Remark(props: RemarkProps) {
   const { value, title = '备注', type = RemarkType.Text, notRefres, onChange } = props
   const [visible, setVisible] = useState(false)
   const [inputValue, setInputValue] = useState(value)

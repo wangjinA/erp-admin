@@ -112,7 +112,7 @@ function ShowAlert(props: {
   }
 }
 
-export default () => {
+export default function Deposit() {
   const history = useHistory()
   const { run, data, loading, error } = useRequest(
     async (params: ScanParams) => {
