@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import styles from './index.module.less'
 
 import { showMessage } from '@/utils'
+import { isString } from '@/utils/is'
 
 export enum RemarkType {
   Text = 'text',
@@ -31,13 +32,13 @@ export default function Remark(props: RemarkProps) {
 
   useEffect(() => {
     if (visible) {
-      setInputValue(newValue ?? value)
+      setInputValue((isString(newValue) ? (newValue || value) : (newValue ?? value)))
     }
   }, [visible])
 
   return (
     <div className={styles['remark-com']}>
-      {newValue || (value ?? '-')}
+      {newValue || (isString(value) ? (value || '-') : (value ?? '-'))}
       <IconEdit className="remark-com-icon" onClick={() => setVisible(true)}></IconEdit>
       <Modal
         title={allTitle}
