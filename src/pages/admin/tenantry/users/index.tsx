@@ -89,6 +89,7 @@ export default () => {
           },
           {
             schema: { label: '备注', field: 'remarks' },
+            isSearch: true,
             render(v, row) {
               return (
                 <Remark
@@ -120,6 +121,9 @@ export default () => {
               //   </Switch>
               // )
             },
+          },
+          {
+            schema: { label: '创建时间', field: 'createTime' },
           },
           {
             schema: {

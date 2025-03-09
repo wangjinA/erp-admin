@@ -81,7 +81,6 @@ export default () => {
         getListRequest={params => shipmentAPI.getConsumerList({
           ...params,
           ...sorterToRequestInfo(sorter),
-          searchAll: true,
         })}
         tableProps={
           {
@@ -101,7 +100,7 @@ export default () => {
           {
             schema: { label: '用户账户', field: 'userLoginAccount' },
             isCreate: true,
-            // isSearch: true,
+            isSearch: true,
           },
           {
             schema: { label: '用户备注', field: 'remark' },
