@@ -1,1 +1,0 @@
-import o from"./index.72de393d.js";import{a as r}from"./index.70dbfa87.js";import"./index.eaceb272.js";import"./index.069ead7c.js";import"./entrepot.ab30483f.js";function p(){return r("div",{children:r(o,{})})}export{p as default};
