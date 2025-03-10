@@ -344,18 +344,18 @@ function Business() {
                       id: item.Vid
                     }))
                   },
-                  skuProps.reduce((pre, cur) => {
-                    return {
-                      ...pre,
-                      [cur.Name]: {
-                        originalQty: cur.quantity,
-                        price: cur.price,
-                      }
-                    }
-                  }, {})
-                ]
+                ],
 
-              }
+              },
+              skuProps.reduce((pre, cur) => {
+                return {
+                  ...pre,
+                  [cur.Name]: {
+                    originalQty: cur.quantity,
+                    price: cur.price,
+                  }
+                }
+              }, {})
             ])
           } else {
             sku = JSON.stringify([
@@ -367,20 +367,19 @@ function Business() {
                       name: item.Name,
                       id: item.Vid
                     }))
-                  },
-                  targtSku.SkuValues.reduce((pre, cur) => {
-                    const target = targtSku.SkuProps.at(-1).PropValues.find(o => o.Vid === cur.skuId);
-                    return {
-                      ...pre,
-                      [target.Name]: {
-                        originalQty: cur.quantity,
-                        price: cur.price,
-                      }
-                    }
-                  }, {})
+                  }
                 ]
-
-              }
+              },
+              targtSku.SkuValues.reduce((pre, cur) => {
+                const target = targtSku.SkuProps.at(-1).PropValues.find(o => o.Vid === cur.skuId);
+                return {
+                  ...pre,
+                  [target.Name]: {
+                    originalQty: cur.quantity,
+                    price: cur.price,
+                  }
+                }
+              }, {})
             ])
           }
         }
@@ -388,7 +387,7 @@ function Business() {
         list.push([
           olist[0],
           olist[1],
-          '', // 说明 HTML
+          (olist[26] ? JSON.parse(olist[26]).DescHtml?.AbsolutePath : '') || '', // 说明 HTML
           olist[4],
           olist[4],
           0,
