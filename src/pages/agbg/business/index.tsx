@@ -318,31 +318,71 @@ function Business() {
           //  ...pre,
           //  [cur.]   
           // ), {})
-          sku = JSON.stringify([
-            {
-              "dataRows": [
-                {
-                  "name": "规格",
-                  "specValue": targtSku.SkuProps.at(-1).PropValues.map(item => ({
-                    name: item.Name,
-                    id: item.Vid
-                  }))
-                },
-                targtSku.SkuValues.reduce((pre, cur) => {
-                  const target = targtSku.SkuProps.at(-1).PropValues.find(o => o.Vid === cur.skuId);
-                  return {
-                    ...pre,
-                    [target.Name]: {
-                      originalQty: cur.quantity,
-                      price: cur.price,
+          const isSub = targtSku.SkuProps.length === 5
+          if (isSub) {
+            const skuProps = [];
+            targtSku.SkuProps[3].PropValues.forEach(item => {
+              targtSku.SkuProps[4].PropValues.forEach(oitem => {
+                const skuValuesTarget = targtSku.SkuValues.find(k => k.spec === item.Vid && k.skuId === oitem.Vid);
+                skuProps.push({
+                  ...item,
+                  Name: `${item.Name} ${oitem.Name}`,
+                  Vid: item.Vid + oitem.Vid, // spec
+                  price: skuValuesTarget?.price || 0,
+                  quantity: skuValuesTarget?.quantity || 0,
+                })
+              })
+            })
+            skuProps.splice(30); // 保留30个
+            sku = JSON.stringify([
+              {
+                "dataRows": [
+                  {
+                    "name": "规格",
+                    "specValue": skuProps.map(item => ({
+                      name: item.Name,
+                      id: item.Vid
+                    }))
+                  },
+                  skuProps.reduce((pre, cur) => {
+                    return {
+                      ...pre,
+                      [cur.Name]: {
+                        originalQty: cur.quantity,
+                        price: cur.price,
+                      }
                     }
-                  }
-                }, {})
-              ]
+                  }, {})
+                ]
 
-            }
-          ])
+              }
+            ])
+          } else {
+            sku = JSON.stringify([
+              {
+                "dataRows": [
+                  {
+                    "name": "规格",
+                    "specValue": targtSku.SkuProps.at(-1).PropValues.map(item => ({
+                      name: item.Name,
+                      id: item.Vid
+                    }))
+                  },
+                  targtSku.SkuValues.reduce((pre, cur) => {
+                    const target = targtSku.SkuProps.at(-1).PropValues.find(o => o.Vid === cur.skuId);
+                    return {
+                      ...pre,
+                      [target.Name]: {
+                        originalQty: cur.quantity,
+                        price: cur.price,
+                      }
+                    }
+                  }, {})
+                ]
 
+              }
+            ])
+          }
         }
 
         list.push([
@@ -352,7 +392,7 @@ function Business() {
           olist[4],
           olist[4],
           0,
-          '定价贩售',
+          '',
           olist[19],
           7,
           '全新',
@@ -403,21 +443,21 @@ function Business() {
           'FALSE',
           'FALSE',
           'FALSE',
-          0,
-          100,
-          0,
-          500,
-          0,
-          60,
-          60,
-          0,
-          130,
-          0,
-          0,
-          0,
-          0,
-          50,
-          0,
+          '',
+          '',
+          '',
+          '',
+          '',
+          '',
+          '',
+          '',
+          '',
+          '',
+          '',
+          '',
+          '',
+          '',
+          '',
           '', // 账号
           '',
           '',
@@ -448,10 +488,10 @@ function Business() {
           onChange={async (e) => {
             console.log(e);
 
-            if(e.files){
+            if (e.files) {
               const { toLutian } = await isToLuTian(e.files[0].originFile);
               setShowPath(!toLutian)
-            }else {
+            } else {
               setShowPath(false)
             }
           }}
