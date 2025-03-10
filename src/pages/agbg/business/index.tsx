@@ -484,9 +484,7 @@ function Business() {
         <Form form={form} initialValues={{
           // baseurl: 'N:\\爱够不够采集\\精靈測試導出\\卡夫特'
         }}
-          onChange={async (e) => {
-            console.log(e);
-
+          onChange={async (v, e) => {
             if (e.files) {
               const { toLutian } = await isToLuTian(e.files[0].originFile);
               setShowPath(!toLutian)
