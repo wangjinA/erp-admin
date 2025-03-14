@@ -1,24 +1,20 @@
-import { Button, DatePicker, Space } from '@arco-design/web-react'
+import { Button, DatePicker, Space, Tag } from '@arco-design/web-react'
 import { SorterInfo } from '@arco-design/web-react/es/Table/interface'
 import { useRequest } from 'ahooks'
 import classNames from 'classnames'
+import { omit } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
-import { useSelector } from 'react-redux'
-
 import { tenantryUserAPI } from '@/api/admin/tenantry'
-import { ConsumerInfo, shipmentAPI } from '@/api/shopeeUtils/shipment'
+import { shipmentAPI } from '@/api/shopeeUtils/shipment'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 import { DictNameFC } from '@/components/Selectors/DictSelector'
 import { shortcuts } from '@/constants'
-import { GlobalState } from '@/store'
 import { formatDate, getExpiredStatus, showMessage, showModal, sorterToRequestInfo } from '@/utils'
 
 export default () => {
-  const [current, setCurrent] = useState<ConsumerInfo | undefined>()
   const ref = React.useRef<SearchTableRef>()
   const [sorter, setSorter] = useState<SorterInfo>()
-  const userInfo = useSelector((state: GlobalState) => state.userInfo)
 
   const userHandle = useRequest(() => {
     return tenantryUserAPI.getList({
@@ -78,10 +74,25 @@ export default () => {
       <SearchTable
         ref={ref}
         name="店铺授权"
-        getListRequest={params => shipmentAPI.getConsumerList({
-          ...params,
-          ...sorterToRequestInfo(sorter),
-        })}
+        getListRequest={async (params) => {
+          let userLoginAccount = params.userLoginAccount || ''
+          if (params.remark) {
+            const ls = await tenantryUserAPI.getList({
+              pageNum: 1,
+              pageSize: 1000,
+              remarks: params.remark,
+            }).then(r => r.data.data.list)
+            if (ls.length) {
+              const prefix = userLoginAccount ? ',' : ''
+              userLoginAccount = prefix + ls.map(o => o.tenantryPhone).toString()
+            }
+          }
+          return shipmentAPI.getConsumerList({
+            ...omit(params, 'remark'),
+            ...sorterToRequestInfo(sorter),
+            userLoginAccount,
+          })
+        }}
         tableProps={
           {
             onChange(pagination, sorter: SorterInfo) {
@@ -104,6 +115,7 @@ export default () => {
           },
           {
             schema: { label: '用户备注', field: 'remark' },
+            isSearch: true,
             isCreate: true,
             // isSearch: true,
             render(c, row) {
@@ -118,7 +130,7 @@ export default () => {
           {
             schema: { label: '激活时间', field: 'activateDate' },
             render(r) {
-              return r ? formatDate(r) : '-'
+              return r ? formatDate(r) : <Tag>未激活</Tag>
             },
           },
           {

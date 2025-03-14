@@ -79,9 +79,19 @@ const loginModal = debounce((msg) => {
   }
 }, 300)
 
+const errorMgsMap = {
+  'Invalid access_token': '店铺授权过期，请重新授权',
+  'Start time must be earlier than end time and diff in 15days': '时间范围要在15天内',
+}
+
 baseAxios.interceptors.response.use((res) => {
   if ([30010, 20].includes(res.data.code)) {
     loginModal(res.data.msg)
+  }
+  for (const key in errorMgsMap) {
+    if (res.data.msg?.includes(key)) {
+      res.data.msg = errorMgsMap[key]
+    }
   }
   return res
 })

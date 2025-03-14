@@ -1,4 +1,4 @@
-import baseAxios from '..'
+import baseAxios, { SuccessCode } from '..'
 import { APIListResponse, APIResponse, IPageParams } from '../type'
 
 import { Order, OrderProductList, OrderResponseItem } from '@/types/order'
@@ -77,11 +77,17 @@ export const orderAPI = {
       return baseAxios.post('/api/logistics/order/synchronous/order', body, {
         timeout: 1000 * 60 * 5,
       })
-        .then(r => r)
+        .then((r) => {
+          if (r.data.code !== SuccessCode) {
+            SyncTimeCache[key] = 0
+            sessionStorage.setItem(sessionKey, JSON.stringify(SyncTimeCache))
+          }
+          return r
+        })
         .catch((e) => {
           SyncTimeCache[key] = 0
           sessionStorage.setItem(sessionKey, JSON.stringify(SyncTimeCache))
-          throw new Error(e.response.data.message)
+          throw new Error(e.response?.data?.message)
         })
     }
     throw new Error('10分钟内不可重复操作')
