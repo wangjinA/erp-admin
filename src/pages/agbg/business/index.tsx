@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { exportToExcel, getExcleData } from '@/utils';
 import { Button, Form, Upload, Input } from '@arco-design/web-react';
 import dayjs from 'dayjs';
@@ -147,7 +147,9 @@ async function isToLuTian(file: File) {
 
 function Business() {
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
   const [showPath, setShowPath] = useState(false);
+  const preloadExcelDataRef = useRef(null);
   async function submit() {
     const { files, baseurl } = await form.validate();
     const file = files[0].originFile;
@@ -156,7 +158,12 @@ function Business() {
     const newName = fileName.split('.')[0] + '_new';
 
     const list = [];
-    const { excelData, toLutian } = await isToLuTian(file);
+    let excelData, toLutian;
+    if (preloadExcelDataRef.current) {
+      ({ excelData, toLutian } = await preloadExcelDataRef.current)
+    } else {
+      ({ excelData, toLutian } = await isToLuTian(file))
+    }
     if (!toLutian) {
       list.push(acHeaders);
       excelData.slice(1).filter(olist => olist.some(Boolean)).forEach((olist) => {
@@ -363,8 +370,13 @@ function Business() {
               ])
             } else {
               if (targtSku.SkuProps?.length > 3) {
-                const PropValues = targtSku.SkuProps.at(-1).PropValues?.length || targtSku.SkuProps.find(o => o.DisplayName === '颜色')?.PropValues || 
-                targtSku.SkuProps.find(o => o.DisplayName === '规格')?.PropValues || []
+                const lastArr = targtSku.SkuProps.at(-1).PropValues
+                let PropValues = lastArr?.length ? lastArr : null;
+                if (PropValues) {
+                  PropValues = targtSku.SkuProps.find(o => o.DisplayName === '颜色')?.PropValues ||
+                    targtSku.SkuProps.find(o => o.DisplayName === '规格')?.PropValues || []
+                }
+
                 sku = JSON.stringify([
                   {
                     "dataRows": [
@@ -484,9 +496,6 @@ function Business() {
     }
     console.log(list);
     exportToExcel(list, newName);
-    setTimeout(() => {
-      form.resetFields();
-    }, 1000);
   }
   return (
     <div className="p-4" style={{
@@ -497,9 +506,12 @@ function Business() {
           // baseurl: 'N:\\爱够不够采集\\精靈測試導出\\卡夫特'
         }}
           onChange={async (v, e) => {
-            if (e.files) {
-              const { toLutian } = await isToLuTian(e.files[0].originFile);
-              setShowPath(!toLutian)
+            if (e.files?.length) {
+              setLoading(true)
+              const rrr = await isToLuTian(e.files[0].originFile);
+              setLoading(false)
+              preloadExcelDataRef.current = rrr;
+              setShowPath(!rrr.toLutian)
             } else {
               setShowPath(false)
             }
@@ -534,8 +546,12 @@ function Business() {
               type="primary"
               status="success"
               className="mt-4"
-              onClick={() => {
-                submit();
+              loading={loading}
+              onClick={async () => {
+                setLoading(true)
+                submit().finally(() => {
+                  setLoading(false)
+                });
               }}
             >
               转换
