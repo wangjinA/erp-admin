@@ -1,3 +1,6 @@
+百度统计：https://tongji.baidu.com/main/setting/10000676540/home/site/index
+
+
 1. 注册时关联仓库
 2. 订单备注看下
 
