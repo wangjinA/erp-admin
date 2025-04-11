@@ -9,11 +9,7 @@ export default defineConfig({
   resolve: {
     alias: [{ find: '@', replacement: '/src' }],
   },
-  base: '/agbg/',
-  // build: {
-  //   base: '/agbg/',
-  //   assetsDir: '/agbg/assets',
-  // },
+  base: '/mo/',
   plugins: [
     react(),
     svgrPlugin({

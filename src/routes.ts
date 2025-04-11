@@ -14,8 +14,8 @@ export type IRoute = AuthParams & {
 
 export const routes: IRoute[] = [
   {
-    name: 'menu.tool-lutian-excel',
-    key: 'agbg/business',
+    name: 'menu.tool-mo-excel',
+    key: 'mo/business',
     // children: [
     //   {
     //     name: 'menu.business.deposit',
