@@ -222,8 +222,16 @@ function Business() {
       prieceShouJia: formData.prieceShouJia,
       prieceShiJia: formData.prieceShiJia,
     });
-    Object.entries(groupData).forEach(([key, lists], index) => {
+    const maxSize = 40; // 最大规格文字长度
+    const maxlength = 100; // 最大规格数量
+    Object.entries(groupData).forEach(([key, _lists], index) => {
       try {
+        const lists = _lists.slice(0, maxlength).map((olist) => {
+          // sku处理
+          olist[5] = olist[5]?.slice(0, maxSize) || '';
+          olist[7] = olist[7]?.slice(0, maxSize) || '';
+          return olist;
+        });
         const uniqList = uniqBy(
           lists,
           (olist) => `${olist[5] || ''}${olist[7] || ''}`
