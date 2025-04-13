@@ -222,8 +222,8 @@ function Business() {
       prieceShouJia: formData.prieceShouJia,
       prieceShiJia: formData.prieceShiJia,
     });
-    const maxSize = 40; // 最大规格文字长度
-    const maxlength = 100; // 最大规格数量
+    const maxSize = 35; // 最大规格文字长度
+    const maxlength = 95; // 最大规格数量
     Object.entries(groupData).forEach(([key, _lists], index) => {
       try {
         const lists = _lists.slice(0, maxlength).map((olist) => {
