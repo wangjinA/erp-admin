@@ -23,7 +23,7 @@ import { GlobalState } from '@/store'
 import { showMessage, showModal } from '@/utils'
 import { secondsToDateString } from '@/utils/date'
 
-interface StoreListProps {}
+interface StoreListProps { }
 const StoreList: React.FC<StoreListProps> = (props) => {
   const { userInfo } = useSelector((state: GlobalState) => state)
   const ref = useRef<SearchTableRef>()
@@ -275,6 +275,16 @@ const StoreList: React.FC<StoreListProps> = (props) => {
             controlProps: {
               max: 30,
               min: 2,
+            },
+          }, {
+            schema: {
+              span: 24,
+              label: '忽略商品ID',
+              field: 'ids',
+            },
+            control: 'textarea',
+            controlProps: {
+              placeholder: '输入商品ID，用逗号隔开',
             },
           }]}
         >

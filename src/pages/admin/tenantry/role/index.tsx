@@ -18,8 +18,6 @@ import { useRequest } from 'ahooks'
 
 import { useState } from 'react'
 
-import { useSelector } from 'react-redux'
-
 import { useClientMenuTree } from '../../account/menu/hooks'
 import { MenuTypeTag } from '../menu'
 
@@ -34,7 +32,6 @@ import {
   ShowFormType,
   ShowFormTypeMap,
 } from '@/constants'
-import { GlobalState } from '@/store'
 import { showMessage } from '@/utils'
 
 function Permission() {
@@ -47,7 +44,7 @@ function Permission() {
   const [editCurrent, setEditCurrent] = useState(null)
   const [addUserLoading, setAddUserLoading] = useState(false)
   const [formRef] = useForm()
-  const { clientMenuList } = useSelector((state: GlobalState) => state)
+  // const { clientMenuList } = useSelector((state: GlobalState) => state)
 
   const menuTreeHandle = useClientMenuTree()
   // 获取用户组详情
@@ -71,7 +68,7 @@ function Permission() {
     }
     return tenantryUserAPI.getDPList({
       pageNum: 1,
-      pageSize: 30,
+      pageSize: 300,
     }).then((r: any) => {
       return r.data.data
     })
@@ -315,10 +312,13 @@ function Permission() {
               <Spin loading={roleUsersHandle.loading} className="flex justify-center">
                 <Transfer
                   simple={{ retainSelectedItems: true }}
-                  dataSource={roleUsersHandle.data?.list.map(item => ({
+                  dataSource={((roleUsersHandle.data?.list || []) as any[]).toSorted((a, b) =>
+                    Number(selectedKeys.includes(a.id)) - Number(selectedKeys.includes(b.id)),
+                  ).map(item => ({
                     key: item.id,
                     value: item.userLoginAccount,
                   })) || []}
+                  showSearch={true}
                   targetKeys={selectedKeys || []}
                   // targetKeys={current?.roleUserInfoVOList?.map(item => item.userId as any)}
                   onChange={(e) => {
