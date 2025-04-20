@@ -26,7 +26,7 @@ export const shipmentAPI = {
     return shopeeUtilsAxios.post<APIListResponse<ConsumerInfo>>('/consumer', params)
   },
 
-  apply(body: { userLoginAccount, shopId }) {
+  apply(body: { userLoginAccount, shopId, shopName }) {
     return shopeeUtilsAxios.post<APIResponse>('/consumer/apply', body)
   },
   agree(body: { userLoginAccount, shopId, expiredDate }) {
@@ -73,6 +73,8 @@ export interface ConsumerInfo {
   userLoginAccount: string
 
   shopId: string
+
+  userId: string
 
   platformShopId: number
 

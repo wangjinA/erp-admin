@@ -50,10 +50,11 @@ const StoreList: React.FC<StoreListProps> = (props) => {
     manual: true,
   })
 
-  const applyHandle = useRequest((id) => {
+  const applyHandle = useRequest(({ id, shopName }) => {
     return showMessage(() => shipmentAPI.apply({
       userLoginAccount: userInfo.userLoginAccount,
       shopId: id,
+      shopName,
     }).then((r) => {
       setApplyCurrent(null)
       ref.current.refreshSearchTable()
@@ -236,7 +237,7 @@ const StoreList: React.FC<StoreListProps> = (props) => {
                           },
                         })
                         setApplyCurrent(row)
-                        applyHandle.run(row.id)
+                        applyHandle.run(row)
                       }}
                     >
                       申请权限

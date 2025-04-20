@@ -1,4 +1,4 @@
-import { Button, DatePicker, Space, Tag } from '@arco-design/web-react'
+import { Button, DatePicker, Space, Tag, Typography } from '@arco-design/web-react'
 import { SorterInfo } from '@arco-design/web-react/es/Table/interface'
 import { useRequest } from 'ahooks'
 import classNames from 'classnames'
@@ -91,7 +91,7 @@ export default () => {
             ...omit(params, 'remark'),
             ...sorterToRequestInfo(sorter),
             userLoginAccount,
-          })
+          } as any)
         }}
         tableProps={
           {
@@ -112,6 +112,22 @@ export default () => {
             schema: { label: '用户账户', field: 'userLoginAccount' },
             isCreate: true,
             isSearch: true,
+            render(c, row) {
+              return (
+                <div>
+                  <Tag color="blue">{c}</Tag>
+                  {row.shopName
+                    ? (
+                        <p>
+                          <Typography.Text type="warning" copyable className="mt-1 text-sm">
+                            {row.shopName}
+                          </Typography.Text>
+                        </p>
+                      )
+                    : null}
+                </div>
+              )
+            },
           },
           {
             schema: { label: '用户备注', field: 'remark' },
