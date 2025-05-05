@@ -26,8 +26,16 @@ export const shipmentAPI = {
     return shopeeUtilsAxios.post<APIListResponse<ConsumerInfo>>('/consumer', params)
   },
 
+  getUpdateTimeGroupList() {
+    return shopeeUtilsAxios.post('/consumer/update_group')
+  },
+
   apply(body: { userLoginAccount, shopId, shopName }) {
     return shopeeUtilsAxios.post<APIResponse>('/consumer/apply', body)
+  },
+
+  save(body: { userLoginAccount, shopId, shopName }) {
+    return shopeeUtilsAxios.post<APIResponse>('/consumer/save', body)
   },
   agree(body: { userLoginAccount, shopId, expiredDate }) {
     return shopeeUtilsAxios.post<APIResponse>('/consumer/agree', body)

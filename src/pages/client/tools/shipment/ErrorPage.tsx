@@ -416,8 +416,9 @@ export default ({ data, shopId }: IProps) => {
                     title: '错误原因',
                     dataIndex: 'msg',
                     render(msg) {
-                      const translatedMsg = msg?.replace(RepeatText, '商品重复').replace('please check and update', '请检查后再更新')
+                      const translatedMsg = msg?.replace(RepeatText, '商品重复，请处理其中一个').replace('please check and update', '请检查后再更新')
                         .replace('is mandatory required', '是必填项').replace('Attribute', '属性').replace('requests too frequent', '频率过高，重试即可')
+                        .replace('system busy,please try again leater', '系统繁忙，重试即可')
                       return (
                         <div>
                           {translatedMsg}

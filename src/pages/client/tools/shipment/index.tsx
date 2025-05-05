@@ -1,6 +1,7 @@
-import { Button, Drawer, Form, Image, Modal, Progress, Space, Spin } from '@arco-design/web-react'
+import { Button, Drawer, Form, Image, Modal, Progress, Space, Spin, Tag } from '@arco-design/web-react'
 import { IconEdit, IconSend } from '@arco-design/web-react/icon'
 import { useRequest } from 'ahooks'
+import { random } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
 
 import { useSelector } from 'react-redux'
@@ -64,6 +65,26 @@ const StoreList: React.FC<StoreListProps> = (props) => {
     manual: true,
   })
 
+  const updateTimeGroupList = useRequest(() => {
+    return shipmentAPI.getUpdateTimeGroupList()
+  }, {
+    manual: false,
+  })
+
+  const saveHandle = useRequest(async () => {
+    const formData = await form.validate()
+    return showMessage(() => shipmentAPI.save({
+      ...formData,
+      userLoginAccount: userInfo.userLoginAccount,
+      shopId: current?.id,
+    })).then(() => {
+      setCurrent(null)
+      ref.current.refreshSearchTable()
+    })
+  }, {
+    manual: true,
+  })
+
   useEffect(() => {
     let timer
     function fn() {
@@ -85,6 +106,7 @@ const StoreList: React.FC<StoreListProps> = (props) => {
     }
   }, [JSON.stringify(list),
   ])
+  console.log(current)
 
   return (
     <div className="p-4 bg-white">
@@ -258,13 +280,35 @@ const StoreList: React.FC<StoreListProps> = (props) => {
         onCancel={() => {
           setCurrent(null)
         }}
-        confirmLoading={loading}
+        confirmLoading={loading || saveHandle.loading}
+        okText="立即修改"
         onConfirm={() => {
           run()
         }}
+        footer={(cancelButtonNode, okButtonNode) => (
+          <>
+            {
+              cancelButtonNode
+            }
+            <Button
+              type="primary"
+              status="warning"
+              onClick={() => {
+                saveHandle.run()
+              }}
+              loading={saveHandle.loading}
+            >
+              保存
+            </Button>
+            {
+              okButtonNode
+            }
+          </>
+        )}
       >
         <FilterForm
           form={form}
+          initialValues={current?.consumerInfo}
           formItemConfigList={[{
             schema: {
               span: 24,
@@ -286,6 +330,73 @@ const StoreList: React.FC<StoreListProps> = (props) => {
             control: 'textarea',
             controlProps: {
               placeholder: '输入商品ID，用逗号隔开',
+            },
+          }, {
+            schema: {
+              span: 24,
+              label: '定时执行',
+              field: 'time',
+            },
+            control: 'switch',
+            controlProps: {
+            },
+          }, {
+            schema: {
+              span: 24,
+              label: '周日执行',
+              field: 'sunday_update_time',
+            },
+            control: 'select',
+            controlProps: {
+              options: [
+                '20:00',
+                '20:30',
+                '21:00',
+                '21:30',
+                '22:00',
+                '22:30',
+                '23:00',
+                '23:30',
+              ].map(o => ({
+                label: (
+                  <div className="flex justify-between items-center">
+                    <span>{o}</span>
+                    <Tag color={random(1, 10) % 2 === 0 ? 'red' : 'green'}>
+                      50%
+                    </Tag>
+                  </div>
+                ),
+                value: o,
+              })),
+            },
+          }, {
+            schema: {
+              span: 24,
+              label: '周一执行',
+              field: 'monday_update_time',
+            },
+            control: 'select',
+            controlProps: {
+              options: [
+                '00:05',
+                '00:25',
+                '00:45',
+                '01:00',
+                '01:20',
+                '01:45',
+                '02:00',
+                '02:25',
+              ].map(o => ({
+                label: (
+                  <div className="flex justify-between items-center">
+                    <span>{o}</span>
+                    <Tag color={random(1, 10) % 2 === 0 ? 'red' : 'green'}>
+                      50%
+                    </Tag>
+                  </div>
+                ),
+                value: o,
+              })),
             },
           }]}
         >
