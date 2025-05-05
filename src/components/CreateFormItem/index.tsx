@@ -236,7 +236,7 @@ const createFormItem: CreateFormItemParams = (props: CreateFormItemType) => {
       label={<LabelWithTips label={label} tips={tips} position={position} />}
       field={field}
       rules={
-        rules || required
+        (rules?.length) || required
           ? [
               {
                 required: true,

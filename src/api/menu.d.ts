@@ -19,4 +19,6 @@ export interface MenuItem {
   updateBy: number
   updateTime: string
   children?: MenuItem[]
+  childDatas?: MenuItem[]
+
 }

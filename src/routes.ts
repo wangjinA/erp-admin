@@ -571,6 +571,15 @@ type DefaultRouteMap = Partial<Record<EndType, string>>
 
 function useRoute(): [IRoute[], DefaultRouteMap] {
   const { loginInfo, clientMenuList } = useSelector((state: GlobalState) => state)
+
+  const menuList: any[] = useMemo(() => {
+    if (isAdmin()) {
+      return loginInfo?.sysMenuTenantryVos || []
+    }
+    else {
+      return clientMenuList || []
+    }
+  }, [JSON.stringify(loginInfo), JSON.stringify(clientMenuList)])
   // const filterRoute = (params: {
   //   routes: IRoute[]
   //   arr: any[]
@@ -632,7 +641,7 @@ function useRoute(): [IRoute[], DefaultRouteMap] {
         filterRoute({
           routes: route.children,
           arr: newRoute.children,
-          menus: targetMenu.children,
+          menus: targetMenu.childDatas || targetMenu.children,
           parentPath: targetMenu.menuPath,
         })
         if (newRoute.children.length) {
@@ -648,21 +657,22 @@ function useRoute(): [IRoute[], DefaultRouteMap] {
   }
 
   const [permissionRoute, setPermissionRoute] = useState([])
+  console.log(menuList, loginInfo?.sysMenuTenantryVos)
 
   useEffect(() => {
     if (!loginInfo) {
       return
     }
     // const newRoutes = routes
-    const newRoutes = loginInfo?.sysUser?.isAdmin || isAdmin()
+    const newRoutes = loginInfo?.sysUser?.isAdmin
       ? routes
       : filterRoute({
         routes,
         arr: [],
-        menus: clientMenuList,
+        menus: menuList,
       })
     setPermissionRoute(newRoutes)
-  }, [JSON.stringify(loginInfo), JSON.stringify(clientMenuList)])
+  }, [JSON.stringify(loginInfo), JSON.stringify(menuList)])
 
   const defaultRouteMap = useMemo(() => {
     return Object.values(EndType).reduce<DefaultRouteMap>((pre, endKey) => {

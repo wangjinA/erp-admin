@@ -362,11 +362,20 @@ function formItemConfigListStatusFilter(
   key: string,
   dynamicHandleParams: { showType?: ShowFormType } = {},
 ): any[] {
-  return formItemConfigList
+  const result = formItemConfigList
     .filter(item => item[key])
-    .map(item => ({ ...omit(item, ['isCreate', 'isSearch', 'dynamicHandle']), ...(item.dynamicHandle
-      ? item.dynamicHandle(dynamicHandleParams)
-      : {}) }))
+    .map((item) => {
+      return ({ ...omit(item, ['isCreate', 'isSearch', 'dynamicHandle']), ...{
+        schema: {
+          ...item.schema,
+          required: item.isSearch ? false : item.schema.required,
+          rules: item.isSearch ? null : item.schema.rules,
+        },
+      }, ...(item.dynamicHandle ? item.dynamicHandle(dynamicHandleParams) : {}) })
+    })
+  console.log(result)
+
+  return result
 }
 
 function createFormListToColumnList(

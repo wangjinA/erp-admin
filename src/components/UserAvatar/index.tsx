@@ -14,7 +14,7 @@ function UserAvatar(props: UserAvatarProps) {
         </div>
       )}
       {...props}
-      className={classNames('size-9 bg-emerald-400 rounded-full flex items-center justify-center', props.className)}
+      className={classNames('size-9 bg-emerald-400 rounded-full flex items-center justify-center arco-image-cover', props.className)}
     >
     </Image>
   )

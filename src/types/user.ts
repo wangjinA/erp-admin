@@ -46,6 +46,7 @@ export interface LoginResponse {
   token: string
   sysUser: SysUser
   sysMenuTenantryVoList: SysMenuTenantryVo[]
+  sysMenuTenantryVos?: SysMenuTenantryVo[]
   permissions: string[]
   logo: any // Change this to a specific type if the structure of the logo object is known
 }

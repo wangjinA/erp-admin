@@ -90,7 +90,7 @@ export default function Users() {
           //   },
           // },
           {
-            schema: { label: '姓名', field: 'userName' },
+            schema: { label: '姓名', field: 'userName', required: true },
             isCreate: true,
             isSearch: true,
           },
@@ -98,12 +98,13 @@ export default function Users() {
             schema: { label: '角色', field: 'roleName' },
           },
           {
-            schema: { label: '登录账号', field: 'userLoginAccount' },
+            schema: { label: '登录账号', field: 'userLoginAccount', required: true },
             isCreate: true,
             isSearch: true,
+
           },
           {
-            schema: { label: '密码', field: 'userPassword' },
+            schema: { label: '密码', field: 'userPassword', required: true },
             isCreate: true,
             hideTable: true,
             controlProps: {
@@ -111,7 +112,7 @@ export default function Users() {
             },
           },
           {
-            schema: { label: '用户组', field: 'roleIdList' },
+            schema: { label: '用户组', field: 'roleIdList', required: true },
             isCreate: true,
             control: 'role',
             controlProps: {
