@@ -212,7 +212,7 @@ const StoreList: React.FC<StoreListProps> = (props) => {
                       status="danger"
                       onClick={async () => {
                         await showModal({
-                          title: '平台内测期间，添加客服微信免费使用',
+                          title: '温馨提示',
                           okText: '申请',
                           content: (
                             <div>
