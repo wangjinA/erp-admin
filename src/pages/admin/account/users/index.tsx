@@ -3,16 +3,21 @@ import { useRequest } from 'ahooks'
 import { omit } from 'lodash'
 import React, { useState } from 'react'
 
+import { useSelector } from 'react-redux'
+
 import { userAPI } from '@/api/admin/user'
 import { expressAPI } from '@/api/client/express'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 import { RoleNameFC } from '@/components/Selectors/RoleSelector'
 import UserAvatar from '@/components/UserAvatar'
+import { WhetherOptions } from '@/constants'
+import { GlobalState } from '@/store'
 import { showMessage, showModal } from '@/utils'
 
 export default function Users() {
   const [current, setCurrent] = useState<any>()
   const ref = React.useRef<SearchTableRef>()
+  const { userInfo } = useSelector((state: GlobalState) => state)
 
   const { run, loading } = useRequest(
     async (row) => {
@@ -47,6 +52,9 @@ export default function Users() {
           // ...timeArrToObject(params.applyTime, 'applyStartTime', 'applyEndTime'),
           // ...timeArrToObject(params.rejectionTime, 'rejectionStartTime', 'rejectionEndTime'),
         })}
+        initialValues={{
+          isLogistics: 1,
+        }}
         formItemConfigList={[
           {
             schema: { label: '序号', field: 'index' },
@@ -127,6 +135,17 @@ export default function Users() {
             isCreate: true,
             isSearch: true,
           },
+          ...(userInfo?.isAdmin
+            ? [{
+                schema: { label: '物流主账号', field: 'isLogistics' },
+                isCreate: true,
+                isSearch: true,
+                control: 'radio',
+                controlProps: {
+                  options: WhetherOptions,
+                },
+              }]
+            : []) as any,
           {
             schema: { label: '状态', field: 'userStatus' },
             render(col) {

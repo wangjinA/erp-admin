@@ -43,6 +43,14 @@ export interface EntrepotStorageRacks {
 
 // 仓库
 export const entrepotAPI = {
+  // 仓库关联人员
+  allocation(body: {
+    entrepotId: any
+    userIdList: any[]
+  }) {
+    return baseAxios.post<APIResponse>('/api/entrepot/operation/allocation/entrepot', body)
+  },
+
   setDefualt(entrepotId: any) {
     return baseAxios.get(`/api/tenantry/default/entrepot/insert/data/${entrepotId}`)
   },

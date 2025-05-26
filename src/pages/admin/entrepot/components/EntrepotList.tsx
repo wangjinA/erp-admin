@@ -1,5 +1,6 @@
 import {
   Button,
+  Empty,
   Modal,
   Typography,
 } from '@arco-design/web-react'
@@ -57,6 +58,10 @@ export default (props: {
           </Button>
         </Title>
       </Typography.Paragraph>
+
+      {
+        (!entrepotLoading && !entrepotList?.length) ? <Empty className="mt-10" description="请添加仓库"></Empty> : null
+      }
 
       <List<Entrepot>
         loading={entrepotLoading}

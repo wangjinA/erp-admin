@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import { entrepotAPI } from '@/api/admin/entrepot'
 import { FormType } from '@/components/CreateFormItem'
 import FilterForm from '@/components/FilterForm'
+import { SwitchFormItem } from '@/constants/schema/common'
 import { showMessage } from '@/utils'
 
 export default ({ className, entrepotId }: {
@@ -110,18 +111,18 @@ export default ({ className, entrepotId }: {
           }}
           formItemConfigList={[
             {
+              ...SwitchFormItem,
               schema: {
                 label: '扫码入库是否分仓位',
                 field: 'whetherDivideSpace',
               },
-              control: 'switch',
             },
             {
+              ...SwitchFormItem,
               schema: {
                 label: '待扣头程费用订单自动扣费',
                 field: 'autoFeeDeduction',
               },
-              control: 'switch',
             },
             {
               schema: {
@@ -267,39 +268,39 @@ export default ({ className, entrepotId }: {
               },
             },
             {
+              ...SwitchFormItem,
               schema: {
                 label: '出库打印面单',
                 field: 'printOutSheet',
               },
-              control: 'switch',
             },
             {
+              ...SwitchFormItem,
               schema: {
                 label: '打包下单扣进店费用',
                 field: 'placeOrderfeeDeduction',
               },
-              control: 'switch',
             },
             {
+              ...SwitchFormItem,
               schema: {
                 label: '秤链接',
                 field: 'scaleLink',
               },
-              control: 'switch',
             },
             {
+              ...SwitchFormItem,
               schema: {
                 label: '装袋自动申请面单',
                 field: 'autoApplyForm',
               },
-              control: 'switch',
             },
             {
+              ...SwitchFormItem,
               schema: {
                 label: 'PDA上架是否入库',
                 field: 'whetherPda',
               },
-              control: 'switch',
             },
             {
               schema: {

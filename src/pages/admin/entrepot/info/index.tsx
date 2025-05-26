@@ -1,5 +1,6 @@
 import {
   Button,
+  Empty,
   Grid,
   Space,
   Typography,
@@ -35,6 +36,7 @@ export default () => {
     showTypeRacks,
     formRacksRef,
     activeEntrepot,
+    entrepotLoading,
     racksList,
     rackLoading,
     activeRacks,
@@ -110,7 +112,7 @@ export default () => {
                 </List>
               </Grid.Col>
             )}
-        {showTypeRacks && (
+        {activeEntrepot && showTypeRacks && (
           <Grid.Col span={12} className="pr-6">
             <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">
               <Typography.Title heading={6} className="mb-0">
@@ -181,6 +183,9 @@ export default () => {
           </Grid.Col>
         )}
       </Grid.Row>
+      {
+        (!entrepotLoading && activeEntrepot) ? null : <Empty></Empty>
+      }
     </div>
   )
 }
