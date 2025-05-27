@@ -1,42 +1,39 @@
 import { Switch } from '@arco-design/web-react'
-import { useRequest } from 'ahooks'
 import { omit } from 'lodash'
 import React, { useState } from 'react'
 
 import { useSelector } from 'react-redux'
 
 import { userAPI } from '@/api/admin/user'
-import { expressAPI } from '@/api/client/express'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 import { RoleNameFC } from '@/components/Selectors/RoleSelector'
 import UserAvatar from '@/components/UserAvatar'
 import { WhetherOptions } from '@/constants'
 import { GlobalState } from '@/store'
-import { showMessage, showModal } from '@/utils'
 
 export default function Users() {
   const [current, setCurrent] = useState<any>()
   const ref = React.useRef<SearchTableRef>()
   const { userInfo } = useSelector((state: GlobalState) => state)
 
-  const { run, loading } = useRequest(
-    async (row) => {
-      await showModal({
-        content: '确定取消？',
-        okButtonProps: {
-          status: 'warning',
-        },
-      })
-      setCurrent(row)
-      await showMessage(() =>
-        expressAPI.cancelReject(row.id),
-      )
-      ref.current.refreshSearchTable()
-    },
-    {
-      manual: true,
-    },
-  )
+  // const { run, loading } = useRequest(
+  //   async (row) => {
+  //     await showModal({
+  //       content: '确定取消？',
+  //       okButtonProps: {
+  //         status: 'warning',
+  //       },
+  //     })
+  //     setCurrent(row)
+  //     await showMessage(() =>
+  //       expressAPI.cancelReject(row.id),
+  //     )
+  //     ref.current.refreshSearchTable()
+  //   },
+  //   {
+  //     manual: true,
+  //   },
+  // )
 
   return (
     <div className="p-4 bg-white">

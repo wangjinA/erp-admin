@@ -17,7 +17,7 @@ export const SwitchFormItem: Partial<CreateFormItemType> = {
   formItemProps: {
     normalize: v => Number(v),
     formatter: v => v === 1,
+    triggerPropName: 'checked',
   },
   control: 'switch',
-
 }

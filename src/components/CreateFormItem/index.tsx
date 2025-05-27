@@ -105,6 +105,7 @@ function FormControl(props: Pick<CreateFormItemType, 'schema' | 'control' | 'con
 
   const {
     value,
+    checked,
   } = restProps
 
   const isPreview = formType === FormType.preview
@@ -144,7 +145,7 @@ function FormControl(props: Pick<CreateFormItemType, 'schema' | 'control' | 'con
             )
       case 'switch':
         return isPreview
-          ? <span>{value ? controlProps?.checkedText || '是' : controlProps?.unCheckedText || '否'}</span>
+          ? <span>{checked ? controlProps?.checkedText || '是' : controlProps?.unCheckedText || '否'}</span>
           : (
               <Switch checkedText="是" uncheckedText="否" {...controlProps} {...restProps} />
             )
