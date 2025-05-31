@@ -1,6 +1,7 @@
 import defaultSettings from '../settings.json'
 
 import { UserInfo } from '@/api/admin/user'
+import { LogisticsBoundInfo } from '@/api/client/bound'
 import { MenuItem } from '@/api/menu'
 import { getEndType } from '@/routes'
 import { LoginResponse } from '@/types/user'
@@ -21,6 +22,7 @@ export interface GlobalState {
   editPassword: boolean
   clientMenuList: MenuItem[]
   loginInfo?: LoginResponse
+  boundInfo?: LogisticsBoundInfo
 }
 
 const settingsData = localStorage.getItem(`${getEndType()}-settings`)
@@ -31,6 +33,7 @@ const initialState: GlobalState = {
   editPassword: false,
   clientMenuList: [],
   loginInfo: undefined,
+  boundInfo: null,
 }
 
 export default function store(state = initialState, action) {

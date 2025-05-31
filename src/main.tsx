@@ -109,6 +109,11 @@ function Index() {
     }
   }
 
+  async function initMain() {
+    fetchUserInfo()
+    fetchClientMenuList()
+  }
+
   async function fetchClientMenuList() {
     if (isClient()) {
       const res = await menuAPI.list()
@@ -126,8 +131,7 @@ function Index() {
 
   useEffect(() => {
     if (checkLogin()) {
-      fetchUserInfo()
-      fetchClientMenuList()
+      initMain()
     }
     else {
       toLoginPage()

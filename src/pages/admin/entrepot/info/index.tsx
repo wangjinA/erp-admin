@@ -49,7 +49,7 @@ export default () => {
   } = entrepotInfoHandle
 
   return (
-    <div className="bg-white p-4 pb-6 h-[var(--syb-content-height)]">
+    <div className="bg-white p-4 pb-6 syb-content-h">
       <Grid.Row gutter={[20, 0]}>
         <Grid.Col span={6} className="border-r border-neutral-3 pr-4">
           <EntrepotList entrepotInfoHandle={entrepotInfoHandle}></EntrepotList>

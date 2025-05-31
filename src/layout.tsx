@@ -1,4 +1,4 @@
-import { Breadcrumb, Layout, Menu, Spin } from '@arco-design/web-react'
+import { Breadcrumb, Empty, Layout, Menu, Spin } from '@arco-design/web-react'
 import {
   IconApps,
   IconArchive,
@@ -26,6 +26,7 @@ import { Redirect, Route, Switch, useHistory } from 'react-router-dom'
 import Footer from './components/Footer'
 
 import Navbar from './components/NavBar'
+import Exception403 from './pages/common/exception/403'
 import { GlobalState } from './store'
 import styles from './style/layout.module.less'
 import getUrlParams from './utils/getUrlParams'
@@ -282,19 +283,23 @@ function PageLayout() {
                   style={paddingTop}
                 >
                   <div className={styles['menu-wrapper']}>
-                    <Menu
-                      autoOpen={true}
-                      // accordion={true}
-                      collapse={collapsed}
-                      onClickMenuItem={onClickMenuItem}
-                      selectedKeys={selectedKeys}
-                      openKeys={openKeys}
-                      onClickSubMenu={(_, openKeys) => {
-                        setOpenKeys(openKeys)
-                      }}
-                    >
-                      {renderRoutes(locale)(routes, 1)}
-                    </Menu>
+                    {routes.length
+                      ? (
+                          <Menu
+                            autoOpen={true}
+                            // accordion={true}
+                            collapse={collapsed}
+                            onClickMenuItem={onClickMenuItem}
+                            selectedKeys={selectedKeys}
+                            openKeys={openKeys}
+                            onClickSubMenu={(_, openKeys) => {
+                              setOpenKeys(openKeys)
+                            }}
+                          >
+                            {renderRoutes(locale)(routes, 1)}
+                          </Menu>
+                        )
+                      : <Empty className="mt-40" description="暂无权限,请联系管理员添加"></Empty>}
                   </div>
                   <div className={styles['collapse-btn']} onClick={toggleCollapse}>
                     {collapsed ? <IconMenuUnfold /> : <IconMenuFold />}
@@ -327,7 +332,7 @@ function PageLayout() {
                       })}
                       {Object.values(EndType).map(endKey => (
                         <Route exact path={`/${endKey}`} key={endKey}>
-                          {defaultRoute ? <Redirect to={`/${defaultRoute}`} /> : null}
+                          {defaultRoute ? <Redirect to={`/${defaultRoute}`} /> : <Exception403></Exception403>}
                         </Route>
                       ))}
                       <Route

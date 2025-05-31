@@ -1,4 +1,4 @@
-import { Switch } from '@arco-design/web-react'
+import { Switch, Tag } from '@arco-design/web-react'
 import { omit } from 'lodash'
 import React, { useState } from 'react'
 
@@ -50,7 +50,7 @@ export default function Users() {
           // ...timeArrToObject(params.rejectionTime, 'rejectionStartTime', 'rejectionEndTime'),
         })}
         initialValues={{
-          isLogistics: 1,
+          // isLogistics: 1,
         }}
         formItemConfigList={[
           {
@@ -99,9 +99,9 @@ export default function Users() {
             isCreate: true,
             isSearch: true,
           },
-          {
-            schema: { label: '角色', field: 'roleName' },
-          },
+          // {
+          //   schema: { label: '角色', field: 'roleName' },
+          // },
           {
             schema: { label: '登录账号', field: 'userLoginAccount', required: true },
             isCreate: true,
@@ -124,7 +124,11 @@ export default function Users() {
               mode: 'multiple',
             },
             render(c) {
-              return <RoleNameFC value={c}></RoleNameFC>
+              return (
+                <div className="flex gap-1">
+                  {c.map(o => <Tag color="blue" key={o}><RoleNameFC value={o}></RoleNameFC></Tag>)}
+                </div>
+              )
             },
           },
           {
@@ -140,6 +144,13 @@ export default function Users() {
                 control: 'radio',
                 controlProps: {
                   options: WhetherOptions,
+                },
+                render(col) {
+                  return (
+                    <Tag color={col ? 'green' : 'gray'}>
+                      {col ? '是' : '否'}
+                    </Tag>
+                  )
                 },
               }]
             : []) as any,

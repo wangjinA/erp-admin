@@ -1,4 +1,3 @@
-import { Grid, Space } from '@arco-design/web-react'
 import React from 'react'
 
 import Announcement from './announcement'
@@ -10,23 +9,20 @@ import styles from './style/index.module.less'
 
 import LatestNews from '@/pages/admin/user/info/latest-news'
 
-const { Row, Col } = Grid
-
-const gutter = 16
-
 function Workplace() {
   return (
     <div className={styles.wrapper}>
-      <Space size={16} direction="vertical" className={styles.left}>
+
+      <div className="mr-4 w-[calc(100%-(280px+16px))] flex gap-4 flex-col">
         <Overview />
         <LatestNews></LatestNews>
-      </Space>
-      <Space className={styles.right} size={16} direction="vertical">
+      </div>
+      <div className="w-[280px] flex flex-col gap-4">
         <Shortcuts />
         <Carousel />
         <Announcement />
         {/* <Docs /> */}
-      </Space>
+      </div>
     </div>
   )
 }

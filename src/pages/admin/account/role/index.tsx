@@ -75,7 +75,17 @@ function Permission() {
   })
 
   return (
-    <CreateWrap formRef={formRef} createRequest={roleAPI.create} updateRequest={roleAPI.update} refreshRequest={run}>
+    <CreateWrap
+      formRef={formRef}
+      createRequest={roleAPI.create}
+      updateRequest={(formData) => {
+        return roleAPI.update({
+          ...editCurrent,
+          ...formData,
+        })
+      }}
+      refreshRequest={run}
+    >
       <ActionsContext.Consumer>
         {({ showType, setShowType, createAction, updateAction }) => (
           <div className="bg-white p-4 pb-6">

@@ -11,6 +11,7 @@ export interface Entrepot {
   deliveryAddress: string
   detailedAddress: string
   entrepotName: string
+  defaultFlag: boolean
   entrepotType: number
   id: number
   inventorySupported: number
@@ -49,6 +50,11 @@ export const entrepotAPI = {
     userIdList: any[]
   }) {
     return baseAxios.post<APIResponse>('/api/entrepot/operation/allocation/entrepot', body)
+  },
+
+  // 获取仓库关联人员
+  getAllocationUser(id: any) {
+    return baseAxios.get<APIListResponse<any>>(`/api/entrepot/get/allocation/user/${id}`)
   },
 
   setDefualt(entrepotId: any) {

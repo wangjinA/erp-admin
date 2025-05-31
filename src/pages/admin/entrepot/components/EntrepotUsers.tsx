@@ -1,4 +1,4 @@
-import { Button, Modal, Spin, Transfer } from '@arco-design/web-react'
+import { Button, Modal, Space, Spin, Tag, Transfer } from '@arco-design/web-react'
 import { IconPlus } from '@arco-design/web-react/icon'
 import { useRequest } from 'ahooks'
 
@@ -17,15 +17,22 @@ export default (props: {
   const [addUserLoading, setAddUserLoading] = useState(false)
   const [selectedKeys, setSelectedKeys] = useState([])
 
-  //  const { run, data, loading } = useRequest(
-  //     async (row) => {
-  //       setCurrent(row)
-  //       return tenantryUserAPI.getUserStoreList({ id: row.id }).then(r => r.data.data.list)
-  //     },
-  //     {
-  //       manual: true,
-  //     },
-  //   )
+  const { run, data, loading } = useRequest(
+    async () => {
+      if (!entrepotId) {
+        return
+      }
+      return entrepotAPI.getAllocationUser(entrepotId).then(r => r.data.data.list).then((r) => {
+        setSelectedKeys(r.map(o => (o.userId)))
+        return r
+      })
+    },
+    {
+      manual: false,
+      refreshDeps: [entrepotId],
+    },
+  )
+
   const roleUsersHandle = useRequest(() => {
     if (!addUserVisible || roleUsersHandle.data) {
       return roleUsersHandle.data
@@ -41,17 +48,26 @@ export default (props: {
   })
   return (
     <div>
-      <Button
-        type="primary"
-        size="small"
-        loading={roleUsersHandle.loading}
-        icon={<IconPlus></IconPlus>}
-        onClick={() => {
-          setAddUserVisible(true)
-        }}
-      >
-        添加
-      </Button>
+      <Space size={[10]}>
+        {
+          data?.map(item => (
+            <Tag key={item.userId} checkable={true} color="arcoblue" checked={true}>
+              {item.userName}
+            </Tag>
+          ))
+        }
+        <Button
+          type="primary"
+          size="small"
+          loading={roleUsersHandle.loading || loading}
+          icon={<IconPlus></IconPlus>}
+          onClick={() => {
+            setAddUserVisible(true)
+          }}
+        >
+          添加
+        </Button>
+      </Space>
       <Modal
         style={{
           width: '700px',
@@ -69,6 +85,7 @@ export default (props: {
               userIdList: selectedKeys,
             })).then(() => {
             // infoHandle.run(current.id)
+            run()
             setAddUserVisible(false)
           })
             .finally(() => {
@@ -91,6 +108,8 @@ export default (props: {
             targetKeys={selectedKeys || []}
             // targetKeys={current?.roleUserInfoVOList?.map(item => item.userId as any)}
             onChange={(e) => {
+              console.log(e)
+
               setSelectedKeys(e)
             }}
             searchPlaceholder="请输入"

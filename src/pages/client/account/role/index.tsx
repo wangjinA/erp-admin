@@ -91,7 +91,7 @@ function Permission() {
     <CreateWrap formRef={formRef} createRequest={roleAPI.create} updateRequest={roleAPI.saveRoleMenu} refreshRequest={run}>
       <ActionsContext.Consumer>
         {({ showType, setShowType, createAction, updateAction }) => (
-          <div className="bg-white p-4 h-[var(--syb-content-height)] test-1">
+          <div className="bg-white p-4 syb-content-h] test-1">
             <Grid.Row gutter={[20, 0]} className="h-full">
               <Grid.Col span={6} className="overflow-y-auto h-full border-r border-neutral-3 pr-4">
                 <Title title="用户组">
