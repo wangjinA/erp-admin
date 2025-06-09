@@ -2,7 +2,7 @@ import { Button, Modal, Space, Spin, Tag, Transfer } from '@arco-design/web-reac
 import { IconPlus } from '@arco-design/web-react/icon'
 import { useRequest } from 'ahooks'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { entrepotAPI } from '@/api/admin/entrepot'
 import { userAPI } from '@/api/admin/user'
@@ -46,6 +46,13 @@ export default (props: {
   }, {
     refreshDeps: [addUserVisible],
   })
+
+  useEffect(() => {
+    if (addUserVisible) {
+      setSelectedKeys(data?.map(item => item.userId) || []) // 待测试
+    }
+  }, [addUserVisible])
+
   return (
     <div>
       <Space size={[10]}>
@@ -84,7 +91,6 @@ export default (props: {
               entrepotId,
               userIdList: selectedKeys,
             })).then(() => {
-            // infoHandle.run(current.id)
             run()
             setAddUserVisible(false)
           })
@@ -108,8 +114,6 @@ export default (props: {
             targetKeys={selectedKeys || []}
             // targetKeys={current?.roleUserInfoVOList?.map(item => item.userId as any)}
             onChange={(e) => {
-              console.log(e)
-
               setSelectedKeys(e)
             }}
             searchPlaceholder="请输入"
