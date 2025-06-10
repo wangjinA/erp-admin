@@ -358,7 +358,6 @@ export default ({ data, shopId }: IProps) => {
         !processingError
           ? (
               <Table
-
                 rowSelection={
                   {
                     type: 'checkbox',
