@@ -280,10 +280,10 @@ export const routes: IRoute[] = [
         name: 'admin.account.users',
         key: 'admin/account/users',
       },
-      // {
-      //   name: 'admin.account.member',
-      //   key: 'admin/account/member',
-      // },
+      {
+        name: 'admin.account.member',
+        key: 'admin/account/member',
+      },
       {
         name: 'admin.account.setting',
         key: 'admin/account/setting',
@@ -671,6 +671,8 @@ function useRoute(): [IRoute[], DefaultRouteMap] {
         arr: [],
         menus: menuList,
       })
+    console.log(routes, newRoutes)
+
     setPermissionRoute(newRoutes)
   }, [JSON.stringify(loginInfo), JSON.stringify(menuList)])
 

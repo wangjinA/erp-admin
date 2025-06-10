@@ -81,7 +81,7 @@ function LatestNews() {
           (!boundInfoHandler.loading && !boundInfoHandler.data?.id)
             ? (
                 <>
-                  <div className="flex w-96 mt-4 mx-auto flex-1">
+                  <div className="flex flex-col w-96 mt-4 mx-auto flex-1">
                     <Input.Search
                       placeholder="请输入合作物流商名称"
                       searchButton="绑定"
@@ -99,6 +99,9 @@ function LatestNews() {
                       }}
                     >
                     </Input.Search>
+                    <div className="text-sm mt-2">
+                      绑定成功后，即可选择仓库进行发货打包!
+                    </div>
                   </div>
                 </>
               )

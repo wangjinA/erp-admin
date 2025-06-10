@@ -1,30 +1,27 @@
 import {
-  Avatar,
   Button,
   Divider,
-  Dropdown,
-  Image,
-  Menu,
   Message,
+  Modal,
   Select,
   Tooltip,
 } from '@arco-design/web-react'
 import {
   IconLanguage,
-  IconLoading,
   IconMoonFill,
   IconNotification,
   IconPoweroff,
   IconSettings,
   IconSunFill,
-  IconUser,
 } from '@arco-design/web-react/icon'
-import React, { useContext, useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import Settings from '../Settings'
 
 import StatusTag from '../StatusTag'
+
+import UserAvatar from '../UserAvatar'
 
 import IconButton from './IconButton'
 
@@ -97,70 +94,6 @@ function Navbar({ show }: { show: boolean }) {
     // const newRole = role === 'admin' ? 'user' : 'admin'
     // setRole(newRole)
   }
-
-  const droplist = (
-    <Menu>
-      <Menu.Item onClick={handleChangeRole} key="switch role">
-        {/* <IconTag className={styles['dropdown-icon']} /> */}
-        <IconUser className={styles['dropdown-icon']} />
-        {/* {t['menu.user.switchRoles']} */}
-        {userInfo.userName}
-      </Menu.Item>
-      {/* <Menu.SubMenu
-        key="role"
-        title={
-          <>
-            <IconUser className={styles['dropdown-icon']} />
-            <span className={styles['user-role']}>
-              {role === 'admin'
-                ? t['menu.user.role.admin']
-                : t['menu.user.role.user']}
-            </span>
-          </>
-        }
-      >
-        <Menu.Item onClick={handleChangeRole} key="switch role">
-          <IconTag className={styles['dropdown-icon']} />
-          {t['menu.user.switchRoles']}
-        </Menu.Item>
-      </Menu.SubMenu>
-      <Menu.Item key="setting">
-        <IconSettings className={styles['dropdown-icon']} />
-        {t['menu.user.setting']}
-      </Menu.Item>
-      <Menu.SubMenu
-        key="more"
-        title={
-          <div style={{ width: 80 }}>
-            <IconExperiment className={styles['dropdown-icon']} />
-            {t['message.seeMore']}
-          </div>
-        }
-      >
-        <Menu.Item key="workplace">
-          <IconDashboard className={styles['dropdown-icon']} />
-          {t['menu.dashboard.workplace']}
-        </Menu.Item>
-        <Menu.Item key="card list">
-          <IconInteraction className={styles['dropdown-icon']} />
-          {t['menu.list.cardList']}
-        </Menu.Item>
-      </Menu.SubMenu> */}
-
-      <Divider style={{ margin: '4px 0' }} />
-      <Menu.Item
-        key="logout"
-        onClick={() => {
-          loginExit()
-          logout()
-        }}
-      >
-        <IconPoweroff className={styles['dropdown-icon']} />
-        {/* {t['navbar.logout']} */}
-        退出登录
-      </Menu.Item>
-    </Menu>
-  )
 
   return (
     <div className={styles.navbar}>
@@ -237,33 +170,60 @@ function Navbar({ show }: { show: boolean }) {
         <li>
           <Settings />
         </li>
-        {userInfo && (
-          <li>
-            <Dropdown droplist={droplist} position="br" disabled={userLoading}>
-              <div className="cursor-pointer">
-                {userLoading
-                  ? (
-                      <IconLoading />
-                    )
-                  : (
-                      userInfo.headImg
-                        ? (
-                            <Image
-                              error={
-                                <Avatar className="bg-blue-500" size={32}><IconUser /></Avatar>
-                              }
-                              className="size-9 block rounded-full"
-                              alt="avatar"
-                              preview={false}
-                              src={userInfo.headImg}
-                            />
-                          )
-                        : <Avatar className="bg-blue-500" size={32}><IconUser /></Avatar>
-                    )}
-              </div>
-            </Dropdown>
-          </li>
-        )}
+        <li className="flex gap-2">
+          <UserAvatar src={userInfo?.headImg}></UserAvatar>
+          <div className="text-base">{userInfo.userName}</div>
+        </li>
+        <Divider type="vertical"></Divider>
+        <li
+          className="flex cursor-pointer text-blue-600 hover:text-red-600"
+          onClick={() => {
+            Modal.confirm({
+              title: '确认退出登录吗?',
+              okText: '确认',
+              okButtonProps: {
+                status: 'danger',
+              },
+              onOk: () => {
+                loginExit()
+                logout()
+              },
+            })
+          }}
+        >
+          <IconPoweroff className={styles['dropdown-icon']} />
+          {/* {t['navbar.logout']} */}
+          退出登录
+        </li>
+        {/* {userInfo
+          ? (
+              <li>
+                <Dropdown droplist={droplist} position="br" disabled={userLoading}>
+                  <div className="cursor-pointer">
+                    {userLoading
+                      ? (
+                          <IconLoading />
+                        )
+                      : (
+                          userInfo.headImg
+                            ? (
+                                <Image
+                                  error={
+                                    <Avatar className="bg-blue-500" size={32}><IconUser /></Avatar>
+                                  }
+                                  className="size-9 block rounded-full"
+                                  alt="avatar"
+                                  preview={false}
+                                  src={userInfo.headImg}
+                                />
+                              )
+                            : <Avatar className="bg-blue-500" size={32}><IconUser /></Avatar>
+                        )}
+                  </div>
+                </Dropdown>
+              </li>
+            )
+          : null} */}
       </ul>
     </div>
   )
