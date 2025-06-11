@@ -8,8 +8,7 @@
     "preview": "vite preview",
     "build": "vite build",
     "eslint": "eslint src/ --ext .ts,.tsx,.js,.jsx --fix --cache",
-    "stylelint": "stylelint 'src/**/*.less' 'src/**/*.css' --fix --cache",
-    "prepare": "husky install"
+    "stylelint": "stylelint 'src/**/*.less' 'src/**/*.css' --fix --cache"
   },
   "dependencies": {
     "@antv/data-set": "^0.11.8",
