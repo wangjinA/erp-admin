@@ -72,7 +72,10 @@ export default (props: GoodsInfoProps) => {
               ? (
                   <div className="border-l pl-2 pt-2">
                     <FilterForm
-                      initialValues={item}
+                      initialValues={{
+                        ...item,
+                        deliveryMethod: item.deliveryMethod || '0',
+                      }}
                       onChange={(_, v: any) => {
                         dataRef.current[index] = v
                         onChange?.(dataRef.current)

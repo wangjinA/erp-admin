@@ -21,6 +21,7 @@ import { orderAPI } from '@/api/client/order'
 import FilterForm from '@/components/FilterForm'
 
 import { useDictOptions } from '@/components/Selectors/DictSelector'
+import { batchApplyShippingCarrierList } from '@/constants/order'
 import { EmitTypes, bus, useEventBus } from '@/hooks/useEventBus'
 import OrderTable from '@/pages/admin/components/OrderTable'
 import RefreshButton from '@/pages/admin/components/OrderTable/RefreshButton'
@@ -214,6 +215,11 @@ export default (props: OrderPageProps) => {
                         if (!selectIds.length) {
                           return Message.error('请选择订单')
                         }
+                        const ids = data.list.filter(item =>
+                          batchApplyShippingCarrierList.includes(item.shippingCarrier),
+                        ).map(o => o.id)
+                        const successIds = selectIds.filter(id => ids.includes(id))
+                        // 只选择这些物流的订单id
                         Message.error('开发中...')
                       }}
                     >

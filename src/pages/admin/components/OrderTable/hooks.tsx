@@ -235,7 +235,7 @@ export function useColumns(props: OrderTablePorps) {
                     sendWarehouse={row.sendWarehouse}
                     shrimpOrderNo={row.shrimpOrderNo}
                   >
-                    打印检货单
+                    打印捡货单
                   </PrintButton>
                   <ActionHistory
                     buttonProps={{

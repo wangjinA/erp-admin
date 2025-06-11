@@ -31,7 +31,7 @@ import { APIListResponse } from '@/api/type'
 import CopyText from '@/components/CopyText'
 import FilterForm from '@/components/FilterForm'
 import GoodsInfo from '@/components/GoodsInfo'
-import DictSelector, {
+import {
   useDictOptions,
 } from '@/components/Selectors/DictSelector'
 import { ShowFormType } from '@/constants'
@@ -467,77 +467,87 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
           updateHandle.run()
         }}
       >
-        <FilterForm
-          span={24}
-          form={form}
-          initialValues={currentOrder}
-          className="mb-4"
-          formItemConfigList={[
-            {
-              schema: {
-                field: 'sendWarehouse',
-                label: '打包仓库',
-                required: true,
-              },
-              formItemProps: {
-                // disabled: true,
-              },
-              control: 'entrepotSelector',
-            },
-            {
-              schema: {
-                field: 'transportType',
-                label: '运输类型',
-              },
-              control: (
-                <DictSelector
-                  type="radio"
-                  dictCode="transport_type"
-                >
-                </DictSelector>
-              ),
-            },
-            {
-              schema: {
-                field: 'remark',
-                label: '备注',
-              },
-              control: 'textarea',
-              controlProps: {
-                placeholder: '请输入备注，此备注仓库可见',
-              },
-            },
-          ]}
-          onChange={(_, v) => {
-            setCurrentOrder({
+        {actionType === ShowFormType.edit ? (
+          <>
+            {console.log({
               ...currentOrder,
-              ...v,
-            })
-          }}
-        >
-        </FilterForm>
-        <GoodsInfo
-          data={currentOrder?.orderProductVOList}
-          isEdit={true}
-          onChange={(e) => {
-            setCurrentOrder({
-              ...currentOrder,
-              logisticsOrderProductList: e,
-            })
-          }}
-        >
-        </GoodsInfo>
-        <Button
-          className="mt-4"
-          type="outline"
-          long={true}
-          icon={<IconPlus></IconPlus>}
-          onClick={() => {
-            setActionType(ShowFormType.create)
-          }}
-        >
-          添加商品
-        </Button>
+              transportType: currentOrder?.transportType || '0',
+            })}
+            <FilterForm
+              span={24}
+              form={form}
+              initialValues={{
+                ...currentOrder,
+                transportType: currentOrder?.transportType || '0',
+              }}
+              className="mb-4"
+              formItemConfigList={[
+                {
+                  schema: {
+                    field: 'sendWarehouse',
+                    label: '打包仓库',
+                    required: true,
+                  },
+                  formItemProps: {
+                  // disabled: true,
+                  },
+                  control: 'entrepotSelector',
+                },
+                {
+                  schema: {
+                    field: 'transportType',
+                    label: '运输类型',
+                    required: true,
+                  },
+                  control: 'dictSelector',
+                  controlProps: {
+                    dictCode: 'transport_type',
+                    type: 'radio',
+                  },
+                },
+                {
+                  schema: {
+                    field: 'remark',
+                    label: '备注',
+                  },
+                  control: 'textarea',
+                  controlProps: {
+                    placeholder: '请输入备注，此备注仓库可见',
+                  },
+                },
+              ]}
+              onChange={(_, v) => {
+                setCurrentOrder({
+                  ...currentOrder,
+                  ...v,
+                })
+              }}
+            >
+            </FilterForm>
+            <GoodsInfo
+              data={currentOrder?.orderProductVOList}
+              isEdit={true}
+              onChange={(e) => {
+                setCurrentOrder({
+                  ...currentOrder,
+                  logisticsOrderProductList: e,
+                })
+              }}
+            >
+            </GoodsInfo>
+            <Button
+              className="mt-4"
+              type="outline"
+              long={true}
+              icon={<IconPlus></IconPlus>}
+              onClick={() => {
+                setActionType(ShowFormType.create)
+              }}
+            >
+              添加商品
+            </Button>
+          </>
+        ) : null}
       </Modal>
     </div>
   )

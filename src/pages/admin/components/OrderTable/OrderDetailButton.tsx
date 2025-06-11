@@ -1,7 +1,6 @@
-import { Button, ButtonProps, Descriptions, Divider, Form, Image, InputNumber, List, Modal, Space, Switch, Table } from '@arco-design/web-react'
+import { Button, ButtonProps, Descriptions, Divider, Form, Grid, InputNumber, Modal, Space, Switch } from '@arco-design/web-react'
 
 import { useRequest } from 'ahooks'
-import classNames from 'classnames'
 import { pick } from 'lodash'
 import { useState } from 'react'
 
@@ -92,7 +91,7 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
       <Modal
         style={{
           width: 1200,
-          height: 700,
+          // height: 600,
         }}
         title={(
           <div>
@@ -101,51 +100,68 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
         )}
         visible={visible}
         onCancel={() => setVisible(false)}
-        footer={null}
+        footer={(
+          <Space className="ml-auto">
+            <Button onClick={() => {
+              setVisible(false)
+            }}
+            >
+              关闭
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => {
+                saveHandler.run()
+              }}
+            >
+              保存
+            </Button>
+            <Button type="primary" status="warning">交运</Button>
+            <Button type="primary" status="danger">出库</Button>
+          </Space>
+        )}
       >
-        <div className="h-[600px]">
-
+        <div className="">
           <div className="flex-1 flex">
-            <div className="w-[700px] p-2">
-              <div className="h-[425px]">
-                <header className="flex items-center">
-                  {columns.map(item => (
-                    <div
-                      className="font-medium px-4 py-2"
-                      style={{
-                        width: item.width,
-                        flex: item.width ? 'auto' : 1,
-                      }}
-                      key={item.dataIndex}
-                    >
-                      {item.title}
-                    </div>
-                  ))}
-                </header>
-                <main className="flex flex-col gap-4 bg-white text-left">
-                  <div className="border">
-                    <main className="flex p-1">
-                      {columns.map(oitem => (
-                        <div
-                          style={{
-                            width: oitem.width,
-                            flex: oitem.width ? 'auto' : 1,
-                          }}
-                          key={oitem.dataIndex}
-                        >
-                          {oitem.render(orderItem[oitem.dataIndex], orderItem)}
-                        </div>
-                      ))}
-                    </main>
+            <div className="w-full h-[335px] overflow-y-auto">
+              <header className="flex items-center">
+                {columns.map(item => (
+                  <div
+                    className="font-medium px-4 py-2"
+                    style={{
+                      width: item.width,
+                      flex: item.width ? 'auto' : 1,
+                    }}
+                    key={item.dataIndex}
+                  >
+                    {item.title}
                   </div>
-                </main>
-                <Table
+                ))}
+              </header>
+              <main className="flex flex-col gap-4 bg-white text-left">
+                <div className="border">
+                  <main className="flex p-1">
+                    {columns.map(oitem => (
+                      <div
+                        style={{
+                          width: oitem.width,
+                          flex: oitem.width ? 'auto' : 1,
+                        }}
+                        key={oitem.dataIndex}
+                      >
+                        {oitem.render(orderItem[oitem.dataIndex], orderItem)}
+                      </div>
+                    ))}
+                  </main>
+                </div>
+              </main>
+              {/* <Table
                   data={orderItem.orderProductVOList}
                   columns={[
                     {
                       title: '商品信息',
                       dataIndex: '0',
-                      width: 550,
+                      width: 450,
                       render(col, item) {
                         return (
                           <div
@@ -159,7 +175,7 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
                             <List.Item.Meta
                               className="!items-center p-2 w-full"
                               avatar={<Image className="size-24" src={item.productImg[0]} />}
-                              title={item.productName}
+                              title={`${item.productName.slice(0, 10)}...`}
                               description={(
                                 <div>
                                   <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="单  价" value={item.unitPrice}></LabelValue>
@@ -201,119 +217,103 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
                   ]}
                 >
 
-                </Table>
-              </div>
-              <Divider className="my-4"></Divider>
+                </Table> */}
+            </div>
+          </div>
+          <Divider></Divider>
+          <Grid.Row>
+            <Grid.Col span={12}>
               <div>
                 <LabelValue label="卖家备注" value="暂无备注"></LabelValue>
                 <LabelValue label="打包要求" value="暂无要求"></LabelValue>
                 <LabelValue label="温馨提示" value={<span className="text-red-700 font-bold"><DictNameFC dictCode="tips" value="xpddd"></DictNameFC></span>}></LabelValue>
               </div>
-            </div>
-            <div className="flex-1 border-l">
-              <div className="flex">
-                <FilterForm
-                  className="w-[300px]"
-                  size="small"
-                  span={24}
-                  initialValues={pick(orderItem, ['parcelType', 'parcelWeight', 'parcelLength', 'parcelWide', 'parcelHigh'])}
-                  onValuesChange={(v) => {
-                    setUpdatedOrderItem({
-                      ...orderItem,
-                      ...v,
-                    })
-                  }}
-                  formItemConfigList={[
-                    {
-                      schema: {
-                        label: '包裹类型',
-                        field: 'parcelType',
-                      },
-                      control: 'dictSelector',
-                      controlProps: {
-                        dictCode: 'parcel_type',
-                      },
-                    },
-                    {
-                      schema: {
-                        label: '包裹重量',
-                        field: 'parcelWeight',
-                      },
-                    },
-                    {
-                      schema: {
-                        label: '包裹长度',
-                        field: 'parcelLength',
-                      },
-                    },
-                    {
-                      schema: {
-                        label: '包裹宽度',
-                        field: 'parcelWide',
-                      },
-                    },
-                    {
-                      schema: {
-                        label: '包裹高度',
-                        field: 'parcelHigh',
-                      },
-                    },
-                  ]}
-                >
-
-                </FilterForm>
-                <div
-                  className="flex-1 border-l p-2"
-                >
-                  <Descriptions
-                    column={1}
-                    colon={true}
-                    data={[
+            </Grid.Col>
+            <Grid.Col span={12}>
+              <div className="flex-1 border-l">
+                <div className="flex">
+                  <FilterForm
+                    className="w-[300px]"
+                    size="small"
+                    span={24}
+                    initialValues={pick(orderItem, ['parcelType', 'parcelWeight', 'parcelLength', 'parcelWide', 'parcelHigh'])}
+                    onValuesChange={(v) => {
+                      setUpdatedOrderItem({
+                        ...orderItem,
+                        ...v,
+                      })
+                    }}
+                    formItemConfigList={[
                       {
-                        label: '基本费用',
-                        value: '1',
+                        schema: {
+                          label: '包裹类型',
+                          field: 'parcelType',
+                        },
+                        control: 'dictSelector',
+                        controlProps: {
+                          dictCode: 'parcel_type',
+                        },
                       },
                       {
-                        label: '头程费用',
-                        value: orderItem.firstLegCost,
+                        schema: {
+                          label: '包裹重量',
+                          field: 'parcelWeight',
+                        },
                       },
                       {
-                        label: '附加费用',
-                        value: orderItem.appendCost,
+                        schema: {
+                          label: '包裹长度',
+                          field: 'parcelLength',
+                        },
                       },
                       {
-                        label: '总费用',
-                        value: orderItem.totalCost,
+                        schema: {
+                          label: '包裹宽度',
+                          field: 'parcelWide',
+                        },
+                      },
+                      {
+                        schema: {
+                          label: '包裹高度',
+                          field: 'parcelHigh',
+                        },
                       },
                     ]}
-                    style={{ marginBottom: 20 }}
-                    labelStyle={{ paddingRight: 36 }}
-                  />
+                  >
+
+                  </FilterForm>
+                  <div
+                    className="flex-1 border-l p-2"
+                  >
+                    <Descriptions
+                      column={1}
+                      colon={true}
+                      data={[
+                        {
+                          label: '基本费用',
+                          value: '1',
+                        },
+                        {
+                          label: '头程费用',
+                          value: orderItem.firstLegCost,
+                        },
+                        {
+                          label: '附加费用',
+                          value: orderItem.appendCost,
+                        },
+                        {
+                          label: '总费用',
+                          value: orderItem.totalCost,
+                        },
+                      ]}
+                      style={{ marginBottom: 20 }}
+                      labelStyle={{ paddingRight: 36 }}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-
-          <footer className="h-[60px] border-t flex">
-            <Space className="ml-auto">
-              <Button onClick={() => {
-                setVisible(false)
-              }}
-              >
-                关闭
-              </Button>
-              <Button
-                type="primary"
-                onClick={() => {
-                  saveHandler.run()
-                }}
-              >
-                保存
-              </Button>
-              <Button type="primary" status="warning">交运</Button>
-              <Button type="primary" status="danger">出库</Button>
-            </Space>
-          </footer>
+            </Grid.Col>
+          </Grid.Row>
         </div>
       </Modal>
     </>

@@ -59,6 +59,9 @@ importers:
       eslint-import-resolver-vite:
         specifier: ^2.0.1
         version: 2.0.1(eslint-plugin-import@2.29.1(@typescript-eslint/parser@5.5.0(eslint@9.8.0)(typescript@4.5.2))(eslint@9.8.0))
+      html2canvas:
+        specifier: ^1.4.1
+        version: 1.4.1
       jspdf:
         specifier: ^2.5.1
         version: 2.5.1
@@ -74,6 +77,9 @@ importers:
       nprogress:
         specifier: ^0.2.0
         version: 0.2.0
+      print-js:
+        specifier: ^1.6.0
+        version: 1.6.0
       qrcode:
         specifier: ^1.5.4
         version: 1.5.4
@@ -4289,6 +4295,9 @@ packages:
     peerDependencies:
       prettier: ^2.0.0
 
+  print-js@1.6.0:
+    resolution: {integrity: sha512-BfnOIzSKbqGRtO4o0rnj/K3681BSd2QUrsIZy/+WdCIugjIswjmx3lDEZpXB2ruGf9d4b3YNINri81+J0FsBWg==}
+
   prop-types@15.7.2:
     resolution: {integrity: sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==}
 
@@ -8241,8 +8250,7 @@ snapshots:
 
   balanced-match@2.0.0: {}
 
-  base64-arraybuffer@1.0.2:
-    optional: true
+  base64-arraybuffer@1.0.2: {}
 
   big.js@5.2.2: {}
 
@@ -8519,7 +8527,6 @@ snapshots:
   css-line-break@2.1.0:
     dependencies:
       utrie: 1.0.2
-    optional: true
 
   css-select-base-adapter@0.1.1: {}
 
@@ -9798,7 +9805,6 @@ snapshots:
     dependencies:
       css-line-break: 2.1.0
       text-segmentation: 1.0.3
-    optional: true
 
   human-signals@1.1.1: {}
 
@@ -10678,6 +10684,8 @@ snapshots:
       prettier: 2.5.0
       tslib: 2.6.3
 
+  print-js@1.6.0: {}
+
   prop-types@15.7.2:
     dependencies:
       loose-envify: 1.4.0
@@ -11498,7 +11506,6 @@ snapshots:
   text-segmentation@1.0.3:
     dependencies:
       utrie: 1.0.2
-    optional: true
 
   text-table@0.2.0: {}
 
@@ -11704,7 +11711,6 @@ snapshots:
   utrie@1.0.2:
     dependencies:
       base64-arraybuffer: 1.0.2
-    optional: true
 
   v8-compile-cache@2.3.0: {}
 

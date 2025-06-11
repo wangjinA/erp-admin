@@ -227,19 +227,8 @@ const createFormItem: CreateFormItemParams = (props: CreateFormItemType) => {
   } = schema
 
   const isPreview = formType === FormType.preview
-
   const defaultValueObj
     = defaultValue !== undefined ? { initialValue: defaultValue } : {}
-  console.log(label, required, ((rules?.length) || required)
-    ? [
-        {
-          required: true,
-          message: ['input', 'number'].includes(control as string)
-            ? `请输入${label}`
-            : `请完善${label}`,
-        },
-      ]
-    : [])
   return (
     <Form.Item
       colon={label ? ':' : ''}
