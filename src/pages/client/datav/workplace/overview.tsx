@@ -8,7 +8,6 @@ import {
   Typography,
 } from '@arco-design/web-react'
 
-import { useRequest } from 'ahooks'
 import axios from 'axios'
 import React, { ReactNode, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
@@ -85,16 +84,18 @@ function Overview() {
     fetchData()
   }, [])
 
-  const countDataHandler = useRequest(() => {
+  // const countDataHandler = useRequest(() => {
 
-  }, {})
+  // }, {})
 
   return (
     <Card>
       <div className="flex items-center mb-4">
         <Typography.Title heading={5} className="!mb-0">
           {t['workplace.welcomeBack']}
-          {userInfo.userName || userInfo.userLoginAccount}
+          <Typography.Text copyable>
+            {userInfo.tenantryNo || userInfo.userName || userInfo.userLoginAccount}
+          </Typography.Text>
         </Typography.Title>
         <div className="flex items-center ml-20 gap-2">
           <img className="size-9 select-none" src={moneyIcon}></img>

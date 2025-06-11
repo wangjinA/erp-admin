@@ -49,4 +49,5 @@ export interface LoginResponse {
   sysMenuTenantryVos?: SysMenuTenantryVo[]
   permissions: string[]
   logo: any // Change this to a specific type if the structure of the logo object is known
+  tenantryNo: string
 }

@@ -55,7 +55,6 @@ export default function LoginForm() {
   const {
     run: loginHandler,
     loading,
-    data,
   } = useRequest(
     async (params) => {
       try {

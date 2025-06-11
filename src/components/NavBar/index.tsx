@@ -41,7 +41,7 @@ import useStorage from '@/utils/useStorage'
 
 function Navbar({ show }: { show: boolean }) {
   const t = useI18n()
-  const { userInfo, userLoading } = useSelector((state: GlobalState) => state)
+  const { userInfo } = useSelector((state: GlobalState) => state)
   const dispatch = useDispatch()
 
   const [_, setUserStatus] = useStorage('userStatus')

@@ -71,15 +71,15 @@ export interface CreateFormItemType {
 }
 export type CreateFormItemParams = (params: CreateFormItemType) => ReactElement
 
-const labelCol: ColProps = {
-  style: {
-    width: '8em',
-    paddingLeft: 2,
-  },
-  // xl: {
-  //   span: 6,
-  // },
-}
+// const labelCol: ColProps = {
+//   style: {
+//     width: '8em',
+//     paddingLeft: 2,
+//   },
+//   // xl: {
+//   //   span: 6,
+//   // },
+// }
 const wrapperCol: ColProps = {
   flex: 1,
   // xl: {
@@ -89,6 +89,7 @@ const wrapperCol: ColProps = {
 
 function FormControl(props: Pick<CreateFormItemType, 'schema' | 'control' | 'controlProps' | 'formType'> & {
   value?: any
+  checked?: boolean
   onChange?: (value: any) => void
 }) {
   const {
@@ -229,7 +230,16 @@ const createFormItem: CreateFormItemParams = (props: CreateFormItemType) => {
 
   const defaultValueObj
     = defaultValue !== undefined ? { initialValue: defaultValue } : {}
-
+  console.log(label, required, ((rules?.length) || required)
+    ? [
+        {
+          required: true,
+          message: ['input', 'number'].includes(control as string)
+            ? `请输入${label}`
+            : `请完善${label}`,
+        },
+      ]
+    : [])
   return (
     <Form.Item
       colon={label ? ':' : ''}
@@ -237,7 +247,7 @@ const createFormItem: CreateFormItemParams = (props: CreateFormItemType) => {
       label={<LabelWithTips label={label} tips={tips} position={position} />}
       field={field}
       rules={
-        (rules?.length) || required
+        ((rules?.length) || required)
           ? [
               {
                 required: true,

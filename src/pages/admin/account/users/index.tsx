@@ -106,7 +106,6 @@ export default function Users() {
             schema: { label: '登录账号', field: 'userLoginAccount', required: true },
             isCreate: true,
             isSearch: true,
-
           },
           {
             schema: { label: '密码', field: 'userPassword', required: true },
@@ -138,7 +137,7 @@ export default function Users() {
           },
           ...(userInfo?.isAdmin
             ? [{
-                schema: { label: '物流主账号', field: 'isLogistics' },
+                schema: { label: '物流主账号', field: 'isLogistics', required: true },
                 isCreate: true,
                 isSearch: true,
                 control: 'radio',

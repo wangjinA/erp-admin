@@ -657,7 +657,6 @@ function useRoute(): [IRoute[], DefaultRouteMap] {
   }
 
   const [permissionRoute, setPermissionRoute] = useState([])
-  console.log(menuList, loginInfo?.sysMenuTenantryVos)
 
   useEffect(() => {
     if (!loginInfo) {
@@ -671,7 +670,6 @@ function useRoute(): [IRoute[], DefaultRouteMap] {
         arr: [],
         menus: menuList,
       })
-    console.log(routes, newRoutes)
 
     setPermissionRoute(newRoutes)
   }, [JSON.stringify(loginInfo), JSON.stringify(menuList)])

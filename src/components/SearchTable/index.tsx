@@ -359,7 +359,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
  */
 function formItemConfigListStatusFilter(
   formItemConfigList: SearchTableSchema[],
-  key: string,
+  key: 'isSearch' | 'isCreate',
   dynamicHandleParams: { showType?: ShowFormType } = {},
 ): any[] {
   const result = formItemConfigList
@@ -368,8 +368,8 @@ function formItemConfigListStatusFilter(
       return ({ ...omit(item, ['isCreate', 'isSearch', 'dynamicHandle']), ...{
         schema: {
           ...item.schema,
-          required: item.isSearch ? false : item.schema.required,
-          rules: item.isSearch ? null : item.schema.rules,
+          required: key === 'isSearch' ? false : item.schema.required,
+          rules: key === 'isSearch' ? null : item.schema.rules,
         },
       }, ...(item.dynamicHandle ? item.dynamicHandle(dynamicHandleParams) : {}) })
     })
