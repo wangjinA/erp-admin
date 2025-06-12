@@ -10,7 +10,7 @@ import { formatDate } from '@/utils'
 
 interface ActionHistoryProps {
   buttonProps?: ButtonProps
-  id: number
+  id: string
 }
 export default (props: ActionHistoryProps) => {
   const { buttonProps, id } = props

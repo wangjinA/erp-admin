@@ -101,7 +101,7 @@ export const expressAPI = {
    * 获取虾皮货态
    */
   getOrderTrack(orderId: any) {
-    return baseAxios.get<APIResponse<OrderTrackRes>>(`${orderId}`)
+    return baseAxios.get<APIResponse<OrderTrackRes>>(`/api/logistics/order/get/tracking/info/${orderId}`)
   },
 }
 

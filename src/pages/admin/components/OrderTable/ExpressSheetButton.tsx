@@ -1,5 +1,5 @@
-import { Button, ButtonProps, Link, Modal, Spin } from '@arco-design/web-react'
-import { IconFile } from '@arco-design/web-react/icon'
+import { Button, ButtonProps, Link, Modal, Space, Spin } from '@arco-design/web-react'
+import { IconFile, IconPrinter } from '@arco-design/web-react/icon'
 import { useRequest } from 'ahooks'
 import { useEffect, useState } from 'react'
 
@@ -8,6 +8,8 @@ import { orderAPI as clientOrderAPI } from '@/api/client/order'
 import { isClient } from '@/routes'
 import { OrderResponseItem } from '@/types/order'
 import { showMessage } from '@/utils'
+import { requestEndInfo } from '@/api'
+import printJS from 'print-js'
 
 export default ({ orderItem, buttonProps }: {
   orderItem: OrderResponseItem
@@ -25,10 +27,11 @@ export default ({ orderItem, buttonProps }: {
         await showMessage(() => clientOrderAPI.getSheet(orderItem.id), '查看面单')
       }
       else {
-        const list = await showMessage(() => orderAPI.createShellOrder(orderItem.id), '查看面单').then((r) => {
-          return r.data.data?.list
-        })
-        url = list?.[0]
+        // const list = await showMessage(() => orderAPI.createShellOrder(orderItem.id), '查看面单').then((r) => {
+        //   return r.data.data?.list
+        // })
+        // url = list?.[0]
+        url = requestEndInfo + `/api/logistics/order/get/tracking/number/${orderItem.id}`
       }
     }
     setSrc(url)
@@ -39,25 +42,44 @@ export default ({ orderItem, buttonProps }: {
     <>
       {buttonProps
         ? (
-            <Button
-              loading={loading}
-              icon={<IconFile />}
-              // onClick={async () => {
-              //   const res = await orderAPI.getSheet(item.id)
-              //   if (res.data.code !== SuccessCode) {
-              //     return Message.error(res.data.msg)
-              //   }
-              //   setSheet(res.data.data)
-              // }}
-              onClick={() => {
-                run()
-              }}
-              {...buttonProps}
-            >
-              查看面单
-            </Button>
-          )
+          <Button
+            loading={loading}
+            icon={<IconFile />}
+            // onClick={async () => {
+            //   const res = await orderAPI.getSheet(item.id)
+            //   if (res.data.code !== SuccessCode) {
+            //     return Message.error(res.data.msg)
+            //   }
+            //   setSheet(res.data.data)
+            // }}
+            onClick={() => {
+              run()
+            }}
+            {...buttonProps}
+          >
+            查看面单
+          </Button>
+        )
         : (
+          <Space>
+            <Link
+              className="text-sm"
+              type="text"
+              icon={<IconPrinter />}
+              onClick={() => {
+                // setVisible(true)
+                // run()
+                printJS({
+                  printable: orderItem?.orderPackageList[0].documentUrl,
+                  type: 'pdf',
+                  showModal: true // 可选，显示加载中弹窗
+                });
+
+              }}
+            >
+              打印
+              {loading ? <Spin size={12}></Spin> : ''}
+            </Link>
             <Link
               className="text-sm"
               type="text"
@@ -70,7 +92,8 @@ export default ({ orderItem, buttonProps }: {
               查看面单
               {loading ? <Spin size={12}></Spin> : ''}
             </Link>
-          )}
+          </Space>
+        )}
       <Modal
         title="面单信息"
         style={{ width: 800 }}

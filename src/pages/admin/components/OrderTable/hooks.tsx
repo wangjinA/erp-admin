@@ -225,15 +225,11 @@ export function useColumns(props: OrderTablePorps) {
                   />
                   <PrintButton
                     orderItem={row}
-                    sendWarehouse={row.sendWarehouse}
-                    shrimpOrderNo={row.shrimpOrderNo}
                   >
                     打印出货单
                   </PrintButton>
                   <PrintButton
                     orderItem={row}
-                    sendWarehouse={row.sendWarehouse}
-                    shrimpOrderNo={row.shrimpOrderNo}
                   >
                     打印捡货单
                   </PrintButton>

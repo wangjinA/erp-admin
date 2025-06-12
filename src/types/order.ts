@@ -48,7 +48,7 @@ export interface Order {
   estimatedShippingFee: number // 预计运费
   fillShipInfo: boolean // 是否未填写发货信息
   firstLegCost: number // 头程费用
-  id: number // 主键
+  id: string // 主键
   label: string // 标签
   mobileNumber: string // 手机号码
   orderAmount: number // 订单金额

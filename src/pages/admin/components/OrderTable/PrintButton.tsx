@@ -1,14 +1,19 @@
 import { Button } from '@arco-design/web-react'
 import { ButtonProps } from '@arco-design/web-react/lib'
-
-import { ScanParams } from '@/api/admin/entrepot'
 import { usePrintHtml } from '@/hooks/usePrintWaybill'
 import { OrderResponseItem } from '@/types/order'
 
-interface ShipmentButtonButtonProps extends ScanParams {
+// 0拣货单 1出货单
+export enum PrintType {
+  PICKING = 0,
+  SHIPPING = 1,
+}
+
+interface ShipmentButtonButtonProps {
   buttonProps?: ButtonProps
   orderItem: OrderResponseItem
   children?: React.ReactNode
+  printType?: PrintType
 }
 
 export default (props: ShipmentButtonButtonProps) => {
@@ -18,10 +23,9 @@ export default (props: ShipmentButtonButtonProps) => {
     <>
       <Button
         type="text"
-        disabled={!!orderItem?.orderPackageList?.some(item => item.documentUrl)}
         {...buttonProps}
-        onClick={async () => {
-          await printHandle()
+        onClick={() => {
+          printHandle()
         }}
       >
         {children}

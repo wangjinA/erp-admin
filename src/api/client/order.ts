@@ -13,7 +13,7 @@ export const orderAPI = {
   },
 
   // 获取订单详情
-  getDetail(id: number) {
+  getDetail(id: string) {
     return baseAxios.get(`/api/logistics/order/info/${id}`)
   },
 
@@ -21,19 +21,19 @@ export const orderAPI = {
     return baseAxios.post('/api/logistics/order/insert', body)
   },
 
-  refresh(id: number) {
+  refresh(id: string) {
     return baseAxios.get(`/api/logistics/order/update/shopee/${id}`)
   },
 
-  remove(id: number) {
+  remove(id: string) {
     return baseAxios.get(`/api/logistics/order/remove/${id}`)
   },
 
-  getSheet(id: number) {
+  getSheet(id: string) {
     return baseAxios.get(`/api/logistics/order/view/sheet/${id}`)
   },
 
-  getLog(orderId: number) {
+  getLog(orderId: string) {
     return baseAxios.post<APIListResponse<OrderLogItem>>(`/api/logistics/order/log/list`, {
       pageNum: 1,
       pageSize: 30,

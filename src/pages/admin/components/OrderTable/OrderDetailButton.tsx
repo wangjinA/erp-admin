@@ -1,4 +1,4 @@
-import { Button, ButtonProps, Descriptions, Divider, Form, Grid, InputNumber, Modal, Space, Switch } from '@arco-design/web-react'
+import { Button, ButtonProps, Descriptions, Divider, Form, Grid, InputNumber, List, Modal, Space, Switch, Table, Image } from '@arco-design/web-react'
 
 import { useRequest } from 'ahooks'
 import { pick } from 'lodash'
@@ -14,6 +14,8 @@ import { DictNameFC } from '@/components/Selectors/DictSelector'
 import { EmitTypes, bus } from '@/hooks/useEventBus'
 import { OrderResponseItem } from '@/types/order'
 import { showMessage } from '@/utils'
+import ReceivingInfo from './ReceivingInfo'
+import classNames from 'classnames'
 
 interface OrderDetailButtonProps {
   orderItem?: OrderResponseItem
@@ -40,13 +42,14 @@ const columns = [{
   dataIndex: 'orderProductVOList_2',
   width: 210,
   render(col, row) {
-    return (
-      <div>
-        <Form.Item label="实际数量" layout="vertical" colon={true}>
-          <InputNumber placeholder="请输入"></InputNumber>
-        </Form.Item>
-      </div>
-    )
+    return <ReceivingInfo data={row}></ReceivingInfo>
+    // return (
+    //   // <div>
+    //   //   <Form.Item label="实际数量" layout="vertical" colon={true}>
+    //   //     <InputNumber placeholder="请输入"></InputNumber>
+    //   //   </Form.Item>
+    //   // </div>
+    // )
   },
 }, {
   title: '保留库存',
@@ -124,7 +127,7 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
         <div className="">
           <div className="flex-1 flex">
             <div className="w-full h-[335px] overflow-y-auto">
-              <header className="flex items-center">
+              {/* <header className="flex items-center">
                 {columns.map(item => (
                   <div
                     className="font-medium px-4 py-2"
@@ -154,70 +157,73 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
                     ))}
                   </main>
                 </div>
-              </main>
-              {/* <Table
-                  data={orderItem.orderProductVOList}
-                  columns={[
-                    {
-                      title: '商品信息',
-                      dataIndex: '0',
-                      width: 450,
-                      render(col, item) {
-                        return (
-                          <div
-                            key={item.id}
-                            className={classNames([
-                              'grid',
-                              'h-[125px]',
-                              // index > 0 ? 'border-t' : '',
-                            ])}
-                          >
-                            <List.Item.Meta
-                              className="!items-center p-2 w-full"
-                              avatar={<Image className="size-24" src={item.productImg[0]} />}
-                              title={`${item.productName.slice(0, 10)}...`}
-                              description={(
-                                <div>
-                                  <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="单  价" value={item.unitPrice}></LabelValue>
-                                  <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="数  量" value={item.quantity}></LabelValue>
-                                  <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="规格名称" value={item.specificationName}></LabelValue>
-                                  <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="规格SKU" value={item.sku}></LabelValue>
-                                </div>
-                              )}
-                            />
-                          </div>
-                        )
-                      },
+              </main> */}
+              <Table
+                style={{
+                  height: 335
+                }}
+                data={orderItem.orderProductVOList}
+                columns={[
+                  {
+                    title: '商品信息',
+                    dataIndex: '0',
+                    width: 450,
+                    render(col, item) {
+                      return (
+                        <div
+                          key={item.id}
+                          className={classNames([
+                            'grid',
+                            'h-[125px]',
+                            // index > 0 ? 'border-t' : '',
+                          ])}
+                        >
+                          <List.Item.Meta
+                            className="!items-center p-2 w-full"
+                            avatar={<Image className="size-24" src={item.productImg[0]} />}
+                            title={`${item.productName.slice(0, 10)}...`}
+                            description={(
+                              <div>
+                                <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="单  价" value={item.unitPrice}></LabelValue>
+                                <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="数  量" value={item.quantity}></LabelValue>
+                                <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="规格名称" value={item.specificationName}></LabelValue>
+                                <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="规格SKU" value={item.sku}></LabelValue>
+                              </div>
+                            )}
+                          />
+                        </div>
+                      )
                     },
-                    {
-                      title: '发货信息',
-                      dataIndex: 'fhxx',
-                      width: 550,
-                      render() {
-                        return <SendCargoInfo data={orderItem}></SendCargoInfo>
-                      },
+                  },
+                  {
+                    title: '发货信息',
+                    dataIndex: 'fhxx',
+                    width: 550,
+                    render() {
+                      return <SendCargoInfo data={orderItem}></SendCargoInfo>
                     },
-                    {
-                      title: '收货信息',
-                      dataIndex: 'fhxx',
-                      width: 550,
-                      render() {
-                        return (
-                          <Form.Item label="实际数量" layout="vertical" colon={true}>
-                            <InputNumber placeholder="请输入"></InputNumber>
-                          </Form.Item>
-                        )
-                      },
+                  },
+                  {
+                    title: '收货信息',
+                    dataIndex: 'fhxx',
+                    width: 550,
+                    render() {
+                      return (
+                        <Form.Item label="实际数量" layout="vertical" colon={true}>
+                          <InputNumber placeholder="请输入"></InputNumber>
+                        </Form.Item>
+                      )
                     },
-                    {
-                      title: '发货信息',
-                      dataIndex: '保留库存',
-                      width: 550,
-                    },
-                  ]}
-                >
+                  },
+                  {
+                    title: '发货信息',
+                    dataIndex: '保留库存',
+                    width: 550,
+                  },
+                ]}
+              >
 
-                </Table> */}
+              </Table>
             </div>
           </div>
           <Divider></Divider>

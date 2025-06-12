@@ -1,4 +1,4 @@
-import { Tag } from '@arco-design/web-react'
+import { Form, InputNumber, Tag } from '@arco-design/web-react'
 
 import { useRequest } from 'ahooks'
 import classNames from 'classnames'
@@ -63,10 +63,9 @@ function ExpressStatus(item: OrderResponseItem['orderProductVOList'][0]) {
 function ExpressStatusActions(props: {
   item: OrderResponseItem['orderProductVOList'][0]
   sendWarehouse: string
-  // data: OrderResponseItem
-  orderId: string
+  data: OrderResponseItem
 }) {
-  const { item, sendWarehouse, orderId } = props
+  const { item, sendWarehouse, data } = props
 
   const [isReturnGoods, setIsReturnGoods] = useState<boolean>(false)
   // const [formRef] = Form.useForm()
@@ -87,7 +86,7 @@ function ExpressStatusActions(props: {
   const rejectHandle = useRequest(
     async () => {
       await showMessage(() => expressAPI.addReject({
-        orderId,
+        orderId: data.id,
         trackingNo: item.trackingNo,
       }), '快递拒收申请')
       bus.emit(EmitTypes.refreshOrderPage)
@@ -101,7 +100,7 @@ function ExpressStatusActions(props: {
   const cancelRejectHandle = useRequest(
     async () => {
       await showMessage(() => expressAPI.orderCancelReject({
-        orderId,
+        orderId: data.id,
         trackingNo: item.trackingNo,
       }), '取消拒收')
       bus.emit(EmitTypes.refreshOrderPage)
@@ -188,7 +187,7 @@ function ExpressStatusActions(props: {
               title="确定取消退件吗？"
               onOk={async () => {
                 await showMessage(() => expressAPI.orderCancelReturn({
-                  orderId,
+                  orderId: data.id,
                   trackingNo: item.trackingNo,
                 }), '退件取消')
                 bus.emit(EmitTypes.refreshOrderPage)
@@ -212,69 +211,7 @@ function ExpressStatusActions(props: {
   return <div>-</div>
 }
 
-export const SendCargoItemInfo: React.FC<{
-  item: OrderResponseItem['orderProductVOList'][0]
-  orderStatus: string;
-  sendWarehouse: string;
-  orderId: string;
-}> = ({ item, orderStatus, sendWarehouse, orderId }) => {
-  return <div className="h-full p-2">
-    <LabelValue
-      label="快递"
-      value={item.trackingNo
-        ? (
-          <CopyText
-            value={item.trackingNo}
-            gap={1}
-          >
-            <TrackingNo
-              value={item.trackingNo}
-            >
-            </TrackingNo>
-          </CopyText>
-        )
-        : <Tag>未填</Tag>}
-    >
-    </LabelValue>
-    {
-      item.trackingNo
-        ? (
-          <>
-            <LabelValue
-              label="状态"
-              value={<ExpressStatus {...item} />}
-            >
-            </LabelValue>
-            {
-              ['0', '1', '2'].includes(orderStatus) && isClient()
-                ? (
-                  <LabelValue
-                    valueClassName="inline-flex"
-                    label="操作"
-                    value={(
-                      <ExpressStatusActions
-                        orderId={orderId}
-                        item={item}
-                        sendWarehouse={sendWarehouse}
-                      />
-                    )}
-                  />
-                )
-                : null
-            }
-          </>
-        )
-        : null
-    }
-    {item.freightSpaceName
-      ? (
-        <LabelValue label="仓位" value={item.freightSpaceName}></LabelValue>
-      )
-      : null}
-  </div>
-}
-
-const SkuList: React.FC<SendCargoInfoProps> = (props) => {
+const ReceivingInfo: React.FC<SendCargoInfoProps> = (props) => {
   const { data } = props
   return (
     <div className={classNames(styles['goods-info'], 'pr-2')}>
@@ -284,58 +221,9 @@ const SkuList: React.FC<SendCargoInfoProps> = (props) => {
           className={classNames('h-[105px] border-r', i > 0 ? 'border-t' : '')}
         >
           <div className="h-full p-2">
-            <LabelValue
-              label="快递"
-              value={item.trackingNo
-                ? (
-                  <CopyText
-                    value={item.trackingNo}
-                    gap={1}
-                  >
-                    <TrackingNo
-                      value={item.trackingNo}
-                    >
-                    </TrackingNo>
-                  </CopyText>
-                )
-                : <Tag>未填</Tag>}
-            >
-            </LabelValue>
-            {
-              item.trackingNo
-                ? (
-                  <>
-                    <LabelValue
-                      label="状态"
-                      value={<ExpressStatus {...item} />}
-                    >
-                    </LabelValue>
-                    {
-                      ['0', '1', '2'].includes(data.orderStatus) && isClient()
-                        ? (
-                          <LabelValue
-                            valueClassName="inline-flex"
-                            label="操作"
-                            value={(
-                              <ExpressStatusActions
-                                data={data}
-                                item={item}
-                                sendWarehouse={data.sendWarehouse}
-                              />
-                            )}
-                          />
-                        )
-                        : null
-                    }
-                  </>
-                )
-                : null
-            }
-            {item.freightSpaceName
-              ? (
-                <LabelValue label="仓位" value={item.freightSpaceName}></LabelValue>
-              )
-              : null}
+            <Form.Item label="实际数量" layout="vertical" colon={true}>
+              <InputNumber placeholder="请输入"></InputNumber>
+            </Form.Item>
           </div>
         </div>
       ))}
@@ -343,4 +231,4 @@ const SkuList: React.FC<SendCargoInfoProps> = (props) => {
   )
 }
 
-export default SkuList
+export default ReceivingInfo
