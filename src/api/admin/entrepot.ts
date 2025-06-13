@@ -1,3 +1,4 @@
+import { ShippingOrderPrintingTemplateEnum } from '@/constants/entrepot'
 import baseAxios from '..'
 import { APIListResponse, APIResponse, IPageParams } from '../type'
 
@@ -252,7 +253,7 @@ export interface EntrepotParams {
   senderPhone: string // 寄件手机号
   shelfServiceCharge: number // 上架服务费
   shippingNoteWatermarking: string // 出货单水印  字典值
-  shippingOrderPrintingTemplate: string // 出货单打印模版  字典值
+  shippingOrderPrintingTemplate: ShippingOrderPrintingTemplateEnum // 出货单打印模版  字典值
   shippingOrderSet: string // 出货单集
   shippingOrderVirtualNumber: string // 出货单虚拟号码
   updateBy: number // 更新人

@@ -9,6 +9,7 @@ import { FormType } from '@/components/CreateFormItem'
 import FilterForm from '@/components/FilterForm'
 import { SwitchFormItem } from '@/constants/schema/common'
 import { showMessage } from '@/utils'
+import { ShippingOrderPrintingTemplateOptions } from '@/constants/entrepot'
 
 export default ({ className, entrepotId }: {
   className?: string
@@ -53,45 +54,45 @@ export default ({ className, entrepotId }: {
         {
           isEdit
             ? (
-                <>
-                  <Button
-                    onClick={
-                      () => {
-                        setIsEdit(false)
-                      }
-                    }
-                    loading={setHandler.loading}
-                  >
-                    取消
-                  </Button>
-                  <Button
-                    type="primary"
-                    status="success"
-                    icon={<IconSave />}
-                    loading={setHandler.loading}
-                    onClick={
-                      () => {
-                        setHandler.run()
-                      }
-                    }
-                  >
-                    保存
-                  </Button>
-                </>
-              )
-            : (
+              <>
                 <Button
-                  type="primary"
-                  icon={<IconEdit />}
                   onClick={
                     () => {
-                      setIsEdit(true)
+                      setIsEdit(false)
+                    }
+                  }
+                  loading={setHandler.loading}
+                >
+                  取消
+                </Button>
+                <Button
+                  type="primary"
+                  status="success"
+                  icon={<IconSave />}
+                  loading={setHandler.loading}
+                  onClick={
+                    () => {
+                      setHandler.run()
                     }
                   }
                 >
-                  编辑
+                  保存
                 </Button>
-              )
+              </>
+            )
+            : (
+              <Button
+                type="primary"
+                icon={<IconEdit />}
+                onClick={
+                  () => {
+                    setIsEdit(true)
+                  }
+                }
+              >
+                编辑
+              </Button>
+            )
         }
       </div>
 
@@ -99,231 +100,218 @@ export default ({ className, entrepotId }: {
         {
           !getHandler.loading
             ? (
-                <FilterForm
-                  form={form}
-                  formType={isEdit ? FormType.default : FormType.preview}
-                  initialValues={{
-                    ...(getHandler.data?.data?.data || {}),
-                    1: true,
-                    2: true,
-                    3: '50x30',
-                  }}
-                  span={12}
-                  labelCol={{
-                    style: {
-                      textAlign: 'left',
+              <FilterForm
+                form={form}
+                formType={isEdit ? FormType.default : FormType.preview}
+                initialValues={{
+                  ...(getHandler.data?.data?.data || {}),
+                  1: true,
+                  2: true,
+                  3: '50x30',
+                }}
+                span={12}
+                labelCol={{
+                  style: {
+                    textAlign: 'left',
+                  },
+                }}
+                formItemConfigList={[
+                  {
+                    ...SwitchFormItem,
+                    schema: {
+                      label: '扫码入库是否分仓位',
+                      field: 'whetherDivideSpace',
                     },
-                  }}
-                  formItemConfigList={[
-                    {
-                      ...SwitchFormItem,
-                      schema: {
-                        label: '扫码入库是否分仓位',
-                        field: 'whetherDivideSpace',
-                      },
+                  },
+                  {
+                    ...SwitchFormItem,
+                    schema: {
+                      label: '待扣头程费用订单自动扣费',
+                      field: 'autoFeeDeduction',
                     },
-                    {
-                      ...SwitchFormItem,
-                      schema: {
-                        label: '待扣头程费用订单自动扣费',
-                        field: 'autoFeeDeduction',
-                      },
+                  },
+                  {
+                    schema: {
+                      label: '仓位打印模版',
+                      field: 'warehousePrintingTemplate',
                     },
-                    {
-                      schema: {
-                        label: '仓位打印模版',
-                        field: 'warehousePrintingTemplate',
-                      },
-                      control: 'radio',
-                      controlProps: {
-                        options: [
-                          {
-                            label: '100x100',
-                            value: '100x100',
-                          },
-                          {
-                            label: '50x30',
-                            value: '50x30',
-                          },
-                        ],
-                      },
+                    control: 'radio',
+                    controlProps: {
+                      options: [
+                        {
+                          label: '100x100',
+                          value: '100x100',
+                        },
+                        {
+                          label: '50x30',
+                          value: '50x30',
+                        },
+                      ],
                     },
-                    {
-                      schema: {
-                        label: '上架服务费',
-                        field: 'shelfServiceCharge',
-                      },
-                      control: 'number',
+                  },
+                  {
+                    schema: {
+                      label: '上架服务费',
+                      field: 'shelfServiceCharge',
                     },
-                    {
-                      schema: {
-                        label: '袋号打印模版',
-                        field: 'bagNumberPrintTemplate',
-                      },
-                      control: 'radio',
-                      controlProps: {
-                        options: [
-                          {
-                            label: '100x100',
-                            value: '100x100',
-                          },
-                          {
-                            label: '50x30',
-                            value: '50x30',
-                          },
-                        ],
-                      },
+                    control: 'number',
+                  },
+                  {
+                    schema: {
+                      label: '袋号打印模版',
+                      field: 'bagNumberPrintTemplate',
                     },
-                    {
-                      schema: {
-                        label: '出货单水印',
-                        field: 'shippingNoteWatermarking',
-                      },
+                    control: 'radio',
+                    controlProps: {
+                      options: [
+                        {
+                          label: '100x100',
+                          value: '100x100',
+                        },
+                        {
+                          label: '50x30',
+                          value: '50x30',
+                        },
+                      ],
                     },
-                    {
-                      schema: {
-                        label: '入库数量',
-                        field: 'quantityInStorage',
-                      },
-                      control: 'number',
+                  },
+                  {
+                    schema: {
+                      label: '出货单水印',
+                      field: 'shippingNoteWatermarking',
                     },
-                    {
-                      schema: {
-                        label: '出货单打印模版',
-                        field: 'shippingOrderPrintingTemplate',
-                      },
-                      control: 'radio',
-                      controlProps: {
-                        options: [
-                          {
-                            label: '圆通速运',
-                            value: '圆通速运',
-                          },
-                          {
-                            label: '二维码',
-                            value: '二维码',
-                          },
-                          {
-                            label: '条形码',
-                            value: '条形码',
-                          },
-                        ],
-                      },
+                  },
+                  {
+                    schema: {
+                      label: '入库数量',
+                      field: 'quantityInStorage',
                     },
-                    {
-                      schema: {
-                        label: '出货单集',
-                        field: 'shippingOrderSet',
-                      },
+                    control: 'number',
+                  },
+                  {
+                    schema: {
+                      label: '出货单打印模版',
+                      field: 'shippingOrderPrintingTemplate',
                     },
-                    {
-                      schema: {
-                        label: '出货单末',
-                        field: 'endOfShipment',
-                      },
+                    control: 'radio',
+                    controlProps: {
+                      options: ShippingOrderPrintingTemplateOptions
                     },
-                    {
-                      schema: {
-                        label: '出货单虚拟号码',
-                        field: 'shippingOrderVirtualNumber',
-                      },
+                  },
+                  {
+                    schema: {
+                      label: '出货单集',
+                      field: 'shippingOrderSet',
                     },
-                    {
-                      schema: {
-                        label: '收件名称',
-                        field: 'recipientName',
-                      },
+                  },
+                  {
+                    schema: {
+                      label: '出货单末',
+                      field: 'endOfShipment',
                     },
-                    {
-                      schema: {
-                        label: '收件手机号',
-                        field: 'recipientPhone',
-                      },
+                  },
+                  {
+                    schema: {
+                      label: '出货单虚拟号码',
+                      field: 'shippingOrderVirtualNumber',
                     },
-                    {
-                      schema: {
-                        label: '收件地址',
-                        field: 'recipientAddress',
-                      },
-                      control: 'textarea',
+                  },
+                  {
+                    schema: {
+                      label: '收件名称',
+                      field: 'recipientName',
                     },
-                    {
-                      schema: {
-                        label: '寄件名称',
-                        field: 'senderName',
-                      },
+                  },
+                  {
+                    schema: {
+                      label: '收件手机号',
+                      field: 'recipientPhone',
                     },
-                    {
-                      schema: {
-                        label: '寄件手机号',
-                        field: 'senderPhone',
-                      },
+                  },
+                  {
+                    schema: {
+                      label: '收件地址',
+                      field: 'recipientAddress',
                     },
-                    {
-                      schema: {
-                        label: '寄件地址',
-                        field: 'senderAddress',
-                      },
-                      control: 'textarea',
+                    control: 'textarea',
+                  },
+                  {
+                    schema: {
+                      label: '寄件名称',
+                      field: 'senderName',
                     },
-                    {
-                      schema: {
-                        label: '装袋预警重量',
-                        field: 'baggingWarningWeight',
-                      },
+                  },
+                  {
+                    schema: {
+                      label: '寄件手机号',
+                      field: 'senderPhone',
                     },
-                    {
-                      ...SwitchFormItem,
-                      schema: {
-                        label: '出库打印面单',
-                        field: 'printOutSheet',
-                      },
+                  },
+                  {
+                    schema: {
+                      label: '寄件地址',
+                      field: 'senderAddress',
                     },
-                    {
-                      ...SwitchFormItem,
-                      schema: {
-                        label: '打包下单扣进店费用',
-                        field: 'placeOrderfeeDeduction',
-                      },
+                    control: 'textarea',
+                  },
+                  {
+                    schema: {
+                      label: '装袋预警重量',
+                      field: 'baggingWarningWeight',
                     },
-                    {
-                      ...SwitchFormItem,
-                      schema: {
-                        label: '秤链接',
-                        field: 'scaleLink',
-                      },
+                  },
+                  {
+                    ...SwitchFormItem,
+                    schema: {
+                      label: '出库打印面单',
+                      field: 'printOutSheet',
                     },
-                    {
-                      ...SwitchFormItem,
-                      schema: {
-                        label: '装袋自动申请面单',
-                        field: 'autoApplyForm',
-                      },
+                  },
+                  {
+                    ...SwitchFormItem,
+                    schema: {
+                      label: '打包下单扣进店费用',
+                      field: 'placeOrderfeeDeduction',
                     },
-                    {
-                      ...SwitchFormItem,
-                      schema: {
-                        label: 'PDA上架是否入库',
-                        field: 'whetherPda',
-                      },
+                  },
+                  {
+                    ...SwitchFormItem,
+                    schema: {
+                      label: '秤链接',
+                      field: 'scaleLink',
                     },
-                    {
-                      schema: {
-                        label: '特快设置',
-                        field: 'expressSetting',
-                      },
+                  },
+                  {
+                    ...SwitchFormItem,
+                    schema: {
+                      label: '装袋自动申请面单',
+                      field: 'autoApplyForm',
                     },
-                    {
-                      schema: {
-                        label: '空运设置',
-                        field: 'airTransportSetup',
-                      },
+                  },
+                  {
+                    ...SwitchFormItem,
+                    schema: {
+                      label: 'PDA上架是否入库',
+                      field: 'whetherPda',
                     },
+                  },
+                  {
+                    schema: {
+                      label: '特快设置',
+                      field: 'expressSetting',
+                    },
+                  },
+                  {
+                    schema: {
+                      label: '空运设置',
+                      field: 'airTransportSetup',
+                    },
+                  },
 
-                  ]}
-                >
-                </FilterForm>
-              )
+                ]}
+              >
+              </FilterForm>
+            )
             : null
         }
       </Spin>

@@ -1,6 +1,6 @@
 import { Alert, Link, Spin } from '@arco-design/web-react'
 import { useRequest } from 'ahooks'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 import { useHistory } from 'react-router-dom'
 
@@ -125,7 +125,6 @@ export default function Deposit() {
   )
 
   const [trackingNo, setTrackingNo] = useState<string>()
-  console.log(error, loading)
 
   return (
     <div className="bg-white py-6 px-4">

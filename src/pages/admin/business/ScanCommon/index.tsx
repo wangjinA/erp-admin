@@ -29,6 +29,11 @@ export default (props: ScanComponentProps) => {
   const { data, loading } = useEntrepotOptions()
   const [value, setValue] = useState<string>()
   const [entrepot, setEntrepot] = useLocalStorageState<any>('scan-entrepot')
+  // useEffect(() => {
+  //   if (data?.length) {
+  //     setEntrepot(data.find(o => o.default)?.value || data[0]?.value)
+  //   }
+  // }, [data])
   const height = 'h-20'
   return (
     <div className={className} style={style}>

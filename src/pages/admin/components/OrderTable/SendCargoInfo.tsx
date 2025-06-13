@@ -63,7 +63,6 @@ function ExpressStatus(item: OrderResponseItem['orderProductVOList'][0]) {
 function ExpressStatusActions(props: {
   item: OrderResponseItem['orderProductVOList'][0]
   sendWarehouse: string
-  // data: OrderResponseItem
   orderId: string
 }) {
   const { item, sendWarehouse, orderId } = props
@@ -274,7 +273,7 @@ export const SendCargoItemInfo: React.FC<{
   </div>
 }
 
-const SkuList: React.FC<SendCargoInfoProps> = (props) => {
+const SendCargoInfo: React.FC<SendCargoInfoProps> = (props) => {
   const { data } = props
   return (
     <div className={classNames(styles['goods-info'], 'pr-2')}>
@@ -283,7 +282,7 @@ const SkuList: React.FC<SendCargoInfoProps> = (props) => {
           key={i}
           className={classNames('h-[105px] border-r', i > 0 ? 'border-t' : '')}
         >
-          <div className="h-full p-2">
+          {/* <div className="h-full p-2">
             <LabelValue
               label="快递"
               value={item.trackingNo
@@ -318,9 +317,9 @@ const SkuList: React.FC<SendCargoInfoProps> = (props) => {
                             label="操作"
                             value={(
                               <ExpressStatusActions
-                                data={data}
                                 item={item}
                                 sendWarehouse={data.sendWarehouse}
+                                orderId={data.id}
                               />
                             )}
                           />
@@ -336,11 +335,17 @@ const SkuList: React.FC<SendCargoInfoProps> = (props) => {
                 <LabelValue label="仓位" value={item.freightSpaceName}></LabelValue>
               )
               : null}
-          </div>
+          </div> */}
+          <SendCargoItemInfo
+            item={item}
+            orderStatus={data.orderStatus}
+            sendWarehouse={data.sendWarehouse}
+            orderId={data.id}
+          />
         </div>
       ))}
     </div>
   )
 }
 
-export default SkuList
+export default SendCargoInfo

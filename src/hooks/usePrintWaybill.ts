@@ -5,14 +5,16 @@ import { OrderResponseItem } from '@/types/order'
 import { GlobalState } from '@/store'
 import { useSelector } from 'react-redux'
 import JsBarcode from 'jsbarcode'
+import { entrepotAPI } from '@/api/admin/entrepot'
+import { businessPrinter } from '@/utils/printer'
 
-export function textToBase64Barcode (text) {
-    var canvas = document.createElement("canvas");
-    JsBarcode(canvas, text, {
-        height: 60,
-        displayValue: false
-    });
-    return canvas.toDataURL("image/png");
+export function textToBase64Barcode(text) {
+  var canvas = document.createElement("canvas");
+  JsBarcode(canvas, text, {
+    height: 60,
+    displayValue: false
+  });
+  return canvas.toDataURL("image/png");
 }
 
 function getPrintHtml(orderItem: OrderResponseItem & {
@@ -105,3 +107,56 @@ export function usePrintHtml(orderItem: OrderResponseItem) {
     printHandle,
   }
 }
+
+
+/**
+ * 打印出货单
+ */
+export async function printShippingWaybill(params: {
+  orderItem: OrderResponseItem
+  sendWarehouse: string;
+}) {
+  const { orderItem, sendWarehouse } = params
+  const res = await entrepotAPI.getEntrepotParams(sendWarehouse).then(r => r.data.data);
+  const templateData = {
+    "printTemplate": "test - 0",
+    "watermark": "test - 東坑李總",
+    "printJi": "test - 昊辰",
+    "printMo": "test - 東坑李總",
+    "virtualNumber": "test - 0923******",
+    "recipients": "test - 凤凰",
+    "recipientsMobile": "test - 09********",
+    "recipientsAddress": "test - 桃園市大園區平安路",
+    "senderName": "test - 凤凰",
+    "senderMobile": "test - 09********",
+    "senderAddress": "test - 桃園市大園區平安路",
+    "warehouseId": "test - 740373822921904128"
+  }
+  // 0:圆通速运，1：二维码
+  // if (res.shippingOrderPrintingTemplate) {
+  //圆通速运
+  businessPrinter.printShippingNumber([orderItem], templateData);
+  // } else if (res.shippingOrderPrintingTemplate === '1') {
+  //   // 二维码打印
+  //   businessPrinter.printQrCodeShippingNumber([orderItem], templateData);
+  // } else if (res.shippingOrderPrintingTemplate === '2') {
+  //   // 条形码
+  //   businessPrinter.printBarCodeShippingNumber([orderItem], templateData, '666666666666666666666-test');
+  // }
+  // printHandle()
+}
+
+// {
+//     "printTemplate": "0",
+//     "watermark": "東坑李總",
+//     "printJi": "昊辰",
+//     "printMo": "東坑李總",
+//     "virtualNumber": "0923******",
+//     "recipients": "凤凰",
+//     "recipientsMobile": "09********",
+//     "recipientsAddress": "桃園市大園區平安路",
+//     "senderName": "凤凰",
+//     "senderMobile": "09********",
+//     "senderAddress": "桃園市大園區平安路",
+//     "warehouseId": "740373822921904128"
+// }

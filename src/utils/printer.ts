@@ -1,8 +1,36 @@
-import { Message } from "@arco-design/web-react";
+import { OrderResponseItem } from "@/types/order";
+import { Message, Modal } from "@arco-design/web-react";
 
-const printer = {
-  callback: null,
-  socket: null,
+interface ContentItem {
+  data: Partial<{
+    sy: string;
+    headLogisticsSy: string;
+    hhh: string;
+    orderSn: string;
+    checkOutTime: string;
+    identifying: string;
+    ji: string;
+    mo: string;
+    virtualNumber: string;
+    recipients: string;
+    recipientsMobile: string;
+    recipientsAddress: string;
+    senderName: string;
+    senderMobile: string;
+    senderAddress: string;
+    url: string;
+  }>;
+  templateURL: string;
+}
+
+export interface WaybillInfo {
+  documentID: string;
+  contents: ContentItem[];
+}
+
+class PrinterClass {
+  callback: (data: any) => void = () => { };
+  socket: WebSocket = null
   connect() {
     return new Promise((resolve, reject) => {
       if (this.socket) {
@@ -10,7 +38,6 @@ const printer = {
       } else {
         let socket = new WebSocket('ws://localhost:13528');
         let setPrinterConfig = this.getRequestObject("setPrinterConfig");
-        setPrinterConfig.printer = new Object();
         setPrinterConfig.printer.forceNoPageMargins = false;//强制设置页面无空边,true为强制设置页面无空边,false为由打印机驱动决定
         setPrinterConfig.printer.paperSize = {
           "width": 90,
@@ -61,17 +88,16 @@ const printer = {
         // socket.send(JSON.stringify(setPrinterConfig));
       }
     });
-  },
+  }
   disconnect() {
     if (this.socket) {
       this.socket.onclose;
     }
-  },
-  async doPrint(waybillArray, callback = () => { }) {
+  }
+  async doPrint(waybillInfo: WaybillInfo, callback: (data: any) => void) {
     console.log("开始打印123");
     this.callback = callback;
     let request = this.getRequestObject("print");
-    request.task = new Object();
     console.log("11111111111");
     request.task.taskID = this.getUuid(8, 10);//打印机任务ID，每个打印任务会分配不同的且唯一的ID
     request.task.preview = false;//是否预览.true为预览,false为打印
@@ -80,40 +106,7 @@ const printer = {
     request.task.totalDocumentCount = 1;//task document 总数
     // request.task.printer = "Deli DL-730C(NEW)";//打印机名，如果为空，会使用默认打印机
     request.task.printer = "";//打印机名，如果为空，会使用默认打印机
-    request.task.documents = waybillArray;
-    /*request.task.documents = [{"documentID":"66718590953409591187","contents":[
-        {"data":{
-                "ordersn":"111111111111",
-                "trackingNo":"22222222222222",
-                "logistics":{
-                    "shippingCarrier": "Standard International",
-                    "logisticId": null,
-                    "trackingNo": "PH2181957171129",
-                    "serviceCode": "PV04",
-                    "firstMileName": "Vinflair",
-                    "lastMileName": "PHL2",
-                    "goodsToDeclare": true,
-                    "zone": "",
-                    "laneCode": "S-PH13",
-                    "warehouseAddress": "Logistics Sorting Hub, Xi Niu Yi Street, Maiyuan Village, Changping Town, Dongguan City",
-                    "warehouseId": "TWS01",
-                    "cod": true,
-                    "recipientSortCode": null,
-                    "senderSortCode": null,
-                    "thirdPartyLogisticInfo": null,
-                    "buyerCpfId": null,
-                    "shopeeTrackingNo": "PH2181957171129",
-                    "lmTn": ""},
-                "orderAddress":{
-                    "name":'Zhang San',
-                    "fullAddress":'china',
-                    "phone":"13000000000",
-                },
-            },
-            "templateURL":"http://file.yimaivip.com/file/shopee-print-v4.xml"}]}];//打印内容*/
-    // request.task.documents = [{"documentID":"66718590953409591187","contents":[{"data":{"_dataFrom":"waybill","ordersn":"111111111111","adsInfo":{"adId":"3","advertisementType":"PSA","bannerUrl":"http://ad-cdn.cainiao.com/img/3/1654165145205.png","miniBannerUrl":"http://ad-cdn.cainiao.com/img/3/1655351637320.png"},"items":[{"id":239201641,"itemId":10447763814,"ordersn":"2110186K4Y2P0G","itemName":"Sticker Laptop Lenovo Ideapad 5 Slim 3 Slim 5i IdeaPad 330s Ideapad 3 IdeaPad320 S 120s 330c Lenovo 7000 14 Inch Laptop Skin with Keyboard Cover Three Sides Laptop Protective Cover Anti-scratch Film Waterproof Removable Laptop Casing Full Cover","itemSku":"备注 14寸LX24,小新潮7000-14IKBR Lin","variationId":130346734555,"variationName":"001","variationSku":"J-376 备注 14寸LX24,小新潮7000-14IKBR Lin","images":null,"variationQuantityPurchased":1,"variationOriginalPrice":904.00000000,"variationDiscountedPrice":452.00000000,"isWholesale":false,"weight":0.30000000,"isAddOnDeal":false,"isMainItem":false,"addOnDealId":0,"promotionType":"","promotionId":0,"mainImage":"https://cf.shopee.ph/file/f3e1d3bc18e396be46b5f8e099ae2331","imageUrl":"https://cf.shopee.ph/file/5f8f25109ca4efd1e2f706210c25fee3_tn","sourceUrl":null,"purchaseDetail":null,"shopeeItemUrl":null}],"cpCode":"YTO","realCpCode":"YTO","recipient":{"address":{"city":"广州市","detail":"叁悦广场B塔","district":"海珠区","province":"广东省","town":"琶洲街道"},"mobile":"13065544563","name":"收件人"},"routingInfo":{"blockCode":"叁悦广场","routeCode":"600-H04-00 405"},"sender":{"address":{"city":"广州市","detail":"保利叁悦广场B塔502","district":"海珠区","province":"广东省"},"mobile":"15975448310","name":"张学友"},"waybillCode":"YT6576507477091"},"templateURL":"https://erp.emalacca.com/api/acc/print-tmp/shopee-print-v4.xml"}]}];//打印内容
-    // request.task.documents = [{"documentID":"66718590953409591187","contents":[{"data":{"_dataFrom":"waybill","adsInfo":{"adId":"3","advertisementType":"PSA","bannerUrl":"http://ad-cdn.cainiao.com/img/3/1654165145205.png","miniBannerUrl":"http://ad-cdn.cainiao.com/img/3/1655351637320.png"},"cpCode":"YTO","realCpCode":"YTO","recipient":{"address":{"city":"广州市","detail":"叁悦广场B塔","district":"海珠区","province":"广东省","town":"琶洲街道"},"mobile":"13065544563","name":"收件人"},"routingInfo":{"blockCode":"叁悦广场","routeCode":"600-H04-00 405"},"sender":{"address":{"city":"广州市","detail":"保利叁悦广场B塔502","district":"海珠区","province":"广东省"},"mobile":"15975448310","name":"张学友"},"waybillCode":"YT6576507477091"},"templateURL":"http://cloudprint.cainiao.com/template/standard/290659/61"}]}];//打印内容
-    // request.task.documents = [{"documentID":"66718590953409591187","contents":[{"data":{"ordersn":"2110186K4Y2P0G","storeId":47237,"memberId":26987,"createdBy":null,"shopId":296667567,"orderStatus":"COMPLETED","orderCode":null,"orderCreateTime":"2021-10-18 11:25:26","orderUpdateTime":"2021-11-06 09:14:39","country":"PH","currency":"PHP","cod":true,"trackingNo":"PH2181957171129","daysToShip":3,"estimatedShippingFee":40.00000000,"actualShippingCost":153.00000000,"totalAmount":460.00000000,"escrowAmount":null,"shippingCarrier":"Standard International","paymentMethod":"COD","goodsToDeclare":true,"messageToSeller":"","note":"","noteUpdateTime":"1970-01-01 08:00:00","payTime":"2021-10-31 18:27:09","dropshipper":"","creditCardNumber":null,"buyerUsername":"mariahgayas21","dropshipperPhone":"","shipByDate":"2021-10-21 11:35:27","isSplitUp":null,"splitCount":1,"buyerCancelReason":"","cancelBy":"","fmTn":null,"cancelReason":"","cancelTime":null,"escrowTax":null,"isActualShippingFeeConfirmed":null,"buyerCpfId":null,"orderFlag":"fulfilled_by_cb_seller","lmTn":null,"storeName":null,"storeAlias":null,"storeType":2,"storeCountry":null,"orderAddress":null,"items":[{"id":239201641,"itemId":10447763814,"ordersn":"2110186K4Y2P0G","itemName":"Sticker Laptop Lenovo Ideapad 5 Slim 3 Slim 5i IdeaPad 330s Ideapad 3 IdeaPad320 S 120s 330c Lenovo 7000 14 Inch Laptop Skin with Keyboard Cover Three Sides Laptop Protective Cover Anti-scratch Film Waterproof Removable Laptop Casing Full Cover","itemSku":"备注 14寸LX24,小新潮7000-14IKBR Lin","variationId":130346734555,"variationName":"001","variationSku":"J-376 备注 14寸LX24,小新潮7000-14IKBR Lin","images":null,"variationQuantityPurchased":1,"variationOriginalPrice":904.00000000,"variationDiscountedPrice":452.00000000,"isWholesale":false,"weight":0.30000000,"isAddOnDeal":false,"isMainItem":false,"addOnDealId":0,"promotionType":"","promotionId":0,"mainImage":"https://cf.shopee.ph/file/f3e1d3bc18e396be46b5f8e099ae2331","imageUrl":"https://cf.shopee.ph/file/5f8f25109ca4efd1e2f706210c25fee3_tn","sourceUrl":null,"purchaseDetail":null,"shopeeItemUrl":null}],"logistics":{"shippingCarrier":"Standard International","logisticId":null,"trackingNo":"PH2181957171129","serviceCode":"PV04","firstMileName":"Vinflair","lastMileName":"PHL2","goodsToDeclare":true,"zone":"","laneCode":"S-PH13","warehouseAddress":"Logistics Sorting Hub, Xi Niu Yi Street, Maiyuan Village, Changping Town, Dongguan City","warehouseId":"TWS01","cod":true,"recipientSortCode":null,"senderSortCode":null,"thirdPartyLogisticInfo":null,"buyerCpfId":null,"shopeeTrackingNo":"PH2181957171129","lmTn":""},"orderRemark":null,"orderLabels":null,"fwPackageId":158678,"fwPackageNo":"P2021102016434644849","packageNumber":null,"fmType":1,"fmNo":"78233848861262","fmLogisticName":null,"fmLogisticId":null,"fmStatus":0,"fmCreateTime":null,"crawlerNumber":"","crawlerFileUrl":"","localStatus":0,"isPrintDetailsList":null,"shopeeSellerUrl":null,"seaStatusDTO":null,"orderShopeeOrderPackageDTOS":null,"forwarderExpressPackages":null},"templateURL":"https://erp.emalacca.com/api/acc/print-tmp/shopee-print-v4.xml","signature":null}]}];//打印内容
+    request.task.documents = waybillInfo;
     console.log(request.task);
     this.connect().then(() => {
       console.info(222222222);
@@ -122,31 +115,26 @@ const printer = {
     }).catch((e) => {
       console.info(33333333);
       this.callback("no open");
-      // message.error("您还未安装或者未开启菜鸟打印组件（cainiao-x-print），请先安装或者开启");
     });
-    /* let documents = new Array();
-     for(let i=0;i<waybillArray.length;i++) {
-         let doc = new Object();
-         doc.documentID = waybillArray[i].documentID;
-         let content = new Array();
-         // let waybillJson = this.getWaybillJson(waybillArray[i]);
-         let customAreaData = this.getCustomAreaData(waybillArray[i]);
-         content.push(customAreaData);
-         doc.contents = content;
-         documents.push(doc);
-     }
-     request.task.documents=documents;*/
-  },
+  }
   /***
    * 构造request对象
    */
-  getRequestObject(cmd) {
+  getRequestObject(cmd): {
+    requestID: string;
+    version: string;
+    cmd: string;
+    printer: any
+    task: any
+  } {
     return {
       requestID: this.getUuid(8, 16),
       version: "1.0",
       cmd,
+      printer: {},
+      task: {}
     };
-  },
+  }
   //获取taskId
   getUuid(len, radix) {
     let chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
@@ -166,13 +154,13 @@ const printer = {
       }
     }
     return uuid.join('');
-  },
+  }
   getCustomAreaData(waybillNO) {
     return {
       templateURL: waybillNO.contents[0].templateURL,
       data: waybillNO.contents[0].data,
     };
-  },
+  }
   /***
    * 获取电子面单Json 数据
    * waybillNO 电子面单号
@@ -181,7 +169,276 @@ const printer = {
     //获取waybill对应的json object，此处的ajaxGet函数是伪代码
     let jsonObject = waybillNO[0];
     return jsonObject;
+  }
+};
+
+
+export const Printer = new PrinterClass();
+const CaiNiaoConfigInfo = {
+  links: {
+    CN: {
+      url: "https://item.taobao.com/item.htm?id=",
+      componentDownloadUrl: "https://page.cainiao.com/waybill/cloud_printing/home.html",
+    },
+    SHOPEE_TEMPLATE: {
+      url: "http://file.yimaivip.com/file/shopee-print-v1.xml",
+    },
+    TEMPLATEURL: {//菜鸟打印，打印模版
+      url: "http://file.yimaivip.com/file/",//库位打印（50x30）纯文字
+      seatCodeUrl: "https://cloudprint.cainiao.com/template/standard/746102/2",//库位打印（50x30）纯文字
+      seatBarCodeUrl: "https://cloudprint.cainiao.com/template/standard/745503/3",//仓位打印（100x100）条形码
+      documentUrl: 'http://file.yimaivip.com/file/document-img-1.xml',
+      documentUrlZpt: 'http://file.yimaivip.com/file/document-img-3.xml',// 快捷打印，宅配通
+      documentUrlCode: 'http://file.yimaivip.com/file/document-code.xml',// 取件码
+      // shippingNumberUrl:'https://cloudprint.cainiao.com/template/standard/750629/14',//出货单打印模版（100x150）圆通速运
+      shippingNumberUrl: 'http://file.yimaivip.com/file/shipping_number.xml',//出货单打印模版（100x150）圆通速运
+      shippingNumberQrcodeUrl: 'http://file.yimaivip.com/file/shipping_number_qrcode.xml',//出货单打印模版（100x150）二维码
+      shippingNumberBarCodeUrl: 'http://file.yimaivip.com/file/shipping_number_barcode.xml',//出货单打印模版（100x150）条形码
+      shippingNumberBarCodeUrl02: 'http://file.yimaivip.com/file/shipping_number_barcode_100x100.xml', // 出货单打印模版（100x100）条形码
+      shippingNumberBarCodeUrl03: 'http://file.yimaivip.com/file/shipping_number_barcode_80x60.xml', // 出货单打印模版（80x60）条形码
+      customsClearanceUrl: 'http://file.yimaivip.com/file/customs_clearance.xml',//清關模版（100x100）
+    }
   },
 };
 
-export default printer;
+const RetMsgType = {
+  SUCCESS: 'SUCCESS', // 成功
+  WARING: 'WARNING', // 警告
+  ERROR: 'ERROR', // 错误
+  INFO: 'INFO', // 信息
+}
+
+const ShippingCarrierIndexOfMap = {
+  '线下7-ELEVEN': '线下711',
+  "线下新竹物流": "线下新竹",
+  "线下全家": "线下全家",
+  "OK Mart": "ok",
+  "萊爾富": "莱尔富",
+  "蝦皮店到店": "店到店",
+  "賣家宅配": "卖家宅配",
+  "全家": "全家",
+  "7-ELEVEN": "711",
+  "宅配通": "宅配通",
+  "黑貓宅急便": "黑猫",
+  "新竹物流": "新竹物流",
+  "嘉里快遞": "嘉里快递",
+  "店到家宅配": "店到家宅配",
+}
+
+class BusinessPrinter {
+  // 打印出货单，圆通速运
+  printShippingNumber(orders: OrderResponseItem[], templateData) {
+    let orderList = orders.map(item => {
+      const { transportType, tenantryNo } = item;
+      const shippingCarrier = item.orderPackageList[0].shippingCarrier;
+      let shopOrderSn = item.id;
+      let sy = Object.entries(ShippingCarrierIndexOfMap).find(([key, value]) => shippingCarrier.indexOf(key) != -1)?.[1];
+      let order = {
+        sy: sy,
+        headLogisticsSy: transportType,//
+        hhh: templateData.watermark ? templateData.watermark : '',//分站标识identifying
+        orderSn: shopOrderSn,
+        checkOutTime: "", // 待定
+        identifying: tenantryNo + "  P13",
+        ji: templateData.printJi,//集
+        mo: templateData.printMo,//末
+        virtualNumber: templateData.virtualNumber,//虚拟号码
+        recipients: templateData.recipients,//收件人
+        recipientsMobile: templateData.recipientsMobile,//收件人号码
+        recipientsAddress: templateData.recipientsAddress,//收件人地址
+        senderName: templateData.senderName,//寄件人
+        senderMobile: templateData.senderMobile,//寄件人手机号
+        senderAddress: templateData.senderAddress,//寄件人地址
+      };
+      return order;
+    });
+    let contents = [];
+    let arr = {
+      "documentID": "shippingNumber",
+      "contents": [{
+        "data": orderList[0],
+        "templateURL": CaiNiaoConfigInfo.links['TEMPLATEURL'].shippingNumberUrl
+      }]
+    };
+    contents.push(arr);
+    this.printOperation(contents);
+  }
+  // 打印出货单，二维码
+  printQrCodeShippingNumber(orders: OrderResponseItem[], templateData) {
+    let orderList = orders.map(item => {
+      return {
+        orderSn: item.id,
+        hhh: templateData.watermark || '',//分站表示,
+      }
+    });
+    let contents = [];
+    let arr = {
+      "documentID": "printShippingNumberQrcoder",
+      "contents": [{
+        "data": orderList[0],
+        "templateURL": CaiNiaoConfigInfo.links['TEMPLATEURL'].shippingNumberQrcodeUrl
+      }]
+    };
+    contents.push(arr);
+    this.printOperation(contents);
+  }
+  // 打印出货单，条形码
+  printBarCodeShippingNumber(orders: OrderResponseItem[], templateData, invitationCodeVal) {
+    let orderList = orders.map(item => {
+      let shippingCarrierVal = 'xx';
+      // if (item.shippingCarrier === '賣家宅配'
+      //   || item.shippingCarrier === '賣家宅配：大型/超重物品運送'
+      //   || item.shippingCarrier === '线下新竹物流'
+      //   || item.shippingCarrier === '线下全家'
+      //   || item.shippingCarrier === '线下7-ELEVEN'
+      //   || (item.shopOrder && (item.shopOrder.shippingCarrier === '賣家宅配'
+      //     || item.shopOrder.shippingCarrier === '賣家宅配：大型/超重物品運送'
+      //     || item.shopOrder.shippingCarrier === '线下新竹物流'
+      //     || item.shopOrder.shippingCarrier === '线下全家'
+      //     || item.shopOrder.shippingCarrier === '线下7-ELEVEN'))) {
+      //   shippingCarrierVal = 'xx';
+      // }
+      let order = {
+        orderSn: item.id,
+        hhh: templateData.watermark ? templateData.watermark : '',//分站表示,
+        shippingCarrier: shippingCarrierVal, // 尾程物流
+        invitationCode: invitationCodeVal || '',
+        headLogistics: item.transportType || ''
+      };
+      return order;
+    });
+    let printUrl = CaiNiaoConfigInfo.links['TEMPLATEURL'].shippingNumberBarCodeUrl;
+    if (templateData.printTemplate === '2') {
+      printUrl = CaiNiaoConfigInfo.links['TEMPLATEURL'].shippingNumberBarCodeUrl;
+    } else if (templateData.printTemplate === '3') {
+      printUrl = CaiNiaoConfigInfo.links['TEMPLATEURL'].shippingNumberBarCodeUrl02;
+    } else if (templateData.printTemplate === '4') {
+      printUrl = CaiNiaoConfigInfo.links['TEMPLATEURL'].shippingNumberBarCodeUrl03;
+    }
+    const contents = [{
+      "documentID": "printShippingNumberQrcoder",
+      "contents": [{
+        "data": orderList[0],
+        "templateURL": printUrl
+      }]
+    }];
+    this.printOperation(contents);
+  }
+  //快捷打印（打印面单）
+  // quickPrint(orderObj, loadingObj) {
+  //   let order = { ...orderObj };
+  //   let params = {
+  //     shopPlatform: order.platform,
+  //     orderSn: order.orderSn,
+  //     packageNumber: order.packageNumber,
+  //     fdrShopId: order.shopId,
+  //     trackingNumber: order.trackingNumber,
+  //     platformShopId: order.platformShopId,
+  //     orderType: order.type,
+  //     shopType: order.shopType,
+  //     resultType: "1"
+  //   };
+  //   if (loadingObj) {
+  //     loadingObj.state = true;
+  //   }
+  //   this.$api.order.getShippingDocumentPrintData(params).then(ret => {
+  //     if (loadingObj) {
+  //       loadingObj.state = false;
+  //     }
+  //     if (ret.data && ret.data.type == RetMsgType.SUCCESS) {
+  //       let printDatas = ret.data.bean;
+  //       let contents = [];
+  //       let arr = {
+  //         "documentID": printDatas.orderSn,
+  //         "contents": [
+  //           {
+  //             "data": {
+  //               "orderSn": printDatas.orderSn,
+  //               "trackingNo": printDatas.data.trackingNo,
+  //               "logistics": {
+  //                 "logisticId": null,
+  //                 "trackingNo": printDatas.data.trackingNo,
+  //                 "serviceCode": printDatas.data.serviceCode,
+  //                 "firstMileName": printDatas.data.firstMileName,
+  //                 "lastMileName": printDatas.data.lastMileName,
+  //                 "laneCode": printDatas.data.laneCode,
+  //                 "goodsToDeclare": printDatas.data.goodsToDeclare,
+  //                 "warehouseAddress": printDatas.data.warehouseAddress,
+  //                 "warehouseId": printDatas.data.warehouseId,
+  //               },
+  //             },
+  //             "templateURL": CaiNiaoConfigInfo.links['SHOPEE_TEMPLATE'].url
+  //           }
+  //         ]
+  //       };
+  //       contents.push(arr);
+  //       //开始打印
+  //       this.printOperation(contents);
+  //     } else if (ret.data && ret.data.type == RetMsgType.WARING) {
+  //       this.$message.warning(ret.data.message);
+  //     }
+  //   });
+  // }
+  // quickPrint2(trackingNumber, documentImgUrl, loadingObj, printTemplateURL) {
+  //   if (documentImgUrl) {
+  //     let contents = [];
+  //     let arr = {
+  //       "documentID": trackingNumber + Math.random(),
+  //       "contents": [
+  //         {
+  //           "data": {
+  //             "url": documentImgUrl.replaceAll("&", "&amp;"),
+  //           },
+  //           "templateURL": printTemplateURL
+  //         }
+  //       ]
+  //     };
+  //     contents.push(arr);
+  //     //开始打印
+  //     Printer.doPrint(contents, (data) => {
+  //       if (data == "no open") {
+  //         Message.warning({
+  //           content: `您还未安装或者未开启菜鸟官方打印组件，请先安装或者开启！`
+  //         })
+  //       } else if (data == 'failed') {
+  //         if (loadingObj) {
+  //           loadingObj.state = false;
+  //         }
+  //         Message.error("打印失败");
+  //       } else if (data == 'open') {
+  //         if (loadingObj) {
+  //           loadingObj.state = true;
+  //         }
+  //       } else if (data == 'printed') {
+  //         if (loadingObj) {
+  //           loadingObj.state = false;
+  //         }
+  //         Message.success("打印成功");
+  //       }
+  //     });
+  //   }
+  // }
+  //打印操作
+  printOperation(WaybillInfo: WaybillInfo) {
+    Printer.doPrint(WaybillInfo, (data) => {
+      // console.log("打印回调数据:",data);
+      if (data == "no open") {
+        let content = '您还未安装或者未开启菜鸟官方打印组件，请先安装或者开启！';
+        this.printProcessing(content);
+      }
+    });
+  }
+  printProcessing(content) {
+    Modal.confirm({
+      title: '提示',
+      content: content,
+      okText: '去下载',
+      cancelText: '去开启',
+      onOk: () => {
+        window.open(CaiNiaoConfigInfo.links['CN'].componentDownloadUrl, '_blank');
+      }
+    });
+  }
+}
+
+export const businessPrinter = new BusinessPrinter();

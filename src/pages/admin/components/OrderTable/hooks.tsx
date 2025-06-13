@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom'
 import ActionHistory from './ActionHistory'
 import DeliveryButton from './DeliveryButton'
 import OrderDetailButton from './OrderDetailButton'
-import PrintButton from './PrintButton'
+import PrintButton, { PrintType } from './PrintButton'
 import SendCargoInfo from './SendCargoInfo'
 
 import ShipmentButton from './ShipmentButton'
@@ -201,6 +201,9 @@ export function useColumns(props: OrderTablePorps) {
                   <OrderDetailButton
                     buttonProps={{ size: 'small' }}
                     orderItem={row}
+                    onSuccess={() => {
+                      bus.emit(EmitTypes.refreshOrderPage)
+                    }}
                   >
                   </OrderDetailButton>
                   <DeliveryButton
@@ -225,11 +228,13 @@ export function useColumns(props: OrderTablePorps) {
                   />
                   <PrintButton
                     orderItem={row}
+                    printType={PrintType.SHIPPING}
                   >
                     打印出货单
                   </PrintButton>
                   <PrintButton
                     orderItem={row}
+                    printType={PrintType.PICKING}
                   >
                     打印捡货单
                   </PrintButton>

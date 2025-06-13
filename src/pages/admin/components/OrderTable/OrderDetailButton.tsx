@@ -1,10 +1,10 @@
-import { Button, ButtonProps, Descriptions, Divider, Form, Grid, InputNumber, List, Modal, Space, Switch, Table, Image } from '@arco-design/web-react'
+import { Button, ButtonProps, Descriptions, Form, Grid, InputNumber, List, Modal, Space, Switch, Table, Image } from '@arco-design/web-react'
 
 import { useRequest } from 'ahooks'
-import { pick } from 'lodash'
-import { useState } from 'react'
+import { omit, pick } from 'lodash'
+import { useEffect, useState } from 'react'
 
-import SendCargoInfo from './SendCargoInfo'
+import SendCargoInfo, { SendCargoItemInfo } from './SendCargoInfo'
 
 import { orderAPI } from '@/api/admin/order'
 import FilterForm from '@/components/FilterForm'
@@ -16,10 +16,13 @@ import { OrderResponseItem } from '@/types/order'
 import { showMessage } from '@/utils'
 import ReceivingInfo from './ReceivingInfo'
 import classNames from 'classnames'
+import { scanAPI, ScanParams } from '@/api/admin/entrepot'
+import DeliveryButton from './DeliveryButton'
 
 interface OrderDetailButtonProps {
   orderItem?: OrderResponseItem
   buttonProps?: ButtonProps
+  onSuccess: () => void
 }
 
 const columns = [{
@@ -65,18 +68,36 @@ const columns = [{
 }]
 
 function OrderDetailButton(props: OrderDetailButtonProps) {
-  const { orderItem, buttonProps } = props
+  const { orderItem, buttonProps, onSuccess } = props
   const [visible, setVisible] = useState(false)
+  const [actualQuantityList, setActualQuantityList] = useState([])
+  const [holdStockList, setHoldStockList] = useState([])
   const [updatedOrderItem, setUpdatedOrderItem] = useState<OrderResponseItem>()
   const saveHandler = useRequest(async () => {
     if (updatedOrderItem) {
-      await showMessage(() => orderAPI.saveOrder(updatedOrderItem))
+      await showMessage(() => orderAPI.saveOrder({
+        ...(omit(updatedOrderItem, ['orderProductVOList', 'orderPackageList'])),
+        logisticsOrderProductVOList: updatedOrderItem.orderProductVOList.map((item, i) => ({
+          ...item,
+          actualQuantity: actualQuantityList[i] || item.actualQuantity,
+          holdStock: holdStockList[i] || item.holdStock,
+        })),
+        logisticsOrderPackageList: updatedOrderItem.orderPackageList,
+      }))
     }
     setVisible(false)
     bus.emit(EmitTypes.refreshOrderPage)
   }, {
     manual: true,
   })
+
+  useEffect(() => {
+    if (visible && orderItem?.orderProductVOList) {
+      setActualQuantityList(orderItem.orderProductVOList.map(o => o.actualQuantity))
+      setHoldStockList(orderItem.orderProductVOList.map(o => o.holdStock))
+    }
+  }, [visible])
+
   return (
     <>
       <Button
@@ -120,114 +141,113 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
               保存
             </Button>
             <Button type="primary" status="warning">交运</Button>
-            <Button type="primary" status="danger">出库</Button>
+            <DeliveryButton
+              buttonProps={{
+                type: "primary",
+                status: "danger"
+              }}
+              sendWarehouse={orderItem.sendWarehouse}
+              shrimpOrderNo={orderItem.shrimpOrderNo}
+              onSuccess={onSuccess}
+            />
           </Space>
         )}
       >
         <div className="">
-          <div className="flex-1 flex">
-            <div className="w-full h-[335px] overflow-y-auto">
-              {/* <header className="flex items-center">
-                {columns.map(item => (
-                  <div
-                    className="font-medium px-4 py-2"
-                    style={{
-                      width: item.width,
-                      flex: item.width ? 'auto' : 1,
-                    }}
-                    key={item.dataIndex}
-                  >
-                    {item.title}
-                  </div>
-                ))}
-              </header>
-              <main className="flex flex-col gap-4 bg-white text-left">
-                <div className="border">
-                  <main className="flex p-1">
-                    {columns.map(oitem => (
-                      <div
-                        style={{
-                          width: oitem.width,
-                          flex: oitem.width ? 'auto' : 1,
-                        }}
-                        key={oitem.dataIndex}
-                      >
-                        {oitem.render(orderItem[oitem.dataIndex], orderItem)}
-                      </div>
-                    ))}
-                  </main>
-                </div>
-              </main> */}
-              <Table
-                style={{
-                  height: 335
-                }}
-                data={orderItem.orderProductVOList}
-                columns={[
-                  {
-                    title: '商品信息',
-                    dataIndex: '0',
-                    width: 450,
-                    render(col, item) {
-                      return (
-                        <div
-                          key={item.id}
-                          className={classNames([
-                            'grid',
-                            'h-[125px]',
-                            // index > 0 ? 'border-t' : '',
-                          ])}
-                        >
-                          <List.Item.Meta
-                            className="!items-center p-2 w-full"
-                            avatar={<Image className="size-24" src={item.productImg[0]} />}
-                            title={`${item.productName.slice(0, 10)}...`}
-                            description={(
-                              <div>
-                                <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="单  价" value={item.unitPrice}></LabelValue>
-                                <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="数  量" value={item.quantity}></LabelValue>
-                                <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="规格名称" value={item.specificationName}></LabelValue>
-                                <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="规格SKU" value={item.sku}></LabelValue>
-                              </div>
-                            )}
-                          />
-                        </div>
-                      )
-                    },
-                  },
-                  {
-                    title: '发货信息',
-                    dataIndex: 'fhxx',
-                    width: 550,
-                    render() {
-                      return <SendCargoInfo data={orderItem}></SendCargoInfo>
-                    },
-                  },
-                  {
-                    title: '收货信息',
-                    dataIndex: 'fhxx',
-                    width: 550,
-                    render() {
-                      return (
-                        <Form.Item label="实际数量" layout="vertical" colon={true}>
-                          <InputNumber placeholder="请输入"></InputNumber>
-                        </Form.Item>
-                      )
-                    },
-                  },
-                  {
-                    title: '发货信息',
-                    dataIndex: '保留库存',
-                    width: 550,
-                  },
-                ]}
-              >
+          <Table
+            // style={{
+            //   height: 335
+            // }}
+            pagination={false}
+            scroll={{
+              // x: 1600,
+              y: 400,
+            }}
 
-              </Table>
-            </div>
-          </div>
-          <Divider></Divider>
-          <Grid.Row>
+            border={{
+              wrapper: true,
+              cell: true,
+            }}
+            data={orderItem.orderProductVOList}
+            columns={[
+              {
+                title: '商品信息',
+                dataIndex: '0',
+                width: 450,
+                render(col, item) {
+                  return (
+                    <div
+                      key={item.id}
+                      className={classNames([
+                        'grid',
+                        'h-[125px]',
+                        // index > 0 ? 'border-t' : '',
+                      ])}
+                    >
+                      <List.Item.Meta
+                        className="!items-center p-2 w-full"
+                        avatar={<Image className="size-24" src={item.productImg[0]} />}
+                        title={`${item.productName.slice(0, 25)}...`}
+                        // title={`${item.productName}...`}
+                        description={(
+                          <div>
+                            <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="单  价" value={item.unitPrice}></LabelValue>
+                            <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="数  量" value={item.quantity}></LabelValue>
+                            <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="规格名称" value={item.specificationName}></LabelValue>
+                            <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="规格SKU" value={item.sku}></LabelValue>
+                          </div>
+                        )}
+                      />
+                    </div>
+                  )
+                },
+              },
+              {
+                title: '发货信息',
+                dataIndex: 'fhxx',
+                width: 250,
+                render(col, row) {
+                  return <SendCargoItemInfo
+                    item={row}
+                    orderStatus={orderItem.orderStatus}
+                    sendWarehouse={orderItem.sendWarehouse}
+                    orderId={orderItem.id}
+                  />
+                },
+              },
+              {
+                title: '收货信息',
+                dataIndex: 'shxx',
+                width: 250,
+                render(col, row, i) {
+                  return (
+                    <Form.Item label="实际数量" layout="vertical" colon={true}>
+                      <InputNumber placeholder="请输入" value={actualQuantityList[i] || row.actualQuantity} onChange={e => {
+                        actualQuantityList[i] = e;
+                        setActualQuantityList([...actualQuantityList])
+                      }}></InputNumber>
+                    </Form.Item>
+                  )
+                },
+              },
+              {
+                title: '保留库存',
+                dataIndex: 'blkc',
+                width: 100,
+                render(col, row, i) {
+                  return (
+                    <Switch checked={holdStockList[i] ?? row.holdStock} onChange={e => {
+                      holdStockList[i] = e;
+                      setHoldStockList([...holdStockList])
+                    }}></Switch>
+                  )
+                },
+              },
+            ]}
+          >
+
+          </Table>
+          <Grid.Row className="mt-4">
             <Grid.Col span={12}>
               <div>
                 <LabelValue label="卖家备注" value="暂无备注"></LabelValue>
@@ -252,6 +272,16 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
                     formItemConfigList={[
                       {
                         schema: {
+                          label: '运输类型',
+                          field: 'transportType',
+                        },
+                        control: 'dictSelector',
+                        controlProps: {
+                          dictCode: 'transport_type',
+                        },
+                      },
+                      {
+                        schema: {
                           label: '包裹类型',
                           field: 'parcelType',
                         },
@@ -265,24 +295,28 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
                           label: '包裹重量',
                           field: 'parcelWeight',
                         },
+                        control: 'number'
                       },
                       {
                         schema: {
                           label: '包裹长度',
                           field: 'parcelLength',
                         },
+                        control: 'number'
                       },
                       {
                         schema: {
                           label: '包裹宽度',
                           field: 'parcelWide',
                         },
+                        control: 'number'
                       },
                       {
                         schema: {
                           label: '包裹高度',
                           field: 'parcelHigh',
                         },
+                        control: 'number'
                       },
                     ]}
                   >
@@ -296,19 +330,19 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
                       colon={true}
                       data={[
                         {
-                          label: '基本费用',
+                          label: '基本费用：',
                           value: '1',
                         },
                         {
-                          label: '头程费用',
+                          label: '头程费用：',
                           value: orderItem.firstLegCost,
                         },
                         {
-                          label: '附加费用',
+                          label: '附加费用：',
                           value: orderItem.appendCost,
                         },
                         {
-                          label: '总费用',
+                          label: '总费用：',
                           value: orderItem.totalCost,
                         },
                       ]}

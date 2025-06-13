@@ -1,6 +1,5 @@
 import { Badge, Button, Typography } from '@arco-design/web-react'
 import dayjs from 'dayjs'
-import React from 'react'
 
 import IconHorizontalVideo from './icons/horizontal.svg'
 import IconText from './icons/text.svg'

@@ -43,7 +43,7 @@ export const orderAPI = {
   /**
    * 获取发货时所需要填写的数据
    */
-  getShippingParameter(orderId: number) {
+  getShippingParameter(orderId: string) {
     return baseAxios.get<APIResponse<getShippingParameterRes>>(`/api/logistics/order/get/shipping/parameter/${orderId}`)
   },
   createShellOrder(orderId) {
@@ -51,7 +51,7 @@ export const orderAPI = {
       list: string[]
     }>>(`/api/logistics/order/get/tracking/number/${orderId}`)
   },
-  saveOrder(orderItem: OrderResponseItem) {
+  saveOrder(orderItem: any) {
     return baseAxios.post('/api/logistics/order/save/data', orderItem)
   },
 

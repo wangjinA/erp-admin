@@ -24,6 +24,7 @@ export function getEntrepotOptions() {
         res.data.data?.list.map(item => ({
           label: item.entrepotName,
           value: item.id,
+          default: item.defaultFlag
         })),
       )
   return cache

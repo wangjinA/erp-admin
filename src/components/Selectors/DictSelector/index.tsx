@@ -15,6 +15,7 @@ type DictSelectorProps = SelectProps & {
 export interface DictOptions {
   label: string
   value: any
+  default?: boolean
 }
 
 const cacheData: Record<
