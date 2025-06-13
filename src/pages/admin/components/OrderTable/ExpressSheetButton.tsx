@@ -10,6 +10,7 @@ import { OrderResponseItem } from '@/types/order'
 import { showMessage } from '@/utils'
 import { requestEndInfo } from '@/api'
 import printJS from 'print-js'
+import { quickPrint } from '@/utils/printer'
 
 export default ({ orderItem, buttonProps }: {
   orderItem: OrderResponseItem
@@ -35,6 +36,12 @@ export default ({ orderItem, buttonProps }: {
       }
     }
     setSrc(url)
+  }, {
+    manual: true,
+  })
+  
+  const { run: QuickRun, loading: QuickLoading } = useRequest(async () => {
+    return quickPrint(orderItem)
   }, {
     manual: true,
   })
@@ -79,6 +86,17 @@ export default ({ orderItem, buttonProps }: {
             >
               打印
               {loading ? <Spin size={12}></Spin> : ''}
+            </Link>
+            <Link
+              className="text-sm"
+              type="text"
+              icon={<IconPrinter />}
+              onClick={() => {
+                QuickRun()
+              }}
+            >
+              快捷打印
+              {QuickLoading ? <Spin size={12}></Spin> : ''}
             </Link>
             <Link
               className="text-sm"
