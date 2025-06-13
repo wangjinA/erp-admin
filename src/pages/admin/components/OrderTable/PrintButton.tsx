@@ -1,4 +1,4 @@
-import { Button } from '@arco-design/web-react'
+import { Button, Message } from '@arco-design/web-react'
 import { ButtonProps } from '@arco-design/web-react/lib'
 import { printShippingWaybill, usePrintHtml } from '@/hooks/usePrintWaybill'
 import { OrderResponseItem } from '@/types/order'
@@ -21,11 +21,16 @@ export default (props: ShipmentButtonButtonProps) => {
   const { orderItem, buttonProps, printType, children } = props
   const { printHandle } = usePrintHtml(orderItem)
 
-  const { run, loading } = useRequest(() => {
-    return printShippingWaybill({
-      orderItem,
-      sendWarehouse: orderItem.sendWarehouse || '',
-    })
+  const { run, loading } = useRequest(async () => {
+    try {
+      await printShippingWaybill({
+        orderItem,
+        sendWarehouse: orderItem.sendWarehouse || '',
+      })
+      Message.success('打印成功')
+    } catch (e) {
+      Message.error(e.message)
+    }
   }, {
     manual: true
   })

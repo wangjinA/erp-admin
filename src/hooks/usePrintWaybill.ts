@@ -7,6 +7,8 @@ import { useSelector } from 'react-redux'
 import JsBarcode from 'jsbarcode'
 import { entrepotAPI } from '@/api/admin/entrepot'
 import { businessPrinter } from '@/utils/printer'
+import { ShippingOrderPrintingTemplateEnum } from '@/constants/entrepot'
+import { Message } from '@arco-design/web-react'
 
 export function textToBase64Barcode(text) {
   var canvas = document.createElement("canvas");
@@ -119,31 +121,31 @@ export async function printShippingWaybill(params: {
   const { orderItem, sendWarehouse } = params
   const res = await entrepotAPI.getEntrepotParams(sendWarehouse).then(r => r.data.data);
   const templateData = {
-    "printTemplate": "test - 0",
-    "watermark": "test - 東坑李總",
-    "printJi": "test - 昊辰",
-    "printMo": "test - 東坑李總",
-    "virtualNumber": "test - 0923******",
-    "recipients": "test - 凤凰",
-    "recipientsMobile": "test - 09********",
-    "recipientsAddress": "test - 桃園市大園區平安路",
-    "senderName": "test - 凤凰",
-    "senderMobile": "test - 09********",
-    "senderAddress": "test - 桃園市大園區平安路",
-    "warehouseId": "test - 740373822921904128"
+    "printTemplate": "0",
+    "watermark": res.shippingNoteWatermarking || '',
+    "printJi": res.shippingOrderSet || '',
+    "printMo": res.endOfShipment || '',
+    "virtualNumber": res.shippingOrderVirtualNumber || '',
+    "recipients": res.recipientName || '',
+    "recipientsMobile": res.recipientPhone || '',
+    "recipientsAddress": res.recipientAddress || '',
+    "senderName": res.senderName || '',
+    "senderMobile": res.senderPhone || '',
+    "senderAddress": res.senderAddress || '',
+    "warehouseId": sendWarehouse
   }
   // 0:圆通速运，1：二维码
-  // if (res.shippingOrderPrintingTemplate) {
-  //圆通速运
-  businessPrinter.printShippingNumber([orderItem], templateData);
-  // } else if (res.shippingOrderPrintingTemplate === '1') {
-  //   // 二维码打印
-  //   businessPrinter.printQrCodeShippingNumber([orderItem], templateData);
-  // } else if (res.shippingOrderPrintingTemplate === '2') {
-  //   // 条形码
-  //   businessPrinter.printBarCodeShippingNumber([orderItem], templateData, '666666666666666666666-test');
-  // }
-  // printHandle()
+  if (res.shippingOrderPrintingTemplate === ShippingOrderPrintingTemplateEnum.YUANTONG) {
+    businessPrinter.printShippingNumber([orderItem], templateData);
+  } else if (res.shippingOrderPrintingTemplate === ShippingOrderPrintingTemplateEnum.QR_CODE) {
+    // 二维码打印
+    businessPrinter.printQrCodeShippingNumber([orderItem], templateData);
+  } else if (res.shippingOrderPrintingTemplate === ShippingOrderPrintingTemplateEnum.BAR_CODE) {
+    // 条形码
+    businessPrinter.printBarCodeShippingNumber([orderItem], templateData, orderItem.tenantryNo);
+  } else {
+    throw new Error("出货单打印模版不存在,请检查仓库设置！");
+  }
 }
 
 // {
