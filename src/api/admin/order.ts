@@ -12,7 +12,7 @@ export const orderAPI = {
     )
   },
   // 获取订单详情
-  getDetail(id: number) {
+  getDetail(id: string) {
     return baseAxios.get(`/api/logistics/order/info/${id}`)
   },
   insert(body) {
@@ -23,7 +23,7 @@ export const orderAPI = {
       orderIdList,
     })
   },
-  refresh(orderIdList: number[]) {
+  refresh(orderIdList: string[]) {
     return baseAxios.post(`/api/logistics/order/batch/update/order`, orderIdList)
   },
 
@@ -31,13 +31,30 @@ export const orderAPI = {
    * 安排出货
    */
   shipment(body: {
-    orderId: number
+    orderId: string
     /** 寄件人姓名 */
     senderRealName: string
     /** 快递单号 */
     trackingNo: string
   }) {
-    return baseAxios.post(`/api/logistics/order/arrange/shipment`, body)
+    return baseAxios.post('/api/logistics/order/arrange/shipment', body)
+  },
+  /**
+   * 安排出货批量
+   */
+  shipmentBatch(body: {
+    orderId: string
+    /** 寄件人姓名 */
+    senderRealName: string
+    /** 快递单号 */
+    trackingNo?: string
+  }[]) {
+    return baseAxios.post<APIResponse<{
+      list: {
+        "msg": string
+        "orderId": string
+      }[]
+    }>>('/api/logistics/order/arrange/shipmentBatch', body)
   },
 
   /**

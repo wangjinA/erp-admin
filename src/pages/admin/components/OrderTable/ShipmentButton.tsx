@@ -61,10 +61,11 @@ export default (props: ShipmentButtonButtonProps) => {
         entrepotId: orderItem.sendWarehouse,
       }),
     ])
-    const senderList = senderRes?.data?.data?.list || []
+    // 取默认寄件人信息
     setInitialValues({
-      senderRealName: senderList.find(item => item.isDefault)?.details || senderList[0]?.details || '',
+      senderRealName: senderRes.default,
     })
+
     const ls = shippingRes?.data?.data?.infoNeeded?.dropoff?.map(o => InfoNeededMap[o]) || []
     setFormItemConfigList(ls)
     if (!ls.length) {

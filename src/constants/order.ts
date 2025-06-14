@@ -17,3 +17,20 @@ export const ShippingCarrierColorMap = {
   "嘉里快遞": '#7816ff',
   "店到家宅配": '#00b42a',
 }
+
+export const SystemName = '速運寶';
+
+
+export const OrderStatus = {
+  '待入库': "0",
+  '部分入库': "1",
+  '待出库': "2",
+  '已交运': "3",
+  '已出库': "4",
+  '已取消': "5",
+  '已关闭': "6",
+}
+
+export const ShopeeStatus = {
+  '已装船': 'SHIPPED'
+}

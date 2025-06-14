@@ -97,6 +97,13 @@ export const entrepotAPI = {
     // type: number
   }) {
     return baseAxios.post<APIListResponse<Sender>>('/api/entrepot/sender/list/all', body)
+      .then(senderRes => {
+        const senderList = senderRes?.data?.data?.list || []
+        return {
+          list: senderList,
+          default: senderList.find(item => item.isDefault)?.details || senderList[0]?.details || '',
+        }
+      })
   },
   /**
    * 查询物流仓库寄件人列表

@@ -12,7 +12,7 @@ import { showMessage } from '@/utils'
 
 interface RefreshButtonProps {
   buttonProps?: ButtonProps
-  ids: number[]
+  ids: string[]
   children?: ReactNode
 }
 

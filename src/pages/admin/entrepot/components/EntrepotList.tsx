@@ -116,7 +116,14 @@ export default (props: {
         title={`${ShowFormTypeMap[showTypeEntrepot]}仓库`}
       >
         <FilterForm
-          initialValues={updateEntrepotData}
+          initialValues={{
+            storeType: ['1'],
+            supportArea: ['TW'],
+            inventoryStatus: 1,
+            entrepotType: 0,
+            openUser: 1,
+            ...updateEntrepotData,
+          }}
           form={formEntrepotRef}
           labelLength={8}
           span={24}

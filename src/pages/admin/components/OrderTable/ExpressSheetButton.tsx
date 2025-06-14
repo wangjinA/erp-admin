@@ -1,4 +1,4 @@
-import { Button, ButtonProps, Link, Modal, Space, Spin } from '@arco-design/web-react'
+import { Button, ButtonProps, Link, Message, Modal, Space, Spin } from '@arco-design/web-react'
 import { IconFile, IconPrinter } from '@arco-design/web-react/icon'
 import { useRequest } from 'ahooks'
 import { useEffect, useState } from 'react'
@@ -16,11 +16,7 @@ export default ({ orderItem, buttonProps }: {
   orderItem: OrderResponseItem
   buttonProps?: ButtonProps
 }) => {
-  // const [visible, setVisible] = useState(false)
   const [src, setSrc] = useState<string>('')
-  useEffect(() => {
-    // setSrc(orderItem?.orderPackageList?.reduce<string>((pre, cur) => pre || cur.documentUrl, ''))
-  }, [orderItem])
   const { run, loading } = useRequest(async () => {
     let url = orderItem?.orderPackageList?.reduce<string>((pre, cur) => pre || cur.documentUrl, '')
     if (!url) {
@@ -31,7 +27,7 @@ export default ({ orderItem, buttonProps }: {
         const list = await showMessage(() => orderAPI.createShellOrder(orderItem.id), '查看面单').then((r) => {
           return r.data.data?.list
         })
-        // url = list?.[0]
+        //! 111 
         url = requestEndInfo + `/api/logistics/order/get/tracking/number/${orderItem.id}`
       }
     }
@@ -39,7 +35,7 @@ export default ({ orderItem, buttonProps }: {
   }, {
     manual: true,
   })
-  
+
   const { run: QuickRun, loading: QuickLoading } = useRequest(async () => {
     return quickPrint(orderItem)
   }, {
@@ -76,11 +72,20 @@ export default ({ orderItem, buttonProps }: {
               onClick={() => {
                 // setVisible(true)
                 // run()
-                printJS({
-                  printable: orderItem?.orderPackageList[0].documentUrl,
-                  type: 'pdf',
-                  showModal: true // 可选，显示加载中弹窗
-                });
+                try {
+                  printJS({
+                    printable: orderItem?.orderPackageList[0].documentUrl,
+                    type: 'pdf',
+                    showModal: true // 可选，显示加载中弹窗
+                  });
+                } catch (error) {
+                  const message: string = error.message || '';
+                  if (message.includes('Missing printable information')) {
+                    Message.error(error.message)
+                  } else {
+                    Message.error(error.message || '打印出错！请检查相关信息')
+                  }
+                }
 
               }}
             >

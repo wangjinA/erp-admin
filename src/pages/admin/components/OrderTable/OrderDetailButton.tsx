@@ -140,7 +140,7 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
             >
               保存
             </Button>
-            <Button type="primary" status="warning">交运</Button>
+            {/* <Button type="primary" status="warning">交运</Button> */}
             <DeliveryButton
               buttonProps={{
                 type: "primary",
@@ -156,15 +156,12 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
       >
         <div className="">
           <Table
-            // style={{
-            //   height: 335
-            // }}
+            rowKey="id"
             pagination={false}
             scroll={{
               // x: 1600,
               y: 400,
             }}
-
             border={{
               wrapper: true,
               cell: true,

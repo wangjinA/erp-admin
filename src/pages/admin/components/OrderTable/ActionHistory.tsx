@@ -62,8 +62,8 @@ export default (props: ActionHistoryProps) => {
                         <p>
                           {item.operationContent || '-'}
                         </p>
-                        <p>
-                          操作人：{item.operatorUser ? <Tag color="blue">{item.operatorUser}</Tag> : '-'}
+                        <p className="mt-1">
+                          操作人：{item.operatorUser ? <Tag color="blue" size="small">{item.operatorUser}</Tag> : '-'}
                         </p>
                       </div>
                     }

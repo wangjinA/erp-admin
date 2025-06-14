@@ -66,7 +66,6 @@ export default ({ buttonProps }: {
         onCancel={() => {
           setShowSyncOrder(false)
         }}
-        hideCancel={true}
         confirmLoading={loading}
         onConfirm={() => {
           run()

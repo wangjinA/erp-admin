@@ -52,7 +52,7 @@ export interface OrderTablePorps extends StyleProps {
     APIListResponse<Order>['data'],
     any
   >['pagination']
-  onSelect?: (ids: number[]) => void
+  onSelect?: (ids: string[]) => void
 }
 
 export const labelClass = 'arco-descriptions-item-label !w-auto !pb-0'
@@ -62,7 +62,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
   const { className, style, dictCode, loading, run, data, pagination, onSelect } = props
 
   const [currentOrder, setCurrentOrder] = useState<any>()
-  const [selectList, setSelectList] = useState<number[]>([])
+  const [selectList, setSelectList] = useState<string[]>([])
 
   const [actionType, setActionType] = useState<ShowFormType>()
   const [sheet, setSheet] = useState<any>()

@@ -10,6 +10,7 @@ import ShipmentButton from '@/pages/admin/components/OrderTable/ShipmentButton'
 import { OrderResponseItem } from '@/types/order'
 import { bus, EmitTypes } from '@/hooks/useEventBus'
 import { IconSend } from '@arco-design/web-react/icon'
+import { OrderStatus, ShopeeStatus } from '@/constants/order'
 
 export default ({
   orderItem,
@@ -31,7 +32,7 @@ export default ({
   const trackingNumber = orderItem?.orderPackageList?.[0]?.trackingNumber
 
   if (!trackingNumber) {
-    if (isAdmin()) {
+    if (isAdmin() && orderItem.orderStatus === OrderStatus['已出库'] && orderItem.shopeeStatus !== ShopeeStatus['已装船']) {
       return <ShipmentButton
         orderItem={orderItem}
         sendWarehouse={orderItem.sendWarehouse}

@@ -3,6 +3,7 @@ import {
   Button,
   Form,
   Message,
+  Modal,
   Radio,
   Space,
   Tabs,
@@ -10,18 +11,18 @@ import {
 } from '@arco-design/web-react'
 import { IconExport, IconRefresh, IconSearch } from '@arco-design/web-react/icon'
 import { useLocalStorageState, usePagination, useRequest, useResetState } from 'ahooks'
-import { omit } from 'lodash'
+import { omit, uniq } from 'lodash'
 import React, { useState } from 'react'
 
 import { getOrderFilter } from './schema'
 
-import { scanAPI } from '@/api/admin/entrepot'
+import { entrepotAPI, scanAPI } from '@/api/admin/entrepot'
 import { orderAPI as adminOrderApi } from '@/api/admin/order'
 import { orderAPI } from '@/api/client/order'
 import FilterForm from '@/components/FilterForm'
 
 import { useDictOptions } from '@/components/Selectors/DictSelector'
-import { batchApplyShippingCarrierList } from '@/constants/order'
+import { batchApplyShippingCarrierList, OrderStatus, SystemName } from '@/constants/order'
 import { EmitTypes, bus, useEventBus } from '@/hooks/useEventBus'
 import OrderTable from '@/pages/admin/components/OrderTable'
 import RefreshButton from '@/pages/admin/components/OrderTable/RefreshButton'
@@ -99,12 +100,12 @@ export default (props: OrderPageProps) => {
           orderStatus: type === OrderPageType.PACK_ORDER ? activeTab : undefined,
           ...(type === OrderPageType.SHOPEE
             ? {
-                shrimpStatus: activeTab,
-                storeFlag: true,
-              }
+              shrimpStatus: activeTab,
+              storeFlag: true,
+            }
             : {
-                whetherPack: true,
-              }),
+              whetherPack: true,
+            }),
         },
         pageNum: params?.current || pagination.current,
         pageSize: params?.pageSize || pagination.pageSize,
@@ -159,6 +160,41 @@ export default (props: OrderPageProps) => {
     manual: true,
   })
 
+  const shipmentBatchHandle = useRequest(async (orderIds: string[]) => {
+    const selectDatas = data.list.filter(item => selectIds.includes(item.id))
+    const entrepotIds = uniq(selectDatas.map(item => item.sendWarehouse))
+    // 仓库和发货人的映射
+    const entrepotSenderMap = (await Promise.all(entrepotIds.map(id => entrepotAPI.getSenderAll({
+      entrepotId: id,
+    }).then(r => ({
+      [id]: r
+    }))))).reduce((pre, cur) => ({
+      ...pre,
+      ...cur,
+    }), {})
+    const batchList = orderIds.map(orderId => ({
+      orderId,
+      senderRealName: entrepotSenderMap[data.list.find(o => o.id === orderId)?.sendWarehouse]?.default || SystemName
+    }))
+    await showMessage(() => adminOrderApi.shipmentBatch(batchList), '批量出货')
+      .then(res => {
+        const errorList = (res.data?.data?.list || []).map(o => ({
+          msg: o.msg,
+          orderId: data.list.find(item => item.id === o.orderId)?.shrimpOrderNo || '获取失败'
+        }));
+        if (errorList.length) {
+          Modal.confirm({
+            noticeType: 'warning',
+            title: errorList.length !== batchList.length ? '部分订单出货失败' : '批量出货失败',
+            content: errorList.map(item => `${item.msg}，订单编号：${item.orderId}`).join('\n'),
+          })
+        }
+      })
+    refresh()
+  }, {
+    manual: true,
+  })
+
   useEventBus(EmitTypes.refreshOrderPage, () => {
     refresh()
   })
@@ -183,58 +219,46 @@ export default (props: OrderPageProps) => {
           {
             isAdmin()
               ? (
-                  <>
-                    <Button
-                      type="outline"
-                      icon={<IconExport />}
-                      onClick={() => {
-                        Message.error('开发中...')
-                      }}
-                    >
-                      导出数据
-                    </Button>
-                    <Button
-                      type="outline"
-                      status="warning"
-                      loading={cancelListHandle.loading}
-                      onClick={async () => {
-                        if (!selectIds.length) {
-                          return Message.error('请选择订单')
-                        }
-                        await showModal({
-                          content: `确认取消选中的${selectIds.length}个订单？`,
-                        })
-                        cancelListHandle.run()
-                      }}
-                    >
-                      批量取消订单
-                    </Button>
-                    <Button
-                      type="outline"
-                      onClick={() => {
-                        if (!selectIds.length) {
-                          return Message.error('请选择订单')
-                        }
-                        const ids = data.list.filter(item =>
-                          batchApplyShippingCarrierList.includes(item.shippingCarrier),
-                        ).map(o => o.id)
-                        const successIds = selectIds.filter(id => ids.includes(id))
-                        // 只选择这些物流的订单id
-                        Message.error('开发中...')
-                      }}
-                    >
-                      批量申请运单号
-                    </Button>
-                    <RefreshButton
-                      ids={selectIds}
-                      buttonProps={{
-                        type: 'outline',
-                        status: 'default',
-                      }}
-                    >
-                      批量更新订单
-                    </RefreshButton>
-                    {/* <Button
+                <>
+                  <Button
+                    type="outline"
+                    icon={<IconExport />}
+                    onClick={() => {
+                      Message.error('开发中...')
+                    }}
+                  >
+                    导出数据
+                  </Button>
+                  <Button
+                    type="outline"
+                    loading={outListHandle.loading}
+                    disabled={activeTab >= OrderStatus['已出库']}
+                    onClick={async () => {
+                      if (!selectIds.length) {
+                        return Message.error('请选择订单')
+                      }
+                      await showModal({
+                        content: `确定出库 ${selectIds.length} 个订单？`,
+                        okButtonProps: {
+                          status: 'success',
+                        },
+                      })
+
+                      outListHandle.run()
+                    }}
+                  >
+                    批量出库
+                  </Button>
+                  <RefreshButton
+                    ids={selectIds}
+                    buttonProps={{
+                      type: 'outline',
+                      status: 'default',
+                    }}
+                  >
+                    批量更新订单
+                  </RefreshButton>
+                  {/* <Button
                       type="outline"
                       onClick={() => {
                         if (!selectIds.length) {
@@ -244,60 +268,98 @@ export default (props: OrderPageProps) => {
                     >
                       批量更新订单
                     </Button> */}
-                    <Button
-                      type="outline"
-                      onClick={() => {
-                        Message.error('开发中...')
-                      }}
-                    >
-                      下载全部面单
-                    </Button>
-                    <Button
-                      type="outline"
-                      loading={outListHandle.loading}
-                      onClick={async () => {
-                        if (!selectIds.length) {
-                          return Message.error('请选择订单')
-                        }
-                        await showModal({
-                          content: `确定出库 ${selectIds.length} 个订单？`,
-                          okButtonProps: {
-                            status: 'success',
-                          },
-                        })
+                  <Button
+                    type="outline"
+                    onClick={() => {
+                      Message.error('开发中...')
+                    }}
+                  >
+                    下载全部面单
+                  </Button>
+                  <Button
+                    type="outline"
+                    loading={shipmentBatchHandle.loading}
+                    disabled={activeTab !== OrderStatus['已出库']}
+                    onClick={() => {
+                      if (!selectIds.length) {
+                        return Message.error('请选择订单')
+                      }
+                      const ids = data.list.filter(item =>
+                        batchApplyShippingCarrierList.includes(item.shippingCarrier || item.orderPackageList?.[0]?.shippingCarrier),
+                      ).map(o => o.id)
 
-                        outListHandle.run()
-                      }}
-                    >
-                      批量出库
-                    </Button>
-                  </>
-                )
+                      const tips = `只有${batchApplyShippingCarrierList.join('、')}的订单才能批量出货`;
+
+                      if (!ids.length) {
+                        Message.error(tips)
+                        return;
+                      }
+                      const successIds = selectIds.filter(id => ids.includes(id))
+
+                      // 选中的id和匹配的承运商id 都要存在
+                      if (successIds.length) {
+                        if (selectIds.length !== successIds.length) {
+                          Modal.confirm({
+                            title: '温馨提示',
+                            content: `${tips}，其他承运商的订单请手动单个出货！`,
+                            okText: '确认出货',
+                            onOk() {
+                              shipmentBatchHandle.run(successIds)
+                            }
+                          })
+                        } else {
+                          shipmentBatchHandle.run(successIds)
+                        }
+                      } else {
+                        Message.error('不符合出货条件，请检查订单状态和承运商信息！');
+                      }
+                    }}
+                  >
+                    批量出货
+                  </Button>
+                  <Button
+                    type="outline"
+                    status="warning"
+                    loading={cancelListHandle.loading}
+                    onClick={async () => {
+                      if (!selectIds.length) {
+                        return Message.error('请选择订单')
+                      }
+                      await showModal({
+                        content: `确认取消选中的${selectIds.length}个订单？`,
+                      })
+                      cancelListHandle.run()
+                    }}
+                  >
+                    批量取消订单
+                  </Button>
+                </>
+              )
               : (
-                  <>
-                    <SyncOrderButton></SyncOrderButton>
-                    <Button
-                      type="outline"
-                      icon={<IconExport />}
-                      onClick={() => {
-                        Message.error('开发中...')
-                      }}
-                    >
-                      导出订单
-                    </Button>
-                  </>
-                )
+                <>
+                  <SyncOrderButton></SyncOrderButton>
+                  <Button
+                    type="outline"
+                    icon={<IconExport />}
+                    onClick={() => {
+                      Message.error('开发中...')
+                    }}
+                  >
+                    导出订单
+                  </Button>
+                </>
+              )
           }
           {selectIds.length
             ? (
-                <Tag checked={true} color="pinkpurple">
-                  已选中
-                  {' '}
-                  {selectIds.length}
-                  {' '}
-                  个订单
-                </Tag>
-              )
+              <Tag checked={true} color="pinkpurple">
+                已选中
+                {' '}
+                {selectIds.length}
+                {' '}
+                个订单
+              </Tag>
+            )
             : null}
         </Space>
 
