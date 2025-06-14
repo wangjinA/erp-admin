@@ -68,7 +68,7 @@ export default (props: ShipmentButtonButtonProps) => {
     const ls = shippingRes?.data?.data?.infoNeeded?.dropoff?.map(o => InfoNeededMap[o]) || []
     setFormItemConfigList(ls)
     if (!ls.length) {
-      Message.error('相关信息获取失败！')
+      Message.error('相关信息获取失败！请先将包裹出库')
     }
   }, {
     manual: true,

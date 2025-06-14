@@ -54,7 +54,7 @@ function getPrintHtml(orderItem: OrderResponseItem & {
                     <tr>
                         <td style="width: 200px; font-size: 14px;">
                             <div style="border-bottom: dashed 1px #000;"></div>
-                            <div>订单编号：<span style="font-size: 16px;">2503228CDK8GUP</span></div>
+                            <div>订单编号：<span style="font-size: 16px;">${orderItem.shrimpOrderNo}</span></div>
                              <div>用户标识：373537</div>
                             <div>打单人员：${orderItem.userName}</div>
                             <div>尾程物流：${orderItem.orderPackageList?.[0]?.shippingCarrier || ''}</div>

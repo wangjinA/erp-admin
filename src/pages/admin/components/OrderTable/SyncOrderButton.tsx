@@ -26,7 +26,7 @@ export default ({ buttonProps }: {
         orderUpdateEndTime: dayjs(orderUpdateTime[1]).format('YYYY-MM-DD HH:mm:ss'),
         storeId,
       }), sleep(2000)])
-      if (res.data && res.data.code !== SuccessCode) {
+      if (res?.data && res.data.code !== SuccessCode) {
         return Modal.error({
           title: '操作失败',
           content: res.data.msg,
@@ -60,7 +60,7 @@ export default ({ buttonProps }: {
         同步订单
       </Button>
       <Modal
-        title="选择店铺"
+        title="同步订单"
         visible={showSyncOrder}
         style={{ width: 600 }}
         onCancel={() => {

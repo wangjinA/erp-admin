@@ -206,14 +206,14 @@ export function useColumns(props: OrderTablePorps) {
                     }}
                   >
                   </OrderDetailButton>
-                  <DeliveryButton
+                  {/* <DeliveryButton
                     sendWarehouse={row.sendWarehouse}
                     shrimpOrderNo={row.shrimpOrderNo}
                     onSuccess={() => {
                       bus.emit(EmitTypes.refreshOrderPage)
                     }}
                     buttonProps={{ size: 'small', disabled: row.orderStatus !== '2' }}
-                  />
+                  /> */}
                   <ShipmentButton
                     orderItem={row}
                     sendWarehouse={row.sendWarehouse}

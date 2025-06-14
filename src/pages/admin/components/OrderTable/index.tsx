@@ -469,16 +469,12 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
       >
         {actionType === ShowFormType.edit ? (
           <>
-            {console.log({
-              ...currentOrder,
-              transportType: currentOrder?.transportType || '0',
-            })}
             <FilterForm
               span={24}
               form={form}
               initialValues={{
                 ...currentOrder,
-                transportType: currentOrder?.transportType || '0',
+                transportType: currentOrder?.transportType || 'KY',
               }}
               className="mb-4"
               formItemConfigList={[

@@ -144,7 +144,8 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
             <DeliveryButton
               buttonProps={{
                 type: "primary",
-                status: "danger"
+                status: "danger",
+                disabled: orderItem.orderStatus !== '2'
               }}
               sendWarehouse={orderItem.sendWarehouse}
               shrimpOrderNo={orderItem.shrimpOrderNo}

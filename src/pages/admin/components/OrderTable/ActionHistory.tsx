@@ -1,4 +1,4 @@
-import { Button, Empty, Modal, Spin, Timeline } from '@arco-design/web-react'
+import { Button, Empty, Modal, Spin, Tag, Timeline } from '@arco-design/web-react'
 import { IconFile } from '@arco-design/web-react/icon'
 import { ButtonProps } from '@arco-design/web-react/lib'
 import { useRequest } from 'ahooks'
@@ -53,23 +53,32 @@ export default (props: ActionHistoryProps) => {
         >
           {!logHandle.loading && logHandle.data?.data.list?.length
             ? (
-                <Timeline>
-                  {logHandle.data?.data.list.map(item => (
-                    <Timeline.Item
-                      key={item.id}
-                      label={item.operationContent || '-'}
-                    >
-                      <span>{item.operationProcedure}</span>
-                      <span className="ml-4 text-gray-500">
-                        {formatDate(item.createTime)}
-                      </span>
-                    </Timeline.Item>
-                  ))}
-                </Timeline>
-              )
+              <Timeline>
+                {logHandle.data?.data.list.map(item => (
+                  <Timeline.Item
+                    key={item.id}
+                    label={
+                      <div>
+                        <p>
+                          {item.operationContent || '-'}
+                        </p>
+                        <p>
+                          操作人：{item.operatorUser ? <Tag color="blue">{item.operatorUser}</Tag> : '-'}
+                        </p>
+                      </div>
+                    }
+                  >
+                    <span>{item.operationProcedure}</span>
+                    <span className="ml-4 text-gray-500">
+                      {formatDate(item.createTime)}
+                    </span>
+                  </Timeline.Item>
+                ))}
+              </Timeline>
+            )
             : (
-                <Empty description="暂无记录"></Empty>
-              )}
+              <Empty description="暂无记录"></Empty>
+            )}
         </Spin>
       </Modal>
     </>

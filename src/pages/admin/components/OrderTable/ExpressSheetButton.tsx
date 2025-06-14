@@ -27,9 +27,9 @@ export default ({ orderItem, buttonProps }: {
         await showMessage(() => clientOrderAPI.getSheet(orderItem.id), '查看面单')
       }
       else {
-        // const list = await showMessage(() => orderAPI.createShellOrder(orderItem.id), '查看面单').then((r) => {
-        //   return r.data.data?.list
-        // })
+        const list = await showMessage(() => orderAPI.createShellOrder(orderItem.id), '查看面单').then((r) => {
+          return r.data.data?.list
+        })
         // url = list?.[0]
         url = requestEndInfo + `/api/logistics/order/get/tracking/number/${orderItem.id}`
       }
@@ -106,7 +106,7 @@ export default ({ orderItem, buttonProps }: {
           setSrc('')
         }}
       >
-        <iframe className="h-[700px] w-full border-none outline-none" src={src}></iframe>
+        {src ? <iframe className="h-[700px] w-full border-none outline-none" src={src}></iframe> : <Spin loading={true}></Spin>}
       </Modal>
     </>
   )
