@@ -121,7 +121,7 @@ export async function printShippingWaybill(params: {
   const { orderItem, sendWarehouse } = params
   const res = await entrepotAPI.getEntrepotParams(sendWarehouse).then(r => r.data.data);
   const templateData = {
-    "printTemplate": "0",
+    "printTemplate": "0", // 这个注意一下
     "watermark": res.shippingNoteWatermarking || '',
     "printJi": res.shippingOrderSet || '',
     "printMo": res.endOfShipment || '',

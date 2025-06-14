@@ -229,15 +229,14 @@ class BusinessPrinter {
   // 打印出货单，圆通速运
   printShippingNumber(orders: OrderResponseItem[], templateData) {
     let orderList = orders.map(item => {
-      const { transportType, tenantryNo } = item;
+      const { transportType, tenantryNo, shrimpOrderNo } = item;
       const shippingCarrier = item.orderPackageList[0].shippingCarrier;
-      let shopOrderSn = item.id;
       let sy = Object.entries(ShippingCarrierIndexOfMap).find(([key, value]) => shippingCarrier.indexOf(key) != -1)?.[1];
       let order = {
         sy: sy,
         headLogisticsSy: transportType,//
         hhh: templateData.watermark ? templateData.watermark : '',//分站标识identifying
-        orderSn: shopOrderSn,
+        orderSn: shrimpOrderNo,
         checkOutTime: "", // 待定
         identifying: tenantryNo + "  P13",
         ji: templateData.printJi,//集
@@ -267,7 +266,7 @@ class BusinessPrinter {
   printQrCodeShippingNumber(orders: OrderResponseItem[], templateData) {
     let orderList = orders.map(item => {
       return {
-        orderSn: item.id,
+        orderSn: item.shrimpOrderNo,
         hhh: templateData.watermark || '',//分站表示,
       }
     });
@@ -299,7 +298,7 @@ class BusinessPrinter {
       //   shippingCarrierVal = 'xx';
       // }
       let order = {
-        orderSn: item.id,
+        orderSn: item.shrimpOrderNo,
         hhh: templateData.watermark ? templateData.watermark : '',//分站表示,
         shippingCarrier: shippingCarrierVal, // 尾程物流
         invitationCode: invitationCodeVal || '',
@@ -379,45 +378,40 @@ class BusinessPrinter {
   //     }
   //   });
   // }
-  // quickPrint2(trackingNumber, documentImgUrl, loadingObj, printTemplateURL) {
-  //   if (documentImgUrl) {
-  //     let contents = [];
-  //     let arr = {
-  //       "documentID": trackingNumber + Math.random(),
-  //       "contents": [
-  //         {
-  //           "data": {
-  //             "url": documentImgUrl.replaceAll("&", "&amp;"),
-  //           },
-  //           "templateURL": printTemplateURL
-  //         }
-  //       ]
-  //     };
-  //     contents.push(arr);
-  //     //开始打印
-  //     Printer.doPrint(contents, (data) => {
-  //       if (data == "no open") {
-  //         Message.warning({
-  //           content: `您还未安装或者未开启菜鸟官方打印组件，请先安装或者开启！`
-  //         })
-  //       } else if (data == 'failed') {
-  //         if (loadingObj) {
-  //           loadingObj.state = false;
-  //         }
-  //         Message.error("打印失败");
-  //       } else if (data == 'open') {
-  //         if (loadingObj) {
-  //           loadingObj.state = true;
-  //         }
-  //       } else if (data == 'printed') {
-  //         if (loadingObj) {
-  //           loadingObj.state = false;
-  //         }
-  //         Message.success("打印成功");
-  //       }
-  //     });
-  //   }
-  // }
+  async quickPrint2(order: OrderResponseItem, documentImgUrl: string, printTemplateURL: string) {
+    return new Promise((resolve, reject) => {
+      if (documentImgUrl) {
+        const contents = [{
+          "documentID": order.id + Math.random(),
+          "contents": [
+            {
+              "data": {
+                "url": documentImgUrl.replaceAll("&", "&amp;"),
+              },
+              "templateURL": printTemplateURL
+            }
+          ]
+        }];
+        Printer.doPrint(contents, (data) => {
+          if (data == "no open") {
+            Message.warning({
+              content: `您还未安装或者未开启菜鸟官方打印组件，请先安装或者开启！`
+            })
+          } else if (data == 'failed') {
+            reject('打印失败');
+          } else if (data == 'open') {
+            // if (loadingObj) {
+            //   loadingObj.state = true;
+            // }
+          } else if (data == 'printed') {
+            resolve(true);
+          }
+        });
+        return;
+      }
+      reject('打印失败，面单信息为空');
+    })
+  }
   //打印操作
   printOperation(WaybillInfo: WaybillInfo) {
     Printer.doPrint(WaybillInfo, (data) => {
@@ -442,3 +436,82 @@ class BusinessPrinter {
 }
 
 export const businessPrinter = new BusinessPrinter();
+
+
+// 快捷打印
+export function quickPrint(order: OrderResponseItem) {
+  const documentUrl = order.orderPackageList[0]?.documentUrl
+  if (documentUrl) {
+    // 默认模版
+    let printTemplateURL = CaiNiaoConfigInfo.links['TEMPLATEURL'].documentUrl;
+    // 宅配通另外模版
+    if (order.shippingCarrier === '宅配通') {
+      printTemplateURL = CaiNiaoConfigInfo.links['TEMPLATEURL'].documentUrlZpt;
+    }
+    businessPrinter.quickPrint2(order, documentUrl, printTemplateURL);
+    return;
+  }
+  Message.error('该订单未生成面单！')
+  // let params = {
+  //   shopPlatform: order.platform,
+  //   orderSn: order.orderSn,
+  //   packageNumber: order.packageNumber,
+  //   fdrShopId: order.shopId,
+  //   trackingNumber: order.trackingNumber,
+  //   platformShopId: order.platformShopId,
+  //   orderType: order.type,
+  //   shopType: order.shopType,
+  //   resultType: "1"
+  // };
+  // loadingObj.state = true;
+  // this.$api.order.getShippingDocumentPrintData(params).then(ret => {
+  //   loadingObj.state = false;
+  //   if (ret.data && ret.data.type == RetMsgType.SUCCESS) {
+  //     let printDatas = ret.data.bean;
+  //     this.doPrintOrder = doPrintOrder;
+  //     let contents = [];
+  //     let arr = {
+  //       "documentID": printDatas.orderSn,
+  //       "contents": [
+  //         {
+  //           "data": {
+  //             "orderSn": printDatas.orderSn,
+  //             "trackingNo": printDatas.data.trackingNo,
+  //             "logistics": {
+  //               "logisticId": null,
+  //               "trackingNo": printDatas.data.trackingNo,
+  //               "serviceCode": printDatas.data.serviceCode,
+  //               "firstMileName": printDatas.data.firstMileName,
+  //               "lastMileName": printDatas.data.lastMileName,
+  //               "laneCode": printDatas.data.laneCode,
+  //               "goodsToDeclare": printDatas.data.goodsToDeclare,
+  //               "warehouseAddress": printDatas.data.warehouseAddress,
+  //               "warehouseId": printDatas.data.warehouseId,
+  //             },
+  //           },
+  //           "templateURL": CaiNiaoConfigInfo.links['SHOPEE_TEMPLATE'].url
+  //         }
+  //       ]
+  //     };
+  //     contents.push(arr);
+  //     //开始打印
+  //     this.doPrintOrder.doPrint(contents, (data) => {
+  //       // console.log("打印回调数据:",data);
+  //       if (data == "no open") {
+  //         let content = '您还未安装或者未开启菜鸟官方打印组件，请先安装或者开启！';
+  //         this.printProcessing(content);
+  //       }
+  //       loadingObj.state = false;
+  //       //打印成功后，更新状态
+  //       this.updatePrintStatus(order.orderSn);
+  //     });
+  //   } else if (ret.data && ret.data.type == RetMsgType.WARING) {
+  //     this.$message.warning(ret.data.message);
+  //     loadingObj.state = false;
+  //   } else {
+  //     loadingObj.state = false;
+  //   }
+  // });
+  //打印成功后，更新状态
+  // this.updatePrintStatus(order.orderSn);
+}

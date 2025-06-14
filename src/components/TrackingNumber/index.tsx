@@ -5,10 +5,16 @@ import { useState } from 'react'
 import { expressAPI as adminExpressAPI } from '@/api/admin/express'
 import { expressAPI } from '@/api/client/express'
 import ExpressSheetButton from '@/pages/admin/components/OrderTable/ExpressSheetButton'
-import { isClient } from '@/routes'
+import { isAdmin, isClient } from '@/routes'
+import ShipmentButton from '@/pages/admin/components/OrderTable/ShipmentButton'
+import { OrderResponseItem } from '@/types/order'
+import { bus, EmitTypes } from '@/hooks/useEventBus'
+import { IconSend } from '@arco-design/web-react/icon'
 
 export default ({
   orderItem,
+}: {
+  orderItem: OrderResponseItem
 }) => {
   const [visible, setVisible] = useState(false)
   const trackHandle = useRequest(async () => {
@@ -22,8 +28,25 @@ export default ({
   }, {
     manual: true,
   })
-  const trackingNumber = orderItem?.orderPackageList[0]?.trackingNumber
+  const trackingNumber = orderItem?.orderPackageList?.[0]?.trackingNumber
+
   if (!trackingNumber) {
+    if (isAdmin()) {
+      return <ShipmentButton
+        orderItem={orderItem}
+        sendWarehouse={orderItem.sendWarehouse}
+        shrimpOrderNo={orderItem.shrimpOrderNo}
+        onSuccess={() => {
+          bus.emit(EmitTypes.refreshOrderPage)
+        }}
+        buttonProps={{
+          icon: <IconSend />,
+          size: 'small',
+          type: 'text',
+          status: 'default'
+        }}
+      />
+    }
     return <>-</>
   }
   return (
@@ -52,14 +75,14 @@ export default ({
       >
         {trackHandle.data?.length
           ? (
-              <Timeline>
-                {trackHandle.data?.map(item => (
-                  <Timeline.Item key={item.updateTime} label={item.updateTime}>
-                    {item.description}
-                  </Timeline.Item>
-                ))}
-              </Timeline>
-            )
+            <Timeline>
+              {trackHandle.data?.map(item => (
+                <Timeline.Item key={item.updateTime} label={item.updateTime}>
+                  {item.description}
+                </Timeline.Item>
+              ))}
+            </Timeline>
+          )
           : <Empty description="暂无物流跟踪信息"></Empty>}
       </Modal>
     </>

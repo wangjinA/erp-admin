@@ -1,4 +1,4 @@
-import { Button, Space } from '@arco-design/web-react'
+import { Button, Space, Tag } from '@arco-design/web-react'
 
 import { useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
@@ -8,8 +8,6 @@ import DeliveryButton from './DeliveryButton'
 import OrderDetailButton from './OrderDetailButton'
 import PrintButton, { PrintType } from './PrintButton'
 import SendCargoInfo from './SendCargoInfo'
-
-import ShipmentButton from './ShipmentButton'
 
 import { OrderTablePorps } from '.'
 
@@ -21,6 +19,7 @@ import { EmitTypes, bus } from '@/hooks/useEventBus'
 import { isAdmin } from '@/routes'
 import { OrderResponseItem } from '@/types/order'
 import { showMessage, showModal } from '@/utils'
+import { ShippingCarrierColorMap } from '@/constants/order'
 
 export function useColumns(props: OrderTablePorps) {
   const { dictCode } = props
@@ -52,17 +51,20 @@ export function useColumns(props: OrderTablePorps) {
       dataIndex: 'logistics',
       width: 240,
       render(c, row) {
+        const shippingCarrier = row.orderPackageList?.[0]?.shippingCarrier || row.logisticsOrderPackageList?.[0]?.shippingCarrier
         return (
           <div className="border-r h-full p-2">
             {/* <LabelValue label="尾程物流" value={<DictNameFC value={row.orderPackageList[0]?.shippingCarrier} dictCode="logistics_channel"></DictNameFC>}></LabelValue> */}
             <LabelValue
               label="尾程物流"
               value={
-                row.orderPackageList?.[0]?.shippingCarrier || row.logisticsOrderPackageList?.[0]?.shippingCarrier
+                shippingCarrier ? <Tag color={ShippingCarrierColorMap[shippingCarrier]}>{shippingCarrier}</Tag> : null
               }
             >
             </LabelValue>
-            <LabelValue label="物流单号" value={<TrackingNumber orderItem={row}></TrackingNumber>}></LabelValue>
+            <LabelValue label="物流单号" value={
+              <TrackingNumber orderItem={row}></TrackingNumber>
+            }></LabelValue>
             {row.shippingTime ? <LabelValue label="出货时间" value={row.shippingTime}></LabelValue> : null}
             {/* <LabelValue
               label="查看单号"
@@ -148,128 +150,116 @@ export function useColumns(props: OrderTablePorps) {
     },
     ...(dictCode === 'order_status'
       ? [
-          // {
-          //   title: isAdmin() ? '费用' : '货代费用',
-          //   dataIndex: 'hd',
-          //   width: 180,
-          //   render(c, row) {
-          //     return (
-          //       <Descriptions
-          //         size="small"
-          //         className="h-full px-2"
-          //         column={1}
-          //         colon=" :"
-          //         data={[
-          //           {
-          //             label: '总费用',
-          //             value: 1.5,
-          //           },
-          //           {
-          //             label: '打包费用',
-          //             value: 1.5,
-          //           },
-          //           ...(isAdmin()
-          //             ? [
-          //                 {
-          //                   label: '打包附加费用',
-          //                   value: <Button>添加</Button>,
-          //                 },
-          //                 {
-          //                   label: '增值费用',
-          //                   value: <Button>添加</Button>,
-          //                 },
-          //               ]
-          //             : []),
-          //         ]}
-          //         labelStyle={{ textAlign: 'right' }}
-          //         style={{ marginBottom: 20 }}
-          //       />
-          //     )
-          //   },
-          // },
-        ]
+        // {
+        //   title: isAdmin() ? '费用' : '货代费用',
+        //   dataIndex: 'hd',
+        //   width: 180,
+        //   render(c, row) {
+        //     return (
+        //       <Descriptions
+        //         size="small"
+        //         className="h-full px-2"
+        //         column={1}
+        //         colon=" :"
+        //         data={[
+        //           {
+        //             label: '总费用',
+        //             value: 1.5,
+        //           },
+        //           {
+        //             label: '打包费用',
+        //             value: 1.5,
+        //           },
+        //           ...(isAdmin()
+        //             ? [
+        //                 {
+        //                   label: '打包附加费用',
+        //                   value: <Button>添加</Button>,
+        //                 },
+        //                 {
+        //                   label: '增值费用',
+        //                   value: <Button>添加</Button>,
+        //                 },
+        //               ]
+        //             : []),
+        //         ]}
+        //         labelStyle={{ textAlign: 'right' }}
+        //         style={{ marginBottom: 20 }}
+        //       />
+        //     )
+        //   },
+        // },
+      ]
       : []),
     ...(showActions
       ? [{
-          title: '操作',
-          dataIndex: 'actions',
-          width: 120,
-          render(c, row: OrderResponseItem) {
-            return (
-              <div className="h-full p-2 flex justify-center">
-                <Space direction="vertical" size={4}>
-                  <OrderDetailButton
-                    buttonProps={{ size: 'small' }}
-                    orderItem={row}
-                    onSuccess={() => {
-                      bus.emit(EmitTypes.refreshOrderPage)
-                    }}
-                  >
-                  </OrderDetailButton>
-                  {/* <DeliveryButton
-                    sendWarehouse={row.sendWarehouse}
-                    shrimpOrderNo={row.shrimpOrderNo}
-                    onSuccess={() => {
-                      bus.emit(EmitTypes.refreshOrderPage)
-                    }}
-                    buttonProps={{ size: 'small', disabled: row.orderStatus !== '2' }}
-                  /> */}
-                  <ShipmentButton
-                    orderItem={row}
-                    sendWarehouse={row.sendWarehouse}
-                    shrimpOrderNo={row.shrimpOrderNo}
-                    onSuccess={() => {
-                      bus.emit(EmitTypes.refreshOrderPage)
-                    }}
-                    buttonProps={{
-                      size: 'small',
-                      //  disabled: !row.needFill
-                    }}
-                  />
-                  <PrintButton
-                    orderItem={row}
-                    printType={PrintType.SHIPPING}
-                  >
-                    打印出货单
-                  </PrintButton>
-                  <PrintButton
-                    orderItem={row}
-                    printType={PrintType.PICKING}
-                  >
-                    打印捡货单
-                  </PrintButton>
-                  <ActionHistory
-                    buttonProps={{
-                      type: 'text',
-                      icon: null,
-                    }}
-                    id={row.id}
-                  >
-                  </ActionHistory>
-                  <Button
-                    type="text"
-                    size="small"
-                    disabled={['5', '6'].includes(row.orderStatus)}
-                    onClick={async () => {
-                      await showModal({
-                        content: '确定要取消打包吗？',
-                        onOk() {
-                          return showMessage(
-                            () => orderAPI.cancel([row.id]),
-                            '取消打包',
-                          )
-                        },
-                      })
-                      bus.emit(EmitTypes.refreshOrderPage)
-                    }}
-                  >
-                    取消订单
-                  </Button>
-                </Space>
-              </div>
-            )
-          },
-        }]
+        title: '操作',
+        dataIndex: 'actions',
+        width: 120,
+        render(c, row: OrderResponseItem) {
+          return (
+            <div className="h-full p-2 flex justify-center">
+              <Space direction="vertical" size={4}>
+                <OrderDetailButton
+                  buttonProps={{ size: 'small' }}
+                  orderItem={row}
+                  onSuccess={() => {
+                    bus.emit(EmitTypes.refreshOrderPage)
+                  }}
+                >
+                </OrderDetailButton>
+                <DeliveryButton
+                  sendWarehouse={row.sendWarehouse}
+                  shrimpOrderNo={row.shrimpOrderNo}
+                  onSuccess={() => {
+                    bus.emit(EmitTypes.refreshOrderPage)
+                  }}
+                  buttonProps={{ size: 'small', disabled: row.orderStatus !== '2' }}
+                />
+                <PrintButton
+                  orderItem={row}
+                  printType={PrintType.SHIPPING}
+                >
+                  打印出货单
+                </PrintButton>
+                <PrintButton
+                  orderItem={row}
+                  printType={PrintType.PICKING}
+                >
+                  打印捡货单
+                </PrintButton>
+                <ActionHistory
+                  buttonProps={{
+                    type: 'text',
+                    icon: null,
+                  }}
+                  id={row.id}
+                >
+                </ActionHistory>
+                <Button
+                  type="text"
+                  size="small"
+                  disabled={['5', '6'].includes(row.orderStatus)}
+                  onClick={async () => {
+                    await showModal({
+                      content: '确定要取消打包吗？',
+                      onOk() {
+                        return showMessage(
+                          () => orderAPI.cancel([row.id]),
+                          '取消打包',
+                        )
+                      },
+                    })
+                    bus.emit(EmitTypes.refreshOrderPage)
+                  }}
+                >
+                  取消订单
+                </Button>
+              </Space>
+            </div>
+          )
+        },
+      }]
       : []
     ),
   ]
