@@ -1,4 +1,4 @@
-import { Empty, Link, Message, Modal, Timeline } from '@arco-design/web-react'
+import { Empty, Link, Message, Modal, Spin, Timeline, Typography } from '@arco-design/web-react'
 import { useRequest } from 'ahooks'
 import { useState } from 'react'
 
@@ -31,8 +31,19 @@ export default ({
   })
   const trackingNumber = orderItem?.orderPackageList?.[0]?.trackingNumber
 
+
+
   if (!trackingNumber) {
-    if (isAdmin() && orderItem.orderStatus === OrderStatus['已出库'] && orderItem.shopeeStatus !== ShopeeStatus['已装船']) {
+    const showShipmentButton = isAdmin() && orderItem.orderStatus === OrderStatus['已出库'] && orderItem.shopeeStatus !== ShopeeStatus['已装船']
+    if (showShipmentButton) {
+
+      if (orderItem.shippingTime) {
+        return <span>
+          <Spin size={13}></Spin>
+          <Typography.Text className="ml-2 text-sm" type="secondary" >获取面单中...</Typography.Text>
+        </span>
+      }
+
       return <ShipmentButton
         orderItem={orderItem}
         sendWarehouse={orderItem.sendWarehouse}

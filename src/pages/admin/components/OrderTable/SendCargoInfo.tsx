@@ -276,7 +276,7 @@ export const SendCargoItemInfo: React.FC<{
 const SendCargoInfo: React.FC<SendCargoInfoProps> = (props) => {
   const { data } = props
   return (
-    <div className={classNames(styles['goods-info'], 'pr-2')}>
+    <div className={classNames(styles['goods-info'], 'pr-2 h-full')}>
       {data.orderProductVOList?.map((item, i) => (
         <div
           key={i}

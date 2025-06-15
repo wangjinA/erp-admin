@@ -12,7 +12,7 @@ import {
 import { IconExport, IconRefresh, IconSearch } from '@arco-design/web-react/icon'
 import { useLocalStorageState, usePagination, useRequest, useResetState } from 'ahooks'
 import { omit, uniq } from 'lodash'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 
 import { getOrderFilter } from './schema'
 
@@ -73,6 +73,37 @@ export default (props: OrderPageProps) => {
     setActiveTab(shrimpStatus[0]?.value)
   }
 
+  // 页面查询通用参数
+  function getPageQuery(otherQuery = {}) {
+    return {
+      ...formData,
+      selectOrderProductVO: {
+        ...formData.selectOrderProductVO,
+      },
+      selectLogisticsOrderVO: {
+        sortType,
+        ...omit(formData.selectLogisticsOrderVO, ['createdTimes', 'stockRemovalTimes', 'packTimes']),
+        ...timeArrToObject(formData.selectLogisticsOrderVO.packTimes, 'packStartTime', 'packEndTime'),
+        ...timeArrToObject(formData.selectLogisticsOrderVO.createdTimes, 'createStartTime', 'createEndTime'),
+        ...timeArrToObject(
+          formData.selectLogisticsOrderVO.stockRemovalTimes,
+          'stockRemovalStartTime',
+          'stockRemovalEndTime',
+        ),
+        orderStatus: type === OrderPageType.PACK_ORDER ? activeTab : undefined,
+        ...(type === OrderPageType.SHOPEE
+          ? {
+            shrimpStatus: activeTab,
+            storeFlag: true,
+          }
+          : {
+            whetherPack: true,
+          }),
+      },
+      ...otherQuery,
+    }
+  }
+
   const { data, run, pagination, loading, refresh } = usePagination(
     async (params = {
       pageSize: 10,
@@ -82,34 +113,10 @@ export default (props: OrderPageProps) => {
       if (!shrimpStatus?.length) {
         return null
       }
-      const body = {
-        ...formData,
-        selectOrderProductVO: {
-          ...formData.selectOrderProductVO,
-        },
-        selectLogisticsOrderVO: {
-          sortType,
-          ...omit(formData.selectLogisticsOrderVO, ['createdTimes', 'stockRemovalTimes', 'packTimes']),
-          ...timeArrToObject(formData.selectLogisticsOrderVO.packTimes, 'packStartTime', 'packEndTime'),
-          ...timeArrToObject(formData.selectLogisticsOrderVO.createdTimes, 'createStartTime', 'createEndTime'),
-          ...timeArrToObject(
-            formData.selectLogisticsOrderVO.stockRemovalTimes,
-            'stockRemovalStartTime',
-            'stockRemovalEndTime',
-          ),
-          orderStatus: type === OrderPageType.PACK_ORDER ? activeTab : undefined,
-          ...(type === OrderPageType.SHOPEE
-            ? {
-              shrimpStatus: activeTab,
-              storeFlag: true,
-            }
-            : {
-              whetherPack: true,
-            }),
-        },
+      const body = getPageQuery({
         pageNum: params?.current || pagination.current,
         pageSize: params?.pageSize || pagination.pageSize,
-      }
+      })
       const res = await orderAPI.getList(body)
       // 打包订单
       if (type === OrderPageType.PACK_ORDER) {
@@ -156,6 +163,12 @@ export default (props: OrderPageProps) => {
   const cancelListHandle = useRequest(async () => {
     await showMessage(() => adminOrderApi.cancel(selectIds), '取消')
     refresh()
+  }, {
+    manual: true,
+  })
+  const exportOrderListHandle = useRequest(async () => {
+    const body = getPageQuery()
+    await showMessage(() => adminOrderApi.exportOrderList(body), '导出')
   }, {
     manual: true,
   })
@@ -223,11 +236,12 @@ export default (props: OrderPageProps) => {
                   <Button
                     type="outline"
                     icon={<IconExport />}
+                    loading={exportOrderListHandle.loading}
                     onClick={() => {
-                      Message.error('开发中...')
+                      exportOrderListHandle.run();
                     }}
                   >
-                    导出数据
+                    导出订单
                   </Button>
                   <Button
                     type="outline"
@@ -341,9 +355,6 @@ export default (props: OrderPageProps) => {
                   <Button
                     type="outline"
                     icon={<IconExport />}
-                    onClick={() => {
-                      Message.error('开发中...')
-                    }}
                   >
                     导出订单
                   </Button>

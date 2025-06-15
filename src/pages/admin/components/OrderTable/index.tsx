@@ -146,21 +146,21 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
         <header className="flex items-center">
           {onSelect
             ? (
-                <Checkbox
-                  disabled={!data?.list?.length}
-                  className="mr-2 pl-[10px]"
-                  checked={isSelectAll}
-                  onChange={(checked) => {
-                    if (checked) {
-                      setSelectList(data?.list?.map(item => item.id))
-                    }
-                    else {
-                      setSelectList([])
-                    }
-                  }}
-                >
-                </Checkbox>
-              )
+              <Checkbox
+                disabled={!data?.list?.length}
+                className="mr-2 pl-[10px]"
+                checked={isSelectAll}
+                onChange={(checked) => {
+                  if (checked) {
+                    setSelectList(data?.list?.map(item => item.id))
+                  }
+                  else {
+                    setSelectList([])
+                  }
+                }}
+              >
+              </Checkbox>
+            )
             : null}
           {columns.map(item => (
             <div
@@ -186,39 +186,39 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                   {
                     showHeaderActions
                       ? (
-                          <header className="flex items-center p-2 border-b">
-                            <Button.Group>
-                              <Button
-                                disabled={item.orderStatus && !['0', '1', '2'].includes(item.orderStatus)}
-                                onClick={() => {
-                                  setActionType(ShowFormType.edit)
-                                  setCurrentOrder(structuredClone({
-                                    ...item,
-                                    clickPack: item.orderStatus === '5' || !item.whetherPack,
-                                    logisticsOrderProductList: item.orderProductVOList,
-                                    sendWarehouse: item.sendWarehouse === '0' ? undefined : item.sendWarehouse,
-                                  }))
-                                }}
-                              >
-                                {item.whetherPack && item.orderStatus !== '5' ? '编辑打包' : '一键打包'}
-                              </Button>
-                              <Button
-                                disabled={!['0'].includes(item.orderStatus)}
-                                onClick={async () => {
-                                  await showModal({
-                                    content: '确定要取消打包吗？',
-                                  })
-                                  await showMessage(
-                                    () => orderAPI.cancelPack(item.id),
-                                    '取消打包',
-                                  )
-                                  bus.emit(EmitTypes.refreshOrderPage)
-                                }}
-                              >
-                                取消打包
-                              </Button>
-                              <ExpressSheetButton orderItem={item} buttonProps={{}}></ExpressSheetButton>
-                              {/* <Button
+                        <header className="flex items-center p-2 border-b">
+                          <Button.Group>
+                            <Button
+                              disabled={item.orderStatus && !['0', '1', '2'].includes(item.orderStatus)}
+                              onClick={() => {
+                                setActionType(ShowFormType.edit)
+                                setCurrentOrder(structuredClone({
+                                  ...item,
+                                  clickPack: item.orderStatus === '5' || !item.whetherPack,
+                                  logisticsOrderProductList: item.orderProductVOList,
+                                  sendWarehouse: item.sendWarehouse === '0' ? undefined : item.sendWarehouse,
+                                }))
+                              }}
+                            >
+                              {item.whetherPack && item.orderStatus !== '5' ? '编辑打包' : '一键打包'}
+                            </Button>
+                            <Button
+                              disabled={!['0'].includes(item.orderStatus)}
+                              onClick={async () => {
+                                await showModal({
+                                  content: '确定要取消打包吗？',
+                                })
+                                await showMessage(
+                                  () => orderAPI.cancelPack(item.id),
+                                  '取消打包',
+                                )
+                                bus.emit(EmitTypes.refreshOrderPage)
+                              }}
+                            >
+                              取消打包
+                            </Button>
+                            <ExpressSheetButton orderItem={item} buttonProps={{}}></ExpressSheetButton>
+                            {/* <Button
                                 loading={refreshHandle.loading}
                                 onClick={() => {
                                   refreshHandle.run(item.id)
@@ -226,45 +226,45 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                               >
                                 更新订单
                               </Button> */}
-                              <RefreshButton
-                                buttonProps={{
-                                  type: 'default',
-                                  status: 'default',
-                                }}
-                                ids={[item.id]}
-                              >
-                              </RefreshButton>
-                              {/* <Button>发货预报</Button> */}
-                              {/* <Button>订单收入</Button> */}
-                              {/* <Button>隔离订单</Button> */}
-                              <Button
-                                onClick={() => {
-                                  setCurrentOrder({
-                                    ...item,
-                                    logisticsOrderProductList: item.orderProductVOList,
-                                  })
-                                  setActionType(ShowFormType.create)
-                                }}
-                              >
-                                添加商品
-                              </Button>
-                              {/* <Button>打印出货单</Button> */}
-                              <Button
-                                onClick={() => {
-                                  showModal({
-                                    content: '确定要申请预刷吗?',
-                                    okButtonProps: {
-                                      status: 'default',
-                                    },
-                                  }).then(() => {
-                                    Message.success('预刷成功！')
-                                  })
-                                }}
-                              >
-                                申请预刷
-                              </Button>
-                              <ActionHistory id={item.id}></ActionHistory>
-                              {/* <PopconfirmDelete
+                            <RefreshButton
+                              buttonProps={{
+                                type: 'default',
+                                status: 'default',
+                              }}
+                              ids={[item.id]}
+                            >
+                            </RefreshButton>
+                            {/* <Button>发货预报</Button> */}
+                            {/* <Button>订单收入</Button> */}
+                            {/* <Button>隔离订单</Button> */}
+                            <Button
+                              onClick={() => {
+                                setCurrentOrder({
+                                  ...item,
+                                  logisticsOrderProductList: item.orderProductVOList,
+                                })
+                                setActionType(ShowFormType.create)
+                              }}
+                            >
+                              添加商品
+                            </Button>
+                            {/* <Button>打印出货单</Button> */}
+                            <Button
+                              onClick={() => {
+                                showModal({
+                                  content: '确定要申请预刷吗?',
+                                  okButtonProps: {
+                                    status: 'default',
+                                  },
+                                }).then(() => {
+                                  Message.success('预刷成功！')
+                                })
+                              }}
+                            >
+                              申请预刷
+                            </Button>
+                            <ActionHistory id={item.id}></ActionHistory>
+                            {/* <PopconfirmDelete
                                 title="删除订单"
                                 content="确认删除订单？操作不可逆！"
                                 isModal={true}
@@ -274,34 +274,34 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                                 }}
                               >
                               </PopconfirmDelete> */}
-                            </Button.Group>
-                            {/* <div className="flex items-center ml-auto">
+                          </Button.Group>
+                          {/* <div className="flex items-center ml-auto">
                 <span className={labelClass}>订单编号：</span>
                 <span className={valueClass}>{item.shrimpOrderNo}</span>
                 <Button size="mini" type="text">
                   查看详情
                 </Button>
               </div> */}
-                          </header>
-                        )
+                        </header>
+                      )
                       : null
                   }
                   <header className="gap-12 pl-1 pr-4 py-2 border-b flex">
                     <div className="flex w-[320px] items-baseline">
                       {onSelect
                         ? (
-                            <Checkbox
-                              checked={selectList.includes(item.id)}
-                              onChange={(checked) => {
-                                if (checked) {
-                                  setSelectList([...selectList, item.id])
-                                }
-                                else {
-                                  setSelectList(selectList.filter(id => id !== item.id))
-                                }
-                              }}
-                            />
-                          )
+                          <Checkbox
+                            checked={selectList.includes(item.id)}
+                            onChange={(checked) => {
+                              if (checked) {
+                                setSelectList([...selectList, item.id])
+                              }
+                              else {
+                                setSelectList(selectList.filter(id => id !== item.id))
+                              }
+                            }}
+                          />
+                        )
                         : null}
                       <Tooltip content="打包订单状态">
                         <Tag
@@ -343,11 +343,11 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                       </div>
                       {item.packTime
                         ? (
-                            <div>
-                              <span className={labelClass}>提交：</span>
-                              <span className={valueClass}>{item.packTime || '-'}</span>
-                            </div>
-                          )
+                          <div>
+                            <span className={labelClass}>提交：</span>
+                            <span className={valueClass}>{item.packTime || '-'}</span>
+                          </div>
+                        )
                         : null}
                       {/* <div>
                     <span className={labelClass}>最后发货时间：</span>
@@ -359,19 +359,21 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                       <span className={valueClass}>
                         {(isClient() ? item.remark : item.entrepotRemark) || '暂无'}
                       </span>
-                      <Button
-                        type="text"
-                        size="mini"
-                        onClick={() => {
-                          setActionType(ShowFormType.edit)
-                          setCurrentOrder({
-                            ...item,
-                            logisticsOrderProductList: item.orderProductVOList,
-                          })
-                        }}
-                      >
-                        <IconEdit />
-                      </Button>
+                      {
+                        isClient() ? <Button
+                          type="text"
+                          size="mini"
+                          onClick={() => {
+                            setActionType(ShowFormType.edit)
+                            setCurrentOrder({
+                              ...item,
+                              logisticsOrderProductList: item.orderProductVOList,
+                            })
+                          }}
+                        >
+                          <IconEdit />
+                        </Button> : null
+                      }
                     </div>
                   </footer>
                 </div>
@@ -383,17 +385,17 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
         </Spin>
         {data?.list?.length
           ? (
-              <Pagination
-                className="mt-4 flex justify-end"
-                total={data?.total}
-                showTotal={true}
-                onChange={(pageNumber: number, pageSize: number) => {
-                  pagination.changePageSize(pageSize)
-                  pagination.changeCurrent(pageNumber)
-                }}
-              >
-              </Pagination>
-            )
+            <Pagination
+              className="mt-4 flex justify-end"
+              total={data?.total}
+              showTotal={true}
+              onChange={(pageNumber: number, pageSize: number) => {
+                pagination.changePageSize(pageSize)
+                pagination.changeCurrent(pageNumber)
+              }}
+            >
+            </Pagination>
+          )
           : null}
         {(!data?.list?.length && !loading) ? <Empty className="py-28"></Empty> : null}
       </div>
@@ -485,7 +487,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                     required: true,
                   },
                   formItemProps: {
-                  // disabled: true,
+                    // disabled: true,
                   },
                   control: 'entrepotSelector',
                 },

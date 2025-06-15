@@ -71,6 +71,10 @@ export const orderAPI = {
   saveOrder(orderItem: any) {
     return baseAxios.post('/api/logistics/order/save/data', orderItem)
   },
+  // 订单导出
+  exportOrderList(body: Partial<SearchOrderParams & IPageParams>) {
+    return baseAxios.post('/api/logistics/order/exportXls', body);
+  }
 
 }
 
