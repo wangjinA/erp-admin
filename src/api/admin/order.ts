@@ -73,7 +73,9 @@ export const orderAPI = {
   },
   // 订单导出
   exportOrderList(body: Partial<SearchOrderParams & IPageParams>) {
-    return baseAxios.post('/api/logistics/order/exportXls', body);
+    return baseAxios.post('/api/logistics/order/exportXls', body, {
+      responseType: 'blob'
+    });
   }
 
 }

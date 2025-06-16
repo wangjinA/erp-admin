@@ -4,6 +4,7 @@ import {
   Form,
   Message,
   Modal,
+  Popconfirm,
   Radio,
   Space,
   Tabs,
@@ -12,10 +13,10 @@ import {
 import { IconExport, IconRefresh, IconSearch } from '@arco-design/web-react/icon'
 import { useLocalStorageState, usePagination, useRequest, useResetState } from 'ahooks'
 import { omit, uniq } from 'lodash'
-import React, { useMemo, useState } from 'react'
+import { useState } from 'react'
 
 import { getOrderFilter } from './schema'
-
+import { saveAs } from 'file-saver'
 import { entrepotAPI, scanAPI } from '@/api/admin/entrepot'
 import { orderAPI as adminOrderApi } from '@/api/admin/order'
 import { orderAPI } from '@/api/client/order'
@@ -29,6 +30,7 @@ import RefreshButton from '@/pages/admin/components/OrderTable/RefreshButton'
 import SyncOrderButton from '@/pages/admin/components/OrderTable/SyncOrderButton'
 import { isAdmin } from '@/routes'
 import { showMessage, showModal, timeArrToObject } from '@/utils'
+import dayjs from 'dayjs'
 
 export enum OrderPageType {
   SHOPEE = 'shopee',
@@ -74,7 +76,8 @@ export default (props: OrderPageProps) => {
   }
 
   // 页面查询通用参数
-  function getPageQuery(otherQuery = {}) {
+  function getPageQuery(otherQuery: any = {}) {
+    const { selectLogisticsOrderVO = {}, ...other } = otherQuery
     return {
       ...formData,
       selectOrderProductVO: {
@@ -99,8 +102,9 @@ export default (props: OrderPageProps) => {
           : {
             whetherPack: true,
           }),
+        ...selectLogisticsOrderVO
       },
-      ...otherQuery,
+      ...other,
     }
   }
 
@@ -166,9 +170,33 @@ export default (props: OrderPageProps) => {
   }, {
     manual: true,
   })
+
   const exportOrderListHandle = useRequest(async () => {
-    const body = getPageQuery()
-    await showMessage(() => adminOrderApi.exportOrderList(body), '导出')
+    const query: any = {
+      selectLogisticsOrderVO: {}
+    }
+
+    if (selectIds.length) {
+      query.selectLogisticsOrderVO.shrimpOrderNo = data.list.filter(o => selectIds.includes(o.id)).map(o => o.shrimpOrderNo).join(',')
+    }
+
+    const body = getPageQuery(query)
+    const res = await adminOrderApi.exportOrderList(body)
+    // 提取文件名
+    const disposition = res.headers['content-disposition']
+    let fileName = '订单导出.xlsx'
+    if (disposition) {
+      const match = disposition.match(/filename="?([^"]+)"?/)
+      if (match && match[1]) {
+        fileName = decodeURIComponent(match[1])
+      }
+    }
+    // 下载
+    saveAs(res.data, fileName)
+    Modal.success({
+      content: '订单导出成功，请注意查收！',
+      title: '温馨提示'
+    })
   }, {
     manual: true,
   })
@@ -233,16 +261,17 @@ export default (props: OrderPageProps) => {
             isAdmin()
               ? (
                 <>
-                  <Button
-                    type="outline"
-                    icon={<IconExport />}
-                    loading={exportOrderListHandle.loading}
-                    onClick={() => {
-                      exportOrderListHandle.run();
-                    }}
-                  >
-                    导出订单
-                  </Button>
+                  <Popconfirm title="确认导出订单？" onOk={() => exportOrderListHandle.run()} okButtonProps={{
+                    loading: exportOrderListHandle.loading,
+                  }}>
+                    <Button
+                      type="outline"
+                      icon={<IconExport />}
+                      loading={exportOrderListHandle.loading}
+                    >
+                      导出订单
+                    </Button>
+                  </Popconfirm>
                   <Button
                     type="outline"
                     loading={outListHandle.loading}
