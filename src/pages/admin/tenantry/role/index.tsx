@@ -198,39 +198,39 @@ function Permission() {
                 {
                   current?.systemAcquiesce === 1 && current?.backStatus
                     ? (
-                        <Result
-                          className="mt-20"
-                          status="success"
-                          title="全部店铺用户"
-                          subTitle="无法编辑，默认用户拥有的菜单权限"
-                        >
-                        </Result>
-                      )
+                      <Result
+                        className="mt-20"
+                        status="success"
+                        title="全部店铺用户"
+                        subTitle="无法编辑，默认用户拥有的菜单权限"
+                      >
+                      </Result>
+                    )
                     : (
-                        <>
-                          <Space size={[10]} wrap>
-                            {
-                              current?.roleUserInfoVOList?.map(item => (
-                                <Tag key={item.userId} checkable={true} color="arcoblue" checked={true}>
-                                  {item.userName}
-                                </Tag>
-                              ))
-                            }
-                            <Button
-                              type="primary"
-                              size="small"
-                              loading={roleUsersHandle.loading}
-                              icon={<IconPlus></IconPlus>}
-                              onClick={() => {
-                                setSelectedKeys(current?.roleUserInfoVOList?.map(item => item.userId) || [])
-                                setAddUserVisible(true)
-                              }}
-                            >
-                              添加
-                            </Button>
-                          </Space>
-                        </>
-                      )
+                      <>
+                        <Space size={[10]} wrap>
+                          {
+                            current?.roleUserInfoVOList?.map(item => (
+                              <Tag key={item.userId} checkable={true} color="arcoblue" checked={true}>
+                                {item.userName}
+                              </Tag>
+                            ))
+                          }
+                          <Button
+                            type="primary"
+                            size="small"
+                            loading={roleUsersHandle.loading}
+                            icon={<IconPlus></IconPlus>}
+                            onClick={() => {
+                              setSelectedKeys(current?.roleUserInfoVOList?.map(item => item.userId) || [])
+                              setAddUserVisible(true)
+                            }}
+                          >
+                            添加
+                          </Button>
+                        </Space>
+                      </>
+                    )
                 }
 
               </Grid.Col>
@@ -297,9 +297,9 @@ function Permission() {
                     roleId: current.id,
                     userIdList: selectedKeys,
                   })).then(() => {
-                  infoHandle.run(current.id)
-                  setAddUserVisible(false)
-                })
+                    infoHandle.run(current.id)
+                    setAddUserVisible(false)
+                  })
                   .finally(() => {
                     setAddUserLoading(false)
                   })
@@ -309,6 +309,9 @@ function Permission() {
             >
               <Spin loading={roleUsersHandle.loading} className="flex justify-center">
                 <Transfer
+                  listStyle={{
+                    width: 300
+                  }}
                   simple={{ retainSelectedItems: true }}
                   dataSource={((roleUsersHandle.data?.list || []) as any[]).toSorted((a, b) =>
                     Number(selectedKeys.includes(a.id)) - Number(selectedKeys.includes(b.id)),

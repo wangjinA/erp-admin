@@ -91,9 +91,9 @@ export default (props: {
               entrepotId,
               userIdList: selectedKeys,
             })).then(() => {
-            run()
-            setAddUserVisible(false)
-          })
+              run()
+              setAddUserVisible(false)
+            })
             .finally(() => {
               setAddUserLoading(false)
             })
@@ -103,12 +103,15 @@ export default (props: {
       >
         <Spin loading={roleUsersHandle.loading} className="flex justify-center">
           <Transfer
+            listStyle={{
+              width: 300
+            }}
             simple={{ retainSelectedItems: true }}
             dataSource={((roleUsersHandle.data?.list || []) as any[]).toSorted((a, b) =>
               Number(selectedKeys.includes(a.id)) - Number(selectedKeys.includes(b.id)),
             ).map(item => ({
               key: item.id,
-              value: item.userLoginAccount,
+              value: item.userName || item.userLoginAccount,
             })) || []}
             showSearch={true}
             targetKeys={selectedKeys || []}

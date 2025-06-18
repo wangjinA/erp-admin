@@ -288,6 +288,9 @@ function Permission() {
             >
               <Spin loading={roleUsersHandle.loading} className="flex justify-center">
                 <Transfer
+                  listStyle={{
+                    width: 300
+                  }}
                   simple={{ retainSelectedItems: true }}
                   dataSource={roleUsersHandle.data?.list.map(item => ({
                     key: item.userId,
