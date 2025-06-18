@@ -8,12 +8,14 @@ import { SuccessCode } from '@/api'
 import { orderAPI } from '@/api/client/order'
 import FilterForm from '@/components/FilterForm'
 import { sleep } from '@/utils'
+import { timeRangeShortcuts14Day } from '@/constants'
 
 export default ({ buttonProps }: {
   buttonProps?: ButtonProps
 }) => {
   const [syncForm] = Form.useForm()
   const [showSyncOrder, setShowSyncOrder] = useState(false)
+  const [dates, setDates] = useState([]);
 
   const { run, loading } = useRequest(async () => {
     const { storeId, orderUpdateTime } = await syncForm.validate()
@@ -93,12 +95,32 @@ export default ({ buttonProps }: {
                 required: true,
               },
               control: 'datePickerRange',
+              controlProps: {
+                onSelect: (valueString, value) => {
+                  setDates(value)
+                },
+                onVisibleChange: (visible) => {
+                  if (!visible) {
+                    setDates([]);
+                  }
+                },
+                disabledDate: (current) => {
+                  if (dates && dates.length) {
+                    const tooLate = dates[0] && Math.abs(current.diff(dates[0], 'day')) > 14;
+                    const tooEarly = dates[1] && Math.abs(dates[1].diff(current, 'day')) > 14;
+                    return tooEarly || tooLate;
+                  }
+                  return false;
+                },
+                clearRangeOnReselect: true,
+                shortcuts: timeRangeShortcuts14Day,
+              }
             },
           ]}
         >
 
         </FilterForm>
-      </Modal>
+      </Modal >
     </>
   )
 }

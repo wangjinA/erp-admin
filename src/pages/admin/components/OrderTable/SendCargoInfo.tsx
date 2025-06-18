@@ -18,6 +18,7 @@ import { EmitTypes, bus } from '@/hooks/useEventBus'
 import { isClient } from '@/routes'
 import { OrderResponseItem } from '@/types/order'
 import { showMessage, showModal } from '@/utils'
+import { IconEmpty, IconGithub } from '@arco-design/web-react/icon'
 
 interface SendCargoInfoProps {
   data: OrderResponseItem
@@ -27,16 +28,16 @@ export const TagColors = [
   '',
   'green',
   'orangered',
-  'orange',
   'gold',
-  'lime',
-  'cyan',
+  'red',
   'blue',
   'arcoblue',
   'purple',
   'pinkpurple',
   'magenta',
   'gray',
+  'lime',
+  'orange',
 ]
 function ExpressStatus(item: OrderResponseItem['orderProductVOList'][0]) {
   const { data: trackingStatus } = useDictOptions({
@@ -216,23 +217,30 @@ export const SendCargoItemInfo: React.FC<{
   orderStatus: string;
   sendWarehouse: string;
   orderId: string;
-}> = ({ item, orderStatus, sendWarehouse, orderId }) => {
+}> = ({ item, orderStatus, sendWarehouse, orderId, }) => {
+  let trackingNoContent = null;
+
+  if (item.stockOutStatus) {
+    trackingNoContent = <Tag color="orangered" icon={<IconEmpty  />}>缺货打包</Tag>
+    
+  } else if (item.trackingNo) {
+    trackingNoContent = <CopyText
+      value={item.trackingNo}
+      gap={1}
+    >
+      <TrackingNo
+        value={item.trackingNo}
+      >
+      </TrackingNo>
+    </CopyText>
+  } else {
+    trackingNoContent = <Tag>未填</Tag>
+  }
+
   return <div className="h-full p-2">
     <LabelValue
       label="快递"
-      value={item.trackingNo
-        ? (
-          <CopyText
-            value={item.trackingNo}
-            gap={1}
-          >
-            <TrackingNo
-              value={item.trackingNo}
-            >
-            </TrackingNo>
-          </CopyText>
-        )
-        : <Tag>未填</Tag>}
+      value={trackingNoContent}
     >
     </LabelValue>
     {

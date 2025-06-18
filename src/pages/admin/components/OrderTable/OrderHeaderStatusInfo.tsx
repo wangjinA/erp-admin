@@ -57,7 +57,7 @@ export default ({ data }: { data: OrderResponseItem }) => {
             )
           : null
       }
-      {data.remark ? <LabelValue className="w-[240px]" valueClassName="text-red-500 font-bold" label="商家备注" value={data.remark}></LabelValue> : <div></div>}
+      {/* {data.remark ? <LabelValue className="w-[240px]" valueClassName="text-red-500 font-bold" label="商家备注" value={data.remark}></LabelValue> : <div></div>} */}
       <div className="ml-auto">
         <span className={classNames(valueClass, 'text-red-500 font-bold')}>
           {data.shipByDate ? `${dateInfo.dateStr}` : ''}

@@ -16,7 +16,7 @@ import { useRequest } from 'ahooks'
 import { PaginationResult } from 'ahooks/lib/usePagination/types'
 
 import classNames from 'classnames'
-import { omit } from 'lodash'
+import { isNil, omit } from 'lodash'
 import React, { useEffect, useMemo, useState } from 'react'
 
 import ActionHistory from './ActionHistory'
@@ -71,20 +71,23 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
   const [addForm] = useForm()
 
   const columns = useColumns(props)
-  const refreshHandle = useRequest(
-    async (id) => {
-      await showMessage(() => orderAPI.refresh(id))
-    },
-    {
-      manual: true,
-    },
-  )
   const updateHandle = useRequest(
     async (newSku?: any) => {
       const data = omit(currentOrder, [
         'orderProductVOList',
         'orderPackageList',
       ])
+      if(isNil(data.sendWarehouse)){
+        Message.error('请选择打包仓库！')
+        return ;
+      }
+      let actionName = '打包'
+      if(newSku){
+        actionName = '添加'
+      }
+      if(data.whetherPack && data.orderStatus !== '5'){
+        actionName = '更新'
+      }
       await showMessage(
         () =>
           orderAPI.update({
@@ -94,7 +97,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
               ...(newSku ? [newSku] : []),
             ],
           }),
-        newSku ? '添加' : '打包',
+        actionName,
       )
       setActionType(null)
       bus.emit(EmitTypes.refreshOrderPage)
@@ -528,7 +531,10 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
               onChange={(e) => {
                 setCurrentOrder({
                   ...currentOrder,
-                  logisticsOrderProductList: e,
+                  logisticsOrderProductList: e.map(o => ({
+                    ...o,
+                    trackingNo: o.trackingNo ? o.trackingNo.trim() : null
+                  })),
                 })
               }}
             >

@@ -20,13 +20,12 @@ import { isAdmin } from '@/routes'
 import { OrderResponseItem } from '@/types/order'
 import { showMessage, showModal } from '@/utils'
 import { ShippingCarrierColorMap } from '@/constants/order'
+import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
+import classNames from 'classnames'
 
 export function useColumns(props: OrderTablePorps) {
   const { dictCode } = props
   const { pathname } = useLocation()
-  const showMj = useMemo(() => {
-    return ['/client/order/all'].includes(pathname)
-  }, [pathname])
   const showActions = isAdmin()
   return [
     {
@@ -117,23 +116,25 @@ export function useColumns(props: OrderTablePorps) {
     //     )
     //   },
     // },
-    // ...(showMj
-    //   ? [{
-    //       title: '卖家信息',
-    //       dataIndex: '卖家信息',
-    //       width: 180,
-    //       render(c, row: Order) {
-    //         return (
-    //           <div className="border-r h-full p-2">
-    //             <LabelValue label="打包仓库" value={<EntrepotNameFC value={row.sendWarehouse} />}></LabelValue>
-    //             {/* <LabelValue label="卖家标识" value="row"></LabelValue> */}
-    //             <LabelValue label="卖家备注" value={row.remark}></LabelValue>
-    //             <LabelValue label="仓库备注" value={row.entrepotRemark}></LabelValue>
-    //           </div>
-    //         )
-    //       },
-    //     }]
-    //   : []),
+    ...(isAdmin()
+      ? [{
+          title: '卖家信息',
+          dataIndex: 'sellerInfo',
+          width: 180,
+          render(c, row: OrderResponseItem) {
+            return (
+              <div className="border-r h-full p-2">
+                {/* <LabelValue label="打包仓库" value={<EntrepotNameFC value={row.sendWarehouse} />}></LabelValue> */}
+                <LabelValue label="卖家标识" value={row.tenantryNo}></LabelValue>
+                <LabelValue valueClassName={classNames({
+                  'text-red-500 font-bold': row.remark
+                })} label="卖家备注" value={row.remark}></LabelValue>
+                <LabelValue label="仓库备注" value={row.entrepotRemark}></LabelValue>
+              </div>
+            )
+          },
+        }]
+      : []),
     {
       title: '订单金额',
       dataIndex: 'fee',

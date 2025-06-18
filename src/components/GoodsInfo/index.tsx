@@ -86,6 +86,7 @@ export default (props: GoodsInfoProps) => {
                             label: '发货方式',
                             field: 'deliveryMethod',
                             span: 16,
+                            required: true,
                           },
                           control: 'dictSelector',
                           controlProps: {

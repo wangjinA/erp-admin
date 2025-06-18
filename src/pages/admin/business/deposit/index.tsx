@@ -36,9 +36,13 @@ function ShowAlert(props: {
             <div>
               匹配
               {' '}
+              <b>{data.orderItemInfoBgResultList?.length || 0}</b>
+              {' '}
+              个订单、
               <b>{data.orderCount || 0}</b>
               {' '}
-              个订单，分配仓位为：
+              件商品，
+              分配仓位为：
               {data.freightSpaceName}
               ，签收时间：
               {data.signingTime}
@@ -99,9 +103,13 @@ function ShowAlert(props: {
             <div>
               匹配
               {' '}
+              <b>{data.orderItemInfoBgResultList?.length || 0}</b>
+              {' '}
+              个订单、
               <b>{data.orderCount || 0}</b>
               {' '}
-              个订单，分配仓位为：
+              件商品，
+              分配仓位为：
               {data.freightSpaceName}
               ，签收时间：
               {data.signingTime}

@@ -1,7 +1,7 @@
 import { Button, ButtonProps, Link, Message, Modal, Space, Spin } from '@arco-design/web-react'
 import { IconFile, IconPrinter } from '@arco-design/web-react/icon'
 import { useRequest } from 'ahooks'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import { orderAPI } from '@/api/admin/order'
 import { orderAPI as clientOrderAPI } from '@/api/client/order'
@@ -10,7 +10,8 @@ import { OrderResponseItem } from '@/types/order'
 import { showMessage } from '@/utils'
 import { requestEndInfo } from '@/api'
 import printJS from 'print-js'
-import { quickPrint } from '@/utils/printer'
+// import { quickPrint } from '@/utils/printer'
+import { createPdfBlobUrl } from '@/utils/file'
 
 export default ({ orderItem, buttonProps }: {
   orderItem: OrderResponseItem
@@ -27,20 +28,24 @@ export default ({ orderItem, buttonProps }: {
         const list = await showMessage(() => orderAPI.createShellOrder(orderItem.id), '查看面单').then((r) => {
           return r.data.data?.list
         })
-        //! 111 
-        url = requestEndInfo + `/api/logistics/order/get/tracking/number/${orderItem.id}`
+        url = list?.[0] || requestEndInfo.baseUrl + `/api/logistics/order/get/tracking/number/${orderItem.id}`
       }
+    }
+    url = await createPdfBlobUrl(url);
+    if (!url) {
+      Message.error('暂未获取到面单，请刷新后重试！')
+      return;
     }
     setSrc(url)
   }, {
     manual: true,
   })
 
-  const { run: QuickRun, loading: QuickLoading } = useRequest(async () => {
-    return quickPrint(orderItem)
-  }, {
-    manual: true,
-  })
+  // const { run: QuickRun, loading: QuickLoading } = useRequest(async () => {
+  //   return quickPrint(orderItem)
+  // }, {
+  //   manual: true,
+  // })
   return (
     <>
       {buttonProps
@@ -92,7 +97,7 @@ export default ({ orderItem, buttonProps }: {
               打印
               {loading ? <Spin size={12}></Spin> : ''}
             </Link>
-            <Link
+            {/* <Link
               className="text-sm"
               type="text"
               icon={<IconPrinter />}
@@ -102,7 +107,7 @@ export default ({ orderItem, buttonProps }: {
             >
               快捷打印
               {QuickLoading ? <Spin size={12}></Spin> : ''}
-            </Link>
+            </Link> */}
             <Link
               className="text-sm"
               type="text"
@@ -118,9 +123,11 @@ export default ({ orderItem, buttonProps }: {
           </Space>
         )}
       <Modal
+        className="modal-content-not-padding"
         title="面单信息"
         style={{ width: 800 }}
         visible={!!src}
+        footer={null}
         onCancel={() => {
           setSrc('')
         }}

@@ -38,6 +38,36 @@ const timeRangeShortcuts: any[] = [
   },
 ]
 
+
+export const timeRangeShortcuts14Day: any[] = [
+  {
+    text: '今天',
+    value: () => [dayjs().startOf('day'), dayjs()],
+  },
+  {
+    text: '昨天',
+    value: () => [
+      dayjs().subtract(1, 'day').startOf('day'),
+      dayjs().subtract(1, 'day').endOf('day'),
+    ],
+  },
+  {
+    text: '最近14天',
+    value: () => [
+      dayjs().startOf('day').subtract(14, 'day'),
+      dayjs(),
+    ],
+  },
+  {
+    text: '上个14天',
+    value: () => [
+      dayjs().subtract(28, 'day').startOf('day'),
+      dayjs().subtract(14, 'day').endOf('day'),
+    ],
+  },
+]
+
+
 export const shortcuts = [
   {
     text: '1个月',

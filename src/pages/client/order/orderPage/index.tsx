@@ -29,8 +29,8 @@ import OrderTable from '@/pages/admin/components/OrderTable'
 import RefreshButton from '@/pages/admin/components/OrderTable/RefreshButton'
 import SyncOrderButton from '@/pages/admin/components/OrderTable/SyncOrderButton'
 import { isAdmin } from '@/routes'
-import { showMessage, showModal, timeArrToObject } from '@/utils'
-import dayjs from 'dayjs'
+import { replaceQueryValueByObject, showMessage, showModal, timeArrToObject } from '@/utils'
+import DownloadSheetButton from '@/pages/admin/components/OrderTable/DownloadSheetButton'
 
 export enum OrderPageType {
   SHOPEE = 'shopee',
@@ -59,8 +59,6 @@ export default (props: OrderPageProps) => {
   })
   const [filterForm] = Form.useForm()
 
-  // const shopOptions = useShopOptions()
-
   function setFormData(values) {
     _setFormData({
       ...formData,
@@ -76,36 +74,47 @@ export default (props: OrderPageProps) => {
   }
 
   // 页面查询通用参数
-  function getPageQuery(otherQuery: any = {}) {
+  function getPageQuery(otherQuery: any = {}, isBindSelect = false) {
     const { selectLogisticsOrderVO = {}, ...other } = otherQuery
-    return {
+
+    const querySelectLogisticsOrderVO = replaceQueryValueByObject({
+      sortType,
+      ...omit(formData.selectLogisticsOrderVO, ['createdTimes', 'stockRemovalTimes', 'packTimes']),
+      ...timeArrToObject(formData.selectLogisticsOrderVO.packTimes, 'packStartTime', 'packEndTime'),
+      ...timeArrToObject(formData.selectLogisticsOrderVO.createdTimes, 'createStartTime', 'createEndTime'),
+      ...timeArrToObject(formData.selectLogisticsOrderVO.createdTimes, 'createStartTime', 'createEndTime'),
+      ...timeArrToObject(
+        formData.selectLogisticsOrderVO.stockRemovalTimes,
+        'stockRemovalStartTime',
+        'stockRemovalEndTime',
+      ),
+      orderStatus: type === OrderPageType.PACK_ORDER ? activeTab : undefined,
+      ...(type === OrderPageType.SHOPEE
+        ? {
+          shrimpStatus: activeTab,
+          storeFlag: true,
+        }
+        : {
+          whetherPack: true,
+        }),
+      ...((selectIds.length && isBindSelect)
+        ? { shrimpOrderNo: data.list.filter(o => selectIds.includes(o.id)).map(o => o.shrimpOrderNo).join(',') }
+        : {}
+      )
+    }, ['shrimpOrderNo'])
+
+    const querySelectOrderProductVO = replaceQueryValueByObject({
+      ...formData.selectOrderProductVO,
+    }, ['trackingNo'])
+
+
+    const pageQuery = {
       ...formData,
-      selectOrderProductVO: {
-        ...formData.selectOrderProductVO,
-      },
-      selectLogisticsOrderVO: {
-        sortType,
-        ...omit(formData.selectLogisticsOrderVO, ['createdTimes', 'stockRemovalTimes', 'packTimes']),
-        ...timeArrToObject(formData.selectLogisticsOrderVO.packTimes, 'packStartTime', 'packEndTime'),
-        ...timeArrToObject(formData.selectLogisticsOrderVO.createdTimes, 'createStartTime', 'createEndTime'),
-        ...timeArrToObject(
-          formData.selectLogisticsOrderVO.stockRemovalTimes,
-          'stockRemovalStartTime',
-          'stockRemovalEndTime',
-        ),
-        orderStatus: type === OrderPageType.PACK_ORDER ? activeTab : undefined,
-        ...(type === OrderPageType.SHOPEE
-          ? {
-            shrimpStatus: activeTab,
-            storeFlag: true,
-          }
-          : {
-            whetherPack: true,
-          }),
-        ...selectLogisticsOrderVO
-      },
+      selectOrderProductVO: querySelectOrderProductVO,
+      selectLogisticsOrderVO: querySelectLogisticsOrderVO,
       ...other,
     }
+    return pageQuery;
   }
 
   const { data, run, pagination, loading, refresh } = usePagination(
@@ -172,15 +181,7 @@ export default (props: OrderPageProps) => {
   })
 
   const exportOrderListHandle = useRequest(async () => {
-    const query: any = {
-      selectLogisticsOrderVO: {}
-    }
-
-    if (selectIds.length) {
-      query.selectLogisticsOrderVO.shrimpOrderNo = data.list.filter(o => selectIds.includes(o.id)).map(o => o.shrimpOrderNo).join(',')
-    }
-
-    const body = getPageQuery(query)
+    const body = getPageQuery({}, true)
     const res = await adminOrderApi.exportOrderList(body)
     // 提取文件名
     const disposition = res.headers['content-disposition']
@@ -269,7 +270,7 @@ export default (props: OrderPageProps) => {
                       icon={<IconExport />}
                       loading={exportOrderListHandle.loading}
                     >
-                      导出订单
+                      导出订单 {selectIds.length ? `(${selectIds.length}个)` : ''}
                     </Button>
                   </Popconfirm>
                   <Button
@@ -301,29 +302,12 @@ export default (props: OrderPageProps) => {
                   >
                     批量更新订单
                   </RefreshButton>
-                  {/* <Button
-                      type="outline"
-                      onClick={() => {
-                        if (!selectIds.length) {
-                          return Message.error('请选择订单')
-                        }
-                      }}
-                    >
-                      批量更新订单
-                    </Button> */}
-                  <Button
-                    type="outline"
-                    onClick={() => {
-                      Message.error('开发中...')
-                    }}
-                  >
-                    下载全部面单
-                  </Button>
+                  <DownloadSheetButton getPageQuery={getPageQuery} selectIds={selectIds}></DownloadSheetButton>
                   <Button
                     type="outline"
                     loading={shipmentBatchHandle.loading}
                     disabled={activeTab !== OrderStatus['已出库']}
-                    onClick={() => {
+                    onClick={async () => {
                       if (!selectIds.length) {
                         return Message.error('请选择订单')
                       }
@@ -342,13 +326,21 @@ export default (props: OrderPageProps) => {
                       // 选中的id和匹配的承运商id 都要存在
                       if (successIds.length) {
                         if (selectIds.length !== successIds.length) {
-                          Modal.confirm({
-                            title: '温馨提示',
+                          // Modal.confirm({
+                          //   title: '温馨提示',
+                          //   content: `${tips}，其他承运商的订单请手动单个出货！`,
+                          //   okText: '确认出货',
+                          //   onOk() {
+                          //     shipmentBatchHandle.run(successIds)
+                          //   }
+                          // })
+                          await showModal({
                             content: `${tips}，其他承运商的订单请手动单个出货！`,
-                            okText: '确认出货',
-                            onOk() {
-                              shipmentBatchHandle.run(successIds)
-                            }
+                            okButtonProps: {
+                              status: 'success',
+                            },
+                          }).then(() => {
+                            shipmentBatchHandle.run(successIds)
                           })
                         } else {
                           shipmentBatchHandle.run(successIds)
@@ -360,7 +352,7 @@ export default (props: OrderPageProps) => {
                   >
                     批量出货
                   </Button>
-                  <Button
+                  {/* <Button
                     type="outline"
                     status="warning"
                     loading={cancelListHandle.loading}
@@ -375,7 +367,7 @@ export default (props: OrderPageProps) => {
                     }}
                   >
                     批量取消订单
-                  </Button>
+                  </Button> */}
                 </>
               )
               : (

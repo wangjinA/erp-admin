@@ -440,7 +440,7 @@ export const businessPrinter = new BusinessPrinter();
 
 // 快捷打印
 export function quickPrint(order: OrderResponseItem) {
-  const documentUrl = order.orderPackageList[0]?.documentUrl
+  const documentUrl = order.orderPackageList[0]?.documentImgUrl
   if (documentUrl) {
     // 默认模版
     let printTemplateURL = CaiNiaoConfigInfo.links['TEMPLATEURL'].documentUrl;

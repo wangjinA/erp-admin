@@ -1,8 +1,6 @@
 import baseAxios from '..'
 import { APIListResponse, APIResponse, IPageParams } from '../type'
 
-import { OrderResponseItem } from '@/types/order'
-
 export const orderAPI = {
   // 获取订单列表
   getList(body: Partial<SearchOrderParams & IPageParams>) {
@@ -76,8 +74,27 @@ export const orderAPI = {
     return baseAxios.post('/api/logistics/order/exportXls', body, {
       responseType: 'blob'
     });
-  }
-
+  },
+  // 获取面单信息
+  getDownloadSheetFile(body: Partial<SearchOrderParams & IPageParams>) {
+    return baseAxios.post<APIResponse<{
+      list: {
+        "orderNo": string,
+        "orderId": string,
+        "documentUrl": string
+      }[]
+    }
+    >>('/api/logistics/order/getDownloadSheetFile', body)
+  },
+  // 统计下载面单数量
+  countSheetFile(body: Partial<SearchOrderParams & IPageParams>) {
+    return baseAxios.post<APIResponse<{
+      "abnormalSheetData": { "orderId": string, "orderNo": string }[],
+      "total": number;
+      "count": number;
+    }
+    >>('/api/logistics/order/countSheetFile', body)
+  },
 }
 
 interface getShippingParameterRes {

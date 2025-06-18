@@ -3,7 +3,7 @@ import { ConfirmProps } from '@arco-design/web-react/es/Modal/confirm'
 import { SorterInfo } from '@arco-design/web-react/es/Table/interface'
 import { AxiosResponse } from 'axios'
 import dayjs from 'dayjs'
-import { isArray } from 'lodash'
+import { isArray, isNil } from 'lodash'
 import * as XLSX from 'xlsx'
 
 import { SuccessCode } from '@/api'
@@ -194,4 +194,23 @@ export function sorterToRequestInfo(sorter: SorterInfo): {
       order: sortMap[sorter.direction] as any,
     },
   }
+}
+
+/**
+ * 将字符串中的空格 换行 大写逗号 分号 统一转成小写逗号分隔
+ */
+export function replaceQueryValue(value?: string) {
+  if (isNil(value)) {
+    return null;
+  }
+  return value.replace(/[\s，；;]+/g, ',').replace(/,+/g, ',').replace(/^,|,$/g, '');
+}
+
+export function replaceQueryValueByObject(obj: any, keys: string[]) {
+  Object.keys(obj).forEach(key => {
+    if (keys.includes(key)) {
+      obj[key] = replaceQueryValue(obj[key])
+    }
+  })
+  return obj;
 }

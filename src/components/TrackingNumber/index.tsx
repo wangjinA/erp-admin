@@ -19,6 +19,10 @@ export default ({
 }) => {
   const [visible, setVisible] = useState(false)
   const trackHandle = useRequest(async () => {
+    if (trackHandle.data?.length) {
+      setVisible(true)
+      return trackHandle.data
+    }
     return expressAPI.getOrderTrack(orderItem.id).then(res => res.data?.data?.trackingInfoItemVOList).then((r) => {
       setVisible(true)
       return r

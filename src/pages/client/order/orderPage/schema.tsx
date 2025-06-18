@@ -35,7 +35,7 @@ export const getOrderFilter: (params: OrderPageParams) => SearchTableSchema[] = 
     {
       schema: {
         field: 'selectOrderProductVO.trackingNo',
-        label: '物流单号',
+        label: '快递单号',
       },
       control: 'input',
     },
