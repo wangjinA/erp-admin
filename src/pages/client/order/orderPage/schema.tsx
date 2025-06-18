@@ -2,7 +2,7 @@ import { OrderPageType } from '.'
 
 import { SearchTableSchema } from '@/components/SearchTable'
 import { TimeRangeDisabledDateProps } from '@/constants'
-import { isClient } from '@/routes'
+import { isAdmin, isClient } from '@/routes'
 import { showObj } from '@/utils'
 
 interface OrderPageParams {
@@ -20,8 +20,17 @@ export const getOrderFilter: (params: OrderPageParams) => SearchTableSchema[] = 
     control: 'shopRadio',
     isSearch: true,
   }
+  const sendWarehouse: SearchTableSchema = {
+    schema: {
+      label: '仓库',
+      field: 'selectLogisticsOrderVO.sendWarehouse',
+      span: 24,
+    },
+    control: 'entrepotRadio',
+  }
   const list: SearchTableSchema[] = [
     ...showObj(isClient(), shopSchema),
+    ...showObj(isAdmin(), sendWarehouse),
     {
       schema: {
         field: 'selectLogisticsOrderVO.shrimpOrderNo',
