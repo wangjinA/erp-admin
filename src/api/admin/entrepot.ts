@@ -3,6 +3,7 @@ import baseAxios from '..'
 import { APIListResponse, APIResponse, IPageParams } from '../type'
 
 import { Order } from '@/types/order'
+import { withCache } from '@/utils/cache'
 
 export interface Entrepot {
   consignee: string
@@ -14,7 +15,7 @@ export interface Entrepot {
   entrepotName: string
   defaultFlag: boolean
   entrepotType: number
-  id: number
+  id: string
   inventorySupported: number
   openUser: number
   qrCode: string
@@ -61,12 +62,15 @@ export const entrepotAPI = {
   setDefualt(entrepotId: any) {
     return baseAxios.get(`/api/tenantry/default/entrepot/insert/data/${entrepotId}`)
   },
-  getList(body: Partial<Entrepot & IPageParams>) {
+  getList: withCache((body: Partial<Entrepot & IPageParams>) => {
     return baseAxios.post<APIListResponse<Entrepot>>('/api/entrepot/list', {
       entrepotType: 1,
       ...body,
-    })
-  },
+    }).then(r => ({
+      data: r,
+      default: r.data.data.list.find(o => o.defaultFlag)
+    }))
+  },),
   getListAll(body: Partial<Entrepot & IPageParams>) {
     return baseAxios.post<APIListResponse<Entrepot>>('/api/entrepot/list/all', {
       entrepotType: 1,
@@ -376,6 +380,7 @@ export interface LogisticsOrderProduct {
   itemId: any
   orderItemId: any
   productImg: string[]
+  productImgCos: string[]
   productName: string
   sku: string
   globalArticleNo: string
@@ -576,7 +581,7 @@ export interface ScanParams {
 //   firstLegCost: number; // 头程费用
 //   id: number; // 主键
 //   label: string; // 标签
-//   logisticsChannel: string; // 物流渠道  字典值
+//   logisticsChannel: string; // 承运商  字典值
 //   mobileNumber: string; // 手机号码
 //   orderAmount: number; // 订单金额
 //   orderStatus: string; // 订单状态  字典值

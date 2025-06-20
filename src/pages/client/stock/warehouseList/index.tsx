@@ -25,7 +25,7 @@ export default () => {
       ref={ref}
       name="仓库列表"
       className="bg-white p-4"
-      getListRequest={entrepotAPI.getList}
+      getListRequest={(p) => entrepotAPI.getList(p).then(r=> r.data)}
       formItemConfigList={[
         {
           schema: {

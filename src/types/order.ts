@@ -49,6 +49,7 @@ export interface Order {
   fillShipInfo: boolean // 是否未填写发货信息
   firstLegCost: number // 头程费用
   id: string // 主键
+  abeyanceStatus: number; // 异常搁置标记
   label: string // 标签
   mobileNumber: string // 手机号码
   orderAmount: number // 订单金额
@@ -100,6 +101,7 @@ export interface Order {
 export interface OrderResponseItem extends Omit<Order, 'orderProductList'> {
   orderProductVOList: (Omit<OrderProductList, 'productImg'> & {
     productImg: string[]
+    productImgCos: string[]
   })[]
   orderPackageList: {
     createBy: string

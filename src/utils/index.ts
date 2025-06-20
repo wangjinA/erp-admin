@@ -214,3 +214,28 @@ export function replaceQueryValueByObject(obj: any, keys: string[]) {
   })
   return obj;
 }
+
+
+/**
+ * 生成指定长度范围内的随机数值字符串
+ * @param minLength 最小长度（包含）
+ * @param maxLength 最大长度（包含）
+ * @returns 数值字符串（不含前导 0）
+ */
+export function randomNumericString(minLength: number = 9, maxLength: number = 11): string {
+  if (minLength > maxLength || minLength <= 0) {
+    throw new Error('参数错误：minLength 应小于或等于 maxLength，且大于 0');
+  }
+
+  const length = Math.floor(Math.random() * (maxLength - minLength + 1)) + minLength;
+
+  // 第一位不能是0，避免前导0
+  const firstDigit = Math.floor(Math.random() * 9) + 1;
+
+  let result = firstDigit.toString();
+  for (let i = 1; i < length; i++) {
+    result += Math.floor(Math.random() * 10).toString();
+  }
+
+  return result;
+}

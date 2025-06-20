@@ -1,5 +1,6 @@
 import { ProductItem } from '@/api/client/stock'
 import LabelValue from '@/components/LabelValue'
+import { Image } from '@arco-design/web-react'
 
 interface IProductInfo {
   data: Partial<ProductItem>
@@ -9,9 +10,9 @@ export default (props: IProductInfo) => {
   const { data } = props
   return (
     <div className="p-2 w-full flex items-center">
-      <img
+      <Image
         className="size-16"
-        src={data.productImg?.[0]}
+        src={data.productImgCos?.[0] || data.productImg?.[0]}
       />
       <div className="ml-2 flex-1 w-0">
         <div className="text-sm text-gray-500">

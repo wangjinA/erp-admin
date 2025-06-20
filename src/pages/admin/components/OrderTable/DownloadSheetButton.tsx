@@ -1,4 +1,5 @@
 import { orderAPI } from "@/api/admin/order";
+import { PageQuery } from "@/pages/client/order/orderPage";
 import { downloadPdfsToZip } from "@/utils/file";
 import { Alert, Button, Message, Modal, Progress } from "@arco-design/web-react";
 import { useRequest } from "ahooks";
@@ -6,7 +7,7 @@ import { useMemo, useState } from "react";
 
 export default (props: {
   selectIds: string[];
-  getPageQuery: (otherQuery: any, isBindSelect?: boolean) => any;
+  getPageQuery: (params: PageQuery) => any;
 }) => {
   const { selectIds, getPageQuery } = props;
   const [visible, setVisible] = useState(false)
@@ -16,7 +17,9 @@ export default (props: {
   }, [selectIds.length])
 
   const countSheetFileHandle = useRequest(() => {
-    return orderAPI.countSheetFile(getPageQuery({}, true)).then(r => {
+    return orderAPI.countSheetFile(getPageQuery({
+      isBindSelect: true
+    })).then(r => {
       const data = r.data.data
       if(data.count === data.total) {
         Message.error('没有可下载的面单，请检查相关信息！')
@@ -30,7 +33,9 @@ export default (props: {
   })
 
   const { data, loading, run, mutate } = useRequest(async () => {
-    const sheetFileRes = await orderAPI.getDownloadSheetFile(getPageQuery({}, true))
+    const sheetFileRes = await orderAPI.getDownloadSheetFile(getPageQuery({
+      isBindSelect: true
+    }))
     const urls = sheetFileRes.data.data.list.map(o => o.documentUrl)
     return downloadPdfsToZip(urls, (progress) => {
       setProgress(progress.percentage)

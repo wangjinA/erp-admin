@@ -23,7 +23,7 @@ import { orderAPI } from '@/api/client/order'
 import FilterForm from '@/components/FilterForm'
 
 import { useDictOptions } from '@/components/Selectors/DictSelector'
-import { batchApplyShippingCarrierList, OrderStatus, SystemName } from '@/constants/order'
+import { batchApplyShippingCarrierList, ExceptionOnHoldValue, OrderStatus, SystemName } from '@/constants/order'
 import { EmitTypes, bus, useEventBus } from '@/hooks/useEventBus'
 import OrderTable from '@/pages/admin/components/OrderTable'
 import RefreshButton from '@/pages/admin/components/OrderTable/RefreshButton'
@@ -40,6 +40,12 @@ export enum OrderPageType {
 export interface OrderPageProps {
   dictCode?: 'shopee_status' | 'order_status'
   type: OrderPageType
+}
+
+export interface PageQuery {
+  otherQuery?: any,
+  isBindSelect?: boolean;
+  isCount?: boolean;
 }
 
 export default (props: OrderPageProps) => {
@@ -74,8 +80,22 @@ export default (props: OrderPageProps) => {
   }
 
   // 页面查询通用参数
-  function getPageQuery(otherQuery: any = {}, isBindSelect = false) {
+  function getPageQuery({
+    otherQuery = {},
+    isBindSelect,
+    isCount,
+  }: PageQuery) {
     const { selectLogisticsOrderVO = {}, ...other } = otherQuery
+
+    let orderStatus = type === OrderPageType.PACK_ORDER ? activeTab : undefined
+    let abeyanceStatus = undefined // 是否异常搁置
+    if (!isCount) { // count不做处理
+      abeyanceStatus = 0; // 默认是非
+      if (activeTab === ExceptionOnHoldValue) { // 异常搁置单独处理！
+        orderStatus = undefined
+        abeyanceStatus = 1;
+      }
+    }
 
     const querySelectLogisticsOrderVO = replaceQueryValueByObject({
       sortType,
@@ -88,7 +108,8 @@ export default (props: OrderPageProps) => {
         'stockRemovalStartTime',
         'stockRemovalEndTime',
       ),
-      orderStatus: type === OrderPageType.PACK_ORDER ? activeTab : undefined,
+      orderStatus,
+      abeyanceStatus,
       ...(type === OrderPageType.SHOPEE
         ? {
           shrimpStatus: activeTab,
@@ -127,8 +148,10 @@ export default (props: OrderPageProps) => {
         return null
       }
       const body = getPageQuery({
-        pageNum: params?.current || pagination.current,
-        pageSize: params?.pageSize || pagination.pageSize,
+        otherQuery: {
+          pageNum: params?.current || pagination.current,
+          pageSize: params?.pageSize || pagination.pageSize,
+        }
       })
       const res = await orderAPI.getList(body)
       // 打包订单
@@ -136,7 +159,7 @@ export default (props: OrderPageProps) => {
         orderAPI.getPackCount({
           ...omit(body, ['selectLogisticsOrderVO']),
           selectLogisticsOrderVO: {
-            ...omit(body.selectLogisticsOrderVO, ['orderStatus']),
+            ...omit(body.selectLogisticsOrderVO, ['orderStatus', 'abeyanceStatus']),
           } as any,
         }).then((res) => {
           setCountMap(res.data.data)
@@ -173,15 +196,17 @@ export default (props: OrderPageProps) => {
     manual: true,
   })
 
-  const cancelListHandle = useRequest(async () => {
-    await showMessage(() => adminOrderApi.cancel(selectIds), '取消')
-    refresh()
-  }, {
-    manual: true,
-  })
+  // const cancelListHandle = useRequest(async () => {
+  //   await showMessage(() => adminOrderApi.cancel(selectIds), '取消')
+  //   refresh()
+  // }, {
+  //   manual: true,
+  // })
 
   const exportOrderListHandle = useRequest(async () => {
-    const body = getPageQuery({}, true)
+    const body = getPageQuery({
+      isBindSelect: true
+    })
     const res = await adminOrderApi.exportOrderList(body)
     // 提取文件名
     const disposition = res.headers['content-disposition']

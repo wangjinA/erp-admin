@@ -74,7 +74,7 @@ export function useEntrepotInfo(params: {
       pageSize: 100,
       entrepotType: 1,
     })
-    const { list } = res.data.data
+    const { list } = res.data.data.data
     if (list.length) {
       const target
         = list.find(entrepot => entrepot.id === activeEntrepot?.id) || list[0]

@@ -92,6 +92,17 @@ export const orderAPI = {
     }
     throw new Error('10分钟内不可重复操作')
   },
+  getWorkbenches(body: {
+    createStartTime: string
+    createEndTime: string
+  }) {
+    return baseAxios.post<APIResponse<{
+      partialStorageNum: number;
+      stockPendingNum: number;
+      waitingPackagingNum: number;
+      waitingReleasedNum: number;
+    }>>('/api/logistics/order/workbenches', body)
+  },
 }
 
 export interface SyncOrderParams {

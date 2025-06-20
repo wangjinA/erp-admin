@@ -95,6 +95,15 @@ export const orderAPI = {
     }
     >>('/api/logistics/order/countSheetFile', body)
   },
+  // 异常搁置
+  exceptionOnHold(params: {
+    id: string
+    abeyanceStatus: number
+  }) {
+    return baseAxios.get(`/api/logistics/order/mark/abeyance`, {
+      params,
+    })
+  },
 }
 
 interface getShippingParameterRes {
@@ -120,7 +129,7 @@ export interface SearchOrderParams extends IPageParams {
   selectLogisticsOrderVO: {
     createType: string // 订单创建类型
     label: string // 标签
-    logisticsChannel: string // 物流渠道
+    logisticsChannel: string // 承运商
     orderStatus: string // 订单状态
     packEndTime: string // 打包结束时间
     packStartTime: string // 打包开始时间

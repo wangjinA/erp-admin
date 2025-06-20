@@ -1,4 +1,4 @@
-import { List, Space } from '@arco-design/web-react'
+import { List, Space, Image } from '@arco-design/web-react'
 import classNames from 'classnames'
 import React, { useRef } from 'react'
 
@@ -40,10 +40,11 @@ export default (props: GoodsInfoProps) => {
             ])}
           >
             <div className="p-2 w-full flex items-start">
-              <img
-                className="size-24"
-                src={item.productImg[0]}
-                alt=""
+              <Image
+                className="goods-image-main size-24"
+                src={item.productImgCos?.[0] || item.productImg?.[0]}
+                alt='速运宝'
+                preview
               />
               <div className="ml-2 flex-1 w-0">
                 <div className="truncate">{item.productName}</div>
@@ -70,57 +71,57 @@ export default (props: GoodsInfoProps) => {
             </div>
             {isEdit
               ? (
-                  <div className="border-l pl-2 pt-2">
-                    <FilterForm
-                      initialValues={{
-                        ...item,
-                        deliveryMethod: item.deliveryMethod || '0',
-                      }}
-                      onChange={(_, v: any) => {
-                        dataRef.current[index] = v
-                        onChange?.(dataRef.current)
-                      }}
-                      formItemConfigList={[
-                        {
-                          schema: {
-                            label: '发货方式',
-                            field: 'deliveryMethod',
-                            span: 16,
-                            required: true,
-                          },
-                          control: 'dictSelector',
-                          controlProps: {
-                            dictCode: 'delivery_method',
-                            type: 'radio',
-                          },
+                <div className="border-l pl-2 pt-2">
+                  <FilterForm
+                    initialValues={{
+                      ...item,
+                      deliveryMethod: item.deliveryMethod || '0',
+                    }}
+                    onChange={(_, v: any) => {
+                      dataRef.current[index] = v
+                      onChange?.(dataRef.current)
+                    }}
+                    formItemConfigList={[
+                      {
+                        schema: {
+                          label: '发货方式',
+                          field: 'deliveryMethod',
+                          span: 16,
+                          required: true,
                         },
-                        {
-                          schema: {
-                            label: '',
-                            field: 'stockOutStatus',
-                            span: 8,
-                          },
-                          formItemProps: {
-                            triggerPropName: 'checked',
-                          },
-                          control: 'switch',
-                          controlProps: {
-                            checkedText: '缺货打包',
-                            uncheckedText: '缺货打包',
-                          },
+                        control: 'dictSelector',
+                        controlProps: {
+                          dictCode: 'delivery_method',
+                          type: 'radio',
                         },
-                        {
-                          schema: {
-                            label: '快递单号',
-                            field: 'trackingNo',
-                            span: 24,
-                          },
+                      },
+                      {
+                        schema: {
+                          label: '',
+                          field: 'stockOutStatus',
+                          span: 8,
                         },
-                      ]}
-                    >
-                    </FilterForm>
-                  </div>
-                )
+                        formItemProps: {
+                          triggerPropName: 'checked',
+                        },
+                        control: 'switch',
+                        controlProps: {
+                          checkedText: '缺货打包',
+                          uncheckedText: '缺货打包',
+                        },
+                      },
+                      {
+                        schema: {
+                          label: '快递单号',
+                          field: 'trackingNo',
+                          span: 24,
+                        },
+                      },
+                    ]}
+                  >
+                  </FilterForm>
+                </div>
+              )
               : null}
           </div>
         )}

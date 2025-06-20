@@ -30,7 +30,7 @@ export default (props) => {
     : res.data?.length
       ? (
           <Radio.Group {...props}>
-            {res.data.map((item) => {
+            {res.data.filter(o => o.label).map((item) => {
               return (
                 <Radio className="pl-0" key={item.value} value={item.value}>
                   {({ checked }) => {

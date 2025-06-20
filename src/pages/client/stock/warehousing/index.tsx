@@ -10,6 +10,7 @@ import { WarehousingApplyAPI } from '@/api/client/stock'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
 import { formatDate, showMessage } from '@/utils'
+import { DictNameFC } from '@/components/Selectors/DictSelector'
 
 // 入库管理
 export default () => {
@@ -131,6 +132,9 @@ export default () => {
             controlProps: {
               dictCode: 'storage_status',
             },
+            render(c) {
+              return <DictNameFC dictCode="storage_status" value={c}></DictNameFC>
+            }
           },
           {
             schema: {

@@ -44,7 +44,6 @@ export default () => {
           getListRequest={dictChildAPI.getList}
           removeRequest={dictChildAPI.remove}
           updateRequest={dictChildAPI.update}
-          onView={setRecord}
         >
         </SearchTable>
       </Drawer>

@@ -10,7 +10,7 @@ import { CreateFormItemType } from '@/components/CreateFormItem'
 import FilterForm from '@/components/FilterForm'
 import { EmitTypes, bus } from '@/hooks/useEventBus'
 import { OrderResponseItem } from '@/types/order'
-import { showMessage, sleep } from '@/utils'
+import { showMessage } from '@/utils'
 
 interface ShipmentButtonButtonProps extends ScanParams {
   buttonProps?: ButtonProps

@@ -52,7 +52,7 @@ export default () => {
     <div className="bg-white p-4">
       <SearchTable
         ref={ref}
-        name="入库申请"
+        name="入库订单"
         getListRequest={WarehousingApplyAPI.getList}
         // leftTool={() => (
         //   <div>

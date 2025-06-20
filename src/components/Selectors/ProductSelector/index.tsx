@@ -86,7 +86,6 @@ export default (props) => {
                   },
                 ]}
               >
-
               </SearchTable>
             )
           : null
@@ -108,6 +107,7 @@ export default (props) => {
         <SearchTable
           getListRequest={(...p) => StockAPI.getProductList(...p).then((r) => {
             setList(r.data.data.list)
+            setSelectedRowKeys([])
             return r
           })}
           name="商品选择"

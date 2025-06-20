@@ -23,6 +23,9 @@ import styles from './style/overview.module.less'
 import moneyIcon from '@/assets/money.png'
 
 import useI18n from '@/utils/useI18n'
+import { useRequest } from 'ahooks'
+import { orderAPI } from '@/api/client/order'
+import dayjs from 'dayjs'
 
 const { Row, Col } = Grid
 
@@ -62,31 +65,18 @@ interface DataType {
 }
 
 function Overview() {
-  const [data, setData] = useState<DataType>({})
-  const [loading, setLoading] = useState(true)
   const t = useI18n(locale)
 
   const userInfo = useSelector((state: any) => state.userInfo || {})
 
-  const fetchData = () => {
-    setLoading(true)
-    axios
-      .get('/api/workplace/overview-content')
-      .then((res) => {
-        setData(res.data)
-      })
-      .finally(() => {
-        setLoading(false)
-      })
-  }
-
-  useEffect(() => {
-    fetchData()
-  }, [])
-
-  // const countDataHandler = useRequest(() => {
-
-  // }, {})
+  const { data, loading } = useRequest(() => {
+    return orderAPI.getWorkbenches({
+      createStartTime: dayjs().subtract(3, 'month').format('YYYY-MM-DD HH:mm:ss'),
+      createEndTime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+    }).then(r => r.data.data);
+  }, {
+    manual: false
+  })
 
   return (
     <Card>
@@ -97,10 +87,9 @@ function Overview() {
             {userInfo.tenantryNo || userInfo.userName || userInfo.userLoginAccount}
           </Typography.Text>
         </Typography.Title>
-        <div className="flex items-center ml-20 gap-2">
+        {/* <div className="flex items-center ml-20 gap-2">
           <img className="size-9 select-none" src={moneyIcon}></img>
           <div>
-            {/* <span style={{ color: '#333' }}>账户余额：</span> */}
             <Typography.Text>
               账户余额：
             </Typography.Text>
@@ -120,7 +109,7 @@ function Overview() {
           >
             立即缴费
           </Button>
-        </div>
+        </div> */}
       </div>
       <Divider />
       <Row>
@@ -128,7 +117,7 @@ function Overview() {
           <StatisticItem
             icon={<IconCalendar />}
             title={t['workplace.totalOnlyData']}
-            count={data.allContents}
+            count={data?.waitingPackagingNum}
             loading={loading}
             unit={t['workplace.pecs']}
           />
@@ -138,7 +127,7 @@ function Overview() {
           <StatisticItem
             icon={<IconContent />}
             title={t['workplace.contentInMarket']}
-            count={data.liveContents}
+            count={data?.stockPendingNum}
             loading={loading}
             unit={t['workplace.pecs']}
           />
@@ -148,7 +137,7 @@ function Overview() {
           <StatisticItem
             icon={<IconComments />}
             title={t['workplace.comments']}
-            count={data.increaseComments}
+            count={data?.partialStorageNum}
             loading={loading}
             unit={t['workplace.pecs']}
           />
@@ -158,7 +147,7 @@ function Overview() {
           <StatisticItem
             icon={<IconIncrease />}
             title={t['workplace.growth']}
-            count={data.growthRate}
+            count={data?.waitingReleasedNum}
             loading={loading}
           />
         </Col>

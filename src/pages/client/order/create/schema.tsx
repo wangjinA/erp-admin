@@ -5,6 +5,7 @@ export const OrderCreateSchema1: CreateFormItemType[] = [
     schema: {
       field: 'platformType',
       label: '平台类型',
+      defaultValue: '0'
     },
     control: 'dictSelector',
     controlProps: {
@@ -15,6 +16,7 @@ export const OrderCreateSchema1: CreateFormItemType[] = [
     schema: {
       field: 'orderType',
       label: '订单类型',
+      defaultValue: '0'
     },
     control: 'dictSelector',
     controlProps: {
@@ -31,15 +33,15 @@ export const OrderCreateSchema1: CreateFormItemType[] = [
   },
   {
     schema: {
-      field: 'packageNumber',
-      label: '物流单号',
+      field: 'trackingNumber',
+      label: '运单号',
     },
     control: 'input',
   },
   {
     schema: {
       field: 'orderAmount',
-      label: '订单金额',
+      label: '订单(代收)金额',
     },
     control: 'input',
   },
@@ -47,6 +49,7 @@ export const OrderCreateSchema1: CreateFormItemType[] = [
     schema: {
       field: 'transportType',
       label: '运输类型',
+      defaultValue: 'KY'
     },
     control: 'dictSelector',
     controlProps: {
@@ -56,27 +59,27 @@ export const OrderCreateSchema1: CreateFormItemType[] = [
   {
     schema: {
       field: 'shippingCarrier',
-      label: '物流渠道',
+      label: '承运商',
     },
     control: 'dictSelector',
     controlProps: {
       dictCode: 'logistics_channel',
     },
   },
-  {
-    schema: {
-      field: 'shippingTime',
-      label: '出货时间',
-    },
-    control: 'datePicker',
-  },
-  {
-    schema: {
-      field: 'cancellationTime',
-      label: '取消时间',
-    },
-    control: 'datePicker',
-  },
+  // {
+  //   schema: {
+  //     field: 'shippingTime',
+  //     label: '出货时间',
+  //   },
+  //   control: 'datePicker',
+  // },
+  // {
+  //   schema: {
+  //     field: 'cancellationTime',
+  //     label: '取消时间',
+  //   },
+  //   control: 'datePicker',
+  // },
   {
     schema: {
       required: true,
@@ -141,6 +144,7 @@ export const OrderCreateSchema2: CreateFormItemType[] = [
     schema: {
       field: 'specificationName',
       label: '规格名称',
+      defaultValue: '默认'
     },
     control: 'input',
   },
@@ -159,6 +163,7 @@ export const OrderCreateSchema2: CreateFormItemType[] = [
     schema: {
       field: 'quantity',
       label: '数量',
+      defaultValue: 1
     },
     control: 'number',
   },
@@ -166,6 +171,7 @@ export const OrderCreateSchema2: CreateFormItemType[] = [
     schema: {
       field: 'unitPrice',
       label: '单价',
+      defaultValue: 0
     },
     control: 'number',
   },
@@ -196,6 +202,7 @@ export const OrderCreateSchema3: CreateFormItemType[] = [
     schema: {
       field: 'region',
       label: '地区',
+      defaultValue: 'TW'
     },
     control: 'dictSelector',
     controlProps: {

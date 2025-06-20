@@ -34,3 +34,6 @@ export const OrderStatus = {
 export const ShopeeStatus = {
   '已装船': 'SHIPPED'
 }
+
+// 异常搁置值 99
+export const ExceptionOnHoldValue = '7'

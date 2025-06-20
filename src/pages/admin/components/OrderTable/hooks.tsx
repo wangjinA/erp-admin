@@ -20,8 +20,8 @@ import { isAdmin } from '@/routes'
 import { OrderResponseItem } from '@/types/order'
 import { showMessage, showModal } from '@/utils'
 import { ShippingCarrierColorMap } from '@/constants/order'
-import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
 import classNames from 'classnames'
+import ExceptionOnHoldButton from './ExceptionOnHoldButton'
 
 export function useColumns(props: OrderTablePorps) {
   const { dictCode } = props
@@ -118,22 +118,22 @@ export function useColumns(props: OrderTablePorps) {
     // },
     ...(isAdmin()
       ? [{
-          title: '卖家信息',
-          dataIndex: 'sellerInfo',
-          width: 180,
-          render(c, row: OrderResponseItem) {
-            return (
-              <div className="border-r h-full p-2">
-                {/* <LabelValue label="打包仓库" value={<EntrepotNameFC value={row.sendWarehouse} />}></LabelValue> */}
-                <LabelValue label="卖家标识" value={row.tenantryNo}></LabelValue>
-                <LabelValue valueClassName={classNames({
-                  'text-red-500 font-bold': row.remark
-                })} label="卖家备注" value={row.remark}></LabelValue>
-                <LabelValue label="仓库备注" value={row.entrepotRemark}></LabelValue>
-              </div>
-            )
-          },
-        }]
+        title: '卖家信息',
+        dataIndex: 'sellerInfo',
+        width: 180,
+        render(c, row: OrderResponseItem) {
+          return (
+            <div className="border-r h-full p-2">
+              {/* <LabelValue label="打包仓库" value={<EntrepotNameFC value={row.sendWarehouse} />}></LabelValue> */}
+              <LabelValue label="卖家标识" value={row.tenantryNo}></LabelValue>
+              <LabelValue valueClassName={classNames({
+                'text-red-500 font-bold': row.remark
+              })} label="卖家备注" value={row.remark}></LabelValue>
+              <LabelValue label="仓库备注" value={row.entrepotRemark}></LabelValue>
+            </div>
+          )
+        },
+      }]
       : []),
     {
       title: '订单金额',
@@ -237,6 +237,11 @@ export function useColumns(props: OrderTablePorps) {
                   id={row.id}
                 >
                 </ActionHistory>
+                <ExceptionOnHoldButton
+                  id={row.id}
+                  abeyanceStatus={row.abeyanceStatus}
+                >
+                </ExceptionOnHoldButton>
                 <Button
                   type="text"
                   size="small"

@@ -1,10 +1,7 @@
 import { Avatar, Button, Card, Divider, Image, Input, List, Message, Skeleton, Typography } from '@arco-design/web-react'
 import { useRequest } from 'ahooks'
 import classNames from 'classnames'
-import React from 'react'
-
 import styles from './style/index.module.less'
-
 import { entrepotAPI } from '@/api/admin/entrepot'
 import { boundAPI } from '@/api/client/bound'
 import CopyText from '@/components/CopyText'
@@ -19,7 +16,7 @@ function LatestNews() {
         pageNum: 1,
         pageSize: 100,
         entrepotType: 1,
-      }).then(r => r.data.data.list)
+      }).then(r => r.data?.data?.data.list)
   })
   const boundInfoHandler = useRequest(() => {
     return boundAPI
@@ -38,7 +35,12 @@ function LatestNews() {
   })
 
   const setDefaultHandler = useRequest((id) => {
-    return showMessage((() => entrepotAPI.setDefualt(id))).then(entrepotListHandler.run)
+    return showMessage((() => entrepotAPI.setDefualt(id))).then(() => {
+      entrepotListHandler.mutate(entrepotListHandler.data.map(o => ({
+        ...o,
+        defaultFlag: o.id === id,
+      })))
+    })
   }, {
     manual: true,
   })
@@ -152,6 +154,7 @@ function LatestNews() {
                                             <Button
                                               type="primary"
                                               size="mini"
+                                              loading={setDefaultHandler.loading}
                                               onClick={() => {
                                                 setDefaultHandler.run(item.id)
                                               }}

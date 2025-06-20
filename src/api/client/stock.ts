@@ -162,6 +162,7 @@ export interface StockLogItem {
   productCode: string
   productCost: number
   productImg: string
+  productImgCos: string
   productName: string
   remark: string
   sendWarehouse: number
@@ -230,6 +231,7 @@ export interface ProductItem {
   productCode: string
   productCost: number
   productImg: string
+  productImgCos: string
   productName: string
   quantity: number
   remark: string

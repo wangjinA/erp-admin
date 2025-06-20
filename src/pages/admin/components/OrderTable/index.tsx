@@ -16,7 +16,7 @@ import { useRequest } from 'ahooks'
 import { PaginationResult } from 'ahooks/lib/usePagination/types'
 
 import classNames from 'classnames'
-import { isNil, omit } from 'lodash'
+import { isNil, merge, omit } from 'lodash'
 import React, { useEffect, useMemo, useState } from 'react'
 
 import ActionHistory from './ActionHistory'
@@ -37,10 +37,12 @@ import {
 import { ShowFormType } from '@/constants'
 import { EmitTypes, bus, useEventBus } from '@/hooks/useEventBus'
 import { OrderCreateSchema2 } from '@/pages/client/order/create/schema'
-import { isClient } from '@/routes'
+import { isAdmin, isClient } from '@/routes'
 import { StyleProps } from '@/types'
 import { Order, OrderResponseItem } from '@/types/order'
 import { showMessage, showModal } from '@/utils'
+import { entrepotAPI } from '@/api/admin/entrepot'
+import { useDefaultEntrepot } from '@/components/Selectors/EntrepotSelector'
 
 export interface OrderTablePorps extends StyleProps {
   // tableProps: TableProps;
@@ -59,7 +61,7 @@ export const labelClass = 'arco-descriptions-item-label !w-auto !pb-0'
 export const valueClass = 'arco-descriptions-item-value !w-auto !pb-0'
 
 const OrderTable: React.FC<OrderTablePorps> = (props) => {
-  const { className, style, dictCode, loading, run, data, pagination, onSelect } = props
+  const { className, style, loading, data, pagination, onSelect } = props
 
   const [currentOrder, setCurrentOrder] = useState<any>()
   const [selectList, setSelectList] = useState<string[]>([])
@@ -73,30 +75,36 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
   const columns = useColumns(props)
   const updateHandle = useRequest(
     async (newSku?: any) => {
-      const data = omit(currentOrder, [
+      const formData = merge(await form.validate(), currentOrder)
+      const data = omit(formData, [
         'orderProductVOList',
         'orderPackageList',
       ])
-      if(isNil(data.sendWarehouse)){
+      if (isNil(data.sendWarehouse)) {
         Message.error('请选择打包仓库！')
-        return ;
+        return;
       }
       let actionName = '打包'
-      if(newSku){
+      if (newSku) {
         actionName = '添加'
       }
-      if(data.whetherPack && data.orderStatus !== '5'){
+      if (data.whetherPack && data.orderStatus !== '5') {
         actionName = '更新'
       }
+      const updateData = {
+        ...data,
+        logisticsOrderProductList: [
+          ...data.logisticsOrderProductList,
+          ...(newSku ? [newSku] : []),
+        ],
+      };
+      // debugger用
+      // if(updateData.logisticsOrderProductList.some(o => !o.trackingNo)){
+      //   console.log(updateData);
+      // }
       await showMessage(
         () =>
-          orderAPI.update({
-            ...data,
-            logisticsOrderProductList: [
-              ...data.logisticsOrderProductList,
-              ...(newSku ? [newSku] : []),
-            ],
-          }),
+          orderAPI.update(updateData),
         actionName,
       )
       setActionType(null)
@@ -106,6 +114,8 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
       manual: true,
     },
   )
+
+  const defaultEntrepotHandle = useDefaultEntrepot();
 
   const addProductHandle = useRequest(
     async () => {
@@ -194,13 +204,14 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                             <Button
                               disabled={item.orderStatus && !['0', '1', '2'].includes(item.orderStatus)}
                               onClick={() => {
-                                setActionType(ShowFormType.edit)
-                                setCurrentOrder(structuredClone({
+                                const newOrder = structuredClone({
                                   ...item,
                                   clickPack: item.orderStatus === '5' || !item.whetherPack,
                                   logisticsOrderProductList: item.orderProductVOList,
                                   sendWarehouse: item.sendWarehouse === '0' ? undefined : item.sendWarehouse,
-                                }))
+                                })
+                                setCurrentOrder(newOrder)
+                                setActionType(ShowFormType.edit)
                               }}
                             >
                               {item.whetherPack && item.orderStatus !== '5' ? '编辑打包' : '一键打包'}
@@ -316,6 +327,9 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                           {orderStatusText}
                         </Tag>
                       </Tooltip>
+                      {
+                        (item.abeyanceStatus === 1 && isAdmin()) ? <Tag className="mr-2" color='red'>异常搁置</Tag> : null
+                      }
                       <span className={labelClass}>订单编号：</span>
                       <span className={classNames(valueClass, 'truncate')}>
                         <CopyText value={item.shrimpOrderNo}>
@@ -381,9 +395,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                   </footer>
                 </div>
               )
-            },
-
-            )}
+            })}
           </main>
         </Spin>
         {data?.list?.length
@@ -479,6 +491,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
               form={form}
               initialValues={{
                 ...currentOrder,
+                sendWarehouse: currentOrder?.sendWarehouse || defaultEntrepotHandle?.data?.id,
                 transportType: currentOrder?.transportType || 'KY',
               }}
               className="mb-4"
@@ -517,10 +530,11 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                   },
                 },
               ]}
-              onChange={(_, v) => {
+              onChange={async (_, v) => {
+                const formData = await form.validate();
                 setCurrentOrder({
                   ...currentOrder,
-                  ...v,
+                  ...formData,
                 })
               }}
             >
