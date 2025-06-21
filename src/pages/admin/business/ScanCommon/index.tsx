@@ -18,14 +18,18 @@ import { ScanParams } from '@/api/admin/entrepot'
 import { useEntrepotOptions } from '@/components/Selectors/EntrepotSelector'
 
 interface ScanComponentProps {
+  showAlert?: boolean;
+  isAuto?: boolean;
   placeholder?: string
   className?: string
   style?: React.CSSProperties
   onScan?: (params: ScanParams) => void
 }
 
+export const ScanMinWidth = 650
+
 export default (props: ScanComponentProps) => {
-  const { placeholder, className, style, onScan } = props
+  const { showAlert = true, isAuto = false, placeholder, className, style, onScan } = props
   const { data, loading } = useEntrepotOptions()
   const [value, setValue] = useState<string>()
   const [entrepot, setEntrepot] = useLocalStorageState<any>('scan-entrepot')
@@ -37,7 +41,7 @@ export default (props: ScanComponentProps) => {
   const height = 'h-20'
   return (
     <div className={className} style={style}>
-      <Grid.Row className="mx-auto w-1/2" style={{ minWidth: 650 }}>
+      <Grid.Row className="mx-auto w-1/2" style={{ minWidth: ScanMinWidth }}>
         <Grid.Col span={5}>
           <div
             className={classNames(
@@ -52,15 +56,17 @@ export default (props: ScanComponentProps) => {
             <Typography.Title heading={6} className="!mb-0 pl-5">
               当前仓库
             </Typography.Title>
-            <Select
-              value={entrepot}
-              onChange={setEntrepot}
-              size="large"
-              placeholder="请选择仓库"
-              options={data}
-              loading={loading}
-            >
-            </Select>
+            {
+              isAuto ? <Typography.Text type="secondary" className="pl-5">自动匹配</Typography.Text> : <Select
+                value={entrepot}
+                onChange={setEntrepot}
+                size="large"
+                placeholder="请选择仓库"
+                options={data}
+                loading={loading}
+              >
+              </Select>
+            }
           </div>
         </Grid.Col>
         <Grid.Col span={19}>
@@ -89,11 +95,13 @@ export default (props: ScanComponentProps) => {
           >
           </Input>
         </Grid.Col>
-        <Alert
-          type="info"
-          content="请用扫描快递条形码或者手动输入快递单号签收快递"
-          className="mt-4"
-        />
+        {
+          showAlert ? <Alert
+            type="info"
+            content="请用扫描快递条形码或者手动输入快递单号签收快递"
+            className="mt-4"
+          /> : null
+        }
       </Grid.Row>
     </div>
   )

@@ -32,7 +32,9 @@ export const OrderStatus = {
 }
 
 export const ShopeeStatus = {
-  '已装船': 'SHIPPED'
+  '已装船': 'SHIPPED',
+  '已取消': 'CANCELLED',
+  "取消中": "IN_CANCEL",
 }
 
 // 异常搁置值 99

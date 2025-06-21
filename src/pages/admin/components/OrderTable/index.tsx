@@ -381,11 +381,14 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                           type="text"
                           size="mini"
                           onClick={() => {
-                            setActionType(ShowFormType.edit)
+                            if(item?.sendWarehouse === '0'){
+                              delete item.sendWarehouse
+                            }
                             setCurrentOrder({
                               ...item,
                               logisticsOrderProductList: item.orderProductVOList,
                             })
+                            setActionType(ShowFormType.edit)
                           }}
                         >
                           <IconEdit />

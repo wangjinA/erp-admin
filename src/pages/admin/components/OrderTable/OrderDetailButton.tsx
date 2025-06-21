@@ -4,68 +4,25 @@ import { useRequest } from 'ahooks'
 import { omit, pick } from 'lodash'
 import { useEffect, useState } from 'react'
 
-import SendCargoInfo, { SendCargoItemInfo } from './SendCargoInfo'
+import { SendCargoItemInfo } from './SendCargoInfo'
 
 import { orderAPI } from '@/api/admin/order'
 import FilterForm from '@/components/FilterForm'
-import GoodsInfo from '@/components/GoodsInfo'
+
 import LabelValue from '@/components/LabelValue'
 import { DictNameFC } from '@/components/Selectors/DictSelector'
 import { EmitTypes, bus } from '@/hooks/useEventBus'
 import { OrderResponseItem } from '@/types/order'
 import { showMessage } from '@/utils'
-import ReceivingInfo from './ReceivingInfo'
 import classNames from 'classnames'
-import { scanAPI, ScanParams } from '@/api/admin/entrepot'
 import DeliveryButton from './DeliveryButton'
+import { ShopeeStatus } from '@/constants/order'
 
 interface OrderDetailButtonProps {
   orderItem?: OrderResponseItem
   buttonProps?: ButtonProps
   onSuccess: () => void
 }
-
-const columns = [{
-  title: '商品信息',
-  dataIndex: 'orderProductVOList',
-  width: 300,
-  render(col) {
-    return <GoodsInfo data={col}></GoodsInfo>
-  },
-  fixed: 'left',
-}, {
-  title: '发货信息',
-  dataIndex: 'orderProductVOList_1',
-  width: 210,
-  render(col, row) {
-    return <SendCargoInfo data={row}></SendCargoInfo>
-  },
-}, {
-  title: '收货信息',
-  dataIndex: 'orderProductVOList_2',
-  width: 210,
-  render(col, row) {
-    return <ReceivingInfo data={row}></ReceivingInfo>
-    // return (
-    //   // <div>
-    //   //   <Form.Item label="实际数量" layout="vertical" colon={true}>
-    //   //     <InputNumber placeholder="请输入"></InputNumber>
-    //   //   </Form.Item>
-    //   // </div>
-    // )
-  },
-}, {
-  title: '保留库存',
-  dataIndex: 'orderProductVOList_3',
-  width: 210,
-  render(col, row) {
-    return (
-      <div className="p-8">
-        <Switch></Switch>
-      </div>
-    )
-  },
-}]
 
 function OrderDetailButton(props: OrderDetailButtonProps) {
   const { orderItem, buttonProps, onSuccess } = props
@@ -145,7 +102,7 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
               buttonProps={{
                 type: "primary",
                 status: "danger",
-                disabled: orderItem.orderStatus !== '2'
+                disabled: orderItem.orderStatus !== '2' || [ShopeeStatus['取消中'], ShopeeStatus['已取消']].includes(orderItem.shopeeStatus),
               }}
               sendWarehouse={orderItem.sendWarehouse}
               shrimpOrderNo={orderItem.shrimpOrderNo}

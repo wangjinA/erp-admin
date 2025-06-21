@@ -74,6 +74,10 @@ export const routes: IRoute[] = [
         name: 'client.order.create',
         key: 'client/order/create',
       },
+      {
+        name: 'client.order.returnOrder',
+        key: 'client/order/returnOrder',
+      },
     ],
   },
   {
@@ -208,10 +212,10 @@ export const routes: IRoute[] = [
         name: 'admin.business.scanHistory',
         key: 'admin/business/scanHistory',
       },
-      // {
-      //   name: 'admin.business.returnToShelves',
-      //   key: 'admin/business/returnToShelves',
-      // },
+      {
+        name: 'admin.business.returnToShelves',
+        key: 'admin/business/returnToShelves',
+      },
       // {
       //   name: 'admin.business.retention',
       //   key: 'admin/business/retention',

@@ -1,6 +1,6 @@
 import FilterForm from '@/components/FilterForm'
 import { getOrderFilter } from '@/pages/client/order/orderPage/schema'
-import { Button, Form, Space, Tabs } from '@arco-design/web-react'
+import { Button, Drawer, Form, Space, Tabs } from '@arco-design/web-react'
 import React, { useState } from 'react'
 import { useRequest } from 'ahooks'
 import SearchTable from '@/components/SearchTable'
@@ -12,6 +12,7 @@ import GoodsInfo from '@/components/GoodsInfo'
 export default () => {
   const [filterForm] = Form.useForm()
   const [formData, setFormData] = useState({})
+  const [current, setCurrent] = useState()
   const listHandle = useRequest(async () => {
     // const data = 
   }, {
@@ -90,8 +91,7 @@ export default () => {
             },
             render(col, item, index) {
               return <Space>
-                <LabelValue label="客户标识" value="663557"></LabelValue>
-                <LabelValue label="发货仓库" value="凤凰国际仓"></LabelValue>
+                <LabelValue label="退件仓库" value="东坑李总"></LabelValue>
                 <LabelValue label="仓位编码" value="89803-11"></LabelValue>
               </Space>
             },
@@ -102,13 +102,25 @@ export default () => {
             },
             render(col, item, index) {
               return <>
-                <Button type='text' status="default" size="small">销毁</Button>
-                <Button type='text' status="danger" size="small">撤销退件</Button>
+                <Button type='text' status="default" size="small" onClick={() => {
+                  setCurrent(item)
+                }}>换单</Button>
+                <Button type='text' status="danger" size="small">销毁</Button>
               </>
             }
           }
         ]}>
       </SearchTable>
+      <Drawer
+        title={`${current?.orderNo} - 换单重出`}
+        width="65%"
+        visible={current}
+        onCancel={() => {
+          setCurrent(null)
+        }}
+      >
+
+      </Drawer>
     </div>
   )
 }

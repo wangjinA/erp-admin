@@ -77,6 +77,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
       getListRequest,
       updateRequest,
       removeRequest,
+      middleTool,
       editTransform,
       onDataChange,
     } = props
@@ -216,6 +217,9 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                     </div>
                   )
                 : null}
+              {
+                middleTool?.()
+              }
               <Table
                 rowKey={majorKey}
                 pagination={{
@@ -412,6 +416,7 @@ interface SearchTableProps {
   editTransform?: (params: any) => any
   requestQueryTransform?: (params: any) => any
   leftTool?: () => React.ReactNode
+  middleTool?: () => React.ReactNode
   createRequest?: CreateWrapProps['createRequest']
   createHandle?: () => void
   getListRequest?: (

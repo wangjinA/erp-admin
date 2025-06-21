@@ -9,8 +9,7 @@ interface OrderPageParams {
   type: OrderPageType
 }
 
-export const getOrderFilter: (params: OrderPageParams) => SearchTableSchema[] = (params) => {
-  const { type } = params
+export const getOrderFilter: (params?: OrderPageParams) => SearchTableSchema[] = (params) => {
   const shopSchema: SearchTableSchema = {
     schema: {
       field: 'selectLogisticsOrderVO.platformShopId',
