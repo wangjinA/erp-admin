@@ -16,9 +16,9 @@ import GoodsInfo from '@/components/GoodsInfo'
 import LabelValue from '@/components/LabelValue'
 import TrackingNumber from '@/components/TrackingNumber'
 import { EmitTypes, bus } from '@/hooks/useEventBus'
-import { isAdmin } from '@/routes'
+import { isAdmin, isClient } from '@/routes'
 import { OrderResponseItem } from '@/types/order'
-import { showMessage, showModal } from '@/utils'
+import { showMessage, showModal, stringToMasked } from '@/utils'
 import { ShippingCarrierColorMap } from '@/constants/order'
 import classNames from 'classnames'
 import ExceptionOnHoldButton from './ExceptionOnHoldButton'
@@ -83,23 +83,23 @@ export function useColumns(props: OrderTablePorps) {
         )
       },
     },
-    // ...(showMj
-    //   ? [{
-    //       title: '买家信息',
-    //       dataIndex: 'seller',
-    //       width: 180,
-    //       render(c, row) {
-    //         return (
-    //           <div className="border-r h-full p-2">
-    //             <LabelValue label="买家" value={stringToMasked(row.buyerUsername)}></LabelValue>
-    //             <LabelValue label="收货人" value={stringToMasked(row.recipients)}></LabelValue>
-    //             <LabelValue label="收货电话" value={stringToMasked(row.mobileNumber)}></LabelValue>
-    //             <LabelValue label="收货地址" value={stringToMasked(row.detailedAddress)}></LabelValue>
-    //           </div>
-    //         )
-    //       },
-    //     }]
-    //   : []),
+    ...(isClient()
+      ? [{
+          title: '买家信息',
+          dataIndex: 'seller',
+          width: 180,
+          render(c, row) {
+            return (
+              <div className="border-r h-full p-2">
+                <LabelValue label="买家" value={stringToMasked(row.buyerUsername)}></LabelValue>
+                <LabelValue label="收货人" value={stringToMasked(row.recipients)}></LabelValue>
+                <LabelValue label="收货电话" value={stringToMasked(row.mobileNumber)}></LabelValue>
+                <LabelValue label="收货地址" value={stringToMasked(row.detailedAddress)}></LabelValue>
+              </div>
+            )
+          },
+        }]
+      : []),
     // {
     //   title: '打包信息',
     //   dataIndex: 'db',

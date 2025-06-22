@@ -62,10 +62,10 @@ export const routes: IRoute[] = [
         name: 'client.order.all',
         key: 'client/order/all',
       },
-      // {
-      //   name: 'client.order.toBeprocessed',
-      //   key: 'client/order/toBeprocessed',
-      // },
+      {
+        name: 'client.order.pending',
+        key: 'client/order/pending',
+      },
       {
         name: 'client.order.alreadyPacked',
         key: 'client/order/alreadyPacked',

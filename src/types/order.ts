@@ -103,6 +103,7 @@ export interface OrderResponseItem extends Omit<Order, 'orderProductList'> {
     productImg: string[]
     productImgCos: string[]
   })[]
+  logisticsOrderPackageList?: any;
   orderPackageList: {
     createBy: string
     createTime: string

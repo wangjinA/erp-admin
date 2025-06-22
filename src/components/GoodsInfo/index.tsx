@@ -51,7 +51,7 @@ export default (props: GoodsInfoProps) => {
                 <div className="text-sm text-gray-500">
                   <Space size={30}>
                     <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="单  价" value={item.unitPrice}></LabelValue>
-                    <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="数  量" value={item.quantity}></LabelValue>
+                    <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="数  量" value={item.quantity > 1 ? <span className="text-red-500">{item.quantity}</span> : item.quantity}></LabelValue>
                   </Space>
                   <LabelValue className="!mb-0" labelClassName="!text-sm !pr-1 !align-baseline" valueClassName="!text-sm" label="规格名称" value={item.specificationName}></LabelValue>
                   <LabelValue

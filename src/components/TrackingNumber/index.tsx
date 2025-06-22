@@ -33,9 +33,8 @@ export default ({
   }, {
     manual: true,
   })
-  const trackingNumber = orderItem?.orderPackageList?.[0]?.trackingNumber
-
-
+  
+  const trackingNumber = orderItem?.orderPackageList?.[0]?.trackingNumber || orderItem?.logisticsOrderPackageList?.[0]?.trackingNumber
 
   if (!trackingNumber) {
     const showShipmentButton = isAdmin() && orderItem.orderStatus === OrderStatus['已出库'] && orderItem.shopeeStatus !== ShopeeStatus['已装船']

@@ -35,10 +35,10 @@ import DownloadSheetButton from '@/pages/admin/components/OrderTable/DownloadShe
 export enum OrderPageType {
   SHOPEE = 'shopee',
   PACK_ORDER = 'pack_order',
+  PENDING = 'pending', // 待处理订单
 }
 
 export interface OrderPageProps {
-  dictCode?: 'shopee_status' | 'order_status'
   type: OrderPageType
 }
 
@@ -51,8 +51,9 @@ export interface PageQuery {
 export default (props: OrderPageProps) => {
   const { type } = props
   const dictCode = {
-    shopee: 'shopee_status',
-    pack_order: 'order_status',
+    [OrderPageType.SHOPEE]: 'shopee_status',
+    [OrderPageType.PACK_ORDER]: 'order_status',
+    [OrderPageType.PENDING]: 'order_pending_status'
   }[type]
   const [activeTab, setActiveTab] = useLocalStorageState<string>(location.pathname)
   const [countMap, setCountMap] = useState<Record<string, number>>()
@@ -183,6 +184,7 @@ export default (props: OrderPageProps) => {
       defaultPageSize: 10,
       defaultCurrent: 1,
       manual: false,
+      debounceWait: 80,
       refreshDeps: [activeTab, shrimpStatus, sortType],
     },
   )

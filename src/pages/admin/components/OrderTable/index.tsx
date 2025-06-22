@@ -381,7 +381,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                           type="text"
                           size="mini"
                           onClick={() => {
-                            if(item?.sendWarehouse === '0'){
+                            if (item?.sendWarehouse === '0') {
                               delete item.sendWarehouse
                             }
                             setCurrentOrder({
@@ -407,9 +407,17 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
               className="mt-4 flex justify-end"
               total={data?.total}
               showTotal={true}
+              sizeCanChange={true}
+              current={pagination.current}
+              pageSize={pagination.pageSize}
+              sizeOptions={[10, 20, 30, 40, 50, 100,]}
               onChange={(pageNumber: number, pageSize: number) => {
-                pagination.changePageSize(pageSize)
-                pagination.changeCurrent(pageNumber)
+                console.log(pageNumber, pageSize, pagination);
+                if (pageNumber !== pagination.current) {
+                  pagination.changeCurrent(pageNumber)
+                } else {
+                  pagination.changePageSize(pageSize)
+                }
               }}
             >
             </Pagination>

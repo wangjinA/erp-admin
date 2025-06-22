@@ -88,11 +88,22 @@ export const getOrderFilter: (params?: OrderPageParams) => SearchTableSchema[] =
     },
     {
       schema: {
-        field: 'selectOrderProductVO.sku',
-        label: '规格SKU',
+        field: 'selectLogisticsVO.shippingCarrier',
+        label: '承运商',
       },
-      control: 'input',
+      control: 'dictSelector',
+      controlProps: {
+        dictCode: 'logistics_channel',
+        mode: "multiple"
+      }
     },
+    // {
+    //   schema: {
+    //     field: 'selectOrderProductVO.sku',
+    //     label: '规格SKU',
+    //   },
+    //   control: 'input',
+    // },
     // {
     //   schema: {
     //     field: 'selectOrderProductVO.globalArticleNo',
