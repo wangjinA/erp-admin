@@ -50,7 +50,7 @@ export interface OrderTablePorps extends StyleProps {
   data?: APIListResponse<OrderResponseItem>['data']
   loading: boolean
   run: any
-  pagination: PaginationResult<
+  pagination?: PaginationResult<
     APIListResponse<Order>['data'],
     any
   >['pagination']
@@ -75,7 +75,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
   const columns = useColumns(props)
   const updateHandle = useRequest(
     async (newSku?: any) => {
-      const formData = merge(await form.validate(), currentOrder)
+      const formData = merge(currentOrder, await form.validate())
       const data = omit(formData, [
         'orderProductVOList',
         'orderPackageList',
@@ -408,14 +408,19 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
               total={data?.total}
               showTotal={true}
               sizeCanChange={true}
-              current={pagination.current}
-              pageSize={pagination.pageSize}
+              current={pagination?.current || 1}
+              pageSize={pagination?.pageSize}
               sizeOptions={[10, 20, 30, 40, 50, 100,]}
               onChange={(pageNumber: number, pageSize: number) => {
                 console.log(pageNumber, pageSize, pagination);
-                if (pageNumber !== pagination.current) {
-                  pagination.changeCurrent(pageNumber)
+                if (pagination) {
+                  if (pageNumber !== pagination.current) {
+                    pagination.changeCurrent(pageNumber)
+                  } else {
+                    pagination.changePageSize(pageSize)
+                  }
                 } else {
+                  pagination.changeCurrent(pageNumber)
                   pagination.changePageSize(pageSize)
                 }
               }}
