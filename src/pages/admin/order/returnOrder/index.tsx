@@ -8,6 +8,7 @@ import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
 import { DividerSchema } from '@/constants/schema/common'
 import LabelValue from '@/components/LabelValue'
 import GoodsInfo from '@/components/GoodsInfo'
+import { orderAPI } from '@/api/admin/order'
 
 export default () => {
   const [filterForm] = Form.useForm()
@@ -23,6 +24,7 @@ export default () => {
         tableProps={{
           data: [{}]
         }}
+        getListRequest={orderAPI.overseasWarehouseReturnList}
         middleTool={
           () => <Tabs className="-mt-[55px] mb-5">
             <Tabs.TabPane title="全部" key="1" />

@@ -1,4 +1,4 @@
-import { Button, Image } from '@arco-design/web-react'
+import { Button, Image, Tag } from '@arco-design/web-react'
 
 import { shopStoreAPI } from '@/api/client/shopStore'
 import shopeeIcon from '@/assets/shopee.png'
@@ -150,8 +150,14 @@ function getStoreListSchema(
         label: '授权状态',
         field: 'status',
       },
-      render(e) {
-        return <DictNameFC dictCode="accredit_status" value={e}></DictNameFC>
+      render(e, row) {
+        if(row.deleteStatus){
+          return <Tag color='red'>已删除</Tag>
+        }
+        if(!row.authTime || !row.authExpireTime) {
+          return '授权失败'
+        }
+        return <Tag color={e === 'NORMAL' ? 'green' : 'red'}><DictNameFC dictCode="accredit_status" value={e}></DictNameFC></Tag>
       },
     },
     {

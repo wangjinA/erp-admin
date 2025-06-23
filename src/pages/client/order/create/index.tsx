@@ -80,8 +80,10 @@ export default () => {
 
   const createHandler = useRequest(
     async () => {
-      console.log(formData)
-      await showMessage(() => orderAPI.insert({ customStatus: true, ...formData }))
+      await showMessage(() => orderAPI.insert({ customStatus: true, ...formData })).then(r=>{
+        resetCreateForm();
+        return r;
+      })
       setCurrent(current + 1)
     },
     {
@@ -271,7 +273,6 @@ export default () => {
                       key="reset"
                       style={{ marginRight: 16 }}
                       onClick={() => {
-                        resetCreateForm()
                         setCurrent(1)
                       }}
                     >

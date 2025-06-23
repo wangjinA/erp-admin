@@ -4,6 +4,7 @@ import {
   Input,
   Message,
   Select,
+  Spin,
   Typography,
 } from '@arco-design/web-react'
 import { IconScan } from '@arco-design/web-react/icon'
@@ -22,6 +23,7 @@ interface ScanComponentProps {
   isAuto?: boolean;
   placeholder?: string
   className?: string
+  loading?: boolean
   style?: React.CSSProperties
   onScan?: (params: ScanParams) => void
 }
@@ -29,8 +31,8 @@ interface ScanComponentProps {
 export const ScanMinWidth = 650
 
 export default (props: ScanComponentProps) => {
-  const { showAlert = true, isAuto = false, placeholder, className, style, onScan } = props
-  const { data, loading } = useEntrepotOptions()
+  const { showAlert = true, isAuto = false, placeholder, className, style, loading, onScan } = props
+  const { data, loading: loadingEntrepot } = useEntrepotOptions()
   const [value, setValue] = useState<string>()
   const [entrepot, setEntrepot] = useLocalStorageState<any>('scan-entrepot')
   // useEffect(() => {
@@ -63,7 +65,7 @@ export default (props: ScanComponentProps) => {
                 size="large"
                 placeholder="请选择仓库"
                 options={data}
-                loading={loading}
+                loading={loadingEntrepot}
               >
               </Select>
             }
@@ -79,7 +81,7 @@ export default (props: ScanComponentProps) => {
             className={classNames(height, styles['input-style'], 'text-3xl')}
             placeholder={placeholder || '扫描或者输入快递单号'}
             onPressEnter={(e) => {
-              if (entrepot === undefined) {
+              if (!isAuto && entrepot === undefined) {
                 return Message.error('请选择仓库')
               }
               else if (!e.target.value) {
@@ -91,7 +93,7 @@ export default (props: ScanComponentProps) => {
                 sendWarehouse: entrepot,
               })
             }}
-            suffix={<IconScan />}
+            suffix={(loadingEntrepot || loading) ? <Spin /> : <IconScan />}
           >
           </Input>
         </Grid.Col>

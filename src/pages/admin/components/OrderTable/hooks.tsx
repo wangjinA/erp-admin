@@ -94,6 +94,7 @@ export function useColumns(props: OrderTablePorps) {
                 <LabelValue label="买家" value={stringToMasked(row.buyerUsername)}></LabelValue>
                 <LabelValue label="收货人" value={stringToMasked(row.recipients)}></LabelValue>
                 <LabelValue label="收货电话" value={stringToMasked(row.mobileNumber)}></LabelValue>
+                {row.messageToSeller ? <LabelValue label="买家留言" value={row.messageToSeller}></LabelValue> : null}
                 <LabelValue label="收货地址" value={stringToMasked(row.detailedAddress)}></LabelValue>
               </div>
             )

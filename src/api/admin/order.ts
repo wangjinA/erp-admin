@@ -104,6 +104,41 @@ export const orderAPI = {
       params,
     })
   },
+  // 海外仓退件列表
+  overseasWarehouseReturnList(body: Partial<SearchOrderParams & IPageParams>) {
+    return baseAxios.post<APIListResponse<SearchOrderParams>>(
+      '/api/logistics/order/overseasWarehouseReturn/list',
+      body,
+    )
+  },
+  // 海外仓退件数量
+  overseasWarehouseReturnCount(body: Partial<SearchOrderParams & IPageParams>) {
+    return baseAxios.post<APIResponse<{
+      "total": number;
+      "count": number;
+    }
+    >>('/api/logistics/order/overseasWarehouseReturn/count', body)
+  },
+  // 撤销海外退件订单
+  overseasWarehouseReturnRevocation(id: string) {
+    return baseAxios.get(`/api/logistics/order/overseasWarehouseReturn/revocation/${id}`)
+  },
+  // 销毁海外退件订单 api/logistics/order/overseasWarehouseReturn/destroy/{id}
+  overseasWarehouseReturnDestroy(id: string) {
+    return baseAxios.get(`/api/logistics/order/overseasWarehouseReturn/destroy/${id}`)
+  },
+  // 扫码标记海外退件订单
+  overseasWarehouseReturnScanMarkOverseasWarehouseReturnOrder(body: {
+    shopeeOrderNo: string
+    overseasWarehouseListingTime: string
+    overseasWarehouseDelistingTime: string
+  }) {
+    return baseAxios.post(`/api/logistics/order/overseasWarehouseReturn/scanMarkOverseasWarehouseReturnOrder`, body)
+  },
+  // 
+  overseasWarehouseReturnReOutOverseasWarehouseReturnOrder(id: string, orderNo: string) {
+    return baseAxios.get(`/api/logistics/order/overseasWarehouseReturn/reOutOverseasWarehouseReturnOrder/${id}?orderNo=${orderNo}`)
+  },
 }
 
 interface getShippingParameterRes {

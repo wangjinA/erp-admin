@@ -8,6 +8,7 @@ import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
 import { DividerSchema } from '@/constants/schema/common'
 import LabelValue from '@/components/LabelValue'
 import GoodsInfo from '@/components/GoodsInfo'
+import { orderAPI } from '@/api/admin/order'
 
 export default () => {
   const [filterForm] = Form.useForm()
@@ -18,12 +19,26 @@ export default () => {
   }, {
     manual: false
   })
+
+  // 换单
+  const changeHandle = useRequest(async () => {
+    // const data = 
+  }, {
+    manual: false
+  })
+  // 销毁
+  const destroyHandle = useRequest(async () => {
+    // const data = 
+  }, {
+    manual: false
+  })
   return (
     <div className="p-4 bg-white">
       <SearchTable
         tableProps={{
           data: [{}]
         }}
+        getListRequest={orderAPI.overseasWarehouseReturnList}
         middleTool={
           () => <Tabs className="-mt-[55px] mb-5">
             <Tabs.TabPane title="全部" key="1" />
@@ -102,10 +117,27 @@ export default () => {
             },
             render(col, item, index) {
               return <>
-                <Button type='text' status="default" size="small" onClick={() => {
-                  setCurrent(item)
-                }}>换单</Button>
-                <Button type='text' status="danger" size="small">销毁</Button>
+                <Button
+                  type='text'
+                  status="default"
+                  size="small"
+                  onClick={() => {
+                    setCurrent(item)
+                  }}
+                >
+                  换单
+                </Button>
+                <Button
+                  type='text'
+                  status="danger"
+                  size="small"
+                  onClick={() => {
+                    destroyHandle.run()
+                  }}
+                  loading={destroyHandle.loading}
+                >
+                  销毁
+                </Button>
               </>
             }
           }
@@ -118,8 +150,29 @@ export default () => {
         onCancel={() => {
           setCurrent(null)
         }}
+        okButtonProps={{
+          loading: destroyHandle.loading
+        }}
+        onOk={async () => {
+          await destroyHandle.run()
+        }}
       >
+        <SearchTable
+          name="换单重出"
+          formItemConfigList={[
+            {
+              schema: {
+                label: '订单编号',
+                field: 'orderNo',
+              },
+              isSearch: true,
+              hideTable: true
+            },
+          ]}
 
+        >
+
+        </SearchTable>
       </Drawer>
     </div>
   )

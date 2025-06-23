@@ -7,7 +7,7 @@ import {
   Space,
   Spin,
 } from '@arco-design/web-react'
-import { IconLock, IconSafe, IconUser } from '@arco-design/web-react/icon'
+import { IconLock, IconSafe, IconSwap, IconUser } from '@arco-design/web-react/icon'
 
 import { useLocalStorageState, useRequest } from 'ahooks'
 
@@ -309,6 +309,7 @@ export default function LoginForm() {
           }
           <Button
             type="text"
+            status="success"
             long
             className={styles['login-form-register-btn']}
             onClick={() => {
@@ -320,7 +321,7 @@ export default function LoginForm() {
               }
             }}
           >
-            {/* {t['login.form.register']} */}
+            <IconSwap />
             切换
             {isAdmin()
               ? EndTypeTextMap[EndType.CLIENT]
