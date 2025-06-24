@@ -101,15 +101,17 @@ export function useDictName({
 export function DictNameFC({
   dictCode,
   value,
+  defaultValue = '-',
 }: {
   dictCode: string
   value: any
+  defaultValue?: string
 }) {
   const { data: name } = useDictName({
     dictCode,
     value,
   })
-  return <>{name || '-'}</>
+  return <>{name || defaultValue}</>
 }
 
 const DictSelector: React.FC<DictSelectorProps> = (props) => {

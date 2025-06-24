@@ -125,9 +125,20 @@ export function showModal(params: Partial<ConfirmProps>) {
       okButtonProps: {
         status: 'danger',
       },
-      onOk: resolve,
-      onCancel: reject,
       ...params,
+      onOk: async () => {
+        try {
+          if (params.onOk) {
+            const res = await params.onOk()
+            resolve(res);
+          }else {
+            resolve(null);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      },
+      onCancel: reject,
     })
   })
 }

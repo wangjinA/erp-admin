@@ -1,5 +1,5 @@
 // 只对这些物流商进行批量申请面单
-export const batchApplyShippingCarrierList = ['蝦皮店到店', '7-ELEVEN', 'OK Mart', '全家', '萊爾富']
+export const BatchApplyShippingCarrierList = ['蝦皮店到店', '7-ELEVEN', 'OK Mart', '全家', '萊爾富']
 
 export const ShippingCarrierColorMap = {
   '线下7-ELEVEN': 'red',
@@ -9,6 +9,7 @@ export const ShippingCarrierColorMap = {
   "萊爾富": 'lime',
   "蝦皮店到店": 'green',
   "賣家宅配": 'blue',
+  "賣家宅配：大型/超重物品運送": 'blue',
   "全家": 'arcoblue',
   "7-ELEVEN": 'purple',
   "宅配通": 'pinkpurple',

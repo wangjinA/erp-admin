@@ -2,7 +2,7 @@ import { ShippingOrderPrintingTemplateEnum } from '@/constants/entrepot'
 import baseAxios from '..'
 import { APIListResponse, APIResponse, IPageParams } from '../type'
 
-import { Order } from '@/types/order'
+import { Order, OrderResponseItem } from '@/types/order'
 import { withCache } from '@/utils/cache'
 
 export interface Entrepot {
@@ -209,6 +209,15 @@ export const scanAPI = {
   scanHistory(body: Partial<EntrepotStorageRacks & IPageParams>) {
     return baseAxios.post<APIListResponse<ScanRecord>>('/api/sign/record/list', body)
   },
+
+  // 扫码标记海外退件订单
+  scanMarkOverseasWarehouseReturnOrder(body: {
+    shopeeOrderNo: string
+    overseasWarehouseListingTime: string
+    overseasWarehouseDelistingTime: string
+  }) {
+    return baseAxios.post<APIResponse<ScanResponse>>('/api/logistics/order/overseasWarehouseReturn/scanMarkOverseasWarehouseReturnOrder', body)
+  },
 }
 
 export const costAPI = {
@@ -364,8 +373,9 @@ export interface ScanResponse {
   orderItemInfoBgResultList: Omit<Order, 'orderProductList'> &
   {
     logisticsOrderProductList: LogisticsOrderProduct[]
+    logisticsOrderPackageList: OrderResponseItem['orderPackageList']
   }[]
-  logisticsEntrepot: Entrepot
+  logisticsEntrepot?: Entrepot
 }
 
 export interface LogisticsOrderProduct {

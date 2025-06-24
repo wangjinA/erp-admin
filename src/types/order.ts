@@ -49,7 +49,8 @@ export interface Order {
   fillShipInfo: boolean // 是否未填写发货信息
   firstLegCost: number // 头程费用
   id: string // 主键
-  abeyanceStatus: number; // 异常搁置标记
+  abeyanceStatus: boolean; // 异常搁置标记
+  isOverseasWarehouseReturn: boolean; // 是否海外仓退件
   label: string // 标签
   mobileNumber: string // 手机号码
   orderAmount: number // 订单金额
@@ -57,6 +58,7 @@ export interface Order {
   orderProductList: OrderProductList[]
   logisticsOrderProductList?: OrderProductList[]
   orderStatus: string // 订单状态 字典值
+  returnStatus: string // 退件状态 0 1 2
   shopeeStatus: string // 虾皮订单状态 字典值
   orderTime: string // 订单时间
   orderType: string // 订单类型 字典值
@@ -79,6 +81,7 @@ export interface Order {
   remark: string // 备注
   sendWarehouse: string // 送往仓库字典
   clickPack: boolean // 是否一键打包，false就是编辑 true就是打包
+  isReissued: boolean // 是否已被换单了 （退件
   sheetnumber: string // 面单条码
   sheetStatus: boolean // 面单申请状态 false 没有申请 true 已经申请
   shipByDate: string // 最后发货日期

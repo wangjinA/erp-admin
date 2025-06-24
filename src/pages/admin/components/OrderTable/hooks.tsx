@@ -1,37 +1,30 @@
-import { Button, Space, Tag } from '@arco-design/web-react'
-
-import { useMemo } from 'react'
-import { useLocation } from 'react-router-dom'
-
-import ActionHistory from './ActionHistory'
-import DeliveryButton from './DeliveryButton'
-import OrderDetailButton from './OrderDetailButton'
-import PrintButton, { PrintType } from './PrintButton'
+import { Tag, Typography } from '@arco-design/web-react'
 import SendCargoInfo from './SendCargoInfo'
 
 import { OrderTablePorps } from '.'
 
-import { orderAPI } from '@/api/admin/order'
 import GoodsInfo from '@/components/GoodsInfo'
 import LabelValue from '@/components/LabelValue'
 import TrackingNumber from '@/components/TrackingNumber'
-import { EmitTypes, bus } from '@/hooks/useEventBus'
 import { isAdmin, isClient } from '@/routes'
 import { OrderResponseItem } from '@/types/order'
-import { showMessage, showModal, stringToMasked } from '@/utils'
+import { stringToMasked } from '@/utils'
 import { ShippingCarrierColorMap } from '@/constants/order'
 import classNames from 'classnames'
-import ExceptionOnHoldButton from './ExceptionOnHoldButton'
+import OrderTableActions from './admin/OrderTableActions'
+import { useLocation } from "react-router"
+import { OrderPageDict } from '@/pages/client/order/orderPage'
 
 export function useColumns(props: OrderTablePorps) {
   const { dictCode } = props
-  const { pathname } = useLocation()
-  const showActions = isAdmin()
+  const location = useLocation()
+
+  const showActions = (isClient() && dictCode === OrderPageDict.OUT_ORDER_STATUS) || (isAdmin() && !location.pathname.includes('business/returnToShelves'))
   return [
     {
       title: '商品信息',
       dataIndex: 'orderProductVOList',
-      width: 550,
+      width: 540,
       render(col) {
         return <GoodsInfo data={col}></GoodsInfo>
       },
@@ -40,7 +33,7 @@ export function useColumns(props: OrderTablePorps) {
     {
       title: '发货信息',
       dataIndex: 'orderProductVOList_1',
-      width: 210,
+      width: 220,
       render(col, row) {
         return <SendCargoInfo data={row}></SendCargoInfo>
       },
@@ -51,6 +44,7 @@ export function useColumns(props: OrderTablePorps) {
       width: 240,
       render(c, row) {
         const shippingCarrier = row.orderPackageList?.[0]?.shippingCarrier || row.logisticsOrderPackageList?.[0]?.shippingCarrier
+        const isShowMjInfo = ['线下', '宅配'].some(o => shippingCarrier?.includes(o));
         return (
           <div className="border-r h-full p-2">
             {/* <LabelValue label="尾程物流" value={<DictNameFC value={row.orderPackageList[0]?.shippingCarrier} dictCode="logistics_channel"></DictNameFC>}></LabelValue> */}
@@ -65,6 +59,15 @@ export function useColumns(props: OrderTablePorps) {
               <TrackingNumber orderItem={row}></TrackingNumber>
             }></LabelValue>
             {row.shippingTime ? <LabelValue label="出货时间" value={row.shippingTime}></LabelValue> : null}
+            {
+              isShowMjInfo ? <>
+                <LabelValue label="收货地址" value={
+                  <Typography.Text copyable>
+                    {`${row.recipients} ${row.mobileNumber} ${row.province || ''} ${row.city || ''} ${row.detailedAddress || ''}`}
+                  </Typography.Text>
+                }></LabelValue>
+              </> : null
+            }
             {/* <LabelValue
               label="查看单号"
               value={(
@@ -85,21 +88,21 @@ export function useColumns(props: OrderTablePorps) {
     },
     ...(isClient()
       ? [{
-          title: '买家信息',
-          dataIndex: 'seller',
-          width: 180,
-          render(c, row) {
-            return (
-              <div className="border-r h-full p-2">
-                <LabelValue label="买家" value={stringToMasked(row.buyerUsername)}></LabelValue>
-                <LabelValue label="收货人" value={stringToMasked(row.recipients)}></LabelValue>
-                <LabelValue label="收货电话" value={stringToMasked(row.mobileNumber)}></LabelValue>
-                {row.messageToSeller ? <LabelValue label="买家留言" value={row.messageToSeller}></LabelValue> : null}
-                <LabelValue label="收货地址" value={stringToMasked(row.detailedAddress)}></LabelValue>
-              </div>
-            )
-          },
-        }]
+        title: '买家信息',
+        dataIndex: 'seller',
+        width: 180,
+        render(c, row) {
+          return (
+            <div className="border-r h-full p-2">
+              <LabelValue label="买家" value={stringToMasked(row.buyerUsername)}></LabelValue>
+              <LabelValue label="收货人" value={stringToMasked(row.recipients)}></LabelValue>
+              <LabelValue label="收货电话" value={stringToMasked(row.mobileNumber)}></LabelValue>
+              {row.messageToSeller ? <LabelValue valueClassName="text-red-500 font-bold" label="买家留言" value={row.messageToSeller}></LabelValue> : null}
+              <LabelValue label="收货地址" value={stringToMasked(row.detailedAddress)}></LabelValue>
+            </div>
+          )
+        },
+      }]
       : []),
     // {
     //   title: '打包信息',
@@ -199,72 +202,7 @@ export function useColumns(props: OrderTablePorps) {
         dataIndex: 'actions',
         width: 120,
         render(c, row: OrderResponseItem) {
-          return (
-            <div className="h-full p-2 flex justify-center">
-              <Space direction="vertical" size={4}>
-                <OrderDetailButton
-                  buttonProps={{ size: 'small' }}
-                  orderItem={row}
-                  onSuccess={() => {
-                    bus.emit(EmitTypes.refreshOrderPage)
-                  }}
-                >
-                </OrderDetailButton>
-                <DeliveryButton
-                  sendWarehouse={row.sendWarehouse}
-                  shrimpOrderNo={row.shrimpOrderNo}
-                  onSuccess={() => {
-                    bus.emit(EmitTypes.refreshOrderPage)
-                  }}
-                  buttonProps={{ size: 'small', disabled: row.orderStatus !== '2' }}
-                />
-                <PrintButton
-                  orderItem={row}
-                  printType={PrintType.SHIPPING}
-                >
-                  打印出货单
-                </PrintButton>
-                <PrintButton
-                  orderItem={row}
-                  printType={PrintType.PICKING}
-                >
-                  打印捡货单
-                </PrintButton>
-                <ActionHistory
-                  buttonProps={{
-                    type: 'text',
-                    icon: null,
-                  }}
-                  id={row.id}
-                >
-                </ActionHistory>
-                <ExceptionOnHoldButton
-                  id={row.id}
-                  abeyanceStatus={row.abeyanceStatus}
-                >
-                </ExceptionOnHoldButton>
-                <Button
-                  type="text"
-                  size="small"
-                  disabled={['5', '6'].includes(row.orderStatus)}
-                  onClick={async () => {
-                    await showModal({
-                      content: '确定要取消打包吗？',
-                      onOk() {
-                        return showMessage(
-                          () => orderAPI.cancel([row.id]),
-                          '取消打包',
-                        )
-                      },
-                    })
-                    bus.emit(EmitTypes.refreshOrderPage)
-                  }}
-                >
-                  取消订单
-                </Button>
-              </Space>
-            </div>
-          )
+          return <OrderTableActions orderItem={row} dictCode={dictCode}></OrderTableActions>
         },
       }]
       : []

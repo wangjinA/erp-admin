@@ -13,6 +13,9 @@ import {
   scanAPI,
 } from '@/api/admin/entrepot'
 import { showMessage } from '@/utils'
+import { EmitTypes, useEventBus } from '@/hooks/useEventBus'
+import { OrderPageDict } from '@/pages/client/order/orderPage'
+import { Result } from 'ahooks/lib/useRequest/src/types'
 
 function ShowAlert(props: {
   data: ScanResponse
@@ -87,6 +90,36 @@ function ShowAlert(props: {
           )}
         />
       )
+    case '5':
+      return (
+        <Alert
+          className="mt-4"
+          type="warning"
+          title={(
+            <div>
+              订单编号：【
+              {trackingNo}
+              】海外仓退件上架成功
+            </div>
+          )}
+          content={
+            <div>
+              匹配
+              {' '}
+              <b>{data.orderItemInfoBgResultList?.length || 0}</b>
+              {' '}
+              个订单、
+              <b>{data.orderCount || 0}</b>
+              {' '}
+              件商品，
+              分配仓位为：
+              {data.freightSpaceName}
+              ，上架时间：
+              {data.signingTime}
+            </div>
+          }
+        />
+      )
     default:
       return (
         <Alert
@@ -120,9 +153,77 @@ function ShowAlert(props: {
   }
 }
 
-export default function Deposit() {
+export function ScanResult(props: {
+  trackingNo: string,
+  scanHandle: Result<ScanResponse, [ScanParams]>,
+  dictCode: OrderPageDict
+}) {
   const history = useHistory()
-  const { run, data, loading, error } = useRequest(
+  const { trackingNo, scanHandle, dictCode } = props
+  return <>
+    {trackingNo && !scanHandle.error
+      ? (
+        <Spin loading={scanHandle.loading} className="block text-center pt-10">
+          {scanHandle.data
+            ? (
+              <>
+                <ShowAlert data={scanHandle.data} trackingNo={trackingNo} />
+                {scanHandle.data.orderItemInfoBgResultList
+                  ? (
+                    <OrderTable
+                      className="mt-4 text-left"
+                      data={{
+                        list: scanHandle.data.orderItemInfoBgResultList.map<any>(item => ({
+                          ...item,
+                          orderProductVOList: item.logisticsOrderProductList,
+                          orderPackageList: item.logisticsOrderPackageList,
+                        })),
+                        pageNum: 1,
+                        pageSize: scanHandle.data.orderItemInfoBgResultList.length,
+                        total: scanHandle.data.orderItemInfoBgResultList.length,
+                      }}
+                      dictCode={dictCode}
+                      loading={false}
+                    >
+                    </OrderTable>
+                  )
+                  : null}
+              </>
+            )
+            : null}
+        </Spin>
+      )
+      : null}
+    {
+      scanHandle.error
+        ? (
+          <Alert
+            className="mt-4"
+            type="error"
+            title={(
+              <div>
+                {scanHandle.error.message}
+                <Link
+                  className="ml-4"
+                  onClick={() => {
+                    history.push('/admin/entrepot/info')
+                  }}
+                >
+                  {' '}
+                  仓库设置
+                </Link>
+              </div>
+            )}
+          >
+          </Alert>
+        )
+        : null
+    }
+  </>
+}
+
+export default function Deposit() {
+  const scanHandle = useRequest(
     async (params: ScanParams) => {
       const res = await showMessage(() => scanAPI.scanPut(params))
       return res.data?.data
@@ -134,75 +235,25 @@ export default function Deposit() {
 
   const [trackingNo, setTrackingNo] = useState<string>()
 
+  // 其他刷新都是基于这个bug，复用一下
+  useEventBus(EmitTypes.refreshOrderPage, () => {
+    scanHandle.refresh()
+  })
+
   return (
     <div className="bg-white py-6 px-4">
       <ScanCommon
         onScan={(info) => {
-          run(info)
+          scanHandle.run(info)
           setTrackingNo(info.trackingNo)
         }}
       >
       </ScanCommon>
-      {trackingNo && !error
-        ? (
-            <Spin loading={loading} className="block text-center pt-10">
-              {data
-                ? (
-                    <>
-                      <ShowAlert data={data} trackingNo={trackingNo} />
-                      {data.orderItemInfoBgResultList
-                        ? (
-                            <OrderTable
-                              className="mt-4 text-left"
-                              data={{
-                                list: data.orderItemInfoBgResultList.map<any>(item => ({
-                                  ...item,
-                                  orderProductVOList: item.logisticsOrderProductList,
-                                  orderPackageList: [],
-                                })),
-                                pageNum: 1,
-                                pageSize: data.orderItemInfoBgResultList.length,
-                                total: data.orderItemInfoBgResultList.length,
-                              }}
-                              dictCode="order_status"
-                              loading={false}
-                            >
-                            </OrderTable>
-                          )
-                        : null}
-                      {/* <OrderTableOld className="mt-4"></OrderTableOld> */}
-                    </>
-                  )
-                : null}
-            </Spin>
-          )
-        : null}
-      {
-        error
-          ? (
-              <Alert
-                className="mt-4"
-                type="error"
-                title={(
-                  <div>
-                    {error.message}
-                    <Link
-                      className="ml-4"
-                      onClick={() => {
-                        history.push('/admin/entrepot/info')
-                      }}
-                    >
-                      {' '}
-                      仓库设置
-                    </Link>
-                  </div>
-                )}
-              >
-
-              </Alert>
-            )
-          : null
-      }
+      <ScanResult
+        trackingNo={trackingNo}
+        scanHandle={scanHandle}
+        dictCode={OrderPageDict.PACK_ORDER}
+      />
     </div>
   )
 }

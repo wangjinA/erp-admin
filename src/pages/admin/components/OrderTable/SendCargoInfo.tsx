@@ -1,4 +1,4 @@
-import { Tag } from '@arco-design/web-react'
+import { Tag, Typography } from '@arco-design/web-react'
 
 import { useRequest } from 'ahooks'
 import classNames from 'classnames'
@@ -18,7 +18,7 @@ import { EmitTypes, bus } from '@/hooks/useEventBus'
 import { isClient } from '@/routes'
 import { OrderResponseItem } from '@/types/order'
 import { showMessage, showModal } from '@/utils'
-import { IconEmpty, IconGithub } from '@arco-design/web-react/icon'
+import { IconEmpty } from '@arco-design/web-react/icon'
 
 interface SendCargoInfoProps {
   data: OrderResponseItem
@@ -221,18 +221,19 @@ export const SendCargoItemInfo: React.FC<{
   let trackingNoContent = null;
 
   if (item.stockOutStatus) {
-    trackingNoContent = <Tag color="orangered" icon={<IconEmpty  />}>缺货打包</Tag>
-    
+    trackingNoContent = <Tag color="orangered" icon={<IconEmpty />}>缺货打包</Tag>
+
   } else if (item.trackingNo) {
-    trackingNoContent = <CopyText
-      value={item.trackingNo}
-      gap={1}
+    trackingNoContent = <Typography.Text
+      copyable={{
+        text: item.trackingNo
+      }}
     >
       <TrackingNo
         value={item.trackingNo}
       >
       </TrackingNo>
-    </CopyText>
+    </Typography.Text>
   } else {
     trackingNoContent = <Tag>未填</Tag>
   }

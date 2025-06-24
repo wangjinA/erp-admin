@@ -96,6 +96,7 @@ export default () => {
                       avatar: item.locationPrefix,
                     }))
                   }
+                  
                   // onUpdate={(item) => {
                   //   setShowTypeEntrepot(ShowFormType.edit)
                   //   formEntrepotRef.setFieldsValue(item)

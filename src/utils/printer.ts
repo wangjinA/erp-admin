@@ -223,6 +223,7 @@ const ShippingCarrierIndexOfMap = {
   "新竹物流": "新竹物流",
   "嘉里快遞": "嘉里快递",
   "店到家宅配": "店到家宅配",
+  "賣家宅配：大型/超重物品運送": "賣家宅配：大型/超重物品運送",
 }
 
 class BusinessPrinter {

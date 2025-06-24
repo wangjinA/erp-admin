@@ -1,10 +1,11 @@
+import { OrderResponseItem } from '@/types/order'
 import baseAxios from '..'
 import { APIListResponse, APIResponse, IPageParams } from '../type'
 
 export const orderAPI = {
   // 获取订单列表
   getList(body: Partial<SearchOrderParams & IPageParams>) {
-    return baseAxios.post<APIListResponse<SearchOrderParams>>(
+    return baseAxios.post<APIListResponse<OrderResponseItem>>(
       '/api/logistics/order/list',
       body,
     )
@@ -127,17 +128,14 @@ export const orderAPI = {
   overseasWarehouseReturnDestroy(id: string) {
     return baseAxios.get(`/api/logistics/order/overseasWarehouseReturn/destroy/${id}`)
   },
-  // 扫码标记海外退件订单
-  overseasWarehouseReturnScanMarkOverseasWarehouseReturnOrder(body: {
-    shopeeOrderNo: string
-    overseasWarehouseListingTime: string
-    overseasWarehouseDelistingTime: string
+  // 换单重出
+  overseasWarehouseReturnReOutOverseasWarehouseReturnOrder(params: {
+    id: string,
+    orderNo: string
   }) {
-    return baseAxios.post(`/api/logistics/order/overseasWarehouseReturn/scanMarkOverseasWarehouseReturnOrder`, body)
-  },
-  // 
-  overseasWarehouseReturnReOutOverseasWarehouseReturnOrder(id: string, orderNo: string) {
-    return baseAxios.get(`/api/logistics/order/overseasWarehouseReturn/reOutOverseasWarehouseReturnOrder/${id}?orderNo=${orderNo}`)
+    return baseAxios.get('/api/logistics/order/overseasWarehouseReturn/reOutOverseasWarehouseReturnOrder', {
+      params
+    })
   },
 }
 
@@ -182,6 +180,9 @@ export interface SearchOrderParams extends IPageParams {
     tenantryNo: string // 用户标识
     tenantryPhone: string // 手机号
     transportType: string // 运输类型
+    abeyanceStatus: number,
+    shrimpStatus: string,
+    storeFlag: boolean,
   }
   selectOrderProductVO: {
     // 物流商品信息

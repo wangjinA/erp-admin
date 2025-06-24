@@ -8,7 +8,7 @@ import { bus, EmitTypes } from '@/hooks/useEventBus'
 interface ActionHistoryProps {
   buttonProps?: ButtonProps
   id: string
-  abeyanceStatus: number
+  abeyanceStatus: boolean;
 }
 export default (props: ActionHistoryProps) => {
   const { buttonProps, id, abeyanceStatus } = props

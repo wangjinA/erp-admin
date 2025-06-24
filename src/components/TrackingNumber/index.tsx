@@ -2,15 +2,15 @@ import { Empty, Link, Message, Modal, Spin, Timeline, Typography } from '@arco-d
 import { useRequest } from 'ahooks'
 import { useState } from 'react'
 
-import { expressAPI as adminExpressAPI } from '@/api/admin/express'
 import { expressAPI } from '@/api/client/express'
 import ExpressSheetButton from '@/pages/admin/components/OrderTable/ExpressSheetButton'
-import { isAdmin, isClient } from '@/routes'
+import { isAdmin } from '@/routes'
 import ShipmentButton from '@/pages/admin/components/OrderTable/ShipmentButton'
 import { OrderResponseItem } from '@/types/order'
 import { bus, EmitTypes } from '@/hooks/useEventBus'
 import { IconSend } from '@arco-design/web-react/icon'
 import { OrderStatus, ShopeeStatus } from '@/constants/order'
+import dayjs from 'dayjs'
 
 export default ({
   orderItem,
@@ -33,7 +33,7 @@ export default ({
   }, {
     manual: true,
   })
-  
+
   const trackingNumber = orderItem?.orderPackageList?.[0]?.trackingNumber || orderItem?.logisticsOrderPackageList?.[0]?.trackingNumber
 
   if (!trackingNumber) {
@@ -41,10 +41,15 @@ export default ({
     if (showShipmentButton) {
 
       if (orderItem.shippingTime) {
-        return <span>
-          <Spin size={13}></Spin>
-          <Typography.Text className="ml-2 text-sm" type="secondary" >获取面单中...</Typography.Text>
-        </span>
+        const min10 = dayjs().diff(dayjs(orderItem.shippingTime), 'minute') < 10
+        if (min10) {
+          return <span>
+            <Spin size={13}></Spin>
+            <Typography.Text className="ml-2 text-sm" type="secondary" >获取面单中...</Typography.Text>
+          </span>
+        } else {
+          return <>-</>
+        }
       }
 
       return <ShipmentButton
@@ -66,15 +71,19 @@ export default ({
   }
   return (
     <>
-      <Link
-        disabled={trackHandle.loading}
-        className="!inline"
-        onClick={() => {
-          trackHandle.run()
-        }}
-      >
-        {trackingNumber}
-      </Link>
+      <Typography.Text copyable={{
+        text: trackingNumber
+      }}>
+        <Link
+          disabled={trackHandle.loading}
+          className="!inline"
+          onClick={() => {
+            trackHandle.run()
+          }}
+        >
+          {trackingNumber}
+        </Link>
+      </Typography.Text>
       <ExpressSheetButton orderItem={orderItem}></ExpressSheetButton>
       <Modal
         confirmLoading={trackHandle.loading}

@@ -18,7 +18,7 @@ import styles from './index.module.less'
 import { ScanParams } from '@/api/admin/entrepot'
 import { useEntrepotOptions } from '@/components/Selectors/EntrepotSelector'
 
-interface ScanComponentProps {
+export interface ScanComponentProps {
   showAlert?: boolean;
   isAuto?: boolean;
   placeholder?: string

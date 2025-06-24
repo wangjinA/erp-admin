@@ -2,40 +2,42 @@ import {
   Badge,
   Button,
   Form,
-  Message,
-  Modal,
-  Popconfirm,
   Radio,
   Space,
   Tabs,
   Tag,
 } from '@arco-design/web-react'
 import { IconExport, IconRefresh, IconSearch } from '@arco-design/web-react/icon'
-import { useLocalStorageState, usePagination, useRequest, useResetState } from 'ahooks'
-import { omit, uniq } from 'lodash'
+import { useLocalStorageState, usePagination, useResetState } from 'ahooks'
+import { omit } from 'lodash'
 import { useState } from 'react'
 
 import { getOrderFilter } from './schema'
-import { saveAs } from 'file-saver'
-import { entrepotAPI, scanAPI } from '@/api/admin/entrepot'
 import { orderAPI as adminOrderApi } from '@/api/admin/order'
 import { orderAPI } from '@/api/client/order'
 import FilterForm from '@/components/FilterForm'
 
 import { useDictOptions } from '@/components/Selectors/DictSelector'
-import { batchApplyShippingCarrierList, ExceptionOnHoldValue, OrderStatus, SystemName } from '@/constants/order'
+import { ExceptionOnHoldValue } from '@/constants/order'
 import { EmitTypes, bus, useEventBus } from '@/hooks/useEventBus'
 import OrderTable from '@/pages/admin/components/OrderTable'
-import RefreshButton from '@/pages/admin/components/OrderTable/RefreshButton'
 import SyncOrderButton from '@/pages/admin/components/OrderTable/SyncOrderButton'
 import { isAdmin } from '@/routes'
-import { replaceQueryValueByObject, showMessage, showModal, timeArrToObject } from '@/utils'
-import DownloadSheetButton from '@/pages/admin/components/OrderTable/DownloadSheetButton'
+import { replaceQueryValueByObject, timeArrToObject } from '@/utils'
+import PageActions from './components/PageActions'
 
 export enum OrderPageType {
   SHOPEE = 'shopee',
   PACK_ORDER = 'pack_order',
   PENDING = 'pending', // 待处理订单
+  OUT_ORDER_STATUS = 'out_order_status', // 海外仓退件订单
+}
+
+export enum OrderPageDict {
+  SHOPEE = 'shopee_status',
+  PACK_ORDER = 'order_status',
+  PENDING = 'order_pending_status',
+  OUT_ORDER_STATUS = 'out_order_status',
 }
 
 export interface OrderPageProps {
@@ -50,11 +52,14 @@ export interface PageQuery {
 
 export default (props: OrderPageProps) => {
   const { type } = props
+
   const dictCode = {
-    [OrderPageType.SHOPEE]: 'shopee_status',
-    [OrderPageType.PACK_ORDER]: 'order_status',
-    [OrderPageType.PENDING]: 'order_pending_status'
+    [OrderPageType.SHOPEE]: OrderPageDict.SHOPEE,
+    [OrderPageType.PACK_ORDER]: OrderPageDict.PACK_ORDER,
+    [OrderPageType.PENDING]: OrderPageDict.PENDING,
+    [OrderPageType.OUT_ORDER_STATUS]: OrderPageDict.OUT_ORDER_STATUS,
   }[type]
+
   const [activeTab, setActiveTab] = useLocalStorageState<string>(location.pathname)
   const [countMap, setCountMap] = useState<Record<string, number>>()
   const [selectIds, setSelectIds] = useState([])
@@ -88,7 +93,12 @@ export default (props: OrderPageProps) => {
   }: PageQuery) {
     const { selectLogisticsOrderVO = {}, ...other } = otherQuery
 
-    let orderStatus = type === OrderPageType.PACK_ORDER ? activeTab : undefined
+    let orderStatus: string; // 系统物流订单状态字段
+    let returnStatus: string; // 海外仓退件列表状态字段
+    if (type === OrderPageType.PACK_ORDER) {
+      orderStatus = activeTab;
+    }
+
     let abeyanceStatus = undefined // 是否异常搁置
     if (!isCount) { // count不做处理
       abeyanceStatus = 0; // 默认是非
@@ -96,6 +106,11 @@ export default (props: OrderPageProps) => {
         orderStatus = undefined
         abeyanceStatus = 1;
       }
+    }
+
+    if (type === OrderPageType.OUT_ORDER_STATUS) {
+      returnStatus = activeTab;
+      abeyanceStatus = undefined // 如果是退件列表，异常搁置字段不参与查询
     }
 
     const querySelectLogisticsOrderVO = replaceQueryValueByObject({
@@ -110,6 +125,7 @@ export default (props: OrderPageProps) => {
         'stockRemovalEndTime',
       ),
       orderStatus,
+      returnStatus,
       abeyanceStatus,
       ...(type === OrderPageType.SHOPEE
         ? {
@@ -154,30 +170,31 @@ export default (props: OrderPageProps) => {
           pageSize: params?.pageSize || pagination.pageSize,
         }
       })
-      const res = await orderAPI.getList(body)
-      // 打包订单
-      if (type === OrderPageType.PACK_ORDER) {
-        orderAPI.getPackCount({
-          ...omit(body, ['selectLogisticsOrderVO']),
-          selectLogisticsOrderVO: {
-            ...omit(body.selectLogisticsOrderVO, ['orderStatus', 'abeyanceStatus']),
-          } as any,
-        }).then((res) => {
-          setCountMap(res.data.data)
-        })
-      }
-      else {
-        const p: any = {
-          ...omit(body, ['selectLogisticsOrderVO']),
-          selectLogisticsOrderVO: {
-            ...omit(body.selectLogisticsOrderVO, ['shrimpStatus']),
-          },
-        }
-        orderAPI.getShopOrderCount(p).then((res) => {
-          setCountMap(res.data.data)
-        })
+
+      const listRequestMap = {
+        [OrderPageType.OUT_ORDER_STATUS]: adminOrderApi.overseasWarehouseReturnList,
       }
 
+      const listRequestList = listRequestMap[type] || orderAPI.getList
+
+      const countBody: any = {
+        ...omit(body, ['selectLogisticsOrderVO']),
+        selectLogisticsOrderVO: {
+          ...omit(body.selectLogisticsOrderVO, ['orderStatus', 'abeyanceStatus', 'shrimpStatus', 'returnStatus']),
+        }
+      }
+      const requestMap = {
+        [OrderPageType.OUT_ORDER_STATUS]: adminOrderApi.overseasWarehouseReturnCount,
+        [OrderPageType.PACK_ORDER]: orderAPI.getPackCount,
+      }
+      const request = requestMap[type] || orderAPI.getShopOrderCount
+
+      const [res] = await Promise.all([
+        listRequestList(body),
+        request(countBody).then((res) => {
+          setCountMap(res.data.data)
+        })
+      ])
       return res.data.data
     },
     {
@@ -188,81 +205,12 @@ export default (props: OrderPageProps) => {
       refreshDeps: [activeTab, shrimpStatus, sortType],
     },
   )
-
-  const outListHandle = useRequest(async () => {
-    await showMessage(() => scanAPI.outList({
-      orderIdList: selectIds,
-    }), '出库')
-    refresh()
-  }, {
-    manual: true,
-  })
-
   // const cancelListHandle = useRequest(async () => {
   //   await showMessage(() => adminOrderApi.cancel(selectIds), '取消')
   //   refresh()
   // }, {
   //   manual: true,
   // })
-
-  const exportOrderListHandle = useRequest(async () => {
-    const body = getPageQuery({
-      isBindSelect: true
-    })
-    const res = await adminOrderApi.exportOrderList(body)
-    // 提取文件名
-    const disposition = res.headers['content-disposition']
-    let fileName = '订单导出.xlsx'
-    if (disposition) {
-      const match = disposition.match(/filename="?([^"]+)"?/)
-      if (match && match[1]) {
-        fileName = decodeURIComponent(match[1])
-      }
-    }
-    // 下载
-    saveAs(res.data, fileName)
-    Modal.success({
-      content: '订单导出成功，请注意查收！',
-      title: '温馨提示'
-    })
-  }, {
-    manual: true,
-  })
-
-  const shipmentBatchHandle = useRequest(async (orderIds: string[]) => {
-    const selectDatas = data.list.filter(item => selectIds.includes(item.id))
-    const entrepotIds = uniq(selectDatas.map(item => item.sendWarehouse))
-    // 仓库和发货人的映射
-    const entrepotSenderMap = (await Promise.all(entrepotIds.map(id => entrepotAPI.getSenderAll({
-      entrepotId: id,
-    }).then(r => ({
-      [id]: r
-    }))))).reduce((pre, cur) => ({
-      ...pre,
-      ...cur,
-    }), {})
-    const batchList = orderIds.map(orderId => ({
-      orderId,
-      senderRealName: entrepotSenderMap[data.list.find(o => o.id === orderId)?.sendWarehouse]?.default || SystemName
-    }))
-    await showMessage(() => adminOrderApi.shipmentBatch(batchList), '批量出货')
-      .then(res => {
-        const errorList = (res.data?.data?.list || []).map(o => ({
-          msg: o.msg,
-          orderId: data.list.find(item => item.id === o.orderId)?.shrimpOrderNo || '获取失败'
-        }));
-        if (errorList.length) {
-          Modal.confirm({
-            noticeType: 'warning',
-            title: errorList.length !== batchList.length ? '部分订单出货失败' : '批量出货失败',
-            content: errorList.map(item => `${item.msg}，订单编号：${item.orderId}`).join('\n'),
-          })
-        }
-      })
-    refresh()
-  }, {
-    manual: true,
-  })
 
   useEventBus(EmitTypes.refreshOrderPage, () => {
     refresh()
@@ -283,146 +231,38 @@ export default (props: OrderPageProps) => {
         }}
       >
       </FilterForm>
-      <div className="flex justify-between py-6 pr-2">
-        <Space size={8}>
-          {
-            isAdmin()
-              ? (
-                <>
-                  <Popconfirm title="确认导出订单？" onOk={() => exportOrderListHandle.run()} okButtonProps={{
-                    loading: exportOrderListHandle.loading,
-                  }}>
-                    <Button
-                      type="outline"
-                      icon={<IconExport />}
-                      loading={exportOrderListHandle.loading}
-                    >
-                      导出订单 {selectIds.length ? `(${selectIds.length}个)` : ''}
-                    </Button>
-                  </Popconfirm>
-                  <Button
-                    type="outline"
-                    loading={outListHandle.loading}
-                    disabled={activeTab >= OrderStatus['已出库']}
-                    onClick={async () => {
-                      if (!selectIds.length) {
-                        return Message.error('请选择订单')
-                      }
-                      await showModal({
-                        content: `确定出库 ${selectIds.length} 个订单？`,
-                        okButtonProps: {
-                          status: 'success',
-                        },
-                      })
-
-                      outListHandle.run()
-                    }}
-                  >
-                    批量出库
-                  </Button>
-                  <RefreshButton
-                    ids={selectIds}
-                    buttonProps={{
-                      type: 'outline',
-                      status: 'default',
-                    }}
-                  >
-                    批量更新订单
-                  </RefreshButton>
-                  <DownloadSheetButton getPageQuery={getPageQuery} selectIds={selectIds}></DownloadSheetButton>
-                  <Button
-                    type="outline"
-                    loading={shipmentBatchHandle.loading}
-                    disabled={activeTab !== OrderStatus['已出库']}
-                    onClick={async () => {
-                      if (!selectIds.length) {
-                        return Message.error('请选择订单')
-                      }
-                      const ids = data.list.filter(item =>
-                        batchApplyShippingCarrierList.includes(item.shippingCarrier || item.orderPackageList?.[0]?.shippingCarrier),
-                      ).map(o => o.id)
-
-                      const tips = `只有${batchApplyShippingCarrierList.join('、')}的订单才能批量出货`;
-
-                      if (!ids.length) {
-                        Message.error(tips)
-                        return;
-                      }
-                      const successIds = selectIds.filter(id => ids.includes(id))
-
-                      // 选中的id和匹配的承运商id 都要存在
-                      if (successIds.length) {
-                        if (selectIds.length !== successIds.length) {
-                          // Modal.confirm({
-                          //   title: '温馨提示',
-                          //   content: `${tips}，其他承运商的订单请手动单个出货！`,
-                          //   okText: '确认出货',
-                          //   onOk() {
-                          //     shipmentBatchHandle.run(successIds)
-                          //   }
-                          // })
-                          await showModal({
-                            content: `${tips}，其他承运商的订单请手动单个出货！`,
-                            okButtonProps: {
-                              status: 'success',
-                            },
-                          }).then(() => {
-                            shipmentBatchHandle.run(successIds)
-                          })
-                        } else {
-                          shipmentBatchHandle.run(successIds)
-                        }
-                      } else {
-                        Message.error('不符合出货条件，请检查订单状态和承运商信息！');
-                      }
-                    }}
-                  >
-                    批量出货
-                  </Button>
-                  {/* <Button
-                    type="outline"
-                    status="warning"
-                    loading={cancelListHandle.loading}
-                    onClick={async () => {
-                      if (!selectIds.length) {
-                        return Message.error('请选择订单')
-                      }
-                      await showModal({
-                        content: `确认取消选中的${selectIds.length}个订单？`,
-                      })
-                      cancelListHandle.run()
-                    }}
-                  >
-                    批量取消订单
-                  </Button> */}
-                </>
-              )
-              : (
-                <>
-                  <SyncOrderButton></SyncOrderButton>
-                  <Button
-                    type="outline"
-                    icon={<IconExport />}
-                  >
-                    导出订单
-                  </Button>
-                </>
-              )
-          }
-          {selectIds.length
+      <div className="flex items-center py-6 pr-2">
+        {
+          isAdmin()
             ? (
-              <Tag checked={true} color="pinkpurple">
-                已选中
-                {' '}
-                {selectIds.length}
-                {' '}
-                个订单
-              </Tag>
+              <PageActions data={data} selectIds={selectIds} activeTab={activeTab} dictCode={dictCode} getPageQuery={getPageQuery} />
             )
-            : null}
-        </Space>
+            : (
+              <Space size={8}>
+                <SyncOrderButton></SyncOrderButton>
+                <Button
+                  type="outline"
+                  icon={<IconExport />}
+                >
+                  导出订单
+                </Button>
+              </Space>
+            )
+        }
+        {selectIds.length
+          ? (
+            <Tag className="ml-2" checked={true} color="pinkpurple">
+              已选中
+              {' '}
+              {selectIds.length}
+              {' '}
+              个订单
+            </Tag>
+          )
+          : null}
 
-        <Space size={20}>
+
+        <Space size={20} className="ml-auto">
           <Button
             type="default"
             loading={loading}
