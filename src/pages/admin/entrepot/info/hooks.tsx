@@ -86,6 +86,7 @@ export function useEntrepotInfo(params: {
   const { run: createEntrepotHandler, loading: createEntrepotLoading }
     = useRequest(
       async (formData) => {
+        debugger;
         await showMessage(() => entrepotAPI.insert(formData))
         setShowTypeEntrepot(null)
         getEntrepotList()

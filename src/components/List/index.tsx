@@ -17,15 +17,16 @@ interface ListProps<T> {
   active?: any
   rowKey?: string
   loading?: boolean
+  className?: string
   onActive?: (row: (T & DataItem)) => void
   onDelete?: (row: (T & DataItem)) => void
   onUpdate?: (row: (T & DataItem)) => void
 }
 
 function List<T>(props: ListProps<T>) {
-  const { data, active, loading, titleKey = 'name', descriptionKey = 'description', onUpdate, onDelete, onActive, rowKey = 'id' } = props
+  const { data, active, loading, className, titleKey = 'name', descriptionKey = 'description', onUpdate, onDelete, onActive, rowKey = 'id' } = props
   return (
-    <Spin className="block" loading={loading}>
+    <Spin className={classNames('block', className)} loading={loading}>
       <Space className={styles['syb-list']} direction="vertical" size="small">
         {data?.map(item => (
           <Card
@@ -59,50 +60,50 @@ function List<T>(props: ListProps<T>) {
               {(item._HideEdit && item._HideDelete) || (!onUpdate && !onDelete)
                 ? null
                 : (
-                    <div onClick={(e) => {
-                      e.stopPropagation()
-                    }}
+                  <div onClick={(e) => {
+                    e.stopPropagation()
+                  }}
+                  >
+
+                    <Dropdown
+                      droplist={(
+                        <Menu onClickMenuItem={(e) => {
+                          if (e === 'update') {
+                            onUpdate?.(item)
+                          }
+                          else if (e === 'delete') {
+                            onDelete?.(item)
+                          }
+                        }}
+                        >
+                          {onUpdate && !item._HideEdit
+                            ? (
+                              <Menu.Item key="update">
+                                <IconEdit />
+                                <Typography.Text className="ml-2">修改</Typography.Text>
+
+                              </Menu.Item>
+                            )
+                            : null}
+                          {onDelete && (!item._HideDelete)
+                            ? (
+                              <Menu.Item key="delete">
+                                <IconDelete />
+                                <Typography.Text className="ml-2">删除</Typography.Text>
+                              </Menu.Item>
+                            )
+                            : null}
+                        </Menu>
+                      )}
+                      trigger="click"
+                      position="br"
                     >
-
-                      <Dropdown
-                        droplist={(
-                          <Menu onClickMenuItem={(e) => {
-                            if (e === 'update') {
-                              onUpdate?.(item)
-                            }
-                            else if (e === 'delete') {
-                              onDelete?.(item)
-                            }
-                          }}
-                          >
-                            {onUpdate && !item._HideEdit
-                              ? (
-                                  <Menu.Item key="update">
-                                    <IconEdit />
-                                    <Typography.Text className="ml-2">修改</Typography.Text>
-
-                                  </Menu.Item>
-                                )
-                              : null }
-                            {onDelete && (!item._HideDelete)
-                              ? (
-                                  <Menu.Item key="delete">
-                                    <IconDelete />
-                                    <Typography.Text className="ml-2">删除</Typography.Text>
-                                  </Menu.Item>
-                                )
-                              : null }
-                          </Menu>
-                        )}
-                        trigger="click"
-                        position="br"
-                      >
-                        <Link>
-                          <IconMore />
-                        </Link>
-                      </Dropdown>
-                    </div>
-                  )}
+                      <Link>
+                        <IconMore />
+                      </Link>
+                    </Dropdown>
+                  </div>
+                )}
             </Space>
           </Card>
         ))}

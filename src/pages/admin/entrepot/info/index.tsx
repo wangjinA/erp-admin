@@ -49,70 +49,70 @@ export default () => {
   } = entrepotInfoHandle
 
   return (
-    <div className="bg-white p-4 pb-6 syb-content-h">
-      <Grid.Row gutter={[20, 0]}>
-        <Grid.Col span={6} className="border-r border-neutral-3 pr-4">
+    <div className="bg-white p-4 pb-6 main-content-box overflow-hidden">
+      <Grid.Row gutter={[20, 0]} className="h-full">
+        <Grid.Col span={6} className="border-r border-neutral-3 pr-4 h-full overflow-y-auto">
           <EntrepotList entrepotInfoHandle={entrepotInfoHandle}></EntrepotList>
         </Grid.Col>
 
         {(showTypeRacks === ShowFormType.create && !racksList?.length)
           ? null
           : (
-              <Grid.Col span={6} className="border-r border-neutral-3 pr-4">
-                <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">
-                  <Typography.Title heading={6} className="mb-0">
-                    货架列表
-                  </Typography.Title>
-                  <Button
-                    icon={<IconPlus></IconPlus>}
-                    type="primary"
-                    size="small"
-                    className="ml-auto"
-                    disabled={showTypeRacks === ShowFormType.create}
-                    onClick={() => {
-                      formRacksRef.resetFields()
-                      setActiveRacks(null)
-                    }}
-                  >
-                    新增
-                  </Button>
-                </Typography.Paragraph>
-                {/* <Input.Search
+            <Grid.Col span={6} className="border-r border-neutral-3 pr-4">
+              <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">
+                <Typography.Title heading={6} className="mb-0">
+                  货架列表
+                </Typography.Title>
+                <Button
+                  icon={<IconPlus></IconPlus>}
+                  type="primary"
+                  size="small"
+                  className="ml-auto"
+                  disabled={showTypeRacks === ShowFormType.create}
+                  onClick={() => {
+                    formRacksRef.resetFields()
+                    setActiveRacks(null)
+                  }}
+                >
+                  新增
+                </Button>
+              </Typography.Paragraph>
+              {/* <Input.Search
             className="mb-4"
             placeholder="请输入仓位名称"
           ></Input.Search> */}
-                <List
-                  loading={rackLoading}
-                  active={activeRacks?.id}
-                  onActive={(item) => {
-                    setActiveRacks(item as any)
-                    formRacksRef.setFieldsValue(item)
-                  }}
-                  data={
-                    racksList?.map(item => ({
-                      ...item,
-                      name: item.storageRacksName,
-                      description: item.storageRacksCode,
-                      avatar: item.locationPrefix,
-                    }))
-                  }
-                  
-                  // onUpdate={(item) => {
-                  //   setShowTypeEntrepot(ShowFormType.edit)
-                  //   formEntrepotRef.setFieldsValue(item)
-                  // }}
-                  onDelete={async (item) => {
-                    await showModal({
-                      title: '删除货架',
-                      content: `是否删除货架：${item.storageRacksName}`,
-                      okText: '删除',
-                    })
-                    removeRacksHandler(item.id)
-                  }}
-                >
-                </List>
-              </Grid.Col>
-            )}
+              <List
+                loading={rackLoading}
+                active={activeRacks?.id}
+                onActive={(item) => {
+                  setActiveRacks(item as any)
+                  formRacksRef.setFieldsValue(item)
+                }}
+                data={
+                  racksList?.map(item => ({
+                    ...item,
+                    name: item.storageRacksName,
+                    description: item.storageRacksCode,
+                    avatar: item.locationPrefix,
+                  }))
+                }
+
+                // onUpdate={(item) => {
+                //   setShowTypeEntrepot(ShowFormType.edit)
+                //   formEntrepotRef.setFieldsValue(item)
+                // }}
+                onDelete={async (item) => {
+                  await showModal({
+                    title: '删除货架',
+                    content: `是否删除货架：${item.storageRacksName}`,
+                    okText: '删除',
+                  })
+                  removeRacksHandler(item.id)
+                }}
+              >
+              </List>
+            </Grid.Col>
+          )}
         {activeEntrepot && showTypeRacks && (
           <Grid.Col span={12} className="pr-6">
             <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">

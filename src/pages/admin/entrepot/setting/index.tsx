@@ -21,7 +21,7 @@ export default () => {
   return (
     <div className="bg-white p-4 main-content-box overflow-hidden">
       <Grid.Row gutter={[20, 0]} className="h-full">
-        <Grid.Col span={6} className="border-r border-neutral-3 pr-4 h-full">
+        <Grid.Col span={6} className="border-r border-neutral-3 pr-4 h-full overflow-y-auto">
           <EntrepotList entrepotInfoHandle={entrepotInfoHandle}></EntrepotList>
         </Grid.Col>
         {

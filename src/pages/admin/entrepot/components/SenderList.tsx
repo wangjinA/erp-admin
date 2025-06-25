@@ -7,7 +7,7 @@ import StatusTag from '@/components/StatusTag'
 export default ({
   entrepotId,
 }: {
-  entrepotId: number
+  entrepotId: string
 }) => {
   const ref = React.useRef<SearchTableRef>()
   useEffect(() => {

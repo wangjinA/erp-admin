@@ -32,8 +32,8 @@ export interface EntrepotStorageRacks {
   createBy: number
   createTime: string
   deleteStatus: number
-  entrepotId: number
-  id: number
+  entrepotId: string
+  id: string
   locationPrefix: string
   numberColumns: number
   numberFloors: number
@@ -62,7 +62,7 @@ export const entrepotAPI = {
   setDefualt(entrepotId: any) {
     return baseAxios.get(`/api/tenantry/default/entrepot/insert/data/${entrepotId}`)
   },
-  getList: withCache((body: Partial<Entrepot & IPageParams>) => {
+  getList: (body: Partial<Entrepot & IPageParams>) => {
     return baseAxios.post<APIListResponse<Entrepot>>('/api/entrepot/list', {
       entrepotType: 1,
       ...body,
@@ -70,7 +70,7 @@ export const entrepotAPI = {
       data: r,
       default: r.data.data.list.find(o => o.defaultFlag)
     }))
-  },),
+  },
   getListAll(body: Partial<Entrepot & IPageParams>) {
     return baseAxios.post<APIListResponse<Entrepot>>('/api/entrepot/list/all', {
       entrepotType: 1,
