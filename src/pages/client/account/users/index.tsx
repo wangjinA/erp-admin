@@ -42,10 +42,10 @@ export default () => {
           ...body,
           roleIdList: [body.roleIdList],
         })}
-        editTransform={params => ({
-          ...omit(params, ['userPassword']),
-          roleIdList: params.roleIdList[0],
-        })}
+        // editTransform={params => ({
+        //   ...omit(params, ['userPassword']),
+        //   roleIdList: params.roleIdList[0],
+        // })}
         requestQueryTransform={params => ({
           ...omit(params, ['applyTime', 'rejectionTime']),
           // ...timeArrToObject(params.applyTime, 'applyStartTime', 'applyEndTime'),

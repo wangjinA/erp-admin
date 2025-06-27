@@ -74,14 +74,14 @@ const OrderTableActions = (props: OrderTableActionsProps) => {
         }}
       >
       </OrderDetailButton>
-      <DeliveryButton
+      {/* <DeliveryButton
         sendWarehouse={orderItem.sendWarehouse}
         shrimpOrderNo={orderItem.shrimpOrderNo}
         onSuccess={() => {
           bus.emit(EmitTypes.refreshOrderPage)
         }}
         buttonProps={{ size: 'small', disabled: orderItem.orderStatus !== '2' }}
-      />
+      /> */}
       <PrintButton
         orderItem={orderItem}
         printType={PrintType.SHIPPING}

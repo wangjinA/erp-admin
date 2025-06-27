@@ -49,6 +49,44 @@ export const getOrderFilter: (params?: OrderPageParams) => SearchTableSchema[] =
     },
     {
       schema: {
+        field: 'selectLogisticsVO.trackingNumber',
+        label: '物流单号',
+      },
+      control: 'input',
+    },
+    {
+      schema: {
+        field: 'selectLogisticsOrderVO.shopeeStatus',
+        label: '订单状态',
+      },
+      control: 'dictSelector',
+      controlProps: {
+        dictCode: 'shopee_status'
+      }
+    },
+    {
+      schema: {
+        field: 'selectLogisticsOrderVO.reissued',
+        label: '换单重出',
+      },
+      control: 'radio',
+      controlProps: {
+        options: [{
+          label: '全部',
+          value: null,
+        },
+        {
+          label: '是',
+          value: 1,
+        },
+        {
+          label: '否',
+          value: 0,
+        },]
+      }
+    },
+    {
+      schema: {
         field: 'selectLogisticsOrderVO.createdTimes',
         label: '创建时间',
       },

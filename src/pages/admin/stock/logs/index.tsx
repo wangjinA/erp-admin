@@ -2,7 +2,6 @@
 import { StockAPI } from '@/api/client/stock'
 import SearchTable from '@/components/SearchTable'
 import { DictNameFC } from '@/components/Selectors/DictSelector'
-import { DividerSchema } from '@/constants/schema/common'
 
 export default () => {
   return (
@@ -21,7 +20,6 @@ export default () => {
           isSearch: true,
           hideTable: true,
         },
-        { ...DividerSchema, isSearch: true, hideTable: true },
         {
           schema: {
             label: '商品信息',

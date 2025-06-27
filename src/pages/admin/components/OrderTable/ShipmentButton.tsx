@@ -28,7 +28,7 @@ const InfoNeededMap: Record<string, CreateFormItemType> = {
   },
   tracking_no: {
     schema: {
-      label: '物流单号',
+      label: '快递单号',
       field: 'trackingNo',
       required: true,
     },

@@ -3,6 +3,8 @@ import {
   ButtonProps,
   Form,
   FormProps,
+  Input,
+  Message,
   Modal,
   ModalProps,
   Space,
@@ -30,7 +32,7 @@ import { AxiosResponse } from 'axios'
 
 import classNames from 'classnames'
 import { omit } from 'lodash'
-import React, { CSSProperties, forwardRef, useImperativeHandle } from 'react'
+import React, { CSSProperties, forwardRef, useImperativeHandle, useRef, useState } from 'react'
 
 import { CreateFormItemType } from '../CreateFormItem'
 import CreateWrap, { ActionsContext, CreateWrapProps } from '../CreateWrap'
@@ -45,7 +47,8 @@ import {
   ShowFormType,
   ShowFormTypeMap,
 } from '@/constants'
-import { showMessage } from '@/utils'
+import { showMessage, showModal } from '@/utils'
+import { InputRef } from '@arco-design/web-react/es/Input/input'
 
 export interface SearchTableRef {
   refreshSearchTable: () => void
@@ -69,7 +72,10 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
       createButtonProps = {},
       formModalProps = {},
       filterFormProps = {},
+      deleteConfirmKey,
       requestQueryTransform,
+      requestEditBodyTransform,
+      openEditTransform,
       leftTool,
       onView,
       createRequest,
@@ -78,7 +84,6 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
       updateRequest,
       removeRequest,
       middleTool,
-      editTransform,
       onDataChange,
     } = props
     const [formRef] = Form.useForm()
@@ -91,6 +96,8 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
       initialValues,
       isSearchParams,
     })
+
+    const delInputRef = useRef(null);
 
     const [pageSize, setPageSize] = useLocalStorageState(`${name}-page-size`, {
       defaultValue: 10,
@@ -133,7 +140,9 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
       <CreateWrap
         formRef={formRef}
         createRequest={createRequest}
-        updateRequest={updateRequest}
+        updateRequest={(updateBody) => {
+          return updateRequest(requestEditBodyTransform ? requestEditBodyTransform(updateBody) : updateBody)
+        }}
         refreshRequest={run}
       >
         <ActionsContext.Consumer>
@@ -141,81 +150,83 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
             <div className={className} style={style}>
               {showSearchSection
                 ? (
-                    <FilterForm
-                      {...formProps}
-                      form={searchFromRef}
-                      initialValues={searchFromData}
-                      formItemConfigList={formItemConfigListStatusFilter(
-                        formItemConfigList,
-                        'isSearch',
-                      )}
-                      onValuesChange={(val, vals) => {
-                        setSearchFromData(vals)
-                      }}
-                    >
-                    </FilterForm>
-                  )
+                  <FilterForm
+                    {...formProps}
+                    form={searchFromRef}
+                    initialValues={searchFromData}
+                    formItemConfigList={formItemConfigListStatusFilter(
+                      formItemConfigList,
+                      'isSearch',
+                    )}
+                    onValuesChange={(val, vals) => {
+                      setSearchFromData(vals)
+                    }}
+                  >
+                  </FilterForm>
+                )
                 : null}
               {showHeaderSection
                 ? (
-                    <div className={classNames('flex justify-between pr-2', showSearchSection ? 'py-6' : 'pb-6')}>
-                      <Space size={16}>
-                        {(createRequest || createHandle) && (
+                  <div className={classNames('flex justify-between pr-2', showSearchSection ? 'py-6' : 'pb-6')}>
+                    {showSearchSection
+                      ? (
+                        <Space size={16}>
+                          <Button
+                            type="default"
+                            loading={loading}
+                            icon={<IconRefresh />}
+                            onClick={() => {
+                              searchFromRef.clearFields()
+                              searchFromRef.setFieldsValue(resetParams())
+
+                              setTimeout(() => {
+                                if (pageNum === 1) {
+                                  run()
+                                }
+                                else {
+                                  setPageNum(1)
+                                }
+                              })
+                            }}
+                          >
+                            重置
+                          </Button>
                           <Button
                             type="primary"
-                            onClick={() => {
-                              if (createHandle) {
-                                createHandle()
-                              }
-                              else {
-                                setShowType(ShowFormType.create)
-                              }
-                            }}
-                            icon={<IconPlus></IconPlus>}
-                            {...createButtonProps}
+                            icon={<IconSearch />}
+                            loading={loading}
+                            onClick={() => run()}
                           >
-                            {createText}
+                            查询
                           </Button>
-                        )}
-                        {leftTool?.()}
-                      </Space>
+                        </Space>
+                      )
+                      : null}
 
-                      {showSearchSection
-                        ? (
-                            <Space size={16}>
-                              <Button
-                                type="default"
-                                loading={loading}
-                                icon={<IconRefresh />}
-                                onClick={() => {
-                                  searchFromRef.clearFields()
-                                  searchFromRef.setFieldsValue(resetParams())
+                    <Space size={16}>
+                      {(createRequest || createHandle) && (
+                        <Button
+                          type="primary"
+                          onClick={() => {
+                            if (createHandle) {
+                              createHandle()
+                            }
+                            else {
+                              setShowType(ShowFormType.create)
+                            }
+                          }}
+                          icon={<IconPlus></IconPlus>}
+                          {...createButtonProps}
+                        >
+                          {createText}
+                        </Button>
+                      )}
+                      {leftTool?.()}
+                    </Space>
 
-                                  setTimeout(() => {
-                                    if (pageNum === 1) {
-                                      run()
-                                    }
-                                    else {
-                                      setPageNum(1)
-                                    }
-                                  })
-                                }}
-                              >
-                                重置
-                              </Button>
-                              <Button
-                                type="primary"
-                                icon={<IconSearch />}
-                                loading={loading}
-                                onClick={() => run()}
-                              >
-                                查询
-                              </Button>
-                            </Space>
-                          )
-                        : null}
-                    </div>
-                  )
+
+                  </div>
+                )
                 : null}
               {
                 middleTool?.()
@@ -245,56 +256,74 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                   ),
                   ...(showActions
                     ? [
-                        {
-                          title: '操作',
-                          key: 'actions',
-                          width: 315,
-                          render: (_, record, index) => (
-                            <Space size={0}>
-                              {onView && (
-                                <Button
-                                  type="text"
-                                  icon={<IconEye />}
-                                  onClick={() => {
-                                    onView(record)
-                                  }}
-                                >
-                                  查看
-                                </Button>
-                              )}
-                              {formItemConfigList
-                                .find(
-                                  oitem => oitem.schema.field === 'actions',
-                                )
-                                ?.render?.(_, record, index)}
-                              {updateRequest && (
-                                <Button
-                                  type="text"
-                                  status="warning"
-                                  icon={<IconEdit />}
-                                  onClick={() => {
-                                    setShowType(ShowFormType.edit, record)
-                                  }}
-                                >
-                                  编辑
-                                </Button>
-                              )}
-                              {removeRequest && (
-                                <PopconfirmDelete
-                                  buttonProps={{
-                                    type: 'text',
-                                  }}
-                                  onOk={() =>
+                      {
+                        title: '操作',
+                        key: 'actions',
+                        width: 315,
+                        render: (_, record, index) => (
+                          <Space size={0}>
+                            {onView && (
+                              <Button
+                                type="text"
+                                icon={<IconEye />}
+                                onClick={() => {
+                                  onView(record)
+                                }}
+                              >
+                                查看
+                              </Button>
+                            )}
+                            {formItemConfigList
+                              .find(
+                                oitem => oitem.schema.field === 'actions',
+                              )
+                              ?.render?.(_, record, index)}
+                            {updateRequest && (
+                              <Button
+                                type="text"
+                                status="warning"
+                                icon={<IconEdit />}
+                                onClick={() => {
+                                  setShowType(ShowFormType.edit, openEditTransform ? openEditTransform(record) : record)
+                                }}
+                              >
+                                编辑
+                              </Button>
+                            )}
+                            {removeRequest && (
+                              <PopconfirmDelete
+                                buttonProps={{
+                                  type: 'text',
+                                }}
+                                onOk={() => {
+                                  if (deleteConfirmKey) {
+                                    showModal({
+                                      content: <Input ref={delInputRef} onChange={(e) => {
+                                        console.log(e);
+                                      }} placeholder={`请输入删除名称(${record[deleteConfirmKey]})`}></Input>,
+                                      onOk() {
+                                        if (delInputRef.current.dom.value === record[deleteConfirmKey]) {
+                                          showMessage(() => removeRequest(record[majorKey])).then(() => {
+                                            run()
+                                          })
+                                        } else {
+                                          Message.error('名称填写错误！')
+                                        }
+                                      }
+                                    })
+                                  } else {
                                     showMessage(() => removeRequest(record[majorKey])).then(() => {
                                       run()
-                                    })}
-                                >
-                                </PopconfirmDelete>
-                              )}
-                            </Space>
-                          ),
-                        },
-                      ]
+                                    })
+                                  }
+                                }}
+                              >
+                              </PopconfirmDelete>
+                            )}
+                          </Space>
+                        ),
+                      },
+                    ]
                     : []),
                 ]}
               >
@@ -369,13 +398,15 @@ function formItemConfigListStatusFilter(
   const result = formItemConfigList
     .filter(item => item[key])
     .map((item) => {
-      return ({ ...omit(item, ['isCreate', 'isSearch', 'dynamicHandle']), ...{
-        schema: {
-          ...item.schema,
-          required: key === 'isSearch' ? false : item.schema.required,
-          rules: key === 'isSearch' ? null : item.schema.rules,
-        },
-      }, ...(item.dynamicHandle ? item.dynamicHandle(dynamicHandleParams) : {}) })
+      return ({
+        ...omit(item, ['isCreate', 'isSearch', 'dynamicHandle']), ...{
+          schema: {
+            ...item.schema,
+            required: key === 'isSearch' ? false : item.schema.required,
+            rules: key === 'isSearch' ? null : item.schema.rules,
+          },
+        }, ...(item.dynamicHandle ? item.dynamicHandle(dynamicHandleParams) : {})
+      })
     })
   console.log(result)
 
@@ -413,7 +444,10 @@ interface SearchTableProps {
   formModalProps?: ModalProps
   createButtonProps?: ButtonProps
   filterFormProps?: Partial<FilterFormProps>
-  editTransform?: (params: any) => any
+  deleteConfirmKey?: string
+  openEditTransform?: (params: any) => any // 打开编辑的时候，对数据做处理
+  requestEditBodyTransform?: (params: any) => any
+  openEditTransform,
   requestQueryTransform?: (params: any) => any
   leftTool?: () => React.ReactNode
   middleTool?: () => React.ReactNode

@@ -11,6 +11,7 @@ import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
 import { ModalWidth } from '@/pages/client/stock/products'
 import { formatDate, showMessage } from '@/utils'
+import { DictNameFC } from '@/components/Selectors/DictSelector'
 // 入库订单
 export default () => {
   const [visible, setVisible] = useState(false)
@@ -144,6 +145,9 @@ export default () => {
             controlProps: {
               dictCode: 'storage_status',
             },
+            render(c){
+              return <DictNameFC dictCode="storage_status" value={c}></DictNameFC>
+            }
           },
           {
             schema: {

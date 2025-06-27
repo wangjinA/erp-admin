@@ -1,6 +1,6 @@
 import { Switch, Tag } from '@arco-design/web-react'
 import { omit } from 'lodash'
-import React, { useState } from 'react'
+import React from 'react'
 
 import { useSelector } from 'react-redux'
 
@@ -8,11 +8,10 @@ import { userAPI } from '@/api/admin/user'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 import { RoleNameFC } from '@/components/Selectors/RoleSelector'
 import UserAvatar from '@/components/UserAvatar'
-import { WhetherOptions } from '@/constants'
+import { ShowFormType, WhetherOptions } from '@/constants'
 import { GlobalState } from '@/store'
 
 export default function Users() {
-  const [current, setCurrent] = useState<any>()
   const ref = React.useRef<SearchTableRef>()
   const { userInfo } = useSelector((state: GlobalState) => state)
 
@@ -40,6 +39,7 @@ export default function Users() {
       <SearchTable
         ref={ref}
         name="用户管理"
+        deleteConfirmKey='userName'
         getListRequest={userAPI.list}
         createRequest={userAPI.create}
         removeRequest={userAPI.remove}
@@ -48,6 +48,10 @@ export default function Users() {
           ...omit(params, ['applyTime', 'rejectionTime']),
           // ...timeArrToObject(params.applyTime, 'applyStartTime', 'applyEndTime'),
           // ...timeArrToObject(params.rejectionTime, 'rejectionStartTime', 'rejectionEndTime'),
+        })}
+        openEditTransform={(body) => ({
+          ...body,
+          userPassword: null,
         })}
         initialValues={{
           // isLogistics: 1,
@@ -106,13 +110,26 @@ export default function Users() {
             schema: { label: '登录账号', field: 'userLoginAccount', required: true },
             isCreate: true,
             isSearch: true,
+            dynamicHandle({ showType }) {
+              return {
+                controlProps: {
+                  disabled: showType === ShowFormType.edit,
+                },
+              }
+            },
           },
           {
-            schema: { label: '密码', field: 'userPassword', required: true },
+            schema: { label: '密码', field: 'userPassword' },
             isCreate: true,
             hideTable: true,
-            controlProps: {
-              type: 'password',
+            dynamicHandle({ showType }) {
+              return {
+                controlProps: {
+                  required: showType === ShowFormType.create,
+                  type: 'password',
+                  placeholder: showType === ShowFormType.create ? '请输入密码' : '不修改请留空',
+                },
+              }
             },
           },
           {
@@ -137,21 +154,21 @@ export default function Users() {
           },
           ...(userInfo?.isAdmin
             ? [{
-                schema: { label: '物流主账号', field: 'isLogistics', required: true },
-                isCreate: true,
-                isSearch: true,
-                control: 'radio',
-                controlProps: {
-                  options: WhetherOptions,
-                },
-                render(col) {
-                  return (
-                    <Tag color={col ? 'green' : 'gray'}>
-                      {col ? '是' : '否'}
-                    </Tag>
-                  )
-                },
-              }]
+              schema: { label: '物流主账号', field: 'isLogistics', required: true },
+              isCreate: true,
+              isSearch: true,
+              control: 'radio',
+              controlProps: {
+                options: WhetherOptions,
+              },
+              render(col) {
+                return (
+                  <Tag color={col ? 'green' : 'gray'}>
+                    {col ? '是' : '否'}
+                  </Tag>
+                )
+              },
+            }]
             : []) as any,
           {
             schema: { label: '状态', field: 'userStatus' },

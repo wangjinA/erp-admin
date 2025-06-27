@@ -1,6 +1,7 @@
 import {
   Badge,
   Button,
+  Divider,
   Form,
   Radio,
   Space,
@@ -139,7 +140,7 @@ export default (props: OrderPageProps) => {
         ? { shrimpOrderNo: data.list.filter(o => selectIds.includes(o.id)).map(o => o.shrimpOrderNo).join(',') }
         : {}
       )
-    }, ['shrimpOrderNo'])
+    }, ['shrimpOrderNo', 'trackingNumber'])
 
     switch (type) {
       case OrderPageType.PACK_ORDER:
@@ -257,6 +258,35 @@ export default (props: OrderPageProps) => {
       >
       </FilterForm>
       <div className="flex items-center py-6 pr-2">
+        <Space size={20} className="">
+          <Button
+            type="default"
+            loading={loading}
+            icon={<IconRefresh />}
+            onClick={() => {
+              filterForm.resetFields()
+              restFormData()
+              setTimeout(() => {
+                pagination.changeCurrent(1)
+              }, 0)
+            }}
+          >
+            重置
+          </Button>
+          <Button
+            type="primary"
+            icon={<IconSearch />}
+            loading={loading}
+            onClick={() =>
+              run({
+                current: 1,
+                pageSize: 10,
+              })}
+          >
+            查询
+          </Button>
+        </Space>
+        <Divider className="mx-8" type="vertical"></Divider>
         {
           isAdmin()
             ? (
@@ -285,36 +315,6 @@ export default (props: OrderPageProps) => {
             </Tag>
           )
           : null}
-
-
-        <Space size={20} className="ml-auto">
-          <Button
-            type="default"
-            loading={loading}
-            icon={<IconRefresh />}
-            onClick={() => {
-              filterForm.resetFields()
-              restFormData()
-              setTimeout(() => {
-                pagination.changeCurrent(1)
-              }, 0)
-            }}
-          >
-            重置
-          </Button>
-          <Button
-            type="primary"
-            icon={<IconSearch />}
-            loading={loading}
-            onClick={() =>
-              run({
-                current: 1,
-                pageSize: 10,
-              })}
-          >
-            查询
-          </Button>
-        </Space>
       </div>
       <Tabs
         lazyload={true}
