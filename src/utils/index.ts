@@ -105,6 +105,29 @@ export function getExcleData(file: File): Promise<any[][]> {
   })
 }
 
+
+export function exportToExcel(data: any[][], fileName: string, columnWidths: any[] = []) {
+  // 创建工作簿
+  var workbook = XLSX.utils.book_new();
+  // 创建工作表
+  var worksheet = XLSX.utils.aoa_to_sheet(data);
+
+  worksheet["!cols"] = columnWidths;
+
+  // 将工作表添加到工作簿
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+  // 生成Excel文件的二进制数据
+  var excelData = XLSX.write(workbook, { type: "array", bookType: "xlsx" });
+  // 创建Blob对象
+  var blob = new Blob([excelData], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+  // 创建下载链接
+  var link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `${fileName}.xlsx`;
+  link.click();
+}
+
+
 export function timeArrToObject(arr: string[], key1: string, key2: string) {
   if (arr?.length) {
     return {

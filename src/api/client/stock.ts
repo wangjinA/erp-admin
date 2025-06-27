@@ -14,6 +14,9 @@ export const StockAPI = {
   addGoodsInfo(body: Partial<ProductItem>) {
     return baseAxios.post<APIResponse<any>>('/api/logistics/product/insert', body)
   },
+  addGoodsInfoBatch(body: Partial<ProductItem>[]) {
+    return baseAxios.post<APIResponse<any>>('/api/logistics/product/insertBatch', body)
+  },
   /**
    * 查询商品
    */

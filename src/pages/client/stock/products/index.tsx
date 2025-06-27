@@ -1,5 +1,5 @@
 // 商品管理
-import { Button, Form, Modal } from '@arco-design/web-react'
+import { Button, Form, Message, Modal, Upload } from '@arco-design/web-react'
 
 import { useRequest } from 'ahooks'
 import dayjs from 'dayjs'
@@ -10,7 +10,8 @@ import ProductInfo from '../components/ProductInfo'
 import { StockAPI } from '@/api/client/stock'
 import FilterForm from '@/components/FilterForm'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
-import { showMessage } from '@/utils'
+import { exportToExcel, getExcleData, showMessage, showModal } from '@/utils'
+import { UploadItem } from '@arco-design/web-react/es/Upload'
 
 export const ModalWidth = 600
 
@@ -23,6 +24,8 @@ export default () => {
   const [syncForm] = Form.useForm()
   const [syncAppointForm] = Form.useForm()
   const [addForm] = Form.useForm()
+
+  const fileRef = useRef<any>();
 
   const syncHandler = useRequest(async () => {
     const formData = await syncForm.validate()
@@ -52,10 +55,37 @@ export default () => {
     manual: true,
   })
 
+  const addGoodsInfoBatchHandle = useRequest(async (list) => {
+    return showMessage(() => StockAPI.addGoodsInfoBatch(list), '导入商品')
+  }, {
+    manual: true,
+  })
+
+
   return (
     <div
       className="bg-white p-4"
     >
+      <input accept=".xlsx" style={{ display: 'none' }} hidden type='file' ref={fileRef} onChange={async e => {
+        const file = e.target.files[0];
+        if (file) {
+          const list = await getExcleData(file)
+          console.log(list);
+
+          await showModal({
+            content: `确认导入${list.length}个商品吗？`,
+          })
+          const data = list.slice(1).map(o => ({
+            productName: o[0],
+            sku: o[1],
+            productCost: o[2],
+            unitPrice: o[3],
+            remark: o[4]
+          }))
+          addGoodsInfoBatchHandle.run(data)
+        }
+      }
+      }></input>
       <SearchTable
         name="商品管理"
         getListRequest={StockAPI.getProductList}
@@ -198,6 +228,26 @@ export default () => {
             >
               同步指定商品
             </Button>
+            <Button
+              type="primary"
+              onClick={() => {
+                fileRef.current.click()
+              }}
+              loading={addGoodsInfoBatchHandle.loading}
+            >
+              导入数据
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => {
+                exportToExcel([
+                  ['商品名称', 'SKU', '成本', '商品价格', '备注'],
+                ], '添加商品模板')
+                Message.success('导出成功')
+              }}
+            >
+              导出模板
+            </Button>
           </>
         )}
       >
@@ -306,6 +356,6 @@ export default () => {
 
         </FilterForm>
       </Modal>
-    </div>
+    </div >
   )
 }
