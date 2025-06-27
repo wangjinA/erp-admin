@@ -146,7 +146,7 @@ export default (props: OrderPageProps) => {
         querySelectLogisticsOrderVO.whetherPack = true;
         break;
       case OrderPageType.PENDING:
-        querySelectLogisticsOrderVO.isHandle = true;
+        querySelectLogisticsOrderVO.handle = true;
         break;
       case OrderPageType.OUT_ORDER_STATUS:
         querySelectLogisticsOrderVO.whetherPack = true;
