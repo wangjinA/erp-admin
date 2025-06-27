@@ -37,6 +37,7 @@ import {
 import { showMessage } from '@/utils'
 import useI18n from '@/utils/useI18n'
 import useStorage from '@/utils/useStorage'
+import { Store, Truck } from 'lucide-react'
 
 export default function LoginForm() {
   const [form] = Form.useForm()
@@ -181,79 +182,92 @@ export default function LoginForm() {
 
   return (
     <div className={styles['login-form-wrapper']}>
-      <div className={styles['login-form-title']}>{t['login.form.title']}</div>
-      <div className={styles['login-form-sub-title']}>{getEndTypeName()}</div>
-      <div className={styles['login-form-error-msg']}>{errorMessage}</div>
+      <div className={classNames(styles['login-form-title'], 'flex items-center mb-6 justify-between')}>
+        <span>{t['login.form.title']}</span>
+        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm ${isClient()
+          ? 'bg-gradient-to-r from-orange-100 to-red-100 text-orange-700 border border-orange-200'
+          : 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 border border-blue-200'
+          }`}>
+          <>
+            {isAdmin() ? <Truck size={18}></Truck> : <Store size={18}></Store>}
+            <span>当前：{getEndTypeName()}登录</span>
+          </>
+        </div>
+
+      </div>
+
+      {/* <div className={styles['login-form-error-msg']}>{errorMessage}</div> */}
       <Form
         className={styles['login-form']}
         layout="vertical"
         form={form}
-        // initialValues={
-        //   isAdmin()
-        //     ? {
-        //         userLoginAccount: 'admin',
-        //         userLoginPassword: '123456',
-        //       }
-        //     : {
-        //         userLoginAccount: '15279298921',
-        //         userLoginPassword: '123456',
-        //       }
-        // }
+      // initialValues={
+      //   isAdmin()
+      //     ? {
+      //         userLoginAccount: 'admin',
+      //         userLoginPassword: '123456',
+      //       }
+      //     : {
+      //         userLoginAccount: '15279298921',
+      //         userLoginPassword: '123456',
+      //       }
+      // }
       >
         {!isRegister && !isForget
           ? (
-              <>
-                <Form.Item
-                  field="userLoginAccount"
-                  rules={[{ required: true, message: t['login.form.userName.errMsg'] }]}
-                >
-                  <Input
-                    prefix={<IconUser />}
-                    placeholder={t['login.form.userName.placeholder']}
-                    onPressEnter={onSubmitClick}
-                  />
-                </Form.Item>
-                <Form.Item
-                  field="userLoginPassword"
-                  rules={[{ required: true, message: t['login.form.password.errMsg'] }]}
-                >
-                  <Input.Password
-                    prefix={<IconLock />}
-                    placeholder={t['login.form.password.placeholder']}
-                    onPressEnter={onSubmitClick}
-                  />
-                </Form.Item>
-                <Form.Item>
-                  <div className="flex">
-                    <Form.Item
-                      noStyle={true}
-                      field="captcha"
-                      rules={[
-                        { required: true, message: t['login.form.password.errMsg'] },
-                      ]}
-                    >
-                      <Input
-                        prefix={<IconSafe />}
-                        placeholder="请输入验证码答案"
-                        onPressEnter={onSubmitClick}
-                      />
-                    </Form.Item>
-                    <Image
-                      width={135}
-                      className="flex-shrink-0 cursor-pointer"
-                      loader={(
-                        <div className="flex justify-center">
-                          <Spin size={4} dot></Spin>
-                        </div>
-                      )}
-                      preview={false}
-                      src={getCaptcha(randomStr)}
-                      onClick={() => setRandomStr(random(1, 99999))}
+            <>
+              <Form.Item
+                field="userLoginAccount"
+                rules={[{ required: true, message: t['login.form.userName.errMsg'] }]}
+              >
+                <Input
+                  prefix={<IconUser />}
+                  placeholder={t['login.form.userName.placeholder']}
+                  onPressEnter={onSubmitClick}
+                />
+              </Form.Item>
+              <Form.Item
+                field="userLoginPassword"
+                rules={[{ required: true, message: t['login.form.password.errMsg'] }]}
+              >
+                <Input.Password
+                  prefix={<IconLock />}
+                  placeholder={t['login.form.password.placeholder']}
+                  onPressEnter={onSubmitClick}
+                />
+              </Form.Item>
+              <Form.Item>
+                <div className="flex">
+                  <Form.Item
+                    noStyle={true}
+                    field="captcha"
+                    rules={[
+                      { required: true, message: t['login.form.password.errMsg'] },
+                    ]}
+                  >
+                    <Input
+                      className={styles['captcha-input']}
+                      prefix={<IconSafe />}
+                      placeholder="请输入验证码答案"
+                      onPressEnter={onSubmitClick}
                     />
-                  </div>
-                </Form.Item>
-              </>
-            )
+                  </Form.Item>
+                  <Image
+                    width={135}
+                    className={classNames('flex-shrink-0 cursor-pointer h-[40px]', styles['captcha-image'])}
+                    loader={(
+                      <div className="flex justify-center">
+                        <Spin size={4} dot></Spin>
+                      </div>
+                    )}
+                    preview={false}
+                    src={getCaptcha(randomStr)}
+                    onClick={() => setRandomStr(random(1, 99999))}
+                  />
+                </div>
+              </Form.Item>
+            </>
+          )
           : null}
         {
           isRegister && isClient() ? <Register form={form}></Register> : null
@@ -275,36 +289,36 @@ export default function LoginForm() {
           {
             isClient()
               ? (
-                  <div className="w-full flex">
-                    {
-                      !isForget
-                        ? (
-                            <Button
-                              type="text"
-                              className={classNames(styles['login-form-register-btn'], 'flex-1')}
-                              onClick={() => {
-                                setIsForget(false)
-                                setIsRegister(!isRegister)
-                              }}
-                            >
-                              {isRegister ? '返回登录' : '注册'}
-                            </Button>
-                          )
-                        : null
-                    }
-                    {/* 忘记密码 */}
-                    <Button
-                      type="text"
-                      className={classNames(styles['login-form-register-btn'], 'flex-1')}
-                      onClick={() => {
-                        setIsRegister(false)
-                        setIsForget(!isForget)
-                      }}
-                    >
-                      {isForget ? '返回登录' : '忘记密码'}
-                    </Button>
-                  </div>
-                )
+                <div className="w-full flex">
+                  {
+                    !isForget
+                      ? (
+                        <Button
+                          type="text"
+                          className={classNames(styles['login-form-register-btn'], 'flex-1')}
+                          onClick={() => {
+                            setIsForget(false)
+                            setIsRegister(!isRegister)
+                          }}
+                        >
+                          {isRegister ? '返回登录' : '注册'}
+                        </Button>
+                      )
+                      : null
+                  }
+                  {/* 忘记密码 */}
+                  <Button
+                    type="text"
+                    className={classNames(styles['login-form-register-btn'], 'flex-1')}
+                    onClick={() => {
+                      setIsRegister(false)
+                      setIsForget(!isForget)
+                    }}
+                  >
+                    {isForget ? '返回登录' : '忘记密码'}
+                  </Button>
+                </div>
+              )
               : null
           }
           <Button
