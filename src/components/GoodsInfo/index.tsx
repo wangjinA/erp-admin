@@ -42,7 +42,7 @@ export default (props: GoodsInfoProps) => {
             <div className="p-2 w-full flex items-start">
               <Image
                 className="goods-image-main size-24"
-                src={item.productImgCos?.[0] || item.productImg?.[0]}
+                src={item.productImg?.[0]}
                 alt='速运宝'
                 preview
               />

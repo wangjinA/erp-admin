@@ -85,6 +85,18 @@ export default () => {
           },
           {
             schema: {
+              label: 'tenantryId',
+              field: 'tenantryId',
+            },
+            formItemProps: {
+              hidden: true
+            },
+            control: 'input',
+            hideTable: true,
+            isCreate: true,
+          },
+          {
+            schema: {
               label: '商品名称',
               field: 'productName',
               required: true,

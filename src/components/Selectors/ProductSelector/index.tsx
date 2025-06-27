@@ -26,68 +26,72 @@ export default (props) => {
       {
         value?.length
           ? (
-              <SearchTable
-                className="mt-4"
-                name="商品选择"
-                tableProps={{
-                  data: value,
-                }}
-                formItemConfigList={[
-                  {
-                    schema: {
-                      label: '商品名称',
-                      field: 'productName',
-                    },
-                    width: 300,
-                    render: (c, row: ProductItem) => (
-                      <ProductInfo data={row}></ProductInfo>
-                    ),
+            <SearchTable
+              className="mt-4"
+              name="商品选择"
+              tableProps={{
+                data: value,
+              }}
+              formItemConfigList={[
+                {
+                  schema: {
+                    label: '商品名称',
+                    field: 'productName',
                   },
-                  {
-                    schema: {
-                      label: '数量',
-                      field: 'num',
-                    },
-                    render(c, row) {
-                      return (
-                        <Remark
-                          value={c}
-                          title="修改数量"
-                          type={RemarkType.Number}
-                          onChange={(v) => {
-                            row.num = v
-                            console.log(value)
-                            onChange([...value])
-                            return Promise.resolve()
-                            // onChange()
-                          }}
-                        >
-                        </Remark>
-                      )
-                    },
+                  width: 300,
+                  render: (c, row: ProductItem) => (
+                    <ProductInfo data={row}></ProductInfo>
+                  ),
+                },
+                {
+                  schema: {
+                    label: '数量',
+                    field: 'num',
                   },
-                  {
-                    schema: {
-                      label: '操作',
-                      field: 'actions',
-                    },
-                    render(c, row) {
-                      return (
-                        <Button
-                          type="text"
-                          onClick={() => {
-                            onChange(value.filter(o => o !== row))
-                          }}
-                        >
-                          移除
-                        </Button>
-                      )
-                    },
+                  render(c, row) {
+                    return (
+                      <Remark
+                        value={c}
+                        title="修改数量"
+                        type={RemarkType.Number}
+                        onChange={(v) => {
+                          row.num = v
+                          console.log(value)
+                          onChange([...value])
+                          return Promise.resolve({
+                            data: {
+                              code: 0
+                            }
+                          })
+                          // onChange()
+                        }}
+                      >
+                      </Remark>
+                    )
                   },
-                ]}
-              >
-              </SearchTable>
-            )
+                },
+                {
+                  schema: {
+                    label: '操作',
+                    field: 'actions',
+                  },
+                  render(c, row) {
+                    return (
+                      <Button
+                        type="text"
+                        onClick={() => {
+                          onChange(value.filter(o => o !== row))
+                        }}
+                      >
+                        移除
+                      </Button>
+                    )
+                  },
+                },
+              ]}
+            >
+            </SearchTable>
+          )
           : null
       }
       <Modal

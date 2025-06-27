@@ -141,7 +141,7 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
                     >
                       <List.Item.Meta
                         className="!items-center p-2 w-full"
-                        avatar={<Image className="size-24" src={item.productImgCos?.[0] || item.productImg?.[0]} />}
+                        avatar={<Image className="size-24" src={item.productImg?.[0]} />}
                         title={`${item.productName.slice(0, 25)}...`}
                         // title={`${item.productName}...`}
                         description={(

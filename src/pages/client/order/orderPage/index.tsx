@@ -127,19 +127,35 @@ export default (props: OrderPageProps) => {
       orderStatus,
       returnStatus,
       abeyanceStatus,
-      ...(type === OrderPageType.SHOPEE
-        ? {
-          shrimpStatus: activeTab,
-          storeFlag: true,
-        }
-        : {
-          whetherPack: true,
-        }),
+      // ...(type === OrderPageType.SHOPEE
+      //   ? {
+      //     shrimpStatus: activeTab,
+      //     storeFlag: true,
+      //   }
+      //   : {
+      //     whetherPack: true,
+      //   }),
       ...((selectIds.length && isBindSelect)
         ? { shrimpOrderNo: data.list.filter(o => selectIds.includes(o.id)).map(o => o.shrimpOrderNo).join(',') }
         : {}
       )
     }, ['shrimpOrderNo'])
+
+    switch (type) {
+      case OrderPageType.PACK_ORDER:
+        querySelectLogisticsOrderVO.whetherPack = true;
+        break;
+      case OrderPageType.PENDING:
+        querySelectLogisticsOrderVO.isHandle = true;
+        break;
+      case OrderPageType.OUT_ORDER_STATUS:
+        querySelectLogisticsOrderVO.whetherPack = true;
+        break;
+      case OrderPageType.SHOPEE:
+        querySelectLogisticsOrderVO.shrimpStatus = activeTab;
+        querySelectLogisticsOrderVO.storeFlag = true;
+        break;
+    }
 
     const querySelectOrderProductVO = replaceQueryValueByObject({
       ...formData.selectOrderProductVO,
@@ -175,7 +191,14 @@ export default (props: OrderPageProps) => {
         [OrderPageType.OUT_ORDER_STATUS]: adminOrderApi.overseasWarehouseReturnList,
       }
 
-      const listRequestList = listRequestMap[type] || orderAPI.getList
+      const listRequestList = (...params) => ((listRequestMap[type] || orderAPI.getList)(...params)).then(r => {
+        if (type === OrderPageType.PENDING) {
+          setCountMap({
+            0: r.data.data.total,
+          })
+        }
+        return r;
+      })
 
       const countBody: any = {
         ...omit(body, ['selectLogisticsOrderVO']),
@@ -191,9 +214,11 @@ export default (props: OrderPageProps) => {
 
       const [res] = await Promise.all([
         listRequestList(body),
-        request(countBody).then((res) => {
-          setCountMap(res.data.data)
-        })
+        ...(
+          type === OrderPageType.PENDING ? [] : [request(countBody).then((res) => {
+            setCountMap(res.data.data)
+          })]
+        )
       ])
       return res.data.data
     },

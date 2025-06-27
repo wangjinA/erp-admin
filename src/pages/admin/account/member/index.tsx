@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux'
 import { tenantryUserAPI } from '@/api/admin/tenantry'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 import { GlobalState } from '@/store'
+import { ShowFormType } from '@/constants'
 
 export default function Member() {
   const [current, setCurrent] = useState<any>()
@@ -62,13 +63,21 @@ export default function Member() {
           {
             schema: { label: '登录账号', field: 'userLoginAccount', required: true },
             isSearch: true,
-
           },
           {
             schema: { label: '密码', field: 'userPassword', required: true },
             hideTable: true,
             controlProps: {
               type: 'password',
+            },
+            dynamicHandle({ showType }) {
+              return {
+                controlProps: {
+                  required: showType === ShowFormType.create,
+                  type: 'password',
+                  placeholder: showType === ShowFormType.create ? '请输入密码' : '不修改请留空',
+                },
+              }
             },
           },
           {
