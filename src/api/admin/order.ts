@@ -174,7 +174,7 @@ export interface SearchOrderParams extends IPageParams {
     sheetFileStartTime: string // 面单申请开始时间
     shrimpOrderNo: string // 虾皮订单号，查询多个用英文逗号隔开
     shrimpWaybillNo: string // 虾皮运单号
-    sortType: number // 查询排序 0 按打包时间排序 1 按紧急程度排序
+    sortType: number // 查询排序 0 按打包时间排序 1 按紧急程度排序 2 按订单创建时间排序
     stockRemovalEndTime: string // 出库结束时间
     stockRemovalStartTime: string // 出库开始时间
     tenantryNo: string // 用户标识

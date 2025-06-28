@@ -64,7 +64,9 @@ export default (props: OrderPageProps) => {
   const [activeTab, setActiveTab] = useLocalStorageState<string>(location.pathname)
   const [countMap, setCountMap] = useState<Record<string, number>>()
   const [selectIds, setSelectIds] = useState([])
-  const [sortType, setSortType] = useState(1)
+  const [sortType, setSortType] = useLocalStorageState<number>(location.pathname + '-sortType', {
+    defaultValue: 2
+  })
   const [formData, _setFormData, restFormData] = useResetState<any>({
     selectLogisticsOrderVO: {},
     selectOrderProductVO: {},
@@ -330,6 +332,10 @@ export default (props: OrderPageProps) => {
                 setSortType(e)
               }}
               options={[
+                {
+                  label: '按最新订单排序',
+                  value: 2,
+                },
                 {
                   label: '按打包时间排序',
                   value: 0,

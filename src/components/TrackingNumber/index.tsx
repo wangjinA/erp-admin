@@ -42,7 +42,7 @@ export default ({
 
       if (orderItem.shippingTime) {
         const min10 = dayjs().diff(dayjs(orderItem.shippingTime), 'minute') < 10
-        if (min10) {
+        if (min10 && orderItem.createType === '0') {
           return <span>
             <Spin size={13}></Spin>
             <Typography.Text className="ml-2 text-sm" type="secondary" >获取面单中...</Typography.Text>

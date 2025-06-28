@@ -44,7 +44,7 @@ export function useColumns(props: OrderTablePorps) {
       width: 240,
       render(c, row) {
         const shippingCarrier = row.orderPackageList?.[0]?.shippingCarrier || row.logisticsOrderPackageList?.[0]?.shippingCarrier
-        const isShowMjInfo = ['线下', '宅配'].some(o => shippingCarrier?.includes(o));
+        const isShowMjInfo = ['线下', '宅配'].some(o => shippingCarrier?.includes(o)) || row.createType !== '0';
         return (
           <div className="border-r h-full p-2">
             {/* <LabelValue label="尾程物流" value={<DictNameFC value={row.orderPackageList[0]?.shippingCarrier} dictCode="logistics_channel"></DictNameFC>}></LabelValue> */}
