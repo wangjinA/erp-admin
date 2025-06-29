@@ -1,9 +1,10 @@
 import { Modal } from '@arco-design/web-react'
-import axios from 'axios'
-import { debounce } from 'lodash'
+import axios, { AxiosResponse } from 'axios'
+import { chunk, debounce } from 'lodash'
 
 import { WhitePathList } from '@/constants/login'
 import { EndType, getEndType, isLoginPage, toLoginPage } from '@/routes'
+import { APIResponse } from './type'
 
 interface RequestEndTypeInfo {
   baseUrl: string
@@ -97,5 +98,22 @@ baseAxios.interceptors.response.use((res) => {
 })
 
 export const SuccessCode = 200
+
+
+export async function requestPoolLimit(requestList: (() => Promise<AxiosResponse<APIResponse<any>>>)[]) {
+  const requestListGroup = chunk(requestList, 2)
+  const resultList: AxiosResponse<APIResponse<any>>[] = []
+  for await (const requestTwo of requestListGroup) {
+    try {
+      const res = await Promise.all(requestTwo.map(item => item()))
+      resultList.push(...res);
+    } catch (error) {
+      resultList.push(error as AxiosResponse<APIResponse<any>>)
+      console.error('error', error);
+    }
+  }
+  const error = resultList.find(o => o.data.code !== SuccessCode);
+  return error || resultList[0];
+}
 
 export default baseAxios

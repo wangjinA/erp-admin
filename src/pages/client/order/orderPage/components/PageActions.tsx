@@ -4,13 +4,14 @@ import { OrderPageDict, PageQuery } from ".."
 import { orderAPI as adminOrderApi } from '@/api/admin/order'
 import { saveAs } from 'file-saver'
 import { entrepotAPI, scanAPI } from '@/api/admin/entrepot'
-import { uniq } from "lodash"
+import { chunk, uniq } from "lodash"
 import { showMessage, showModal } from "@/utils"
 import { bus, EmitTypes } from "@/hooks/useEventBus"
 import { IconExport } from "@arco-design/web-react/icon"
 import { BatchApplyShippingCarrierList, OrderStatus, SystemName } from "@/constants/order"
 import RefreshButton from "@/pages/admin/components/OrderTable/RefreshButton"
 import DownloadSheetButton from "@/pages/admin/components/OrderTable/DownloadSheetButton"
+import { requestPoolLimit } from "@/api"
 
 interface PageActionsProps {
   selectIds: string[];
@@ -48,9 +49,12 @@ const PageActions = (props: PageActionsProps) => {
   })
 
   const outListHandle = useRequest(async () => {
-    await showMessage(() => scanAPI.outList({
-      orderIdList: selectIds,
-    }), '出库')
+    await showMessage(() => {
+      const requestList = chunk(selectIds, 20).map((list) => () => scanAPI.outList({
+        orderIdList: list,
+      }));
+      return requestPoolLimit(requestList);
+    }, '出库')
     bus.emit(EmitTypes.refreshOrderPage)
   }, {
     manual: true,
@@ -72,7 +76,10 @@ const PageActions = (props: PageActionsProps) => {
       orderId,
       senderRealName: entrepotSenderMap[data.list.find(o => o.id === orderId)?.sendWarehouse]?.default || SystemName
     }))
-    await showMessage(() => adminOrderApi.shipmentBatch(batchList), '批量出货')
+    await showMessage(() => {
+      const requestList = chunk(batchList, 20).map((list) => () => adminOrderApi.shipmentBatch(list));
+      return requestPoolLimit(requestList);
+    }, '批量出货')
       .then(res => {
         const errorList = (res.data?.data?.list || []).map(o => ({
           msg: o.msg,

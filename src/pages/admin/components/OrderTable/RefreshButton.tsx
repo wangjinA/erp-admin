@@ -2,7 +2,7 @@ import { Button, Message } from '@arco-design/web-react'
 import { ButtonProps } from '@arco-design/web-react/lib'
 import { useRequest } from 'ahooks'
 
-import React, { ReactNode } from 'react'
+import { ReactNode } from 'react'
 
 import { orderAPI as adminOrderApi } from '@/api/admin/order'
 import { orderAPI } from '@/api/client/order'
