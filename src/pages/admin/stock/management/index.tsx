@@ -3,8 +3,6 @@ import { Button, Divider, Empty, Form, InputNumber, Message, Modal, Space, Spin,
 import { useRequest } from 'ahooks'
 import { useRef, useState } from 'react'
 
-import ProductInfo from '../components/ProductInfo'
-
 import { StockApplyAdmin, WarehousingApplyAPI, WarehousingBody } from '@/api/client/stock'
 import LabelValue from '@/components/LabelValue'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
@@ -12,9 +10,9 @@ import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
 import { ModalWidth } from '@/pages/client/stock/products'
 import { formatDate, showMessage } from '@/utils'
 import { DictNameFC } from '@/components/Selectors/DictSelector'
+import ProductInfo from '@/pages/client/stock/components/ProductInfo'
 // 入库订单
 export default () => {
-  const [visible, setVisible] = useState(false)
   const [logsCurrent, setLogsCurrent] = useState<any>()
   const [warehouseingCurrent, setWarehouseingCurrent] = useState<StockApplyAdmin>()
   const [warehousingData, setWarehousingData] = useState<WarehousingBody>()
@@ -35,7 +33,7 @@ export default () => {
       })
     }
     return showMessage(() => WarehousingApplyAPI.warehousing(warehousingData)).then(() => {
-      setVisible(false)
+      setWarehouseingCurrent(null);
       ref.current.refreshSearchTable()
     })
   }, {
@@ -173,8 +171,8 @@ export default () => {
                         applyId: row.id,
                         putStorageProductVOS: row.logisticsProductList.map(item => ({
                           id: item.id,
-                          logisticsProductId: item.logisticsProductId,
-                          productStorageId: item.productStorageId,
+                          logisticsProductId: item.id,
+                          productStorageId: row.id,
                           receiveProductCount: item.receiveProductCount || 0,
                         })),
                         sendWarehouse: row.sendWarehouse,

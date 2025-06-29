@@ -38,7 +38,7 @@ const ClientRequestEndInfo: RequestEndTypeInfo = {
 export const requestEndInfo
   = getEndType() === EndType.ADMIN ? AdminRequestEndInfo : ClientRequestEndInfo
 
-const timeout = 20 * 1000
+const timeout = 2 * 60 * 1000
 
 const baseAxios = axios.create({
   baseURL: requestEndInfo.baseUrl,
