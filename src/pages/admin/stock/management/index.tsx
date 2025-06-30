@@ -171,8 +171,8 @@ export default () => {
                         applyId: row.id,
                         putStorageProductVOS: row.logisticsProductList.map(item => ({
                           id: item.id,
-                          logisticsProductId: item.id,
-                          productStorageId: row.id,
+                          logisticsProductId: item.logisticsProductId,
+                          productStorageId: item.productStorageId,
                           receiveProductCount: item.receiveProductCount || 0,
                         })),
                         sendWarehouse: row.sendWarehouse,

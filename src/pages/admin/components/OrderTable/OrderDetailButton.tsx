@@ -104,6 +104,7 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
                 status: "danger",
                 disabled: orderItem.orderStatus !== '2' || [ShopeeStatus['取消中'], ShopeeStatus['已取消']].includes(orderItem.shopeeStatus),
               }}
+              orderItem={orderItem}
               sendWarehouse={orderItem.sendWarehouse}
               shrimpOrderNo={orderItem.shrimpOrderNo}
               onSuccess={onSuccess}
@@ -217,7 +218,11 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
                     className="w-[300px]"
                     size="small"
                     span={24}
-                    initialValues={pick(orderItem, ['parcelType', 'parcelWeight', 'parcelLength', 'parcelWide', 'parcelHigh'])}
+                    initialValues={{
+                      ...pick(orderItem, ['parcelType', 'parcelWeight', 'parcelLength', 'parcelWide', 'parcelHigh']),
+                      transportType: orderItem.transportType || 'KY',
+                      parcelType: orderItem.parcelType || '0'
+                    }}
                     onValuesChange={(v) => {
                       setUpdatedOrderItem({
                         ...orderItem,

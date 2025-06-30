@@ -36,6 +36,7 @@ export const ShopeeStatus = {
   '已装船': 'SHIPPED',
   '已取消': 'CANCELLED',
   "取消中": "IN_CANCEL",
+  "已完成": "COMPLETED",
 }
 
 // 异常搁置值 99

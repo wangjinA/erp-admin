@@ -72,10 +72,13 @@ const PageActions = (props: PageActionsProps) => {
       ...pre,
       ...cur,
     }), {})
-    const batchList = orderIds.map(orderId => ({
+    const batchList = orderIds.filter(id => !data.list.find(o => o.id === id)?.shippingTime).map(orderId => ({
       orderId,
       senderRealName: entrepotSenderMap[data.list.find(o => o.id === orderId)?.sendWarehouse]?.default || SystemName
     }))
+    if(!batchList.length){
+      return Message.info('已全部出货成功');
+    }
     await showMessage(() => {
       const requestList = chunk(batchList, 20).map((list) => () => adminOrderApi.shipmentBatch(list));
       return requestPoolLimit(requestList);
