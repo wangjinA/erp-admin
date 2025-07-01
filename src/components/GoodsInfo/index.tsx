@@ -70,7 +70,10 @@ export default (props: GoodsInfoProps) => {
               </div>
             </div>
             {isEdit
-              ? (
+              ? <>
+                {/* <div>
+                  
+                </div> */}
                 <div className="border-l pl-2 pt-2">
                   <FilterForm
                     initialValues={{
@@ -121,7 +124,7 @@ export default (props: GoodsInfoProps) => {
                   >
                   </FilterForm>
                 </div>
-              )
+              </>
               : null}
           </div>
         )}

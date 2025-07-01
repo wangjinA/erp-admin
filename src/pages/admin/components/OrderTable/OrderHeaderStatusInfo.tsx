@@ -24,12 +24,11 @@ export default ({ data }: { data: OrderResponseItem }) => {
       }
       if (data.shippingTime) {
         const diffDay = dayjs().diff(data.shippingTime, 'day');
-        console.log('diffDay', diffDay);
 
         if (diffDay > 3) {
           return ''
         }
-        const res = getRemainingTime(dayjs(data.shippingTime).add(2, 'day'), '出货')
+        const res = getRemainingTime(dayjs(data.shippingTime).add(2, 'day'), '进店')
         return res.dateStr;
       }
       if (isAdmin()) {

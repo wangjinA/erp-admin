@@ -2,7 +2,7 @@ import { Button, ButtonProps, Descriptions, Form, Grid, InputNumber, List, Modal
 
 import { useRequest } from 'ahooks'
 import { omit, pick } from 'lodash'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { SendCargoItemInfo } from './SendCargoInfo'
 
@@ -55,6 +55,28 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
     }
   }, [visible])
 
+  const modalRef = useRef<HTMLDivElement>();
+  const enterRef = useRef((e) => {
+    console.log(1111)
+    // 禁止冒泡
+    e.stopPropagation()
+  })
+
+  useEffect(() => {
+    if (visible && modalRef.current) {
+      modalRef.current.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      });
+      window.addEventListener('keydown', enterRef.current)
+    }
+    return () => {
+      window.removeEventListener('keydown', enterRef.current)
+    }
+  }, [visible])
+
   return (
     <>
       <Button
@@ -68,7 +90,6 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
           ['1', '2'].includes(orderItem.orderStatus) ? '包裹出库' : '包裹详情'
         }
       </Button>
-
       <Modal
         style={{
           width: 1200,
@@ -112,7 +133,8 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
           </Space>
         )}
       >
-        <div className="">
+        <div className="" tabIndex={-1} ref={modalRef}
+        >
           <Table
             rowKey="id"
             pagination={false}
