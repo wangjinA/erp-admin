@@ -159,6 +159,8 @@ function Permission() {
                     onCheck={(keys, extra) => {
                       setCheckedKeys(keys)
                     }}
+                    autoExpandParent={true}
+                    checkStrictly={true}
                     fieldNames={{
                       title: 'menuName',
                       key: 'menuId',

@@ -130,58 +130,59 @@ function Permission() {
 
               {current
                 ? (
-                    <Grid.Col span={9} className="border-neutral-3 pr-4">
-                      <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">
-                        <Typography.Title heading={6} className="mb-0">
-                          功能权限
-                        </Typography.Title>
-                      </Typography.Paragraph>
-                      <Tree
-                        checkable
-                        autoExpandParent={false}
-                        checkedKeys={checkedKeys}
-                        onCheck={(keys, extra) => {
-                          setCheckedKeys(keys)
-                        }}
-                        fieldNames={{
-                          title: 'menuName',
-                          key: 'menuId',
-                        }}
-                        renderTitle={(item: any) => {
-                          return (
-                            <div>
-                              <span className="mr-2">{item.menuName}</span>
-                              <MenuTypeTag size="small" menuType={item.menuType}></MenuTypeTag>
-                            </div>
-                          )
-                        }}
-                        treeData={menuTreeHandle.data || []}
+                  <Grid.Col span={9} className="border-neutral-3 pr-4">
+                    <Typography.Paragraph className="flex items-baseline !mb-0 !mt-2">
+                      <Typography.Title heading={6} className="mb-0">
+                        功能权限
+                      </Typography.Title>
+                    </Typography.Paragraph>
+                    <Tree
+                      checkable
+                      autoExpandParent={true}
+                      checkStrictly={true}
+                      checkedKeys={checkedKeys}
+                      onCheck={(keys, extra) => {
+                        setCheckedKeys(keys)
+                      }}
+                      fieldNames={{
+                        title: 'menuName',
+                        key: 'menuId',
+                      }}
+                      renderTitle={(item: any) => {
+                        return (
+                          <div>
+                            <span className="mr-2">{item.menuName}</span>
+                            <MenuTypeTag size="small" menuType={item.menuType}></MenuTypeTag>
+                          </div>
+                        )
+                      }}
+                      treeData={menuTreeHandle.data || []}
+                    >
+                    </Tree>
+                    <div className="mt-10 flex justify-center gap-4">
+                      <PopconfirmDelete
+                        deleteRequest={() => roleAPI.remove(current?.id).then((r) => {
+                          run()
+                          return r
+                        })}
                       >
-                      </Tree>
-                      <div className="mt-10 flex justify-center gap-4">
-                        <PopconfirmDelete
-                          deleteRequest={() => roleAPI.remove(current?.id).then((r) => {
-                            run()
-                            return r
-                          })}
-                        >
 
-                        </PopconfirmDelete>
-                        <Button
-                          type="primary"
-                          loading={updateAction.loading}
-                          onClick={() => {
-                            updateAction.run({
-                              ...current,
-                              menuIds: checkedKeys,
-                            })
-                          }}
-                        >
-                          保存
-                        </Button>
-                      </div>
-                    </Grid.Col>
-                  )
+                      </PopconfirmDelete>
+                      <Button
+                        type="primary"
+                        loading={updateAction.loading}
+                        onClick={() => {
+                          updateAction.run({
+                            ...current,
+                            menuIds: checkedKeys,
+                          })
+                        }}
+                      >
+                        保存
+                      </Button>
+                    </div>
+                  </Grid.Col>
+                )
                 : null}
             </Grid.Row>
             <Modal
@@ -228,7 +229,7 @@ function Permission() {
           </div>
         )}
       </ActionsContext.Consumer>
-    </CreateWrap>
+    </CreateWrap >
   )
 }
 

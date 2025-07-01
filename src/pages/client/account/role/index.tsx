@@ -158,10 +158,10 @@ function Permission() {
                   <Tree
                     showLine
                     checkable
+                    autoExpandParent={true}
+                    checkStrictly={true}
                     checkedKeys={checkedKeys}
-                    autoExpandParent={false}
                     onCheck={(keys, extra) => {
-                      console.log(keys, extra)
                       setCheckedKeys(keys)
                     }}
                     fieldNames={{
