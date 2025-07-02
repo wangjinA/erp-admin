@@ -1,17 +1,23 @@
 // 现有库存
-import { Button, Space } from '@arco-design/web-react'
+import { Space, Tag } from '@arco-design/web-react'
 
 import { StockListAPI } from '@/api/client/stock'
 import LabelValue from '@/components/LabelValue'
 import SearchTable from '@/components/SearchTable'
 import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
-import { DividerSchema } from '@/constants/schema/common'
+import ProductInfo from '@/pages/client/stock/components/ProductInfo'
 
 export default () => {
   return (
     <SearchTable
       className="bg-white p-4"
+      tableProps={{
+        scroll: {
+          x: 1200
+        }
+      }}
       name="现有库存"
+      showActions={false}
       getListRequest={StockListAPI.getList}
       formItemConfigList={[
         {
@@ -24,7 +30,6 @@ export default () => {
           isSearch: true,
           hideTable: true,
         },
-        { ...DividerSchema, isSearch: true, hideTable: true },
         {
           schema: {
             label: 'SKU',
@@ -44,7 +49,7 @@ export default () => {
         {
           schema: {
             label: '仓位',
-            field: 'position',
+            field: 'seatCode',
           },
           isSearch: true,
           hideTable: true,
@@ -52,7 +57,13 @@ export default () => {
         {
           schema: {
             label: '商品信息',
-            field: 'goodsInfo',
+            field: 'logisticsProduct',
+          },
+          width: 340,
+          render(item) {
+            return <div key={item.id} className="flex items-center">
+              <ProductInfo data={item}></ProductInfo>
+            </div>
           },
         },
         {
@@ -63,51 +74,39 @@ export default () => {
           render(c) {
             return <EntrepotNameFC value={c}></EntrepotNameFC>
           },
+          width: 120,
         },
         {
           schema: {
             label: '仓位信息',
-            field: 'seatId',
+            field: 'seatCode',
           },
+          width: 100,
         },
         {
           schema: {
-            label: '库存数量',
-            field: 'stockQuantity',
+            label: '可用数量/库存数量',
+            field: 'logisticsProduct.quantity',
           },
+          render(col, item, index) {
+            return <Tag color="blue">{`${col || 0}/${item.quantity || 0}`}</Tag>
+          },
+          width: 130,
         },
         {
           schema: {
-            label: '可用/冻结数量',
-            field: 'availableQuantity',
-          },
-        },
-        {
-          schema: {
-            label: '收费信息',
+            label: '相关信息',
             field: 'chargeInfo',
           },
+          width: 300,
           render(c, row) {
             return (
-              <Space>
-                <LabelValue label="最新入库时间" value=""></LabelValue>
-                <LabelValue label="最近扣费时间" value=""></LabelValue>
-                <LabelValue label="最近扣费金额" value=""></LabelValue>
-                <LabelValue label="计费周期单量" value=""></LabelValue>
+              <Space direction="vertical">
+                <LabelValue label="最新入库时间" value={row.lastCheckInTime}></LabelValue>
+                {/* <LabelValue label="最近扣费时间" value=""></LabelValue> */}
+                {/* <LabelValue label="最近扣费金额" value=""></LabelValue> */}
+                {/* <LabelValue label="计费周期单量" value=""></LabelValue> */}
               </Space>
-            )
-          },
-        },
-        {
-          schema: {
-            label: '操作',
-            field: 'acitons',
-          },
-          render() {
-            return (
-              <div>
-                <Button type="primary" onClick={() => {}}>补货</Button>
-              </div>
             )
           },
         },

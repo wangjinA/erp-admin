@@ -17,6 +17,7 @@ import { showMessage } from '@/utils'
 import classNames from 'classnames'
 import DeliveryButton from './DeliveryButton'
 import { ShopeeStatus } from '@/constants/order'
+import { SendStockInfo } from './SendStockInfo'
 
 interface OrderDetailButtonProps {
   orderItem?: OrderResponseItem
@@ -185,12 +186,18 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
                 dataIndex: 'fhxx',
                 width: 250,
                 render(col, row) {
-                  return <SendCargoItemInfo
+                  return <SendStockInfo
                     item={row}
                     orderStatus={orderItem.orderStatus}
                     sendWarehouse={orderItem.sendWarehouse}
                     orderId={orderItem.id}
                   />
+                  // return <SendCargoItemInfo
+                  //   item={row}
+                  //   orderStatus={orderItem.orderStatus}
+                  //   sendWarehouse={orderItem.sendWarehouse}
+                  //   orderId={orderItem.id}
+                  // />
                 },
               },
               {

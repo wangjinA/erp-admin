@@ -1,7 +1,8 @@
 // 库存日志
 import { StockAPI } from '@/api/client/stock'
 import SearchTable from '@/components/SearchTable'
-import { DictNameFC } from '@/components/Selectors/DictSelector'
+import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
+import ProductInfo from '@/pages/client/stock/components/ProductInfo'
 
 export default () => {
   return (
@@ -9,6 +10,7 @@ export default () => {
       className="bg-white p-4"
       name="库存日志"
       getListRequest={StockAPI.getLogs}
+      showActions={false}
       formItemConfigList={[
         {
           schema: {
@@ -23,45 +25,50 @@ export default () => {
         {
           schema: {
             label: '商品信息',
-            field: 'goodsInfo',
+            field: 'logisticsProduct',
+          },
+          width: 340,
+          render(col, row) {
+            return <ProductInfo data={row}></ProductInfo>
           },
         },
         {
           schema: {
             label: '仓库信息',
-            field: 'warehouseInfo',
+            field: 'sendWarehouse',
           },
-        },
-        {
-          schema: {
-            label: '类型',
-            field: 'logType',
+          render(c) {
+            return <EntrepotNameFC value={c}></EntrepotNameFC>
           },
-          render: value => <DictNameFC dictCode="stock_log_type" value={value} />,
+          width: 120,
         },
         {
           schema: {
             label: '变更数量',
             field: 'changeQuantity',
           },
+          width: 100,
         },
         {
           schema: {
             label: '剩余库存',
-            field: 'remainingStock',
+            field: 'surplusStock',
           },
+          width: 100,
         },
         {
           schema: {
             label: '日志时间',
-            field: 'logTime',
+            field: 'createTime',
           },
+          width: 120,
         },
         {
           schema: {
             label: '说明',
             field: 'remark',
           },
+          width: 120,
         },
       ]}
     >

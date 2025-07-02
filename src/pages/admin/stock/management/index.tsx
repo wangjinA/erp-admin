@@ -53,19 +53,11 @@ export default () => {
         ref={ref}
         name="入库订单"
         getListRequest={WarehousingApplyAPI.getList}
-        // leftTool={() => (
-        //   <div>
-        //     <Button
-        //       type="primary"
-        //       onClick={() => {
-        //         setVisible(true)
-        //       }}
-        //       status="warning"
-        //     >
-        //       入库申请
-        //     </Button>
-        //   </div>
-        // )}
+        tableProps={{
+          scroll:{
+            x: 1200,
+          }
+        }}
         formItemConfigList={[
           {
             schema: {
@@ -73,23 +65,16 @@ export default () => {
               field: 'storageCode',
             },
             isSearch: true,
+            width: 230,
             render(c, row) {
               return (
                 <div>
                   <LabelValue label="编码" value={row.storageCode}></LabelValue>
                   <LabelValue label="申请人" value={row.selectApplyUser?.account}></LabelValue>
                   <LabelValue label="用户标识" value={row.selectApplyUser?.number}></LabelValue>
+                  <LabelValue label="所属仓库" value={<EntrepotNameFC value={row.sendWarehouse}></EntrepotNameFC>}></LabelValue>
                 </div>
               )
-            },
-          },
-          {
-            schema: {
-              label: '所属仓库',
-              field: 'sendWarehouse',
-            },
-            render(c) {
-              return <EntrepotNameFC value={c}></EntrepotNameFC>
             },
           },
           {
@@ -97,9 +82,16 @@ export default () => {
               label: '商品信息',
               field: 'logisticsProductList',
             },
-            width: 300,
+            width: 320,
             render(c) {
-              return c.map(item => <ProductInfo key={item.id} data={item}></ProductInfo>)
+              return <div>
+                {c.map(item => {
+                  return <div key={item.id} className="flex items-center">
+                    <ProductInfo data={item}></ProductInfo>
+                    <Tag color="blue">{`${item.sendProductCount || 0}/${item.receiveProductCount || 0}`}</Tag>
+                  </div>
+                })}
+              </div>
             },
           },
           {
@@ -110,21 +102,25 @@ export default () => {
             isSearch: true,
             hideTable: true,
           },
-
           {
             schema: {
               label: '快递单号',
               field: 'expressNo',
             },
+            width: 120,
             isSearch: true,
+            render(c){
+              return c
+            }
           },
           {
             schema: {
               label: '发货/收货数量',
               field: 'sendProductCount',
             },
+            width: 160,
             render(c, row) {
-              return <div>{`${row.sendProductCount || 0}/${row.receiveProductCount || 0}`}</div>
+              return <Tag color="blue">{`${row.sendProductCount || 0}/${row.receiveProductCount || 0}`}</Tag>
             },
           },
           {
@@ -132,18 +128,20 @@ export default () => {
               label: '上架服务费',
               field: 'serviceCharge',
             },
+            width: 120,
           },
           {
             schema: {
               label: '状态',
               field: 'storageStatus',
             },
+            width: 100,
             isSearch: true,
             control: 'dictSelector',
             controlProps: {
               dictCode: 'storage_status',
             },
-            render(c){
+            render(c) {
               return <DictNameFC dictCode="storage_status" value={c}></DictNameFC>
             }
           },
@@ -152,37 +150,41 @@ export default () => {
               label: '创建时间',
               field: 'createTime',
             },
+            width: 160,
           },
           {
             schema: {
               label: '操作',
               field: 'actions',
             },
+            width: 120,
             render(c, row) {
               return (
                 <div>
-                  <Button
-                    type="text"
-                    size="small"
-                    status="default"
-                    loading={logsLoading}
-                    onClick={() => {
-                      setWarehousingData({
-                        applyId: row.id,
-                        putStorageProductVOS: row.logisticsProductList.map(item => ({
-                          id: item.id,
-                          logisticsProductId: item.logisticsProductId,
-                          productStorageId: item.productStorageId,
-                          receiveProductCount: item.receiveProductCount || 0,
-                        })),
-                        sendWarehouse: row.sendWarehouse,
-                        serviceCharge: undefined,
-                      })
-                      setWarehouseingCurrent(row)
-                    }}
-                  >
-                    入库
-                  </Button>
+                  {
+                    !['3', '4'].includes(row.storageStatus) ? <Button
+                      type="text"
+                      size="small"
+                      status="default"
+                      loading={logsLoading}
+                      onClick={() => {
+                        setWarehousingData({
+                          applyId: row.id,
+                          putStorageProductVOS: row.logisticsProductList.map(item => ({
+                            id: item.id,
+                            logisticsProductId: item.logisticsProductId,
+                            productStorageId: item.productStorageId,
+                            receiveProductCount: item.receiveProductCount || 0,
+                          })),
+                          sendWarehouse: row.sendWarehouse,
+                          serviceCharge: undefined,
+                        })
+                        setWarehouseingCurrent(row)
+                      }}
+                    >
+                      入库
+                    </Button> : null
+                  }
                   <Button
                     type="text"
                     size="small"
@@ -205,19 +207,19 @@ export default () => {
       </SearchTable>
       <Modal
         {
-          ...{
-            style: {
-              width: ModalWidth,
-            },
-            visible: !!warehouseingCurrent,
-            title: '入库申请',
-            onCancel: () => setWarehouseingCurrent(null),
-            confirmLoading: loading,
-            onOk: async () => {
-              run()
-            },
-            okText: '入库',
-          }
+        ...{
+          style: {
+            width: ModalWidth,
+          },
+          visible: !!warehouseingCurrent,
+          title: '入库申请',
+          onCancel: () => setWarehouseingCurrent(null),
+          confirmLoading: loading,
+          onOk: async () => {
+            run()
+          },
+          okText: '入库',
+        }
         }
       >
         <div>
@@ -290,10 +292,10 @@ export default () => {
                   )
                 },
               },
-            // {
-            //   title: '仓位',
-            //   dataIndex: 'warehousePosition',
-            // }
+              // {
+              //   title: '仓位',
+              //   dataIndex: 'warehousePosition',
+              // }
             ]}
           >
 
@@ -316,23 +318,23 @@ export default () => {
         >
           {!logsLoading && logData
             ? (
-                <Timeline>
-                  {logData.map(item => (
-                    <Timeline.Item
-                      key={item.id}
-                      label={item.operationContent || '-'}
-                    >
-                      <span>{item.operationProcedure}</span>
-                      <span className="text-gray-500">
-                        {formatDate(item.createTime)}
-                      </span>
-                    </Timeline.Item>
-                  ))}
-                </Timeline>
-              )
+              <Timeline>
+                {logData.map(item => (
+                  <Timeline.Item
+                    key={item.id}
+                    label={item.operationContent || '-'}
+                  >
+                    <span>{item.operationProcedure}</span>
+                    <span className="text-gray-500">
+                      {formatDate(item.createTime)}
+                    </span>
+                  </Timeline.Item>
+                ))}
+              </Timeline>
+            )
             : (
-                <Empty description="暂无记录"></Empty>
-              )}
+              <Empty description="暂无记录"></Empty>
+            )}
         </Spin>
       </Modal>
     </div>

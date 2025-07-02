@@ -41,7 +41,6 @@ export default ({ data }: { data: OrderResponseItem }) => {
     }
     return ''
   }, [data?.shipByDate, data?.shippingTime, data?.shopeeStatus])
-  console.log(dateStr);
 
   return (
     <>

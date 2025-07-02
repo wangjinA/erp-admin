@@ -148,12 +148,6 @@ export default () => {
                 }}
               </Form.Item>
             ),
-            // controlProps:{
-            //   options: .map(item => ({
-            //     label: item.menuName,
-            //     value: item.menuId,
-            //   }))
-            // }
           },
           {
             schema: { label: '创建时间', field: 'createTime' },

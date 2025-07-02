@@ -14,6 +14,7 @@ import classNames from 'classnames'
 import OrderTableActions from './admin/OrderTableActions'
 import { useLocation } from "react-router"
 import { OrderPageDict } from '@/pages/client/order/orderPage'
+import SendStockInfo from './SendStockInfo'
 
 export function useColumns(props: OrderTablePorps) {
   const { dictCode } = props
@@ -35,7 +36,8 @@ export function useColumns(props: OrderTablePorps) {
       dataIndex: 'orderProductVOList_1',
       width: 220,
       render(col, row) {
-        return <SendCargoInfo data={row}></SendCargoInfo>
+        // return <SendCargoInfo data={row}></SendCargoInfo>
+        return <SendStockInfo data={row}></SendStockInfo>
       },
     },
     {

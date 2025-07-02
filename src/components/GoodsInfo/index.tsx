@@ -1,6 +1,6 @@
-import { List, Space, Image } from '@arco-design/web-react'
+import { List, Space, Image, Form, Input } from '@arco-design/web-react'
 import classNames from 'classnames'
-import React, { useRef } from 'react'
+import { useRef } from 'react'
 
 import CopyText from '../CopyText'
 import FilterForm from '../FilterForm'
@@ -10,6 +10,7 @@ import LabelValue from '../LabelValue'
 import styles from './index.module.less'
 
 import { OrderResponseItem } from '@/types/order'
+import ProductStockSelector from '../Selectors/ProductStockSelector'
 
 interface GoodsInfoProps {
   data: OrderResponseItem['orderProductVOList']
@@ -76,6 +77,7 @@ export default (props: GoodsInfoProps) => {
                 </div> */}
                 <div className="border-l pl-2 pt-2">
                   <FilterForm
+                    gutter={[0, 0]}
                     initialValues={{
                       ...item,
                       deliveryMethod: item.deliveryMethod || '0',
@@ -92,6 +94,9 @@ export default (props: GoodsInfoProps) => {
                           span: 16,
                           required: true,
                         },
+                        formItemProps: {
+                          className: "!mb-0"
+                        },
                         control: 'dictSelector',
                         controlProps: {
                           dictCode: 'delivery_method',
@@ -106,6 +111,7 @@ export default (props: GoodsInfoProps) => {
                         },
                         formItemProps: {
                           triggerPropName: 'checked',
+                          className: "!mb-0"
                         },
                         control: 'switch',
                         controlProps: {
@@ -115,10 +121,31 @@ export default (props: GoodsInfoProps) => {
                       },
                       {
                         schema: {
-                          label: '快递单号',
-                          field: 'trackingNo',
+                          label: ' ',
+                          field: 'dddddd',
                           span: 24,
                         },
+                        formItemProps: {
+                          noStyle: true,
+                        },
+                        control: (
+                          <Form.Item noStyle={true} shouldUpdate={(a, b) => a.menuType !== b.menuType}>
+                            {(values) => {
+                              console.log(values);
+                              if (values.deliveryMethod === '0') {
+                                return (
+                                  <Form.Item className="mt-4" field="trackingNo" label="快递单号" colon>
+                                    <Input placeholder='请输入快递单号'></Input>
+                                  </Form.Item>
+                                )
+                              } else {
+                                return <Form.Item field="aaaa">
+                                  <ProductStockSelector></ProductStockSelector>
+                                </Form.Item>
+                              }
+                            }}
+                          </Form.Item>
+                        ),
                       },
                     ]}
                   >

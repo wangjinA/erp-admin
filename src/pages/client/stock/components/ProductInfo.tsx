@@ -1,18 +1,20 @@
 import { ProductItem } from '@/api/client/stock'
 import LabelValue from '@/components/LabelValue'
 import { Image } from '@arco-design/web-react'
+import { isArray } from 'lodash'
 
 interface IProductInfo {
   data: Partial<ProductItem>
+  className?: string
 }
 
 export default (props: IProductInfo) => {
-  const { data } = props
+  const { data, className } = props
   return (
-    <div className="p-2 w-full flex items-center">
+    <div className={`p-2 w-full flex items-center ${className}`}>
       <Image
         className="size-16"
-        src={data.productImg?.[0]}
+        src={isArray(data.productImg) ? data.productImg?.[0] : data.productImg}
       />
       <div className="ml-2 flex-1 w-0">
         <div className="text-sm text-gray-500">

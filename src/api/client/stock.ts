@@ -243,6 +243,7 @@ export interface ProductItem {
   unitPrice: number
   updateBy: number
   updateTime: string
+  num: number;
 }
 
 export interface StockApplyAdmin {

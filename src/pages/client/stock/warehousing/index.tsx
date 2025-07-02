@@ -1,41 +1,21 @@
-import { Button, Empty, Form, Modal, Spin, Timeline } from '@arco-design/web-react'
+import { Button, Empty, Modal, Spin, Tag, Timeline } from '@arco-design/web-react'
 
 import { useRequest } from 'ahooks'
 import { useRef, useState } from 'react'
-
-import ApplyWarehousingModal from '../components/ApplyWarehousingModal'
 import ProductInfo from '../components/ProductInfo'
 
 import { WarehousingApplyAPI } from '@/api/client/stock'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
-import { formatDate, showMessage } from '@/utils'
+import { formatDate } from '@/utils'
 import { DictNameFC } from '@/components/Selectors/DictSelector'
+import ApplyWarehousingButton from '../components/ApplyWarehousingButton'
 
 // 入库管理
 export default () => {
-  const [visible, setVisible] = useState(false)
   const [logsCurrent, setLogsCurrent] = useState<any>()
 
-  const [form] = Form.useForm()
   const ref = useRef<SearchTableRef>()
-  const { run, loading } = useRequest(async () => {
-    const formData = await form.validate()
-
-    return showMessage(() => WarehousingApplyAPI.insert({
-      ...formData,
-      expressNo: formData.expressNo?.toString(),
-      stockStorageApplyProductList: formData.stockStorageApplyProductList.map(item => ({
-        logisticsProductId: item.id,
-        sendProductCount: item.num, // 发货数量
-      })),
-    })).then(() => {
-      setVisible(false)
-      ref.current.refreshSearchTable()
-    })
-  }, {
-    manual: true,
-  })
   const { run: logsRun, data: logData, loading: logsLoading } = useRequest(async (id) => {
     if (id) {
       return WarehousingApplyAPI.logs(id).then(r => r.data.data.list)
@@ -51,18 +31,14 @@ export default () => {
         name="入库申请"
         getListRequest={WarehousingApplyAPI.getList}
         removeRequest={WarehousingApplyAPI.remove}
+        showRemoveButton={(record) => !['3', '4'].includes(record.storageStatus)}
+        tableProps={{
+          scroll: {
+            x: 1200
+          }
+        }}
         leftTool={() => (
-          <div>
-            <Button
-              type="primary"
-              onClick={() => {
-                setVisible(true)
-              }}
-              status="warning"
-            >
-              入库申请
-            </Button>
-          </div>
+          <ApplyWarehousingButton refreshSearchTable={ref.current?.refreshSearchTable}></ApplyWarehousingButton>
         )}
         formItemConfigList={[
           {
@@ -71,6 +47,7 @@ export default () => {
               field: 'storageCode',
             },
             isSearch: true,
+            width: 140,
           },
           {
             schema: {
@@ -80,6 +57,7 @@ export default () => {
             render(c) {
               return <EntrepotNameFC value={c}></EntrepotNameFC>
             },
+            width: 120,
           },
           {
             schema: {
@@ -106,6 +84,10 @@ export default () => {
               field: 'expressNo',
             },
             isSearch: true,
+            width: 120,
+            render(c) {
+              return c || '-'
+            },
           },
           {
             schema: {
@@ -113,14 +95,16 @@ export default () => {
               field: 'sendProductCount',
             },
             render(c, row) {
-              return <div>{`${row.sendProductCount || 0}/${row.receiveProductCount || 0}`}</div>
+              return <Tag color="blue">{`${row.sendProductCount || 0}/${row.receiveProductCount || 0}`}</Tag>
             },
+            width: 140,
           },
           {
             schema: {
               label: '上架服务费',
               field: 'serviceCharge',
             },
+            width: 120,
           },
           {
             schema: {
@@ -134,13 +118,15 @@ export default () => {
             },
             render(c) {
               return <DictNameFC dictCode="storage_status" value={c}></DictNameFC>
-            }
+            },
+            width: 120,
           },
           {
             schema: {
               label: '创建时间',
               field: 'createTime',
             },
+            width: 120,
           },
           {
             schema: {
@@ -170,20 +156,6 @@ export default () => {
       >
 
       </SearchTable>
-      <ApplyWarehousingModal
-        form={form}
-        modalProps={{
-          visible,
-          title: '入库申请',
-          onCancel: () => setVisible(false),
-          confirmLoading: loading,
-          onOk: async () => {
-            run()
-          },
-
-        }}
-      >
-      </ApplyWarehousingModal>
       <Modal
         title="操作记录"
         visible={logsCurrent}
@@ -200,23 +172,23 @@ export default () => {
         >
           {!logsLoading && logData
             ? (
-                <Timeline>
-                  {logData.map(item => (
-                    <Timeline.Item
-                      key={item.id}
-                      label={item.operationContent || '-'}
-                    >
-                      <span>{item.operationProcedure}</span>
-                      <span className="text-gray-500">
-                        {formatDate(item.createTime)}
-                      </span>
-                    </Timeline.Item>
-                  ))}
-                </Timeline>
-              )
+              <Timeline>
+                {logData.map(item => (
+                  <Timeline.Item
+                    key={item.id}
+                    label={item.operationContent || '-'}
+                  >
+                    <span>{item.operationProcedure}</span>
+                    <span className="text-gray-500">
+                      {formatDate(item.createTime)}
+                    </span>
+                  </Timeline.Item>
+                ))}
+              </Timeline>
+            )
             : (
-                <Empty description="暂无记录"></Empty>
-              )}
+              <Empty description="暂无记录"></Empty>
+            )}
         </Spin>
       </Modal>
     </div>

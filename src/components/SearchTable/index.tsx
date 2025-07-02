@@ -32,7 +32,7 @@ import { AxiosResponse } from 'axios'
 
 import classNames from 'classnames'
 import { omit } from 'lodash'
-import React, { CSSProperties, forwardRef, useImperativeHandle, useRef, useState } from 'react'
+import React, { CSSProperties, forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react'
 
 import { CreateFormItemType } from '../CreateFormItem'
 import CreateWrap, { ActionsContext, CreateWrapProps } from '../CreateWrap'
@@ -48,7 +48,6 @@ import {
   ShowFormTypeMap,
 } from '@/constants'
 import { showMessage, showModal } from '@/utils'
-import { InputRef } from '@arco-design/web-react/es/Input/input'
 
 export interface SearchTableRef {
   refreshSearchTable: () => void
@@ -83,6 +82,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
       getListRequest,
       updateRequest,
       removeRequest,
+      showRemoveButton,
       middleTool,
       onDataChange,
     } = props
@@ -133,6 +133,11 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
         refreshSearchTable: run,
       }
     })
+
+    const actionColumn = useMemo(() => formItemConfigList
+      .find(
+        oitem => oitem.schema.field === 'actions',
+      ), [formItemConfigList])
 
     const showSearchSection = formItemConfigList.some(item => item.isSearch) // 是否有搜索项
     const showHeaderSection = showSearchSection || createRequest // 是否有搜索项或者创建按钮
@@ -260,6 +265,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                         title: '操作',
                         key: 'actions',
                         width: 315,
+                        ...actionColumn,
                         render: (_, record, index) => (
                           <Space size={0}>
                             {onView && (
@@ -273,11 +279,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                                 查看
                               </Button>
                             )}
-                            {formItemConfigList
-                              .find(
-                                oitem => oitem.schema.field === 'actions',
-                              )
-                              ?.render?.(_, record, index)}
+                            {actionColumn?.render?.(_, record, index)}
                             {updateRequest && (
                               <Button
                                 type="text"
@@ -290,7 +292,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                                 编辑
                               </Button>
                             )}
-                            {removeRequest && (
+                            {(removeRequest && (showRemoveButton ? showRemoveButton(record) : true)) ? (
                               <PopconfirmDelete
                                 buttonProps={{
                                   type: 'text',
@@ -319,7 +321,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                                 }}
                               >
                               </PopconfirmDelete>
-                            )}
+                            ) : null}
                           </Space>
                         ),
                       },
@@ -408,8 +410,6 @@ function formItemConfigListStatusFilter(
         }, ...(item.dynamicHandle ? item.dynamicHandle(dynamicHandleParams) : {})
       })
     })
-  console.log(result)
-
   return result
 }
 
@@ -445,9 +445,9 @@ interface SearchTableProps {
   createButtonProps?: ButtonProps
   filterFormProps?: Partial<FilterFormProps>
   deleteConfirmKey?: string
+
   openEditTransform?: (params: any) => any // 打开编辑的时候，对数据做处理
   requestEditBodyTransform?: (params: any) => any
-  openEditTransform,
   requestQueryTransform?: (params: any) => any
   leftTool?: () => React.ReactNode
   middleTool?: () => React.ReactNode
@@ -457,6 +457,7 @@ interface SearchTableProps {
     params: IPageParams & Record<string, any>
   ) => Promise<AxiosResponse<APIListResponse<any>>>
   removeRequest?: (id) => Promise<AxiosResponse<APIResponse>>
+  showRemoveButton?: (params: any) => boolean;
   updateRequest?: (id) => Promise<AxiosResponse<APIResponse>>
   onView?: (record) => void
   onDataChange?: (data: ListResponse) => void

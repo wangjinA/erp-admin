@@ -92,6 +92,11 @@ export default () => {
         removeRequest={StockAPI.deleteGoodsInfo}
         updateRequest={StockAPI.updateGoodsInfo}
         createRequest={StockAPI.addGoodsInfo}
+        tableProps={{
+          scroll: {
+            x: 1200,
+          }
+        }}
         createText="新增商品"
         createButtonProps={{
           status: 'success',
@@ -147,6 +152,7 @@ export default () => {
               label: '商品信息',
               field: 'goodsInfo',
             },
+            width: 320,
             render(c, row) {
               return <ProductInfo data={row}></ProductInfo>
             },
@@ -161,6 +167,7 @@ export default () => {
             render(c) {
               return c || '未填写'
             },
+            hideTable: true,
           },
           {
             schema: {
@@ -185,6 +192,9 @@ export default () => {
             },
             control: 'number',
             isCreate: true,
+            render(c) {
+              return c || 0
+            },
           },
           {
             schema: {
@@ -193,6 +203,9 @@ export default () => {
             },
             control: 'number',
             isCreate: true,
+            render(c) {
+              return c || 0
+            },
           },
           {
             schema: {
