@@ -1,13 +1,11 @@
-import { Tag, Typography } from '@arco-design/web-react'
-
-import { useRequest } from 'ahooks'
-import classNames from 'classnames'
 import React, { useState } from 'react'
-
+import classNames from 'classnames'
 import styles from './index.module.less'
-
-import { expressAPI } from '@/api/client/express'
+import { OrderResponseItem } from '@/types/order'
 import LabelValue from '@/components/LabelValue'
+import { Tag, Typography } from '@arco-design/web-react'
+import { useRequest } from 'ahooks'
+import { expressAPI } from '@/api/client/express'
 import MyBadge from '@/components/MyBadge'
 import PopconfirmDelete from '@/components/PopconfirmDelete'
 import ReturnParcel from '@/components/ReturnParcel'
@@ -15,9 +13,26 @@ import { useDictOptions } from '@/components/Selectors/DictSelector'
 import TrackingNo from '@/components/TrackingNo'
 import { EmitTypes, bus } from '@/hooks/useEventBus'
 import { isClient } from '@/routes'
-import { OrderResponseItem } from '@/types/order'
 import { showMessage, showModal } from '@/utils'
 import { IconEmpty } from '@arco-design/web-react/icon'
+
+interface SendCargoInfoProps {
+  data: OrderResponseItem
+}
+
+export const SendStockItemInfo: React.FC<{
+  item: OrderResponseItem['orderProductVOList'][0]
+  orderStatus: string;
+  sendWarehouse: string;
+  orderId: string;
+}> = ({ item }) => {
+  return <div className="h-full p-2">
+    <LabelValue label="快递" value={<Tag color="magenta">库存发货 x{item.stockUse}</Tag>}></LabelValue>
+    {/* <LabelValue label="仓位" value={item.freightSpaceName}></LabelValue> */}
+    <LabelValue label="商品编号" value={<Typography.Text copyable={{ text: item.logisticsProduct?.productCode }}><Tag color="blue">{item.logisticsProduct?.productCode}</Tag></Typography.Text>}></LabelValue>
+  </div>
+}
+
 
 interface SendCargoInfoProps {
   data: OrderResponseItem
@@ -281,70 +296,35 @@ export const SendCargoItemInfo: React.FC<{
   </div>
 }
 
-const SendCargoInfo: React.FC<SendCargoInfoProps> = (props) => {
+export const SendStockCargoItemInfo: React.FC<{
+  item: OrderResponseItem['orderProductVOList'][0]
+  orderStatus: string;
+  sendWarehouse: string;
+  orderId: string;
+}> = (props) => {
+  const { item, orderStatus, sendWarehouse, orderId } = props
+  return item.deliveryMethod === '1' ? <SendStockItemInfo
+    item={item}
+    orderStatus={orderStatus}
+    sendWarehouse={sendWarehouse}
+    orderId={orderId}
+  /> : <SendCargoItemInfo
+    item={item}
+    orderStatus={orderStatus}
+    sendWarehouse={sendWarehouse}
+    orderId={orderId} />
+}
+
+const SendStockCargoInfos: React.FC<SendCargoInfoProps> = (props) => {
   const { data } = props
   return (
     <div className={classNames(styles['goods-info'], 'pr-2 h-full')}>
       {data.orderProductVOList?.map((item, i) => (
         <div
-          key={i}
+          key={item.id}
           className={classNames('h-[105px] border-r', i > 0 ? 'border-t' : '')}
         >
-          {/* <div className="h-full p-2">
-            <LabelValue
-              label="快递"
-              value={item.trackingNo
-                ? (
-                  <CopyText
-                    value={item.trackingNo}
-                    gap={1}
-                  >
-                    <TrackingNo
-                      value={item.trackingNo}
-                    >
-                    </TrackingNo>
-                  </CopyText>
-                )
-                : <Tag>未填</Tag>}
-            >
-            </LabelValue>
-            {
-              item.trackingNo
-                ? (
-                  <>
-                    <LabelValue
-                      label="状态"
-                      value={<ExpressStatus {...item} />}
-                    >
-                    </LabelValue>
-                    {
-                      ['0', '1', '2'].includes(data.orderStatus) && isClient()
-                        ? (
-                          <LabelValue
-                            valueClassName="inline-flex"
-                            label="操作"
-                            value={(
-                              <ExpressStatusActions
-                                item={item}
-                                sendWarehouse={data.sendWarehouse}
-                                orderId={data.id}
-                              />
-                            )}
-                          />
-                        )
-                        : null
-                    }
-                  </>
-                )
-                : null
-            }
-            {item.freightSpaceName
-              ? (
-                <LabelValue label="仓位" value={item.freightSpaceName}></LabelValue>
-              )
-              : null}
-          </div> */}
-          <SendCargoItemInfo
+          <SendStockCargoItemInfo
             item={item}
             orderStatus={data.orderStatus}
             sendWarehouse={data.sendWarehouse}
@@ -356,4 +336,4 @@ const SendCargoInfo: React.FC<SendCargoInfoProps> = (props) => {
   )
 }
 
-export default SendCargoInfo
+export default SendStockCargoInfos

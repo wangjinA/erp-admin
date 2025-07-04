@@ -1,120 +1,79 @@
-import { Button, Image, Modal } from '@arco-design/web-react'
-
+import { Button, InputNumber, Modal, Tag } from '@arco-design/web-react'
 import { useState } from 'react'
-
-import { ProductItem, StockAPI } from '@/api/client/stock'
+import { StockItem, StockListAPI } from '@/api/client/stock'
 import SearchTable from '@/components/SearchTable'
 import ProductInfo from '@/pages/client/stock/components/ProductInfo'
+import LabelValue from '@/components/LabelValue'
+import { IconClose, IconPlus } from '@arco-design/web-react/icon'
 
 interface ProductStockSelectorProps {
   className?: string
-  value?: ProductItem[]
-  onChange?: (value: ProductItem[]) => void
+  value?: StockItem[]
+  onChange?: (value: StockItem[]) => void
+  stockNum?: number
+  disabled?: boolean
 }
 
 export default (props: ProductStockSelectorProps) => {
-  const { value, onChange } = props
+  const { value, className, onChange, stockNum, disabled } = props
   const [visible, setVisible] = useState(false)
-  const [selectedRowKeys, setSelectedRowKeys] = useState<(ProductItem)[]>([...(value || [])])
-  const [list, setList] = useState<ProductItem[]>()
-
+  const [selectedRowKeys, setSelectedRowKeys] = useState<(StockItem)[]>([...(value || [])])
+  const [list, setList] = useState<StockItem[]>()
+  console.log('value', value, stockNum)
   return (
-    <div>
+    <div className={className}>
       {
-        !value?.length ? <Button onClick={() => {
+        !value?.length ? <Button className="mx-auto w-1/2" disabled={disabled} type="primary" icon={<IconPlus></IconPlus>} long onClick={() => {
           setVisible(true)
-        }}
-        >
+        }}>
           选择库存
         </Button> : <div>
           {
             value.map(item => (
-              <div key={item.id}>
-                <ProductInfo className="!px-2" data={item}></ProductInfo>
+              <div key={item.id} className="flex items-center relative">
+                <ProductInfo className="!px-2" data={item.logisticsProduct}></ProductInfo>
+                <InputNumber
+                  disabled={disabled}
+                  value={item.useAbleQuantityChange}
+                  className="w-24"
+                  placeholder="数量"
+                  min={1}
+                  max={item.useAbleQuantity || 1} onChange={(v) => {
+                    item.useAbleQuantityChange = v
+                    const newSelectedRowKeys = selectedRowKeys.map(o => o.id === item.id ? {
+                      ...o,
+                      useAbleQuantityChange: v,
+                    } : o);
+                    setSelectedRowKeys(newSelectedRowKeys);
+                    onChange(newSelectedRowKeys)
+                  }}></InputNumber>
+                <Button
+                  className="absolute -right-3 -top-3"
+                  status="danger"
+                  icon={<IconClose />}
+                  shape='circle'
+                  onClick={() => {
+                    const newSelectedRowKeys = selectedRowKeys.filter(o => o.id !== item.id)
+                    onChange(newSelectedRowKeys)
+                    setSelectedRowKeys(newSelectedRowKeys)
+                  }}>
+                </Button>
               </div>
             ))
           }
         </div>
       }
-      {/* {
-        value?.length
-          ? (
-            <SearchTable
-              className="mt-4"
-              name="商品选择"
-              tableProps={{
-                data: value,
-              }}
-              formItemConfigList={[
-                {
-                  schema: {
-                    label: '商品名称',
-                    field: 'productName',
-                  },
-                  width: 300,
-                  render: (c, row: ProductItem) => (
-                    
-                  ),
-                },
-                {
-                  schema: {
-                    label: '数量',
-                    field: 'num',
-                  },
-                  render(c, row) {
-                    return (
-                      <Remark
-                        value={c}
-                        title="修改数量"
-                        type={RemarkType.Number}
-                        onChange={(v) => {
-                          row.num = v
-                          console.log(value)
-                          onChange([...value])
-                          return Promise.resolve({
-                            data: {
-                              code: 0
-                            }
-                          })
-                          // onChange()
-                        }}
-                      >
-                      </Remark>
-                    )
-                  },
-                },
-                {
-                  schema: {
-                    label: '操作',
-                    field: 'actions',
-                  },
-                  render(c, row) {
-                    return (
-                      <Button
-                        type="text"
-                        onClick={() => {
-                          onChange(value.filter(o => o !== row))
-                        }}
-                      >
-                        移除
-                      </Button>
-                    )
-                  },
-                },
-              ]}
-            >
-            </SearchTable>
-          )
-          : null
-      } */}
       <Modal
         style={{
           width: '850px',
         }}
         visible={visible}
-        title="商品选择"
+        title="库存选择"
         onConfirm={() => {
-          onChange(selectedRowKeys)
+          onChange(selectedRowKeys.map(o => ({
+            ...o,
+            useAbleQuantityChange: stockNum >= o.useAbleQuantity ? o.useAbleQuantity : stockNum
+          })))
           setVisible(false)
         }}
         onCancel={() => {
@@ -122,7 +81,7 @@ export default (props: ProductStockSelectorProps) => {
         }}
       >
         <SearchTable
-          getListRequest={(...p) => StockAPI.getProductList(...p).then((r) => {
+          getListRequest={(...p) => StockListAPI.getList(...p).then((r) => {
             setList(r.data.data.list)
             setSelectedRowKeys([])
             return r
@@ -132,12 +91,12 @@ export default (props: ProductStockSelectorProps) => {
           tableProps={{
             rowKey: 'id',
             rowSelection: {
-              type: 'checkbox',
+              type: 'radio',
               selectedRowKeys: selectedRowKeys.map(item => item.id),
-              onChange: (selectedRowKeys) => {
-                setSelectedRowKeys(list.filter(oitem => selectedRowKeys.includes(oitem.id)).map(item => ({
-                  ...item,
-                  num: 20,
+              onChange: (selectedRowKeys, selectedRows) => {
+                console.log(selectedRows, selectedRowKeys)
+                setSelectedRowKeys(selectedRows.map(o => ({
+                  ...o,
                 })))
               },
               onSelectAll: (selected) => {
@@ -151,6 +110,12 @@ export default (props: ProductStockSelectorProps) => {
                   setSelectedRowKeys([])
                 }
               },
+              checkboxProps: (record) => {
+                return {
+                  disabled: !record.useAbleQuantity,
+                };
+              },
+
             },
           }}
           formItemConfigList={[
@@ -159,23 +124,26 @@ export default (props: ProductStockSelectorProps) => {
                 label: '商品名称',
                 field: 'productName',
               },
-              render: (c, row: ProductItem) => (
-                <div className="flex items-center">
-                  <Image className="size-14 mr-1 overflow-hidden object-cover" src={row.productImg}></Image>
-                  <div className="w-44">{row.productName}</div>
-                </div>
+              render: (c, row: StockItem) => (
+                <ProductInfo data={row.logisticsProduct}></ProductInfo>
               ),
+              width: 340,
               isSearch: true,
             },
             {
               schema: {
-                label: 'SKU',
-                field: 'sku',
+                label: '相关信息',
+                field: 'lastCheckInTime',
               },
+              render: (c, row: StockItem) => (
+                <div>
+                  <LabelValue label="可用库存" value={<Tag color='blue'>{row.useAbleQuantity || 0}</Tag>}></LabelValue>
+                  <LabelValue label="入库时间" value={row.lastCheckInTime}></LabelValue>
+                </div>
+              ),
             },
           ]}
         >
-
         </SearchTable>
       </Modal>
     </div>

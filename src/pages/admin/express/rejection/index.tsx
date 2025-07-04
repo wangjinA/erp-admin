@@ -9,7 +9,7 @@ import { DictNameFC } from '@/components/Selectors/DictSelector'
 import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
 import TrackingNo from '@/components/TrackingNo'
 import { DividerSchema } from '@/constants/schema/common'
-import { TagColors } from '@/pages/admin/components/OrderTable/SendCargoInfo'
+import { TagColors } from '@/constants/colorMap'
 import { showMessage, showModal, timeArrToObject } from '@/utils'
 
 export default () => {

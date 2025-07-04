@@ -34,7 +34,7 @@ const ClientHeaderActions = (props: ClientHeaderActionsProps) => {
         {item.whetherPack && item.orderStatus !== '5' ? '编辑打包' : '一键打包'}
       </Button>
       <Button
-        disabled={!['0'].includes(item.orderStatus)}
+        disabled={!['0'].includes(item.orderStatus) || !item.whetherPack}
         onClick={async () => {
           await showModal({
             content: '确定要取消打包吗？',

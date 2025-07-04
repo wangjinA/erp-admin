@@ -142,7 +142,7 @@ function FormControl(props: Pick<CreateFormItemType, 'schema' | 'control' | 'con
         return isPreview
           ? <span>{value}</span>
           : (
-              <Input.TextArea placeholder="请输入" rows={4} {...controlProps} {...restProps} />
+              <Input.TextArea placeholder="请输入" rows={3} {...controlProps} {...restProps} />
             )
       case 'switch':
         return isPreview

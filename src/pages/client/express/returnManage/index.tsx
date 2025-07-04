@@ -11,7 +11,7 @@ import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 import { DictNameFC } from '@/components/Selectors/DictSelector'
 import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
 import { DividerSchema } from '@/constants/schema/common'
-import { TagColors } from '@/pages/admin/components/OrderTable/SendCargoInfo'
+import { TagColors } from '@/constants/colorMap'
 import { showMessage, showModal } from '@/utils'
 
 export default () => {

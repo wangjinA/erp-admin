@@ -1,5 +1,4 @@
 import { Button, Radio, Spin } from '@arco-design/web-react'
-import React from 'react'
 
 import { useEntrepotOptions } from '../EntrepotSelector'
 
@@ -11,10 +10,10 @@ export default (props) => {
       )
     : res.data
       ? (
-          <Radio.Group {...props}>
+          <Radio.Group size="small" {...props}>
             {[{ label: '全部', value: undefined }, ...res.data].map((item) => {
               return (
-                <Radio className="pl-0" key={item.value || 'all'} value={item.value}>
+                <Radio className="pl-0" key={item.value ?? 'all'} value={item.value}>
                   {({ checked }) => {
                     return (
                       <Button

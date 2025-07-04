@@ -5,7 +5,7 @@ import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
 import duration from 'dayjs/plugin/duration'
 import weekday from 'dayjs/plugin/weekday'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
@@ -33,6 +33,15 @@ import useStorage from './utils/useStorage'
 dayjs.extend(duration)
 dayjs.extend(weekday)
 dayjs().locale('zh-cn')
+
+console.log(import.meta.env.MODE)
+if (import.meta.env.MODE === 'development') {
+  const hm = document.createElement('script');
+  hm.src = 'https://hm.baidu.com/hm.js?fbba72768e8eb71ce20ab470e53488b9';
+  const s = document.getElementsByTagName('script')[0];
+  s.parentNode?.insertBefore(hm, s);
+}
+
 
 const store = createStore(rootReducer)
 function Index() {

@@ -1,3 +1,5 @@
+import { ProductItem } from "@/api/client/stock"
+
 export interface OrderProductList {
   actualQuantity: number // 实际收货数量
   checkStatus: boolean // 核对状态
@@ -12,6 +14,7 @@ export interface OrderProductList {
   itemId: number // 虾皮平台商品id
   orderId: number // 订单id
   orderItemId: number // 虾皮平台订单商品id
+  stockUse: number // 库存使用数量
   problemStatus: boolean // 是否为问题订单：默认为空
   productImg: string // 商品图片
   productName: string // 商品名称
@@ -28,6 +31,7 @@ export interface OrderProductList {
   unitPrice: number // 单价
   updateBy: number // 更新人
   updateTime: '' // 更新时间
+  logisticsProduct: ProductItem
 }
 export interface Order {
   actualShippingFee: number // 实际运费

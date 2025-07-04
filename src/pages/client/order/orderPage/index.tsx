@@ -10,7 +10,7 @@ import {
 } from '@arco-design/web-react'
 import { IconExport, IconRefresh, IconSearch } from '@arco-design/web-react/icon'
 import { useLocalStorageState, usePagination, useResetState } from 'ahooks'
-import { omit } from 'lodash'
+import { omit, sum } from 'lodash'
 import { useState } from 'react'
 
 import { getOrderFilter } from './schema'
@@ -26,6 +26,7 @@ import SyncOrderButton from '@/pages/admin/components/OrderTable/SyncOrderButton
 import { isAdmin } from '@/routes'
 import { replaceQueryValueByObject, timeArrToObject } from '@/utils'
 import PageActions from './components/PageActions'
+import { BadgeDefaultTextList } from '@/constants/colorMap'
 
 export enum OrderPageType {
   SHOPEE = 'shopee',
@@ -51,6 +52,8 @@ export interface PageQuery {
   isCount?: boolean;
 }
 
+const AllTabValue = '-1';
+
 export default (props: OrderPageProps) => {
   const { type } = props
 
@@ -61,7 +64,9 @@ export default (props: OrderPageProps) => {
     [OrderPageType.OUT_ORDER_STATUS]: OrderPageDict.OUT_ORDER_STATUS,
   }[type]
 
-  const [activeTab, setActiveTab] = useLocalStorageState<string>(location.pathname)
+  const [activeTab, setActiveTab] = useLocalStorageState<string>(location.pathname, {
+    defaultValue: AllTabValue
+  })
   const [countMap, setCountMap] = useState<Record<string, number>>()
   const [selectIds, setSelectIds] = useState([])
   const [sortType, setSortType] = useLocalStorageState<number>(location.pathname + '-sortType', {
@@ -98,7 +103,7 @@ export default (props: OrderPageProps) => {
 
     let orderStatus: string; // 系统物流订单状态字段
     let returnStatus: string; // 海外仓退件列表状态字段
-    if (type === OrderPageType.PACK_ORDER) {
+    if (type === OrderPageType.PACK_ORDER && activeTab !== AllTabValue) {
       orderStatus = activeTab;
     }
 
@@ -130,14 +135,6 @@ export default (props: OrderPageProps) => {
       orderStatus,
       returnStatus,
       abeyanceStatus,
-      // ...(type === OrderPageType.SHOPEE
-      //   ? {
-      //     shrimpStatus: activeTab,
-      //     storeFlag: true,
-      //   }
-      //   : {
-      //     whetherPack: true,
-      //   }),
       ...((selectIds.length && isBindSelect)
         ? { shrimpOrderNo: data.list.filter(o => selectIds.includes(o.id)).map(o => o.shrimpOrderNo).join(',') }
         : {}
@@ -155,7 +152,7 @@ export default (props: OrderPageProps) => {
         querySelectLogisticsOrderVO.whetherPack = true;
         break;
       case OrderPageType.SHOPEE:
-        querySelectLogisticsOrderVO.shrimpStatus = activeTab;
+        querySelectLogisticsOrderVO.shrimpStatus = activeTab === AllTabValue ? null : activeTab;
         querySelectLogisticsOrderVO.storeFlag = true;
         break;
     }
@@ -197,7 +194,7 @@ export default (props: OrderPageProps) => {
       const listRequestList = (...params) => ((listRequestMap[type] || orderAPI.getList)(...params)).then(r => {
         if (type === OrderPageType.PENDING) {
           setCountMap({
-            0: r.data.data.total,
+            '0': r.data.data.total,
           })
         }
         return r;
@@ -219,7 +216,10 @@ export default (props: OrderPageProps) => {
         listRequestList(body),
         ...(
           type === OrderPageType.PENDING ? [] : [request(countBody).then((res) => {
-            setCountMap(res.data.data)
+            setCountMap({
+              ...res.data.data,
+              [AllTabValue]: sum(Object.values(res.data.data)),
+            })
           })]
         )
       ])
@@ -351,12 +351,26 @@ export default (props: OrderPageProps) => {
           </>
         )}
       >
-        {shrimpStatus?.map((x, i) => (
+        {[
+          ...(type !== OrderPageType.PENDING ? [{
+            label: '全部',
+            value: AllTabValue,
+          }] : []),
+          ...(shrimpStatus || [])
+        ]?.map((x, i) => (
           <Tabs.TabPane
             key={x.value}
-            title={
-              <Badge offset={[13, -5]} count={countMap?.[x.value]}><span>{x.label}</span></Badge>
-            }
+            title={<Badge
+              className="px-[5px]"
+              style={{
+                '--badge-color': BadgeDefaultTextList.includes(x.label) ? 'var(--gray-4)' : 'var(--danger-6)'
+              } as any}
+              offset={[15, -5]}
+              count={countMap?.[x.value]}
+              maxCount={9999}
+            >
+              <span>{x.label}</span>
+            </Badge>}
           >
           </Tabs.TabPane>
         ))}

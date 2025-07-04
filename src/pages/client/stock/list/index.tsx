@@ -92,10 +92,10 @@ export default () => {
         {
           schema: {
             label: '可用数量/库存数量',
-            field: 'logisticsProduct.quantity',
+            field: 'useAbleQuantity',
           },
           render(col, item, index) {
-            return <Tag color="blue">{`${col || 0}/${item.quantity || 0}`}</Tag>
+            return <Tag color="blue">{`${col || 0} / ${item.quantity || 0}`}</Tag>
           },
           width: 130,
         },

@@ -83,7 +83,6 @@ const FilterForm = React.forwardRef(
           ...labelCol,
           style: { flex: `0 0 ${maxLabelLength}em`, ...labelCol?.style },
         }}
-
         onSubmit={(v) => {
           console.log(v)
         }}
@@ -109,33 +108,34 @@ const FilterForm = React.forwardRef(
             .map(item => (
               (item.showItemHandle ? item.showItemHandle(formData) : true)
                 ? (
-                    <Grid.Col
-                      className={classNames(
-                        item.formItemProps?.hidden ? HideClass : '',
-                      )}
-                      span={item.schema.span || span}
-                      key={item.schema.field || item.schema.key}
-                    >
-                      {createFormItem({
-                        ...item,
-                        formItemProps: {
-                          ...item.formItemProps,
-                          labelCol: {
-                            ...labelCol,
-                            ...item.formItemProps?.labelCol,
-                            style: item.schema.label ? { flex: `0 0 ${maxLabelLength}em`, ...labelCol?.style } : { display: 'none' },
-                          },
+                  <Grid.Col
+                    className={classNames(
+                      item.formItemProps?.hidden ? HideClass : '',
+                    )}
+                    span={item.schema.span || span}
+                    key={item.schema.field || item.schema.key}
+                  >
+                    {createFormItem({
+                      ...item,
+                      formItemProps: {
+                        ...item.formItemProps,
+                        // className: classNames(item.formItemProps?.className, span === 24 ? '!mr-0' : ''),
+                        labelCol: {
+                          ...labelCol,
+                          ...item.formItemProps?.labelCol,
+                          style: item.schema.label ? { flex: `0 0 ${maxLabelLength}em`, ...labelCol?.style } : { display: 'none' },
                         },
-                        schema: {
-                          ...item.schema,
-                          defaultValue:
-                      initialValues?.[item.schema.field]
-                      ?? item.schema.defaultValue,
-                        },
-                        formType,
-                      })}
-                    </Grid.Col>
-                  )
+                      },
+                      schema: {
+                        ...item.schema,
+                        defaultValue:
+                          initialValues?.[item.schema.field]
+                          ?? item.schema.defaultValue,
+                      },
+                      formType,
+                    })}
+                  </Grid.Col>
+                )
                 : null
             ))}
         </Grid.Row>

@@ -1,5 +1,6 @@
 // 库存日志
 import { StockAPI } from '@/api/client/stock'
+import LabelValue from '@/components/LabelValue'
 import SearchTable from '@/components/SearchTable'
 import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
 import ProductInfo from '@/pages/client/stock/components/ProductInfo'
@@ -11,6 +12,11 @@ export default () => {
       name="库存日志"
       getListRequest={StockAPI.getLogs}
       showActions={false}
+      tableProps={{
+        scroll: {
+          x: 1200
+        }
+      }}
       formItemConfigList={[
         {
           schema: {
@@ -69,6 +75,12 @@ export default () => {
             field: 'remark',
           },
           width: 120,
+          render(c, row) {
+            return <div>
+              <p>{c}</p>
+              <LabelValue label="操作人" value={row.createUser}></LabelValue>
+            </div>
+          }
         },
       ]}
     >

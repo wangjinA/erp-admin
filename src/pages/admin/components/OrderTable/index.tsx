@@ -10,20 +10,16 @@ import {
   Tooltip,
   Typography,
 } from '@arco-design/web-react'
-
 import useForm from '@arco-design/web-react/es/Form/useForm'
 import { IconEdit, IconPlus } from '@arco-design/web-react/icon'
 import { useRequest } from 'ahooks'
 import { PaginationResult } from 'ahooks/lib/usePagination/types'
-
 import classNames from 'classnames'
 import { isNil, merge, omit } from 'lodash'
 import React, { useEffect, useMemo, useState } from 'react'
-
 import OrderHeaderStatusInfo from './OrderHeaderStatusInfo'
-import { TagColors } from './SendCargoInfo'
+import { TagColors } from '@/constants/colorMap'
 import { useColumns } from './hooks'
-
 import { orderAPI } from '@/api/client/order'
 import { APIListResponse } from '@/api/type'
 import FilterForm from '@/components/FilterForm'
@@ -457,12 +453,17 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
               data={currentOrder?.orderProductVOList}
               isEdit={true}
               onChange={(e) => {
+                console.log(e);
                 setCurrentOrder({
                   ...currentOrder,
-                  logisticsOrderProductList: e.map(o => ({
+                  logisticsOrderProductList: e.map(o => omit({
                     ...o,
-                    trackingNo: o.trackingNo ? o.trackingNo.trim() : null
-                  })),
+                    trackingNo: o.trackingNo ? o.trackingNo.trim() : null,
+                    productInventoryVO: {
+                      stockProductId: o.productInventoryVO?.[0]?.id,
+                      number: o.productInventoryVO?.[0]?.useAbleQuantityChange,
+                    }
+                  }, o.stockOutStatus ? ['productInventoryVO', 'trackingNo'] : [])),
                 })
               }}
             >

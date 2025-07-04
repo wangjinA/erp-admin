@@ -31,9 +31,6 @@ export default ({ data }: { data: OrderResponseItem }) => {
         const res = getRemainingTime(dayjs(data.shippingTime).add(2, 'day'), '进店')
         return res.dateStr;
       }
-      if (isAdmin()) {
-        return ''
-      }
       if (data.shipByDate) {
         const res = getRemainingTime(data.shipByDate, '发货')
         return res.dateStr

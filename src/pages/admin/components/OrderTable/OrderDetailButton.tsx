@@ -1,14 +1,9 @@
 import { Button, ButtonProps, Descriptions, Form, Grid, InputNumber, List, Modal, Space, Switch, Table, Image } from '@arco-design/web-react'
-
 import { useRequest } from 'ahooks'
 import { omit, pick } from 'lodash'
 import { useEffect, useRef, useState } from 'react'
-
-import { SendCargoItemInfo } from './SendCargoInfo'
-
 import { orderAPI } from '@/api/admin/order'
 import FilterForm from '@/components/FilterForm'
-
 import LabelValue from '@/components/LabelValue'
 import { DictNameFC } from '@/components/Selectors/DictSelector'
 import { EmitTypes, bus } from '@/hooks/useEventBus'
@@ -17,7 +12,7 @@ import { showMessage } from '@/utils'
 import classNames from 'classnames'
 import DeliveryButton from './DeliveryButton'
 import { ShopeeStatus } from '@/constants/order'
-import { SendStockInfo } from './SendStockInfo'
+import SendStockCargoInfos, { SendStockCargoItemInfo } from './SendStockCargoInfos'
 
 interface OrderDetailButtonProps {
   orderItem?: OrderResponseItem
@@ -186,7 +181,7 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
                 dataIndex: 'fhxx',
                 width: 250,
                 render(col, row) {
-                  return <SendStockInfo
+                  return <SendStockCargoItemInfo
                     item={row}
                     orderStatus={orderItem.orderStatus}
                     sendWarehouse={orderItem.sendWarehouse}
@@ -215,19 +210,19 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
                   )
                 },
               },
-              {
-                title: '保留库存',
-                dataIndex: 'blkc',
-                width: 100,
-                render(col, row, i) {
-                  return (
-                    <Switch checked={holdStockList[i] ?? row.holdStock} onChange={e => {
-                      holdStockList[i] = e;
-                      setHoldStockList([...holdStockList])
-                    }}></Switch>
-                  )
-                },
-              },
+              // {
+              //   title: '保留库存',
+              //   dataIndex: 'blkc',
+              //   width: 100,
+              //   render(col, row, i) {
+              //     return (
+              //       <Switch checked={holdStockList[i] ?? row.holdStock} onChange={e => {
+              //         holdStockList[i] = e;
+              //         setHoldStockList([...holdStockList])
+              //       }}></Switch>
+              //     )
+              //   },
+              // },
             ]}
           >
 
@@ -312,7 +307,7 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
 
                   </FilterForm>
                   <div
-                    className="flex-1 border-l p-2"
+                    className="flex-1 border-l px-2"
                   >
                     <Descriptions
                       column={1}

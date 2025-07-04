@@ -1,8 +1,5 @@
 import { Tag, Typography } from '@arco-design/web-react'
-import SendCargoInfo from './SendCargoInfo'
-
 import { OrderTablePorps } from '.'
-
 import GoodsInfo from '@/components/GoodsInfo'
 import LabelValue from '@/components/LabelValue'
 import TrackingNumber from '@/components/TrackingNumber'
@@ -14,7 +11,7 @@ import classNames from 'classnames'
 import OrderTableActions from './admin/OrderTableActions'
 import { useLocation } from "react-router"
 import { OrderPageDict } from '@/pages/client/order/orderPage'
-import SendStockInfo from './SendStockInfo'
+import SendInfos from './SendStockCargoInfos'
 
 export function useColumns(props: OrderTablePorps) {
   const { dictCode } = props
@@ -25,7 +22,7 @@ export function useColumns(props: OrderTablePorps) {
     {
       title: '商品信息',
       dataIndex: 'orderProductVOList',
-      width: 540,
+      width: 500,
       render(col) {
         return <GoodsInfo data={col}></GoodsInfo>
       },
@@ -34,10 +31,9 @@ export function useColumns(props: OrderTablePorps) {
     {
       title: '发货信息',
       dataIndex: 'orderProductVOList_1',
-      width: 220,
+      width: 240,
       render(col, row) {
-        // return <SendCargoInfo data={row}></SendCargoInfo>
-        return <SendStockInfo data={row}></SendStockInfo>
+        return <SendInfos data={row}></SendInfos>
       },
     },
     {

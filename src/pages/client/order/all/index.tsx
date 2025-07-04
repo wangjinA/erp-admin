@@ -1,7 +1,5 @@
-import React from 'react'
-
 import OrderPage, { OrderPageType } from '../orderPage'
 
-export default (props: {}) => {
+export default () => {
   return <OrderPage type={OrderPageType.SHOPEE}></OrderPage>
 }

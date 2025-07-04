@@ -191,12 +191,16 @@ export interface StockItem {
   logisticsProductId: number
   productStorageId: number
   quantity: number
+  useAbleQuantity: number // 可用库存
+  useAbleQuantityChange: number // 可用库存变更 组件数量传递
   seatCode: string
   seatId: number
   sendWarehouse: number
   tenantryId: number
   updateBy: number
   updateTime: string
+  logisticsProduct?: ProductItem
+
 }
 
 export interface WarehousingApply {

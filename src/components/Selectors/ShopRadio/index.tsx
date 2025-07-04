@@ -1,6 +1,5 @@
 import { Button, Radio, Select, SelectProps, Spin } from '@arco-design/web-react'
 import { useRequest } from 'ahooks'
-import React from 'react'
 
 import { shopStoreAPI } from '@/api/client/shopStore'
 
