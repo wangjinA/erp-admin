@@ -42,32 +42,34 @@ export default ({ data }: { data: OrderResponseItem }) => {
   return (
     <>
       {
-        isClient()
+        // isClient()?
+        // (
+        data.createType === '0'
           ? (
-            data.createType === '0'
-              ? (
-                <>
-                  <LabelValue
-                    className="w-[180px]"
-                    label="Shopee状态"
-                    value={
-                      shopeeStatus?.find(
-                        oitem => oitem.value === data.shopeeStatus,
-                      )?.label || '-'
-                    }
-                  >
-                  </LabelValue>
-                  <LabelValue className="w-[240px] truncate" label="店铺" value={<ShopNameFC value={data.platformShopId}></ShopNameFC>}></LabelValue>
-                </>
-              )
-              : (
-
-                <LabelValue className="w-[240px]" label="订单类型" value="跨境 台湾/自建"></LabelValue>
-              )
+            <>
+              <LabelValue
+                className="w-[180px]"
+                label="Shopee状态"
+                value={
+                  shopeeStatus?.find(
+                    oitem => oitem.value === data.shopeeStatus,
+                  )?.label || '-'
+                }
+              >
+              </LabelValue>
+              {
+                isClient() ? <LabelValue className="w-[240px] truncate" label="店铺" value={<ShopNameFC value={data.platformShopId}></ShopNameFC>}></LabelValue> : null
+              }
+            </>
           )
           : (
-            null
+
+            <LabelValue className="w-[240px]" label="订单类型" value="跨境 台湾/自建"></LabelValue>
           )
+        // )
+        // : (
+        //   null
+        // )
       }
       {
         data.sendWarehouse && data.sendWarehouse !== '0'

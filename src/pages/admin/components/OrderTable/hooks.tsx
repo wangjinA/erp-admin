@@ -31,7 +31,7 @@ export function useColumns(props: OrderTablePorps) {
     {
       title: '发货信息',
       dataIndex: 'orderProductVOList_1',
-      width: 240,
+      width: 260,
       render(col, row) {
         return <SendInfos data={row}></SendInfos>
       },
@@ -39,7 +39,7 @@ export function useColumns(props: OrderTablePorps) {
     {
       title: '物流信息',
       dataIndex: 'logistics',
-      width: 240,
+      width: 220,
       render(c, row) {
         const shippingCarrier = row.orderPackageList?.[0]?.shippingCarrier || row.logisticsOrderPackageList?.[0]?.shippingCarrier
         const isShowMjInfo = ['线下', '宅配'].some(o => shippingCarrier?.includes(o)) || row.createType !== '0';

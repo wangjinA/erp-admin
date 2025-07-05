@@ -10,9 +10,9 @@ import { EmitTypes, bus } from '@/hooks/useEventBus'
 import { OrderResponseItem } from '@/types/order'
 import { showMessage } from '@/utils'
 import classNames from 'classnames'
-import DeliveryButton from './DeliveryButton'
+import { DeliveryButton } from './DeliveryButton'
 import { ShopeeStatus } from '@/constants/order'
-import SendStockCargoInfos, { SendStockCargoItemInfo } from './SendStockCargoInfos'
+import { SendStockCargoItemInfo } from './SendStockCargoInfos'
 
 interface OrderDetailButtonProps {
   orderItem?: OrderResponseItem
@@ -36,7 +36,7 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
           holdStock: holdStockList[i] || item.holdStock,
         })),
         logisticsOrderPackageList: updatedOrderItem.orderPackageList,
-      }))
+      }), '保存')
     }
     setVisible(false)
     bus.emit(EmitTypes.refreshOrderPage)
@@ -52,26 +52,31 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
   }, [visible])
 
   const modalRef = useRef<HTMLDivElement>();
+  const deliveryRef = useRef<HTMLButtonElement>();
   const enterRef = useRef((e) => {
-    console.log(1111)
-    // 禁止冒泡
-    e.stopPropagation()
+    console.log('按钮')
+    if (e.key === 'Enter') {
+      if (deliveryRef.current.disabled) {
+        console.log('保存')
+        saveHandler.run()
+      } else {
+        console.log('出库')
+        deliveryRef.current.click();
+      }
+      e.preventDefault();
+      e.stopPropagation();
+    }
   })
 
   useEffect(() => {
     if (visible && modalRef.current) {
-      modalRef.current.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          e.stopPropagation();
-        }
-      });
-      window.addEventListener('keydown', enterRef.current)
+      console.log('绑定')
+      modalRef.current.addEventListener('keydown', enterRef.current)
     }
     return () => {
-      window.removeEventListener('keydown', enterRef.current)
+      modalRef.current?.removeEventListener('keydown', enterRef.current)
     }
-  }, [visible])
+  }, [visible, modalRef.current])
 
   return (
     <>
@@ -108,6 +113,7 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
             </Button>
             <Button
               type="primary"
+              loading={saveHandler.loading}
               onClick={() => {
                 saveHandler.run()
               }}
@@ -116,6 +122,7 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
             </Button>
             {/* <Button type="primary" status="warning">交运</Button> */}
             <DeliveryButton
+              ref={deliveryRef}
               buttonProps={{
                 type: "primary",
                 status: "danger",
