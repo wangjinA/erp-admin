@@ -283,7 +283,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                       }
                     </div>
                   </footer>
-                  {(item.isOverseasWarehouseReturn || item.isReissued) ? <ShippingReceipt color={item.isReissued ? 'green': 'red'}>
+                  {(item.isOverseasWarehouseReturn || item.isReissued) ? <ShippingReceipt color={item.isReissued ? 'green' : 'red'}>
                     {
                       item.isReissued ?
                         '换单重出'
@@ -462,7 +462,10 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                       stockProductId: o.productInventoryVO?.[0]?.id,
                       number: o.productInventoryVO?.[0]?.useAbleQuantityChange,
                     }
-                  }, o.stockOutStatus ? ['productInventoryVO', 'trackingNo'] : [])),
+                  }, o.stockOutStatus ? ['productInventoryVO', 'trackingNo'] : (
+                    // o.deliveryMethod === '0' ? ['productInventoryVO'] : []
+                    []
+                  ))),
                 })
               }}
             >
@@ -481,7 +484,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
           </>
         ) : null}
       </Modal>
-    </div>
+    </div >
   )
 }
 
