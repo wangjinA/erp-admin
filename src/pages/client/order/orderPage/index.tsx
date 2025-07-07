@@ -152,6 +152,7 @@ export default (props: OrderPageProps) => {
         querySelectLogisticsOrderVO.whetherPack = true;
         break;
       case OrderPageType.SHOPEE:
+        querySelectLogisticsOrderVO.abeyanceStatus = undefined
         querySelectLogisticsOrderVO.shrimpStatus = activeTab === AllTabValue ? null : activeTab;
         querySelectLogisticsOrderVO.storeFlag = true;
         break;

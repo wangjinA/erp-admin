@@ -15,6 +15,7 @@ export interface OrderProductList {
   orderId: number // 订单id
   orderItemId: number // 虾皮平台订单商品id
   stockUse: number // 库存使用数量
+  stockProductId: string // 库存商品id
   problemStatus: boolean // 是否为问题订单：默认为空
   productImg: string // 商品图片
   productName: string // 商品名称

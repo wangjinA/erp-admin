@@ -453,7 +453,6 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
               data={currentOrder?.orderProductVOList}
               isEdit={true}
               onChange={(e) => {
-                console.log(e);
                 setCurrentOrder({
                   ...currentOrder,
                   logisticsOrderProductList: e.map(o => omit({

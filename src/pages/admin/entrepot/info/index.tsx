@@ -160,6 +160,7 @@ export default () => {
                       updateRacksHandler({
                         ...formData,
                         id: activeRacks.id,
+                        entrepotId: activeEntrepot.id,
                       })
                     }}
                   >

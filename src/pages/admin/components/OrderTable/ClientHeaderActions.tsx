@@ -24,8 +24,15 @@ const ClientHeaderActions = (props: ClientHeaderActionsProps) => {
           const newOrder = structuredClone({
             ...item,
             clickPack: item.orderStatus === '5' || !item.whetherPack,
-            logisticsOrderProductList: item.orderProductVOList,
+            logisticsOrderProductList: item.orderProductVOList.map((o) => ({
+              ...o,
+              "productInventoryVO": {
+                "stockProductId": o.stockProductId,
+                "number": o.stockUse
+              }
+            })),
             sendWarehouse: item.sendWarehouse === '0' ? undefined : item.sendWarehouse,
+
           })
           setCurrentOrder(newOrder)
           setActionType(ShowFormType.edit)
@@ -34,7 +41,7 @@ const ClientHeaderActions = (props: ClientHeaderActionsProps) => {
         {item.whetherPack && item.orderStatus !== '5' ? '编辑打包' : '一键打包'}
       </Button>
       <Button
-        disabled={!['0'].includes(item.orderStatus) || !item.whetherPack}
+        disabled={!['0', '1', '2'].includes(item.orderStatus) || !item.whetherPack}
         onClick={async () => {
           await showModal({
             content: '确定要取消打包吗？',

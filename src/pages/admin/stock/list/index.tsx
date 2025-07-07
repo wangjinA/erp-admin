@@ -41,7 +41,7 @@ export default () => {
         {
           schema: {
             label: '商品名称',
-            field: 'goodsName',
+            field: 'productName',
           },
           isSearch: true,
           hideTable: true,

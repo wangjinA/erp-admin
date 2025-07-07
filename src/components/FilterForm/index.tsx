@@ -123,7 +123,7 @@ const FilterForm = React.forwardRef(
                         labelCol: {
                           ...labelCol,
                           ...item.formItemProps?.labelCol,
-                          style: item.schema.label ? { flex: `0 0 ${maxLabelLength}em`, ...labelCol?.style } : { display: 'none' },
+                          style: item.schema.label ? { flex: `0 0 ${maxLabelLength}em`, ...labelCol?.style, ...item.formItemProps?.labelCol?.style } : { display: 'none' },
                         },
                       },
                       schema: {

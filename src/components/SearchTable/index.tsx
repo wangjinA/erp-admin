@@ -2,6 +2,7 @@ import {
   Button,
   ButtonProps,
   Form,
+  FormInstance,
   FormProps,
   Input,
   Message,
@@ -51,6 +52,7 @@ import { showMessage, showModal } from '@/utils'
 
 export interface SearchTableRef {
   refreshSearchTable: () => void
+  searchFormRef: FormInstance
 }
 
 const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
@@ -87,7 +89,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
       onDataChange,
     } = props
     const [formRef] = Form.useForm()
-    const [searchFromRef] = Form.useForm()
+    const [searchFormRef] = Form.useForm()
     const {
       value: searchFromData,
       setValue: setSearchFromData,
@@ -131,6 +133,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
     useImperativeHandle(ref, () => {
       return {
         refreshSearchTable: run,
+        searchFormRef: searchFormRef,
       }
     })
 
@@ -157,7 +160,7 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                 ? (
                   <FilterForm
                     {...formProps}
-                    form={searchFromRef}
+                    form={searchFormRef}
                     initialValues={searchFromData}
                     formItemConfigList={formItemConfigListStatusFilter(
                       formItemConfigList,
@@ -181,8 +184,8 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                             loading={loading}
                             icon={<IconRefresh />}
                             onClick={() => {
-                              searchFromRef.clearFields()
-                              searchFromRef.setFieldsValue(resetParams())
+                              searchFormRef.clearFields()
+                              searchFormRef.setFieldsValue(resetParams())
 
                               setTimeout(() => {
                                 if (pageNum === 1) {

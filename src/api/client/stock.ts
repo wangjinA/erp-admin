@@ -248,6 +248,7 @@ export interface ProductItem {
   updateBy: number
   updateTime: string
   num: number;
+  sendProductCount: number;
 }
 
 export interface StockApplyAdmin {

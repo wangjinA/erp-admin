@@ -1,7 +1,7 @@
 import { Button, InputNumber, Modal, Tag } from '@arco-design/web-react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { StockItem, StockListAPI } from '@/api/client/stock'
-import SearchTable from '@/components/SearchTable'
+import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 import ProductInfo from '@/pages/client/stock/components/ProductInfo'
 import LabelValue from '@/components/LabelValue'
 import { IconClose, IconPlus } from '@arco-design/web-react/icon'
@@ -19,7 +19,8 @@ export default (props: ProductStockSelectorProps) => {
   const [visible, setVisible] = useState(false)
   const [selectedRowKeys, setSelectedRowKeys] = useState<(StockItem)[]>([...(value || [])])
   const [list, setList] = useState<StockItem[]>()
-  console.log('value', value, stockNum)
+  const searchTableRef = useRef<SearchTableRef>()
+
   return (
     <div className={className}>
       {
@@ -33,7 +34,7 @@ export default (props: ProductStockSelectorProps) => {
               <div key={item.id} className="flex items-center relative">
                 <ProductInfo className="!px-2" data={item.logisticsProduct}></ProductInfo>
                 <InputNumber
-                  disabled={disabled}
+                  disabled={disabled || !item.useAbleQuantity}
                   value={item.useAbleQuantityChange}
                   className="w-24"
                   placeholder="数量"
@@ -74,9 +75,11 @@ export default (props: ProductStockSelectorProps) => {
             ...o,
             useAbleQuantityChange: stockNum >= o.useAbleQuantity ? o.useAbleQuantity : stockNum
           })))
+          searchTableRef.current.searchFormRef.resetFields();
           setVisible(false)
         }}
         onCancel={() => {
+          searchTableRef.current.searchFormRef.resetFields();
           setVisible(false)
         }}
       >
@@ -87,6 +90,7 @@ export default (props: ProductStockSelectorProps) => {
             return r
           })}
           name="商品选择"
+          ref={searchTableRef}
           showActions={false}
           tableProps={{
             rowKey: 'id',

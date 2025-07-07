@@ -16,6 +16,8 @@ export default () => {
   const [logsCurrent, setLogsCurrent] = useState<any>()
   const [warehouseingCurrent, setWarehouseingCurrent] = useState<StockApplyAdmin>()
   const [warehousingData, setWarehousingData] = useState<WarehousingBody>()
+  const [currentNumber, setCurrentNumber] = useState<number>(0);
+  const [currentServiceCharge, setCurrentServiceCharge] = useState<number>(0);
 
   const [form] = Form.useForm()
   const ref = useRef<SearchTableRef>()
@@ -54,7 +56,7 @@ export default () => {
         name="入库订单"
         getListRequest={WarehousingApplyAPI.getList}
         tableProps={{
-          scroll:{
+          scroll: {
             x: 1200,
           }
         }}
@@ -109,7 +111,7 @@ export default () => {
             },
             width: 120,
             isSearch: true,
-            render(c){
+            render(c) {
               return c
             }
           },
@@ -174,11 +176,13 @@ export default () => {
                             id: item.id,
                             logisticsProductId: item.logisticsProductId,
                             productStorageId: item.productStorageId,
-                            receiveProductCount: item.receiveProductCount || 0,
+                            receiveProductCount: row.sendProductCount || 0,
                           })),
                           sendWarehouse: row.sendWarehouse,
                           serviceCharge: undefined,
                         })
+                        setCurrentNumber(row.sendProductCount);
+                        setCurrentServiceCharge(0);
                         setWarehouseingCurrent(row)
                       }}
                     >
@@ -237,10 +241,12 @@ export default () => {
               label="上架服务费"
               value={(
                 <InputNumber
+                  value={currentServiceCharge}
                   size="mini"
                   placeholder="请输入"
                   suffix="元"
                   onChange={(e) => {
+                    setCurrentServiceCharge(e);
                     setWarehousingData((draft) => {
                       draft.serviceCharge = e
                       return draft
@@ -254,7 +260,6 @@ export default () => {
 
           </Space>
           <Divider></Divider>
-
           <Table
             size="small"
             data={warehouseingCurrent?.logisticsProductList}
@@ -278,10 +283,12 @@ export default () => {
                 render(c, row, index) {
                   return (
                     <InputNumber
+                      value={currentNumber}
                       placeholder="请输入"
                       defaultValue={c}
                       suffix="件"
                       onChange={(e) => {
+                        setCurrentNumber(e);
                         setWarehousingData((darft) => {
                           darft.putStorageProductVOS[index].receiveProductCount = e
                           return darft

@@ -42,7 +42,7 @@ const ApplyWarehousingButton = (props: ApplyWarehousingButtonProps) => {
           }],
         })
       } else {
-        form.clearFields();
+        form.resetFields();
 
       }
     }
