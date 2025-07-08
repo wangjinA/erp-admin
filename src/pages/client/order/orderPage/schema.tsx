@@ -135,6 +135,33 @@ export const getOrderFilter: (params?: OrderPageParams) => SearchTableSchema[] =
         mode: "multiple"
       }
     },
+    {
+      schema: {
+        field: 'selectLogisticsOrderVO.remainShippingTime',
+        label: '剩余发货时间',
+      },
+      control: 'radio',
+      controlProps: {
+        options: [
+          {
+            label: '不限',
+            value: null,
+          },
+          {
+            label: '不足24小时',
+            value: 24,
+          },
+          {
+            label: '不足48小时',
+            value: 48,
+          },
+          {
+            label: '不足72小时',
+            value: 72,
+          },
+        ]
+      }
+    },
     // {
     //   schema: {
     //     field: 'selectOrderProductVO.sku',

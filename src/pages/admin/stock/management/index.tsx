@@ -1,4 +1,4 @@
-import { Button, Divider, Empty, Form, InputNumber, Message, Modal, Space, Spin, Table, Tag, Timeline } from '@arco-design/web-react'
+import { Button, Divider, Empty, InputNumber, Message, Modal, Space, Spin, Table, Tag, Timeline } from '@arco-design/web-react'
 
 import { useRequest } from 'ahooks'
 import { useRef, useState } from 'react'
@@ -16,10 +16,9 @@ export default () => {
   const [logsCurrent, setLogsCurrent] = useState<any>()
   const [warehouseingCurrent, setWarehouseingCurrent] = useState<StockApplyAdmin>()
   const [warehousingData, setWarehousingData] = useState<WarehousingBody>()
-  const [currentNumber, setCurrentNumber] = useState<number>(0);
+  const [currentNumber, setCurrentNumber] = useState<number[]>([]);
   const [currentServiceCharge, setCurrentServiceCharge] = useState<number>(0);
 
-  const [form] = Form.useForm()
   const ref = useRef<SearchTableRef>()
   const { run, loading } = useRequest(async () => {
     if (warehousingData?.serviceCharge === undefined) {
@@ -170,18 +169,19 @@ export default () => {
                       status="default"
                       loading={logsLoading}
                       onClick={() => {
+                        console.log(row.logisticsProductList)
                         setWarehousingData({
                           applyId: row.id,
                           putStorageProductVOS: row.logisticsProductList.map(item => ({
                             id: item.id,
                             logisticsProductId: item.logisticsProductId,
                             productStorageId: item.productStorageId,
-                            receiveProductCount: row.sendProductCount || 0,
+                            receiveProductCount: item.sendProductCount || 0,
                           })),
                           sendWarehouse: row.sendWarehouse,
                           serviceCharge: undefined,
                         })
-                        setCurrentNumber(row.sendProductCount);
+                        setCurrentNumber(row.logisticsProductList.map(o => o.sendProductCount));
                         setCurrentServiceCharge(0);
                         setWarehouseingCurrent(row)
                       }}
@@ -283,12 +283,13 @@ export default () => {
                 render(c, row, index) {
                   return (
                     <InputNumber
-                      value={currentNumber}
+                      value={currentNumber[index]}
                       placeholder="请输入"
                       defaultValue={c}
                       suffix="件"
                       onChange={(e) => {
-                        setCurrentNumber(e);
+                        currentNumber[index] = e;
+                        setCurrentNumber([...currentNumber]);
                         setWarehousingData((darft) => {
                           darft.putStorageProductVOS[index].receiveProductCount = e
                           return darft

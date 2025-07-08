@@ -250,6 +250,12 @@ export default (props: OrderPageProps) => {
       <FilterForm
         form={filterForm}
         size="small"
+        initialValues={{
+          // selectLogisticsOrderVO: {
+          //   remainShippingTime: null,
+          //   reissued: null,
+          // }
+        }}
         formItemConfigList={getOrderFilter({ type })}
         onValuesChange={(val, values) => {
           setFormData(values)
