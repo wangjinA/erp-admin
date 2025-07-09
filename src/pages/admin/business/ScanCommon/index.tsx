@@ -75,7 +75,11 @@ export default (props: ScanComponentProps) => {
           <Input
             value={value}
             onChange={(e) => {
-              setValue(e)
+              if (e) {
+                setValue(e.trim())
+              } else {
+                setValue(e)
+              }
             }}
             size="large"
             className={classNames(height, styles['input-style'], 'text-3xl')}

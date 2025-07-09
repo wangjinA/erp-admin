@@ -8,7 +8,7 @@ import JsBarcode from 'jsbarcode'
 import { entrepotAPI } from '@/api/admin/entrepot'
 import { businessPrinter } from '@/utils/printer'
 import { ShippingOrderPrintingTemplateEnum } from '@/constants/entrepot'
-import { Message } from '@arco-design/web-react'
+import { sum } from 'lodash'
 
 export function textToBase64Barcode(text) {
   var canvas = document.createElement("canvas");
@@ -67,7 +67,7 @@ function getPrintHtml(orderItem: OrderResponseItem & {
                 </table>
                 <div style="text-align: center;margin-bottom: 10px">
                     <span style="text-align: center; margin-bottom: 10px;font-size: 16px;font-weight: bold">集运信息</span>
-                    <span style="float: right;">共1件</span>
+                    <span style="float: right;">共${sum(orderItem.orderProductVOList.map(o => o.quantity))}件</span>
                 </div>
                 <table border="1" class="goodsList">
                     <tr>
@@ -77,9 +77,12 @@ function getPrintHtml(orderItem: OrderResponseItem & {
                         <td style="font-weight: bold;">数量</td>
                     </tr>
                     
-                     <tr>
-                        <td>9801-01</td><td>SP20241215020034</td><td>新款多功能車門紅外線感應燈【1個裝】</td><td>1</td>
-                    </tr>
+                     ${orderItem.orderProductVOList.map(item => `
+                        <tr>
+                            <td>${item.freightSpaceName}</td><td>${orderItem.shrimpOrderNo}</td><td>${item.specificationName}</td><td>${item.quantity}</td>
+                        </tr>  
+                      `)
+    }
                 </table>
              </div>   
              <p style="page-break-after: always"></p>
