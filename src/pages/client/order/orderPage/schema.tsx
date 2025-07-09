@@ -162,12 +162,12 @@ export const getOrderFilter: (params?: OrderPageParams) => SearchTableSchema[] =
         ]
       }
     },
-    {
+    ...(isAdmin() ? [{
       schema: {
         field: 'selectLogisticsOrderVO.tenantryNo',
         label: '用户编号',
       },
-    },
+    }] : []),
     {
       schema: {
         field: 'selectOrderProductVO.deliveryMethod',
