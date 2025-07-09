@@ -72,7 +72,7 @@ export default () => {
                 <div>
                   <LabelValue label="编码" value={row.storageCode}></LabelValue>
                   <LabelValue label="申请人" value={row.userName}></LabelValue>
-                  <LabelValue label="用户标识" value={row.tenantryNo}></LabelValue>
+                  <LabelValue label="用户编号" value={row.tenantryNo}></LabelValue>
                   <LabelValue label="所属仓库" value={<EntrepotNameFC value={row.sendWarehouse}></EntrepotNameFC>}></LabelValue>
                 </div>
               )

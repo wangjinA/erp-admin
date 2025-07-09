@@ -123,6 +123,9 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
           }
           onDataChange?.(result)
           return result
+        }).catch(e=>{
+          Message.error(`查询${name || ''}失败，请重试 ${e?.message || ''}`)
+          return null;
         })
       },
       {

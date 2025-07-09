@@ -7,6 +7,7 @@ import ScanCommon from '../ScanCommon'
 
 import { ScanParams, scanAPI } from '@/api/admin/entrepot'
 import { showMessage } from '@/utils'
+import { OrderPageDict } from '@/pages/client/order/orderPage'
 
 export default function Delivery() {
   const { run, data, loading } = useRequest(
@@ -52,7 +53,7 @@ export default function Delivery() {
                           pageSize: data.orderItemInfoBgResultList.length,
                           total: data.orderItemInfoBgResultList.length,
                         }}
-                        dictCode="order_status"
+                        dictCode={OrderPageDict.PACK_ORDER}
                         loading={false}
                       >
                       </OrderTable>

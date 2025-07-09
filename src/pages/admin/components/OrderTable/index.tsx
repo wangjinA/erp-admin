@@ -73,6 +73,17 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
         'orderProductVOList',
         'orderPackageList',
       ])
+
+      const productInventoryVOIsNull = data.logisticsOrderProductList.some(o => {
+        if (o.deliveryMethod === '1' && !o.stockOutStatus) {
+          return !o.productInventoryVO?.stockProductId || !o.productInventoryVO?.number
+        }
+        return false;
+      })
+      if (productInventoryVOIsNull) {
+        Message.error('库存发货，请选择商品库存')
+        return;
+      }
       if (isNil(data.sendWarehouse)) {
         Message.error('请选择打包仓库！')
         return;
@@ -455,13 +466,14 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
               onChange={(e) => {
                 setCurrentOrder({
                   ...currentOrder,
-                  logisticsOrderProductList: e.map(o => omit({
+                  logisticsOrderProductList: e.map((o) => omit({
                     ...o,
-                    trackingNo: o.trackingNo ? o.trackingNo.trim() : null,
+                    trackingNo: o.trackingNo ? o.trackingNo.trim() : '',
                     productInventoryVO: {
-                      stockProductId: o.productInventoryVO?.[0]?.id,
-                      number: o.productInventoryVO?.[0]?.useAbleQuantityChange,
-                    }
+                      stockProductId: o.productInventoryVO?.[0]?.id || o.stockProductId,
+                      number: o.productInventoryVO?.[0]?.useAbleQuantityChange || o.stockUse,
+                    },
+                    deliveryMethod: o.stockOutStatus ? '0' : o.deliveryMethod,
                   }, o.stockOutStatus ? ['productInventoryVO', 'trackingNo'] : (
                     // o.deliveryMethod === '0' ? ['productInventoryVO'] : []
                     []

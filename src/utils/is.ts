@@ -1,3 +1,5 @@
+import { isNil } from "lodash";
+
 export function isArray(val): boolean {
   return Object.prototype.toString.call(val) === '[object Array]';
 }
@@ -15,3 +17,7 @@ export const isSSR = (function () {
     return true;
   }
 })();
+
+export function isNilPlus(val: any): boolean {
+  return isNil(val) || val === ''
+}

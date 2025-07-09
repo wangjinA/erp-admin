@@ -57,6 +57,16 @@ export const tenantryUserAPI = {
   }) {
     return baseAxios.post('/api/tenantry/set/remark', body)
   },
+
+  /**
+   * 设置会员备注
+   */
+  setLogisticsRemark(body: {
+    id: any
+    logisticsRemark: string
+  }) {
+    return baseAxios.post('/api/tenantry/set/logisticsRemark', body)
+  },
 }
 
 export function cache<T extends (...args: any[]) => any>(fn: T): T {

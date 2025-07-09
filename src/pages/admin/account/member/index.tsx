@@ -1,37 +1,13 @@
 import { Tag, Typography } from '@arco-design/web-react'
 import { omit } from 'lodash'
-import React, { useState } from 'react'
-
-import { useSelector } from 'react-redux'
-
+import React from 'react'
 import { tenantryUserAPI } from '@/api/admin/tenantry'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
-import { GlobalState } from '@/store'
 import { ShowFormType } from '@/constants'
+import Remark from '@/components/Remark'
 
 export default function Member() {
-  const [current, setCurrent] = useState<any>()
   const ref = React.useRef<SearchTableRef>()
-  const { userInfo } = useSelector((state: GlobalState) => state)
-
-  // const { run, loading } = useRequest(
-  //   async (row) => {
-  //     await showModal({
-  //       content: '确定取消？',
-  //       okButtonProps: {
-  //         status: 'warning',
-  //       },
-  //     })
-  //     setCurrent(row)
-  //     await showMessage(() =>
-  //       expressAPI.cancelReject(row.id),
-  //     )
-  //     ref.current.refreshSearchTable()
-  //   },
-  //   {
-  //     manual: true,
-  //   },
-  // )
 
   return (
     <div className="p-4 bg-white">
@@ -51,6 +27,28 @@ export default function Member() {
             schema: { label: '序号', field: 'index' },
             render(col, row, index) {
               return index + 1
+            },
+          },
+          {
+            schema: { label: '用户编号', field: 'tenantryNo', required: true },
+            isSearch: true,
+            render(c) {
+              return <Typography.Text copyable><Tag color="blue">{c}</Tag></Typography.Text>
+            },
+          },
+          {
+            schema: { label: '备注', field: 'logisticsRemark' },
+            isSearch: true,
+            render(c, row) {
+              return <Remark value={c} onChange={(v) => {
+                return tenantryUserAPI.setLogisticsRemark({
+                  id: row.id,
+                  logisticsRemark: v,
+                }).then(r =>{
+                  ref.current.refreshSearchTable();
+                  return r;
+                })
+              }}></Remark>
             },
           },
           {
@@ -78,13 +76,6 @@ export default function Member() {
                   placeholder: showType === ShowFormType.create ? '请输入密码' : '不修改请留空',
                 },
               }
-            },
-          },
-          {
-            schema: { label: '用户编号', field: 'tenantryNo', required: true },
-            control: 'role',
-            render(c) {
-              return <Typography.Text copyable><Tag color="blue">{c}</Tag></Typography.Text>
             },
           },
         ]}

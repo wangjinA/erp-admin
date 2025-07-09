@@ -168,6 +168,29 @@ export const getOrderFilter: (params?: OrderPageParams) => SearchTableSchema[] =
         label: '用户编号',
       },
     },
+    {
+      schema: {
+        field: 'selectOrderProductVO.deliveryMethod',
+        label: '发货类型',
+      },
+      control: 'radio',
+      controlProps: {
+        options: [
+          {
+            label: '全部',
+            value: null,
+          },
+          {
+            label: '快递',
+            value: '0',
+          },
+          {
+            label: '库存',
+            value: '1',
+          },
+        ]
+      }
+    },
     // {
     //   schema: {
     //     field: 'selectOrderProductVO.sku',

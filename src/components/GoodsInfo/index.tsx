@@ -166,7 +166,7 @@ export default (props: GoodsInfoProps) => {
                               if (values.deliveryMethod === '0') {
                                 return (
                                   <Form.Item disabled={values.stockOutStatus} className="mt-4" field="trackingNo" label="快递单号" colon>
-                                    <Input placeholder='请输入快递单号'></Input>
+                                    <Input placeholder='请输入快递单号' allowClear></Input>
                                   </Form.Item>
                                 )
                               } else {

@@ -3,17 +3,21 @@
 
   :global {
     .remark-com-icon {
-      display: none;
       color: rgb(var(--primary-6));
       margin-left: 3px;
       cursor: pointer;
+      display: inline-block;
+    }
+
+    .remark-com-icon-hover {
+      opacity: 0;
     }
   }
 
   &:hover {
     :global {
-      .remark-com-icon {
-        display: inline-block;
+      .remark-com-icon-hover {
+        opacity: 1;
       }
     }
   }

@@ -6,7 +6,8 @@ import { useEffect, useState } from 'react'
 import styles from './index.module.less'
 
 import { showMessage } from '@/utils'
-import { isString } from '@/utils/is'
+import { isNilPlus, isString } from '@/utils/is'
+import classNames from 'classnames'
 
 export enum RemarkType {
   Text = 'text',
@@ -39,7 +40,12 @@ export default function Remark(props: RemarkProps) {
   return (
     <div className={styles['remark-com']}>
       {newValue || (isString(value) ? (value || '-') : (value ?? '-'))}
-      <IconEdit className="remark-com-icon" onClick={() => setVisible(true)}></IconEdit>
+      <IconEdit className={
+        classNames({
+          'remark-com-icon': true,
+          'remark-com-icon-hover': !isNilPlus(value),
+        })
+      } onClick={() => setVisible(true)}></IconEdit>
       <Modal
         title={allTitle}
         visible={visible}

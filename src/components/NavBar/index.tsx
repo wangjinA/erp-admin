@@ -106,12 +106,12 @@ function Navbar({ show }: { show: boolean }) {
             value={Number(isAdmin())}
             tagInfos={[
               {
-                text: '店铺端 | 内测版',
+                text: '店铺端',
                 value: 0,
                 color: 'green',
               },
               {
-                text: '物流端 | 内测版',
+                text: '物流端',
                 value: 1,
                 color: 'blue',
               },
