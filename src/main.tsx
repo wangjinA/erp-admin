@@ -23,12 +23,13 @@ import AdminLogin from './pages/admin/login'
 import ClientLogin from './pages/client/login'
 import AuthShopee from './pages/common/auth/shopee'
 import { isClient, isLoginPage, toLoginPage } from './routes'
-import rootReducer from './store'
+import rootReducer, { CountMapKey } from './store'
 import './style/global.less'
 import changeTheme from './utils/changeTheme'
 import checkLogin from './utils/checkLogin'
 import { isSuccessCode } from './utils/index'
 import useStorage from './utils/useStorage'
+import { orderAPI } from './api/client/order'
 
 dayjs.extend(duration)
 dayjs.extend(weekday)
@@ -118,9 +119,35 @@ function Index() {
     }
   }
 
+  async function initCountMap() {
+    const pendingQuery: any = {
+      "selectLogisticsOrderVO": {
+        "sortType": 2,
+        "shrimpOrderNo": null,
+        "abeyanceStatus": 0,
+        "handle": true
+      },
+      "selectOrderProductVO": {
+        "trackingNo": null
+      },
+      "trackingNumber": "",
+      "selectLogisticsVO": {},
+      "pageNum": 1,
+      "pageSize": 10
+    }
+    const res = await orderAPI.getList(pendingQuery)
+    if (isSuccessCode(res.data.code)) {
+      store.dispatch({
+        type: 'set-count-map',
+        payload: { countMap: { [CountMapKey.CLIENT_ORDER_PENDING]: res.data.data.total } },
+      })
+    }
+  }
+
   async function initMain() {
     fetchUserInfo()
     fetchClientMenuList()
+    initCountMap()
   }
 
   async function fetchClientMenuList() {
@@ -128,7 +155,7 @@ function Index() {
       const res = await menuAPI.list()
       if (isSuccessCode(res.data.code)) {
         const list = listToTree(res.data.data.list)
-        console.log(list)
+        // console.log(list)
 
         store.dispatch({
           type: 'set-client-menu-list',

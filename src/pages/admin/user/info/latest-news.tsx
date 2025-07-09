@@ -45,7 +45,7 @@ function LatestNews() {
     manual: true,
   })
 
-  console.log(boundInfoHandler.data)
+  // console.log(boundInfoHandler.data)
 
   return (
     <Card

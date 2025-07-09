@@ -43,7 +43,7 @@ export default function Member() {
               return <Remark value={c} onChange={(v) => {
                 return tenantryUserAPI.setLogisticsRemark({
                   id: row.id,
-                  logisticsRemark: v,
+                  remarks: v,
                 }).then(r =>{
                   ref.current.refreshSearchTable();
                   return r;

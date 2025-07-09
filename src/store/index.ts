@@ -6,23 +6,19 @@ import { MenuItem } from '@/api/menu'
 import { getEndType } from '@/routes'
 import { LoginResponse } from '@/types/user'
 
+export enum CountMapKey {
+  CLIENT_ORDER_PENDING = 'client/order/pending',
+}
+
 export interface GlobalState {
   settings?: typeof defaultSettings
   userInfo?: Partial<UserInfo>
-  // {
-  // name?: string;
-  // avatar?: string;
-  // job?: string;
-  // organization?: string;
-  // location?: string;
-  // email?: string;
-  // permissions: Record<string, string[]>;
-  // };
   userLoading?: boolean
   editPassword: boolean
   clientMenuList: MenuItem[]
   loginInfo?: LoginResponse
   boundInfo?: LogisticsBoundInfo
+  countMap: Record<CountMapKey, number>
 }
 
 const settingsData = localStorage.getItem(`${getEndType()}-settings`)
@@ -34,6 +30,9 @@ const initialState: GlobalState = {
   clientMenuList: [],
   loginInfo: undefined,
   boundInfo: null,
+  countMap: {
+    [CountMapKey.CLIENT_ORDER_PENDING]: 0,
+  },
 }
 
 export default function store(state = initialState, action) {
@@ -72,6 +71,16 @@ export default function store(state = initialState, action) {
       return {
         ...state,
         loginInfo,
+      }
+    }
+    case 'set-count-map': {
+      const { countMap } = action.payload
+      return {
+        ...state,
+        countMap: {
+          ...state.countMap,
+          ...countMap,
+        },
       }
     }
     default:

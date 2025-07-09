@@ -27,6 +27,8 @@ import { isAdmin } from '@/routes'
 import { replaceQueryValueByObject, timeArrToObject } from '@/utils'
 import PageActions from './components/PageActions'
 import { BadgeDefaultTextList } from '@/constants/colorMap'
+import { useDispatch } from 'react-redux'
+import { CountMapKey } from '@/store'
 
 export enum OrderPageType {
   SHOPEE = 'shopee',
@@ -56,7 +58,7 @@ const AllTabValue = '-1';
 
 export default (props: OrderPageProps) => {
   const { type } = props
-
+  const dispatch = useDispatch()
   const dictCode = {
     [OrderPageType.SHOPEE]: OrderPageDict.SHOPEE,
     [OrderPageType.PACK_ORDER]: OrderPageDict.PACK_ORDER,
@@ -194,8 +196,13 @@ export default (props: OrderPageProps) => {
 
       const listRequestList = (...params) => ((listRequestMap[type] || orderAPI.getList)(...params)).then(r => {
         if (type === OrderPageType.PENDING) {
+          const total = r.data.data.total;
+          dispatch({
+            type: 'set-count-map',
+            payload: { countMap: { [CountMapKey.CLIENT_ORDER_PENDING]: total } },
+          })
           setCountMap({
-            '0': r.data.data.total,
+            '0': total,
           })
         }
         return r;

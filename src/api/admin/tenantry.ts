@@ -63,7 +63,7 @@ export const tenantryUserAPI = {
    */
   setLogisticsRemark(body: {
     id: any
-    logisticsRemark: string
+    remarks: string
   }) {
     return baseAxios.post('/api/tenantry/set/logisticsRemark', body)
   },

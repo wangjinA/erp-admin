@@ -1,4 +1,4 @@
-import { Breadcrumb, Empty, Layout, Menu, Spin } from '@arco-design/web-react'
+import { Badge, Breadcrumb, Empty, Layout, Menu, Spin } from '@arco-design/web-react'
 import {
   IconApps,
   IconArchive,
@@ -120,7 +120,7 @@ function PageLayout() {
   const history = useHistory()
   const pathname = history.location.pathname
   const locale = useI18n()
-  const { settings, userLoading } = useSelector(
+  const { settings, userLoading, countMap } = useSelector(
     (state: GlobalState) => state,
   )
 
@@ -190,7 +190,16 @@ function PageLayout() {
           <>
             {iconDom}
             {' '}
-            {locale[route.name] || route.name}
+            {locale[route.name] || route.name} 
+            {
+              countMap[route.key] ? <Badge style={{
+                '--badge-color': 'var(--danger-6)',
+                marginLeft: 5
+              } as any} 
+              count={countMap[route.key]}
+              maxCount={9999}
+              ></Badge> : null
+            }
           </>
         )
 
