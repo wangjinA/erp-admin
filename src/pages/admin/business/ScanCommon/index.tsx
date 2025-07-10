@@ -11,12 +11,13 @@ import { IconScan } from '@arco-design/web-react/icon'
 import { useLocalStorageState } from 'ahooks'
 import classNames from 'classnames'
 
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 
 import styles from './index.module.less'
 
 import { ScanParams } from '@/api/admin/entrepot'
 import { useEntrepotOptions } from '@/components/Selectors/EntrepotSelector'
+import { EmitTypes, useEventBus } from '@/hooks/useEventBus'
 
 export interface ScanComponentProps {
   showAlert?: boolean;
@@ -40,6 +41,13 @@ export default (props: ScanComponentProps) => {
   //     setEntrepot(data.find(o => o.default)?.value || data[0]?.value)
   //   }
   // }, [data])
+  const ref = useRef<any>()
+
+  useEventBus(EmitTypes.focusScanInput, () => {
+    console.log(ref.current)
+    ref.current.focus()
+  })
+
   const height = 'h-20'
   return (
     <div className={className} style={style}>
@@ -73,7 +81,9 @@ export default (props: ScanComponentProps) => {
         </Grid.Col>
         <Grid.Col span={19}>
           <Input
+            ref={ref}
             value={value}
+            autoFocus={true}
             onChange={(e) => {
               if (e) {
                 setValue(e.trim())

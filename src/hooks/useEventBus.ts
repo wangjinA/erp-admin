@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 export enum EmitTypes {
   refreshOrderPage = 'refresh-order-page',
   clearSelectOrderList = 'clear-select-order-list',
+  focusScanInput = 'focus-scan-input',
 }
 
 // 创建事件总线

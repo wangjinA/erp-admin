@@ -57,6 +57,9 @@ export function useColumns(props: OrderTablePorps) {
               <TrackingNumber orderItem={row}></TrackingNumber>
             }></LabelValue>
             {row.shippingTime ? <LabelValue label="出货时间" value={row.shippingTime}></LabelValue> : null}
+            {/* <LabelValue label="申请人" value={
+              <TrackingNumber orderItem={row}></TrackingNumber>
+            }></LabelValue> */}
             {
               isShowMjInfo ? <>
                 <LabelValue label="收货地址" value={
@@ -129,7 +132,7 @@ export function useColumns(props: OrderTablePorps) {
               {/* <LabelValue label="打包仓库" value={<EntrepotNameFC value={row.sendWarehouse} />}></LabelValue> */}
               <LabelValue label="卖家标识" value={row.tenantryNo}></LabelValue>
               <LabelValue valueClassName={classNames({
-                'text-red-500 font-bold': row.remark
+                '!text-red-500 !font-bold': row.remark
               })} label="卖家备注" value={row.remark}></LabelValue>
               <LabelValue label="仓库备注" value={row.entrepotRemark}></LabelValue>
             </div>

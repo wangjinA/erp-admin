@@ -78,7 +78,7 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
     }
   }, [visible, modalRef.current])
 
-return (
+  return (
     <>
       <Button
         onClick={() => {
@@ -131,7 +131,13 @@ return (
               orderItem={orderItem}
               sendWarehouse={orderItem.sendWarehouse}
               shrimpOrderNo={orderItem.shrimpOrderNo}
-              onSuccess={onSuccess}
+              onSuccess={() => {
+                setVisible(false);
+                setTimeout(() => {
+                  bus.emit(EmitTypes.focusScanInput);
+                }, 200);
+                onSuccess();
+              }}
             />
           </Space>
         )}
@@ -237,7 +243,7 @@ return (
           <Grid.Row className="mt-4">
             <Grid.Col span={12}>
               <div>
-                <LabelValue label="卖家备注" value="暂无备注"></LabelValue>
+                <LabelValue label="卖家备注" value={<span className="text-red-700 font-bold">{orderItem.remark}</span>}></LabelValue>
                 <LabelValue label="打包要求" value="暂无要求"></LabelValue>
                 <LabelValue label="温馨提示" value={<span className="text-red-700 font-bold"><DictNameFC dictCode="tips" value="xpddd"></DictNameFC></span>}></LabelValue>
               </div>
