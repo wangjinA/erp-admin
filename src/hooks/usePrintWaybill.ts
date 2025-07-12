@@ -48,7 +48,7 @@ function getPrintHtml(orderItem: OrderResponseItem & {
                 <table >
                     <tr>
                       <td style="text-align: center;padding: 5px 0px 0px;">
-                        <img width="200" src="${textToBase64Barcode(orderItem.id)}"/> 
+                        <img width="200" src="${textToBase64Barcode(orderItem.shrimpOrderNo)}"/> 
                        </td>
                     </tr>
                     <tr>
