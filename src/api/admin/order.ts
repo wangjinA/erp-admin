@@ -34,7 +34,6 @@ export const orderAPI = {
     /** 寄件人姓名 */
     senderRealName: string
     /** 快递单号 */
-    trackingNo: string
   }) {
     return baseAxios.post('/api/logistics/order/arrange/shipment', body)
   },

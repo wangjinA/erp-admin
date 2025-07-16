@@ -37,7 +37,10 @@ export default ({
   const trackingNumber = orderItem?.orderPackageList?.[0]?.trackingNumber || orderItem?.logisticsOrderPackageList?.[0]?.trackingNumber
 
   if (!trackingNumber) {
-    const showShipmentButton = isAdmin() && orderItem.orderStatus === OrderStatus['已出库'] && orderItem.shopeeStatus !== ShopeeStatus['已装船']
+    const showShipmentButton = isAdmin() &&
+      // orderItem.orderStatus === OrderStatus['已出库']
+      orderItem.warehouseDeliveryTime
+      && orderItem.shopeeStatus !== ShopeeStatus['已装船']
     if (showShipmentButton) {
 
       if (orderItem.shippingTime) {
@@ -47,8 +50,8 @@ export default ({
             <Spin size={13}></Spin>
             <Typography.Text className="ml-2 text-sm" type="secondary" >获取面单中...</Typography.Text>
           </span>
-        } else {
-          return <>-</>
+        // } else {
+        //   return <>-</>
         }
       }
 

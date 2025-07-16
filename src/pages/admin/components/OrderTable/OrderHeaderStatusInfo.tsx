@@ -19,7 +19,7 @@ export default ({ data }: { data: OrderResponseItem }) => {
   })
   const dateStr = useMemo(() => {
     if (data && data.shipByDate) {
-      if ([ShopeeStatus['已完成']].includes(data.shopeeStatus)) {
+      if ([ShopeeStatus['已完成'], ShopeeStatus['已取消']].includes(data.shopeeStatus)) {
         return '';
       }
       if (data.shippingTime) {
@@ -28,11 +28,11 @@ export default ({ data }: { data: OrderResponseItem }) => {
         if (diffDay > 3) {
           return ''
         }
-        const res = getRemainingTime(dayjs(data.shippingTime).add(2, 'day'), '进店')
+        const res = getRemainingTime(dayjs(data.shippingTime).add(2, 'day'), '进店', data)
         return res.dateStr;
       }
       if (data.shipByDate) {
-        const res = getRemainingTime(data.shipByDate, '发货')
+        const res = getRemainingTime(data.shipByDate, '发货', data)
         return res.dateStr
       }
     }

@@ -5,7 +5,7 @@ import LabelValue from '@/components/LabelValue'
 import TrackingNumber from '@/components/TrackingNumber'
 import { isAdmin, isClient } from '@/routes'
 import { OrderResponseItem } from '@/types/order'
-import { stringToMasked } from '@/utils'
+import { formatDate, stringToMasked } from '@/utils'
 import { ShippingCarrierColorMap } from '@/constants/order'
 import classNames from 'classnames'
 import OrderTableActions from './admin/OrderTableActions'
@@ -56,7 +56,11 @@ export function useColumns(props: OrderTablePorps) {
             <LabelValue label="物流单号" value={
               <TrackingNumber orderItem={row}></TrackingNumber>
             }></LabelValue>
-            {row.shippingTime ? <LabelValue label="出货时间" value={row.shippingTime}></LabelValue> : null}
+            {(row.shippingTime
+              && (row?.orderPackageList?.[0]?.trackingNumber || row?.logisticsOrderPackageList?.[0]?.trackingNumber))
+              ? <LabelValue label="出货时间" value={formatDate(row.shippingTime)}></LabelValue>
+              : null}
+            {row.warehouseDeliveryTime ? <LabelValue label="出库时间" value={formatDate(row.warehouseDeliveryTime)}></LabelValue> : null}
             {/* <LabelValue label="申请人" value={
               <TrackingNumber orderItem={row}></TrackingNumber>
             }></LabelValue> */}

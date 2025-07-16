@@ -20,7 +20,7 @@ export default (props: Props) => {
     value,
     onChange,
     autoCard = false,
-    fileSize = 10,
+    fileSize = 2,
     ...uploadProps
   } = props
   const urls = toArray(value).filter(Boolean)

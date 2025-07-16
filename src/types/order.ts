@@ -65,6 +65,7 @@ export interface Order {
   orderStatus: string // 订单状态 字典值
   returnStatus: string // 退件状态 0 1 2
   shopeeStatus: string // 虾皮订单状态 字典值
+  warehouseDeliveryTime: string;
   orderTime: string // 订单时间
   orderType: string // 订单类型 字典值
   packCost: number // 打包费用

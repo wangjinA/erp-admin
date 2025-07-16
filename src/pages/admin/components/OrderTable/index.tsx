@@ -31,7 +31,7 @@ import { OrderCreateSchema2 } from '@/pages/client/order/create/schema'
 import { isAdmin, isClient } from '@/routes'
 import { StyleProps } from '@/types'
 import { Order, OrderResponseItem } from '@/types/order'
-import { showMessage } from '@/utils'
+import { formatDate, showMessage } from '@/utils'
 import { useDefaultEntrepot } from '@/components/Selectors/EntrepotSelector'
 import ClientHeaderActions from './ClientHeaderActions'
 import { OrderPageDict } from '@/pages/client/order/orderPage'
@@ -254,13 +254,13 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                     <div className="gap-12 grid grid-cols-[200px_280px]">
                       <div>
                         <span className={labelClass}>下单：</span>
-                        <span className={valueClass}>{item.orderTime || '-'}</span>
+                        <span className={valueClass}>{formatDate(item.orderTime)}</span>
                       </div>
                       {item.packTime
                         ? (
                           <div>
                             <span className={labelClass}>提交：</span>
-                            <span className={valueClass}>{item.packTime || '-'}</span>
+                            <span className={valueClass}>{formatDate(item.packTime)}</span>
                           </div>
                         )
                         : null}
