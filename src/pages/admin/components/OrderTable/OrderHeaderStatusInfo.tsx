@@ -23,12 +23,13 @@ export default ({ data }: { data: OrderResponseItem }) => {
         return '';
       }
       if (data.shippingTime) {
-        const diffDay = dayjs().diff(data.shippingTime, 'day');
+        const shippingTimeDayjs = dayjs(data.shippingTime).endOf('day');
+        const diffDay = dayjs().diff(shippingTimeDayjs, 'day');
 
         if (diffDay > 3) {
           return ''
         }
-        const res = getRemainingTime(dayjs(data.shippingTime).add(2, 'day'), '进店', data)
+        const res = getRemainingTime(shippingTimeDayjs.add(2, 'day'), '进店', data)
         return res.dateStr;
       }
       if (data.shipByDate) {
