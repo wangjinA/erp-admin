@@ -275,7 +275,7 @@ const StoreList: React.FC<StoreListProps> = (props) => {
             control: 'number',
             controlProps: {
               max: 30,
-              min: 2,
+              min: 1,
             },
           }, {
             schema: {

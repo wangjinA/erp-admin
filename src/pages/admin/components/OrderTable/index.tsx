@@ -315,7 +315,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
               sizeCanChange={true}
               current={pagination?.current || 1}
               pageSize={pagination?.pageSize}
-              sizeOptions={[10, 20, 30, 40, 50, 100,]}
+              sizeOptions={[10, 20, 30, 40, 50, 100, 300, 500]}
               onChange={(pageNumber: number, pageSize: number) => {
                 console.log(pageNumber, pageSize, pagination);
                 if (pagination) {
