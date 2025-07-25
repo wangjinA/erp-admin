@@ -49,6 +49,14 @@ export default () => {
         },
         {
           schema: {
+            label: 'SKU',
+            field: 'sku',
+          },
+          isSearch: true,
+          hideTable: true,
+        },
+        {
+          schema: {
             label: '商品编码',
             field: 'productCode',
           },
