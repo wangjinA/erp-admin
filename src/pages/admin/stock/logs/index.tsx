@@ -14,8 +14,8 @@ export default () => {
       showActions={false}
       tableProps={{
         scroll: {
-          x: 1200
-        }
+          x: 1200,
+        },
       }}
       formItemConfigList={[
         {
@@ -37,6 +37,24 @@ export default () => {
           render(col, row) {
             return <ProductInfo data={row}></ProductInfo>
           },
+        },
+        {
+          schema: {
+            label: '商品名称',
+            field: 'productName',
+          },
+          hideTable: true,
+          width: 100,
+          isSearch: true,
+        },
+        {
+          schema: {
+            label: '商品编码',
+            field: 'productCode',
+          },
+          hideTable: true,
+          width: 100,
+          isSearch: true,
         },
         {
           schema: {
@@ -76,11 +94,29 @@ export default () => {
           },
           width: 120,
           render(c, row) {
-            return <div>
-              <p>{c}</p>
-              <LabelValue label="操作人" value={row.createUser}></LabelValue>
-            </div>
-          }
+            return (
+              <div>
+                <p>{c}</p>
+                <LabelValue label="操作人" value={row.createUser}></LabelValue>
+              </div>
+            )
+          },
+        },
+        {
+          schema: {
+            label: '日志类型',
+            field: 'logType',
+          },
+          width: 100,
+          // render(x) {
+          //   return x === '1' ? '商品入库' : '变更数量'
+          // },
+          isSearch: true,
+          hideTable: true,
+          control: 'dictSelector',
+          controlProps: {
+            dictCode: 'stock_log_type',
+          },
         },
       ]}
     >
