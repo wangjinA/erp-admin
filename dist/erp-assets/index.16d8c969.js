@@ -1,1 +1,0 @@
-import o from"./index.4d5a93a2.js";import{b as e}from"./vendor.2c95b06f.js";/* empty css               */import"./useEventBus.e33b5048.js";import"./entrepot.8bb66161.js";import"./index.4928b86f.js";function d(){return e("div",{children:e(o,{})})}export{d as default};
