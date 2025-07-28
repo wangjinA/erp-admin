@@ -29,7 +29,7 @@ export const SendStockItemInfo: React.FC<{
   return <div className="h-full p-2">
     <LabelValue label="快递" value={<Tag color="magenta">库存发货 x{item.stockUse}</Tag>}></LabelValue>
     {/* <LabelValue label="仓位" value={item.freightSpaceName}></LabelValue> */}
-    <LabelValue label="商品编号" value={<Typography.Text copyable={{ text: item.logisticsProduct?.productCode }}><Tag color="blue">{item.logisticsProduct?.productCode}</Tag></Typography.Text>}></LabelValue>
+    <LabelValue label="库存SKU" value={<Typography.Text copyable={{ text: item.logisticsProduct?.sku }}><Tag color="blue">{item.logisticsProduct?.sku}</Tag></Typography.Text>}></LabelValue>
   </div>
 }
 
