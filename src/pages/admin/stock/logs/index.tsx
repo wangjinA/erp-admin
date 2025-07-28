@@ -4,6 +4,7 @@ import LabelValue from '@/components/LabelValue'
 import SearchTable from '@/components/SearchTable'
 import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
 import ProductInfo from '@/pages/client/stock/components/ProductInfo'
+import { omitBy } from 'lodash'
 
 export default () => {
   return (
@@ -11,6 +12,7 @@ export default () => {
       className="bg-white p-4"
       name="库存日志"
       getListRequest={StockAPI.getLogs}
+      requestQueryTransform={(query) => omitBy(query, value => value === '')}
       showActions={false}
       tableProps={{
         scroll: {
