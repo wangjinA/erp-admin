@@ -41,7 +41,7 @@ export default (props: ShipmentButtonButtonProps) => {
   const [initialValues, setInitialValues] = useState({})
 
   const [formRef] = Form.useForm()
-  const { loading, run } = useRequest(async () => {
+  const mainHandle = async () => {
     const formData = await formRef.validate()
     await showMessage(() => orderAPI.shipment({
       ...formData,
@@ -49,7 +49,8 @@ export default (props: ShipmentButtonButtonProps) => {
     }), '出货')
     bus.emit(EmitTypes.refreshOrderPage)
     setFormItemConfigList([])
-  }, {
+  }
+  const { loading, run } = useRequest(mainHandle, {
     manual: true,
   })
   const getNeedInfoHandle = useRequest(async () => {
@@ -69,7 +70,8 @@ export default (props: ShipmentButtonButtonProps) => {
     const ls = shippingRes?.data?.data?.infoNeeded?.dropoff?.map(o => InfoNeededMap[o]) || []
     setFormItemConfigList(ls)
     if (!ls.length) {
-      Message.error('相关信息获取失败！请先将包裹出库')
+      return mainHandle();
+      // Message.error('相关信息获取失败！请先将包裹出库')
     }
   }, {
     manual: true,
