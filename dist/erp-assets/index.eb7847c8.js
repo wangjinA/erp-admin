@@ -1,0 +1,1 @@
+import{r as o}from"./vendor.d4c870c4.js";import{u as a}from"./index.a202f17a.js";function f(t){var n=a(),r=t.type,e=t.config;return o.exports.useLayoutEffect(function(){return n.interaction(r,e),function(){n.removeInteraction(r)}}),null}export{f as I};
