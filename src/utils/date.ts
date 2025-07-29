@@ -1,6 +1,7 @@
-import { OrderResponseItem } from '@/types/order'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
+
+import { OrderResponseItem } from '@/types/order'
 
 dayjs.extend(duration)
 
@@ -12,7 +13,7 @@ export function getRemainingTime(date, name, orderItem: OrderResponseItem) {
   const days = Math.floor(duration.asDays())
   const hours = duration.hours()
   const minutes = duration.minutes()
-  const isRealExpired = orderItem.orderPackageList?.[0]?.logisticsStatus === "LOGISTICS_INVALID";
+  const isRealExpired = orderItem.orderPackageList?.[0]?.logisticsStatus === 'LOGISTICS_INVALID'
   if (isRealExpired) {
     return {
       expired: true,
@@ -22,7 +23,7 @@ export function getRemainingTime(date, name, orderItem: OrderResponseItem) {
   if (diff <= 0) {
     return {
       expired: true,
-      dateStr: '即将逾期',
+      dateStr: '',
     }
   }
   else {
