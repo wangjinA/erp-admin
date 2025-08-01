@@ -273,3 +273,8 @@ export function randomNumericString(minLength: number = 9, maxLength: number = 1
 
   return result;
 }
+
+// 将*号处理为空字符串
+export function replaceXStr(str: string) {
+  return str?.replace(new RegExp('\\*', 'g'), '') || ''
+}
