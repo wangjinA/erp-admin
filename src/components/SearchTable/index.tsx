@@ -33,7 +33,7 @@ import { AxiosResponse } from 'axios'
 
 import classNames from 'classnames'
 import { omit } from 'lodash'
-import React, { CSSProperties, forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import React, { CSSProperties, forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 
 import { CreateFormItemType } from '../CreateFormItem'
 import CreateWrap, { ActionsContext, CreateWrapProps } from '../CreateWrap'
@@ -98,6 +98,10 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
       initialValues,
       isSearchParams,
     })
+
+    // useEffect(()=>{
+    //   console.log(searchFromData);
+    // }, [searchFromData])
 
     const delInputRef = useRef(null);
 

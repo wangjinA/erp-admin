@@ -11,7 +11,7 @@ import {
 import { IconExport, IconRefresh, IconSearch } from '@arco-design/web-react/icon'
 import { useLocalStorageState, usePagination, useResetState } from 'ahooks'
 import { omit, sum } from 'lodash'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { getOrderFilter } from './schema'
 import { orderAPI as adminOrderApi } from '@/api/admin/order'
@@ -237,7 +237,7 @@ export default (props: OrderPageProps) => {
       defaultPageSize: 10,
       defaultCurrent: 1,
       manual: false,
-      debounceWait: 80,
+      debounceWait: 200,
       refreshDeps: [activeTab, shrimpStatus, sortType],
     },
   )
@@ -247,6 +247,14 @@ export default (props: OrderPageProps) => {
   // }, {
   //   manual: true,
   // })
+
+  useEffect(() => {
+    console.log(formData)
+    run({
+      current: 1,
+      pageSize: 10,
+    })
+  }, [formData])
 
   useEventBus(EmitTypes.refreshOrderPage, () => {
     refresh()

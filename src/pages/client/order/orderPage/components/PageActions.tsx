@@ -154,7 +154,7 @@ const PageActions = (props: PageActionsProps) => {
           return Message.error('请选择订单')
         }
         const ids = data.list.filter(item =>
-          BatchApplyShippingCarrierList.includes(item.shippingCarrier || item.orderPackageList?.[0]?.shippingCarrier),
+          BatchApplyShippingCarrierList.some(o => (item.shippingCarrier || item.orderPackageList?.[0]?.shippingCarrier).includes(o))
         ).map(o => o.id)
 
         const tips = `只有${BatchApplyShippingCarrierList.join('、')}的订单才能批量出货`;
