@@ -77,7 +77,6 @@ export default (props: OrderPageProps) => {
   const [formData, _setFormData, restFormData] = useResetState<any>({
     selectLogisticsOrderVO: {},
     selectOrderProductVO: {},
-    trackingNumber: '',
   })
   const [filterForm] = Form.useForm()
 
@@ -164,11 +163,16 @@ export default (props: OrderPageProps) => {
       ...formData.selectOrderProductVO,
     }, ['trackingNo'])
 
+    const querySelectLogisticsVO = replaceQueryValueByObject({
+      ...formData.selectLogisticsVO,
+    }, ['trackingNumber'])
+
 
     const pageQuery = {
       ...formData,
       selectOrderProductVO: querySelectOrderProductVO,
       selectLogisticsOrderVO: querySelectLogisticsOrderVO,
+      selectLogisticsVO: querySelectLogisticsVO,
       ...other,
     }
     return pageQuery;
