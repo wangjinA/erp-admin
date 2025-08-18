@@ -1,4 +1,4 @@
-import { Button, Drawer, Form, Image, Modal, Progress, Space, Spin } from '@arco-design/web-react'
+import { Alert, Button, Drawer, Form, Image, Modal, Progress, Space, Spin } from '@arco-design/web-react'
 import { IconEdit, IconSend } from '@arco-design/web-react/icon'
 import { useRequest } from 'ahooks'
 import React, { useEffect, useRef, useState } from 'react'
@@ -22,6 +22,7 @@ import { KF } from '@/constants'
 import { GlobalState } from '@/store'
 import { showMessage, showModal } from '@/utils'
 import { secondsToDateString } from '@/utils/date'
+import { useDictName } from '@/components/Selectors/DictSelector'
 
 interface StoreListProps { }
 const StoreList: React.FC<StoreListProps> = (props) => {
@@ -62,6 +63,11 @@ const StoreList: React.FC<StoreListProps> = (props) => {
     }))
   }, {
     manual: true,
+  })
+
+  const notice = useDictName({
+    dictCode: 'update_day_notice',
+    value: 'notice_1',
   })
 
   useEffect(() => {
@@ -220,6 +226,7 @@ const StoreList: React.FC<StoreListProps> = (props) => {
                                 确定申请权限？申请后联系客服同意授权：
                                 {KF}
                               </div>
+                              <Alert type="success" content={notice?.data || ''}></Alert>
                               <Space className="items-start">
                                 <Image
                                   width={200}
