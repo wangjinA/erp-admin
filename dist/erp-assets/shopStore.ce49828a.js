@@ -1,1 +1,0 @@
-import{b as e}from"./index.93a64ab7.js";const a={getList(t){return e.post("/api/tenantry/store/list",t)},getAuthLink(){return e.post("/api/tenantry/store/create/accredit/url")},unbind(t){return e.get(`/api/tenantry/store/remove/${t}`)},reAuth(){return e.post("/api/tenantry/store/update")},editAlias(t){return e.post("/api/tenantry/store/edit/alias",t)}};export{a as s};
