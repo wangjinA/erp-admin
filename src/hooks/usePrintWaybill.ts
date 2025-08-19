@@ -73,13 +73,19 @@ function getPrintHtml(orderItem: OrderResponseItem & {
                     <tr>
                         <td style="width: 70px;font-weight: bold;">仓位</td>
                         <td style="width: 80px;font-weight: bold;">单号</td>
-                        <td style="font-weight: bold;">规格</td>
+                        <td style="font-weight: bold;">规格/SKU</td>
                         <td style="font-weight: bold;">数量</td>
                     </tr>
                     
                      ${orderItem.orderProductVOList.map(item => `
                         <tr>
-                            <td>${item.freightSpaceName}</td><td>${orderItem.shrimpOrderNo}</td><td>${item.specificationName}</td><td>${item.quantity}</td>
+                            <td>${item.freightSpaceName}</td>
+                            <td>${orderItem.shrimpOrderNo}</td>
+                            <td>
+                              <div>${item.specificationName||item.logisticsProduct?.productName}</div>
+                              <div>${item.logisticsProduct?.sku || item.sku}</div>
+                            </td>
+                            <td>${item.quantity}</td>
                         </tr>  
                       `)
     }
