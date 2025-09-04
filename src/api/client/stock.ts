@@ -118,6 +118,12 @@ export const StockListAPI = {
   info(id: string) {
     return baseAxios.get<APIResponse<any>>(`/api/stock/product/info/${id}`)
   },
+  changeQuantity(body: {
+    id: number
+    quantity: number
+  }) {
+    return baseAxios.post<APIResponse<any>>('/api/stock/product/changeQuantity', body)
+  },
 }
 
 export interface StockStorageApplyProductList {
@@ -247,8 +253,8 @@ export interface ProductItem {
   unitPrice: number
   updateBy: number
   updateTime: string
-  num: number;
-  sendProductCount: number;
+  num: number
+  sendProductCount: number
 }
 
 export interface StockApplyAdmin {
