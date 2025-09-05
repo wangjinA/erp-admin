@@ -20,8 +20,8 @@ import { useEntrepotOptions } from '@/components/Selectors/EntrepotSelector'
 import { EmitTypes, useEventBus } from '@/hooks/useEventBus'
 
 export interface ScanComponentProps {
-  showAlert?: boolean;
-  isAuto?: boolean;
+  showAlert?: boolean
+  isAuto?: boolean
   placeholder?: string
   className?: string
   loading?: boolean
@@ -67,15 +67,19 @@ export default (props: ScanComponentProps) => {
               当前仓库
             </Typography.Title>
             {
-              isAuto ? <Typography.Text type="secondary" className="pl-5">自动匹配</Typography.Text> : <Select
-                value={entrepot}
-                onChange={setEntrepot}
-                size="large"
-                placeholder="请选择仓库"
-                options={data}
-                loading={loadingEntrepot}
-              >
-              </Select>
+              isAuto
+                ? <Typography.Text type="secondary" className="pl-5">自动匹配</Typography.Text>
+                : (
+                    <Select
+                      value={entrepot}
+                      onChange={setEntrepot}
+                      size="large"
+                      placeholder="请选择仓库"
+                      options={data}
+                      loading={loadingEntrepot}
+                    >
+                    </Select>
+                  )
             }
           </div>
         </Grid.Col>
@@ -86,8 +90,10 @@ export default (props: ScanComponentProps) => {
             autoFocus={true}
             onChange={(e) => {
               if (e) {
-                setValue(e.trim())
-              } else {
+                const value = e.split(',').map(item => item.trim()).join(',')
+                setValue(value)
+              }
+              else {
                 setValue(e)
               }
             }}
@@ -112,11 +118,15 @@ export default (props: ScanComponentProps) => {
           </Input>
         </Grid.Col>
         {
-          showAlert ? <Alert
-            type="info"
-            content="请用扫描快递条形码或者手动输入快递单号签收快递"
-            className="mt-4"
-          /> : null
+          showAlert
+            ? (
+                <Alert
+                  type="info"
+                  content="请用扫描快递条形码或者手动输入快递单号签收快递"
+                  className="mt-4"
+                />
+              )
+            : null
         }
       </Grid.Row>
     </div>
