@@ -1,5 +1,11 @@
 import { ProductItem } from '@/api/client/stock'
 
+export enum PickingStatus {
+  DEFAULT = 0, // 没有选择，默认状态
+  PICKED = 1, // 已拣货
+  UNPICKED = 2, // 未拣货
+}
+
 export interface OrderProductList {
   actualQuantity: number // 实际收货数量
   checkStatus: boolean // 核对状态
@@ -17,6 +23,7 @@ export interface OrderProductList {
   stockUse: number // 库存使用数量
   stockProductId: string // 库存商品id
   problemStatus: boolean // 是否为问题订单：默认为空
+  pickingStatus: PickingStatus // 是否拣货
   productImg: string // 商品图片
   productName: string // 商品名称
   purchaseStatus: boolean // 是否采购：默认为

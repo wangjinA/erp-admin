@@ -141,6 +141,13 @@ export const orderAPI = {
       params,
     })
   },
+  // 修改快递拣货状态
+  updatePickingStatus(params: {
+    productId: number
+    pickingStatus: number
+  }) {
+    return baseAxios.get(`/api/logistics/order/mark/pickingProduct?productId=${params.productId}&pickingStatus=${params.pickingStatus}`)
+  },
 }
 
 interface getShippingParameterRes {

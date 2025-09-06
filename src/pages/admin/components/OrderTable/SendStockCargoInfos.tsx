@@ -1,11 +1,14 @@
-import React, { useState } from 'react'
-import classNames from 'classnames'
-import styles from './index.module.less'
-import { OrderResponseItem } from '@/types/order'
-import LabelValue from '@/components/LabelValue'
-import { Tag, Typography } from '@arco-design/web-react'
+import { Modal, Tag, Tooltip, Typography } from '@arco-design/web-react'
+import { IconCheckCircle, IconCheckCircleFill, IconCloseCircle, IconCloseCircleFill, IconEmpty } from '@arco-design/web-react/icon'
 import { useRequest } from 'ahooks'
+import classNames from 'classnames'
+import React, { useState } from 'react'
+
+import styles from './index.module.less'
+
+import { orderAPI } from '@/api/admin/order'
 import { expressAPI } from '@/api/client/express'
+import LabelValue from '@/components/LabelValue'
 import MyBadge from '@/components/MyBadge'
 import PopconfirmDelete from '@/components/PopconfirmDelete'
 import ReturnParcel from '@/components/ReturnParcel'
@@ -13,8 +16,8 @@ import { useDictOptions } from '@/components/Selectors/DictSelector'
 import TrackingNo from '@/components/TrackingNo'
 import { EmitTypes, bus } from '@/hooks/useEventBus'
 import { isClient } from '@/routes'
+import { OrderResponseItem, PickingStatus } from '@/types/order'
 import { showMessage, showModal } from '@/utils'
-import { IconEmpty } from '@arco-design/web-react/icon'
 
 interface SendCargoInfoProps {
   data: OrderResponseItem
@@ -22,17 +25,27 @@ interface SendCargoInfoProps {
 
 export const SendStockItemInfo: React.FC<{
   item: OrderResponseItem['orderProductVOList'][0]
-  orderStatus: string;
-  sendWarehouse: string;
-  orderId: string;
+  orderStatus: string
+  sendWarehouse: string
+  orderId: string
 }> = ({ item }) => {
-  return <div className="h-full p-2">
-    <LabelValue label="快递" value={<Tag color="magenta">库存发货 x{item.stockUse}</Tag>}></LabelValue>
-    {/* <LabelValue label="仓位" value={item.freightSpaceName}></LabelValue> */}
-    <LabelValue label="库存SKU" value={<Typography.Text copyable={{ text: item.logisticsProduct?.sku }}><Tag color="blue">{item.logisticsProduct?.sku}</Tag></Typography.Text>}></LabelValue>
-  </div>
+  return (
+    <div className="h-full p-2">
+      <LabelValue
+        label="快递"
+        value={(
+          <Tag color="magenta">
+            库存发货 x
+            {item.stockUse}
+          </Tag>
+        )}
+      >
+      </LabelValue>
+      {/* <LabelValue label="仓位" value={item.freightSpaceName}></LabelValue> */}
+      <LabelValue label="库存SKU" value={<Typography.Text copyable={{ text: item.logisticsProduct?.sku }}><Tag color="blue">{item.logisticsProduct?.sku}</Tag></Typography.Text>}></LabelValue>
+    </div>
+  )
 }
-
 
 interface SendCargoInfoProps {
   data: OrderResponseItem
@@ -228,91 +241,162 @@ function ExpressStatusActions(props: {
 
 export const SendCargoItemInfo: React.FC<{
   item: OrderResponseItem['orderProductVOList'][0]
-  orderStatus: string;
-  sendWarehouse: string;
-  orderId: string;
-}> = ({ item, orderStatus, sendWarehouse, orderId, }) => {
-  let trackingNoContent = null;
+  orderStatus: string
+  sendWarehouse: string
+  orderId: string
+}> = ({ item, orderStatus, sendWarehouse, orderId }) => {
+  let trackingNoContent = null
+
+  const pickingStatusHandle = useRequest(async (params: {
+    productId: number
+    pickingStatus: PickingStatus
+  }) => {
+    return showMessage(() => orderAPI.updatePickingStatus(params)).then(() => {
+      bus.emit(EmitTypes.refreshOrderPage)
+    })
+  }, {
+    manual: true,
+  })
 
   if (item.stockOutStatus) {
     trackingNoContent = <Tag color="orangered" icon={<IconEmpty />}>缺货打包</Tag>
-
-  } else if (item.trackingNo) {
-    trackingNoContent = <Typography.Text
-      copyable={{
-        text: item.trackingNo
-      }}
-    >
-      <TrackingNo
-        value={item.trackingNo}
+  }
+  else if (item.trackingNo) {
+    trackingNoContent = (
+      <Typography.Text
+        copyable={{
+          text: item.trackingNo,
+        }}
       >
-      </TrackingNo>
-    </Typography.Text>
-  } else {
+        <TrackingNo
+          value={item.trackingNo}
+        >
+        </TrackingNo>
+      </Typography.Text>
+    )
+  }
+  else {
     trackingNoContent = <Tag>未填</Tag>
   }
 
-  return <div className="h-full p-2">
-    <LabelValue
-      label="快递"
-      value={trackingNoContent}
-    >
-    </LabelValue>
-    {
-      item.trackingNo
-        ? (
-          <>
-            <LabelValue
-              label="状态"
-              value={<ExpressStatus {...item} />}
-            >
-            </LabelValue>
-            {
-              ['0', '1', '2'].includes(orderStatus) && isClient()
-                ? (
+  const defaultIconStyle = {
+    fontSize: 22,
+    cursor: 'pointer',
+    color: '#86909c',
+  }
+
+  return (
+    <div className="h-full p-2 flex justify-between">
+      <div>
+        <LabelValue
+          label="快递"
+          value={trackingNoContent}
+        >
+        </LabelValue>
+        {
+          item.trackingNo
+            ? (
+                <>
                   <LabelValue
-                    valueClassName="inline-flex"
-                    label="操作"
-                    value={(
-                      <ExpressStatusActions
-                        orderId={orderId}
-                        item={item}
-                        sendWarehouse={sendWarehouse}
-                      />
-                    )}
-                  />
-                )
-                : null
-            }
-          </>
-        )
-        : null
-    }
-    {item.freightSpaceName
-      ? (
-        <LabelValue label="仓位" value={item.freightSpaceName}></LabelValue>
-      )
-      : null}
-  </div>
+                    label="状态"
+                    value={<ExpressStatus {...item} />}
+                  >
+                  </LabelValue>
+                  {
+                    ['0', '1', '2'].includes(orderStatus) && isClient()
+                      ? (
+                          <LabelValue
+                            valueClassName="inline-flex"
+                            label="操作"
+                            value={(
+                              <ExpressStatusActions
+                                orderId={orderId}
+                                item={item}
+                                sendWarehouse={sendWarehouse}
+                              />
+                            )}
+                          />
+                        )
+                      : null
+                  }
+                </>
+              )
+            : null
+        }
+        {item.freightSpaceName
+          ? (
+              <LabelValue label="仓位" value={item.freightSpaceName}></LabelValue>
+            )
+          : null}
+      </div>
+      <div className="flex flex-col align-end">
+        {/* <div style={{ width: 20, height: 20, borderRadius: '50%', border: '2px solid #86909c', paddingLeft: 1 }} className="border-box flex justify-center items-center mb-2">
+          <IconMessage style={{ ...defaultIconStyle, fontSize: 14 }} />
+        </div> */}
+        <Tooltip content={item.pickingStatus === PickingStatus.PICKED ? '取消已拣货状态' : '设置为已拣货状态'}>
+          <div
+            className="mb-1"
+            onClick={() => {
+              Modal.confirm({
+                title: item.pickingStatus === PickingStatus.PICKED ? '确认将拣货状态取消？' : '确认将拣货状态设置为已拣货？',
+                onOk: async () => {
+                  pickingStatusHandle.run({
+                    productId: item.id,
+                    pickingStatus: item.pickingStatus === PickingStatus.PICKED ? PickingStatus.DEFAULT : PickingStatus.PICKED,
+                  })
+                },
+              })
+            }}
+          >
+            {item.pickingStatus === PickingStatus.PICKED ? <IconCheckCircleFill style={{ ...defaultIconStyle, color: 'green' }} /> : <IconCheckCircle style={defaultIconStyle} />}
+          </div>
+        </Tooltip>
+
+        <Tooltip content={item.pickingStatus === PickingStatus.UNPICKED ? '取消未拣货状态' : '设置为未拣货状态'}>
+          <div onClick={() => {
+            Modal.confirm({
+              title: item.pickingStatus ? '确认将未拣货状态取消？' : '确认将拣货状态设置为未拣货？',
+              onOk: async () => {
+                pickingStatusHandle.run({
+                  productId: item.id,
+                  pickingStatus: item.pickingStatus === PickingStatus.UNPICKED ? PickingStatus.DEFAULT : PickingStatus.UNPICKED,
+                })
+              },
+            })
+          }}
+          >
+            {item.pickingStatus === PickingStatus.UNPICKED ? <IconCloseCircleFill style={{ ...defaultIconStyle, color: 'red' }} /> : <IconCloseCircle style={defaultIconStyle} /> }
+          </div>
+        </Tooltip>
+      </div>
+    </div>
+  )
 }
 
 export const SendStockCargoItemInfo: React.FC<{
   item: OrderResponseItem['orderProductVOList'][0]
-  orderStatus: string;
-  sendWarehouse: string;
-  orderId: string;
+  orderStatus: string
+  sendWarehouse: string
+  orderId: string
 }> = (props) => {
   const { item, orderStatus, sendWarehouse, orderId } = props
-  return item.deliveryMethod === '1' ? <SendStockItemInfo
-    item={item}
-    orderStatus={orderStatus}
-    sendWarehouse={sendWarehouse}
-    orderId={orderId}
-  /> : <SendCargoItemInfo
-    item={item}
-    orderStatus={orderStatus}
-    sendWarehouse={sendWarehouse}
-    orderId={orderId} />
+  return item.deliveryMethod === '1'
+    ? (
+        <SendStockItemInfo
+          item={item}
+          orderStatus={orderStatus}
+          sendWarehouse={sendWarehouse}
+          orderId={orderId}
+        />
+      )
+    : (
+        <SendCargoItemInfo
+          item={item}
+          orderStatus={orderStatus}
+          sendWarehouse={sendWarehouse}
+          orderId={orderId}
+        />
+      )
 }
 
 const SendStockCargoInfos: React.FC<SendCargoInfoProps> = (props) => {

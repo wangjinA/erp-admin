@@ -221,27 +221,28 @@ export function useColumns(props: OrderTablePorps) {
         //     )
         //   },
         // },
-          {
-            title: '上架时间',
-            dataIndex: 'overseasWarehouseListingTime',
-            width: 180,
-            render: c => (
-              <div className="border-r h-full p-2">
-                {c}
-              </div>
-            ),
-          },
-          {
-            title: '下架时间',
-            dataIndex: 'overseasWarehouseDelistingTime',
-            width: 180,
-            render: c => (
-              <div className="border-r h-full p-2">
-                {c}
-              </div>
-            ),
-          },
         ]
+      : []),
+    ...(dictCode === OrderPageDict.OUT_ORDER_STATUS
+      ? [{
+          title: '上架时间',
+          dataIndex: 'overseasWarehouseListingTime',
+          width: 180,
+          render: c => (
+            <div className="border-r h-full p-2">
+              {c}
+            </div>
+          ),
+        }, {
+          title: '下架时间',
+          dataIndex: 'overseasWarehouseDelistingTime',
+          width: 180,
+          render: c => (
+            <div className="border-r h-full p-2">
+              {c}
+            </div>
+          ),
+        }]
       : []),
     ...(showActions
       ? [{
