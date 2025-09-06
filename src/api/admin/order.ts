@@ -1,6 +1,7 @@
-import { OrderResponseItem } from '@/types/order'
 import baseAxios from '..'
 import { APIListResponse, APIResponse, IPageParams } from '../type'
+
+import { OrderResponseItem } from '@/types/order'
 
 export const orderAPI = {
   // 获取订单列表
@@ -49,8 +50,8 @@ export const orderAPI = {
   }[]) {
     return baseAxios.post<APIResponse<{
       list: {
-        "msg": string
-        "orderId": string
+        msg: string
+        orderId: string
       }[]
     }>>('/api/logistics/order/arrange/shipmentBatch', body)
   },
@@ -72,16 +73,16 @@ export const orderAPI = {
   // 订单导出
   exportOrderList(body: Partial<SearchOrderParams & IPageParams>) {
     return baseAxios.post('/api/logistics/order/exportXls', body, {
-      responseType: 'blob'
-    });
+      responseType: 'blob',
+    })
   },
   // 获取面单信息
   getDownloadSheetFile(body: Partial<SearchOrderParams & IPageParams>) {
     return baseAxios.post<APIResponse<{
       list: {
-        "orderNo": string,
-        "orderId": string,
-        "documentUrl": string
+        orderNo: string
+        orderId: string
+        documentUrl: string
       }[]
     }
     >>('/api/logistics/order/getDownloadSheetFile', body)
@@ -89,9 +90,9 @@ export const orderAPI = {
   // 统计下载面单数量
   countSheetFile(body: Partial<SearchOrderParams & IPageParams>) {
     return baseAxios.post<APIResponse<{
-      "abnormalSheetData": { "orderId": string, "orderNo": string }[],
-      "total": number;
-      "count": number;
+      abnormalSheetData: { orderId: string, orderNo: string }[]
+      total: number
+      count: number
     }
     >>('/api/logistics/order/countSheetFile', body)
   },
@@ -114,8 +115,8 @@ export const orderAPI = {
   // 海外仓退件数量
   overseasWarehouseReturnCount(body: Partial<SearchOrderParams & IPageParams>) {
     return baseAxios.post<APIResponse<{
-      "total": number;
-      "count": number;
+      total: number
+      count: number
     }
     >>('/api/logistics/order/overseasWarehouseReturn/count', body)
   },
@@ -127,13 +128,17 @@ export const orderAPI = {
   overseasWarehouseReturnDestroy(id: string) {
     return baseAxios.get(`/api/logistics/order/overseasWarehouseReturn/destroy/${id}`)
   },
+  // 批量销毁海外退件订单
+  overseasWarehouseReturnDestroyBatch(body: { ids: string[] }) {
+    return baseAxios.post('/api/logistics/order/overseasWarehouseReturn/destroyBatch', body)
+  },
   // 换单重出
   overseasWarehouseReturnReOutOverseasWarehouseReturnOrder(params: {
-    id: string,
+    id: string
     orderNo: string
   }) {
     return baseAxios.get('/api/logistics/order/overseasWarehouseReturn/reOutOverseasWarehouseReturnOrder', {
-      params
+      params,
     })
   },
 }
@@ -179,9 +184,9 @@ export interface SearchOrderParams extends IPageParams {
     tenantryNo: string // 用户标识
     tenantryPhone: string // 手机号
     transportType: string // 运输类型
-    abeyanceStatus: number,
-    shrimpStatus: string,
-    storeFlag: boolean,
+    abeyanceStatus: number
+    shrimpStatus: string
+    storeFlag: boolean
   }
   selectOrderProductVO: {
     // 物流商品信息

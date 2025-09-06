@@ -15,27 +15,31 @@ import { IconEdit, IconPlus } from '@arco-design/web-react/icon'
 import { useRequest } from 'ahooks'
 import { PaginationResult } from 'ahooks/lib/usePagination/types'
 import classNames from 'classnames'
+import dayjs from 'dayjs'
 import { isNil, merge, omit } from 'lodash'
 import React, { useEffect, useMemo, useState } from 'react'
+
+import ClientHeaderActions from './ClientHeaderActions'
 import OrderHeaderStatusInfo from './OrderHeaderStatusInfo'
-import { TagColors } from '@/constants/colorMap'
+
 import { useColumns } from './hooks'
+
 import { orderAPI } from '@/api/client/order'
 import { APIListResponse } from '@/api/type'
 import FilterForm from '@/components/FilterForm'
 import GoodsInfo from '@/components/GoodsInfo'
-import { DictNameFC, } from '@/components/Selectors/DictSelector'
+import { DictNameFC } from '@/components/Selectors/DictSelector'
+import { useDefaultEntrepot } from '@/components/Selectors/EntrepotSelector'
+import ShippingReceipt from '@/components/ShippingReceipt'
 import { ShowFormType } from '@/constants'
+import { TagColors } from '@/constants/colorMap'
 import { EmitTypes, bus, useEventBus } from '@/hooks/useEventBus'
 import { OrderCreateSchema2 } from '@/pages/client/order/create/schema'
+import { OrderPageDict } from '@/pages/client/order/orderPage'
 import { isAdmin, isClient } from '@/routes'
 import { StyleProps } from '@/types'
 import { Order, OrderResponseItem } from '@/types/order'
 import { formatDate, showMessage } from '@/utils'
-import { useDefaultEntrepot } from '@/components/Selectors/EntrepotSelector'
-import ClientHeaderActions from './ClientHeaderActions'
-import { OrderPageDict } from '@/pages/client/order/orderPage'
-import ShippingReceipt from '@/components/ShippingReceipt'
 
 export interface OrderTablePorps extends StyleProps {
   // tableProps: TableProps;
@@ -74,19 +78,19 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
         'orderPackageList',
       ])
 
-      const productInventoryVOIsNull = data.logisticsOrderProductList.some(o => {
+      const productInventoryVOIsNull = data.logisticsOrderProductList.some((o) => {
         if (o.deliveryMethod === '1' && !o.stockOutStatus) {
           return !o.productInventoryVO?.stockProductId || !o.productInventoryVO?.number
         }
-        return false;
+        return false
       })
       if (productInventoryVOIsNull) {
         Message.error('库存发货，请选择商品库存')
-        return;
+        return
       }
       if (isNil(data.sendWarehouse)) {
         Message.error('请选择打包仓库！')
-        return;
+        return
       }
       let actionName = '打包'
       if (newSku) {
@@ -101,7 +105,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
           ...data.logisticsOrderProductList,
           ...(newSku ? [newSku] : []),
         ],
-      };
+      }
       // debugger用
       // if(updateData.logisticsOrderProductList.some(o => !o.trackingNo)){
       //   console.log(updateData);
@@ -119,7 +123,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
     },
   )
 
-  const defaultEntrepotHandle = useDefaultEntrepot();
+  const defaultEntrepotHandle = useDefaultEntrepot()
 
   const addProductHandle = useRequest(
     async () => {
@@ -159,21 +163,21 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
         <header className="flex items-center">
           {onSelect
             ? (
-              <Checkbox
-                disabled={!data?.list?.length}
-                className="mr-2 pl-[10px]"
-                checked={isSelectAll}
-                onChange={(checked) => {
-                  if (checked) {
-                    setSelectList(data?.list?.map(item => item.id))
-                  }
-                  else {
-                    setSelectList([])
-                  }
-                }}
-              >
-              </Checkbox>
-            )
+                <Checkbox
+                  disabled={!data?.list?.length}
+                  className="mr-2 pl-[10px]"
+                  checked={isSelectAll}
+                  onChange={(checked) => {
+                    if (checked) {
+                      setSelectList(data?.list?.map(item => item.id))
+                    }
+                    else {
+                      setSelectList([])
+                    }
+                  }}
+                >
+                </Checkbox>
+              )
             : null}
           {columns.map(item => (
             <div
@@ -202,18 +206,18 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                     <div className="flex w-[420px] items-baseline">
                       {onSelect
                         ? (
-                          <Checkbox
-                            checked={selectList.includes(item.id)}
-                            onChange={(checked) => {
-                              if (checked) {
-                                setSelectList([...selectList, item.id])
-                              }
-                              else {
-                                setSelectList(selectList.filter(id => id !== item.id))
-                              }
-                            }}
-                          />
-                        )
+                            <Checkbox
+                              checked={selectList.includes(item.id)}
+                              onChange={(checked) => {
+                                if (checked) {
+                                  setSelectList([...selectList, item.id])
+                                }
+                                else {
+                                  setSelectList(selectList.filter(id => id !== item.id))
+                                }
+                              }}
+                            />
+                          )
                         : null}
                       <Tooltip content="打包订单状态">
                         <Tag
@@ -222,11 +226,25 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                           className="mx-2"
                           color={TagColors[Number(item.orderStatus)]}
                         >
-                          <DictNameFC defaultValue='待打包' dictCode={'order_status'} value={item.orderStatus} />
+                          <DictNameFC defaultValue="待打包" dictCode="order_status" value={item.orderStatus} />
                         </Tag>
                       </Tooltip>
                       {
-                        (item.abeyanceStatus && isAdmin()) ? <Tag className="mr-2" color='red'>异常搁置</Tag> : null
+                        dictCode === OrderPageDict.OUT_ORDER_STATUS && dayjs().valueOf() >= dayjs(item.overseasWarehouseDelistingTime).valueOf()
+                          ? (
+                              <Tag
+                                bordered
+                                size="small"
+                                className="mx-2"
+                                color={TagColors[Number(item.orderStatus)]}
+                              >
+                                退件已过期
+                              </Tag>
+                            )
+                          : null
+                      }
+                      {
+                        (item.abeyanceStatus && isAdmin()) ? <Tag className="mr-2" color="red">异常搁置</Tag> : null
                       }
                       <span className={labelClass}>订单编号：</span>
                       <span className={classNames(valueClass, 'truncate')}>
@@ -258,11 +276,11 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                       </div>
                       {item.packTime
                         ? (
-                          <div>
-                            <span className={labelClass}>提交：</span>
-                            <span className={valueClass}>{formatDate(item.packTime)}</span>
-                          </div>
-                        )
+                            <div>
+                              <span className={labelClass}>提交：</span>
+                              <span className={valueClass}>{formatDate(item.packTime)}</span>
+                            </div>
+                          )
                         : null}
                       {/* <div>
                     <span className={labelClass}>最后发货时间：</span>
@@ -275,32 +293,40 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                         {(isClient() ? item.remark : item.entrepotRemark) || '暂无'}
                       </span>
                       {
-                        isClient() ? <Button
-                          type="text"
-                          size="mini"
-                          onClick={() => {
-                            if (item?.sendWarehouse === '0') {
-                              delete item.sendWarehouse
-                            }
-                            setCurrentOrder({
-                              ...item,
-                              logisticsOrderProductList: item.orderProductVOList,
-                            })
-                            setActionType(ShowFormType.edit)
-                          }}
-                        >
-                          <IconEdit />
-                        </Button> : null
+                        isClient()
+                          ? (
+                              <Button
+                                type="text"
+                                size="mini"
+                                onClick={() => {
+                                  if (item?.sendWarehouse === '0') {
+                                    delete item.sendWarehouse
+                                  }
+                                  setCurrentOrder({
+                                    ...item,
+                                    logisticsOrderProductList: item.orderProductVOList,
+                                  })
+                                  setActionType(ShowFormType.edit)
+                                }}
+                              >
+                                <IconEdit />
+                              </Button>
+                            )
+                          : null
                       }
                     </div>
                   </footer>
-                  {(item.isOverseasWarehouseReturn || item.isReissued) ? <ShippingReceipt color={item.isReissued ? 'green' : 'red'}>
-                    {
-                      item.isReissued ?
-                        '换单重出'
-                        : (item.returnStatus === '2' ? '退件入库(销毁)' : '已退件入库')
-                    }
-                  </ShippingReceipt> : null}
+                  {(item.isOverseasWarehouseReturn || item.isReissued)
+                    ? (
+                        <ShippingReceipt color={item.isReissued ? 'green' : 'red'}>
+                          {
+                            item.isReissued
+                              ? '换单重出'
+                              : (item.returnStatus === '2' ? '退件入库(销毁)' : '已退件入库')
+                          }
+                        </ShippingReceipt>
+                      )
+                    : null}
                 </div>
               )
             })}
@@ -308,30 +334,32 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
         </Spin>
         {data?.list?.length
           ? (
-            <Pagination
-              className="mt-4 flex justify-end"
-              total={data?.total}
-              showTotal={true}
-              sizeCanChange={true}
-              current={pagination?.current || 1}
-              pageSize={pagination?.pageSize}
-              sizeOptions={[10, 25, 50, 100, 300, 500]}
-              onChange={(pageNumber: number, pageSize: number) => {
-                console.log(pageNumber, pageSize, pagination);
-                if (pagination) {
-                  if (pageNumber !== pagination.current) {
+              <Pagination
+                className="mt-4 flex justify-end"
+                total={data?.total}
+                showTotal={true}
+                sizeCanChange={true}
+                current={pagination?.current || 1}
+                pageSize={pagination?.pageSize}
+                sizeOptions={[10, 25, 50, 100, 300, 500]}
+                onChange={(pageNumber: number, pageSize: number) => {
+                  console.log(pageNumber, pageSize, pagination)
+                  if (pagination) {
+                    if (pageNumber !== pagination.current) {
+                      pagination.changeCurrent(pageNumber)
+                    }
+                    else {
+                      pagination.changePageSize(pageSize)
+                    }
+                  }
+                  else {
                     pagination.changeCurrent(pageNumber)
-                  } else {
                     pagination.changePageSize(pageSize)
                   }
-                } else {
-                  pagination.changeCurrent(pageNumber)
-                  pagination.changePageSize(pageSize)
-                }
-              }}
-            >
-            </Pagination>
-          )
+                }}
+              >
+              </Pagination>
+            )
           : null}
         {(!data?.list?.length && !loading) ? <Empty className="py-28"></Empty> : null}
       </div>
@@ -452,7 +480,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                 },
               ]}
               onChange={async (_, v) => {
-                const formData = await form.validate();
+                const formData = await form.validate()
                 setCurrentOrder({
                   ...currentOrder,
                   ...formData,
@@ -466,7 +494,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
               onChange={(e) => {
                 setCurrentOrder({
                   ...currentOrder,
-                  logisticsOrderProductList: e.map((o) => omit({
+                  logisticsOrderProductList: e.map(o => omit({
                     ...o,
                     trackingNo: o.trackingNo ? o.trackingNo.trim() : '',
                     productInventoryVO: {
@@ -496,7 +524,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
           </>
         ) : null}
       </Modal>
-    </div >
+    </div>
   )
 }
 

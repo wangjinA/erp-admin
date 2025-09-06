@@ -1,4 +1,4 @@
-import { ProductItem } from "@/api/client/stock"
+import { ProductItem } from '@/api/client/stock'
 
 export interface OrderProductList {
   actualQuantity: number // 实际收货数量
@@ -54,8 +54,8 @@ export interface Order {
   fillShipInfo: boolean // 是否未填写发货信息
   firstLegCost: number // 头程费用
   id: string // 主键
-  abeyanceStatus: boolean; // 异常搁置标记
-  isOverseasWarehouseReturn: boolean; // 是否海外仓退件
+  abeyanceStatus: boolean // 异常搁置标记
+  isOverseasWarehouseReturn: boolean // 是否海外仓退件
   label: string // 标签
   mobileNumber: string // 手机号码
   orderAmount: number // 订单金额
@@ -65,7 +65,7 @@ export interface Order {
   orderStatus: string // 订单状态 字典值
   returnStatus: string // 退件状态 0 1 2
   shopeeStatus: string // 虾皮订单状态 字典值
-  warehouseDeliveryTime: string;
+  warehouseDeliveryTime: string
   orderTime: string // 订单时间
   orderType: string // 订单类型 字典值
   packCost: number // 打包费用
@@ -112,7 +112,7 @@ export interface OrderResponseItem extends Omit<Order, 'orderProductList'> {
     productImg: string[]
     productImgCos: string[]
   })[]
-  logisticsOrderPackageList?: any;
+  logisticsOrderPackageList?: any
   orderPackageList: {
     createBy: string
     createTime: string
@@ -137,4 +137,5 @@ export interface OrderResponseItem extends Omit<Order, 'orderProductList'> {
     trackingNumber?: string // 物流单号
     deleteStatus: number
   }[]
+  overseasWarehouseDelistingTime: string
 }

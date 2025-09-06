@@ -1,17 +1,22 @@
 import { Tag, Typography } from '@arco-design/web-react'
+
+import classNames from 'classnames'
+
+import { useLocation } from 'react-router'
+
+import SendInfos from './SendStockCargoInfos'
+import OrderTableActions from './admin/OrderTableActions'
+
 import { OrderTablePorps } from '.'
+
 import GoodsInfo from '@/components/GoodsInfo'
 import LabelValue from '@/components/LabelValue'
 import TrackingNumber from '@/components/TrackingNumber'
+import { ShippingCarrierColorMap } from '@/constants/order'
+import { OrderPageDict } from '@/pages/client/order/orderPage'
 import { isAdmin, isClient } from '@/routes'
 import { OrderResponseItem } from '@/types/order'
 import { formatDate, replaceXStr, stringToMasked } from '@/utils'
-import { ShippingCarrierColorMap } from '@/constants/order'
-import classNames from 'classnames'
-import OrderTableActions from './admin/OrderTableActions'
-import { useLocation } from "react-router"
-import { OrderPageDict } from '@/pages/client/order/orderPage'
-import SendInfos from './SendStockCargoInfos'
 
 export function useColumns(props: OrderTablePorps) {
   const { dictCode } = props
@@ -42,7 +47,7 @@ export function useColumns(props: OrderTablePorps) {
       width: 220,
       render(c, row) {
         const shippingCarrier = row.orderPackageList?.[0]?.shippingCarrier || row.logisticsOrderPackageList?.[0]?.shippingCarrier
-        const isShowMjInfo = replaceXStr(row.detailedAddress) || row.createType !== '0';
+        const isShowMjInfo = replaceXStr(row.detailedAddress) || row.createType !== '0'
         return (
           <div className="border-r h-full p-2">
             {/* <LabelValue label="尾程物流" value={<DictNameFC value={row.orderPackageList[0]?.shippingCarrier} dictCode="logistics_channel"></DictNameFC>}></LabelValue> */}
@@ -53,11 +58,15 @@ export function useColumns(props: OrderTablePorps) {
               }
             >
             </LabelValue>
-            <LabelValue label="物流单号" value={
-              <TrackingNumber orderItem={row}></TrackingNumber>
-            }></LabelValue>
+            <LabelValue
+              label="物流单号"
+              value={
+                <TrackingNumber orderItem={row}></TrackingNumber>
+              }
+            >
+            </LabelValue>
             {(row.shippingTime
-              && (row?.orderPackageList?.[0]?.trackingNumber || row?.logisticsOrderPackageList?.[0]?.trackingNumber))
+            && (row?.orderPackageList?.[0]?.trackingNumber || row?.logisticsOrderPackageList?.[0]?.trackingNumber))
               ? <LabelValue label="出货时间" value={formatDate(row.shippingTime)}></LabelValue>
               : null}
             {row.warehouseDeliveryTime ? <LabelValue label="出库时间" value={formatDate(row.warehouseDeliveryTime)}></LabelValue> : null}
@@ -65,13 +74,21 @@ export function useColumns(props: OrderTablePorps) {
               <TrackingNumber orderItem={row}></TrackingNumber>
             }></LabelValue> */}
             {
-              isShowMjInfo ? <>
-                <LabelValue label="收货地址" value={
-                  <Typography.Text copyable>
-                    {`${replaceXStr(row.recipients)} ${replaceXStr(row.mobileNumber)} ${replaceXStr(row.province) || ''} ${replaceXStr(row.city) || ''} ${row.detailedAddress || ''}`}
-                  </Typography.Text>
-                }></LabelValue>
-              </> : null
+              isShowMjInfo
+                ? (
+                    <>
+                      <LabelValue
+                        label="收货地址"
+                        value={(
+                          <Typography.Text copyable>
+                            {`${replaceXStr(row.recipients)} ${replaceXStr(row.mobileNumber)} ${replaceXStr(row.province) || ''} ${replaceXStr(row.city) || ''} ${row.detailedAddress || ''}`}
+                          </Typography.Text>
+                        )}
+                      >
+                      </LabelValue>
+                    </>
+                  )
+                : null
             }
             {/* <LabelValue
               label="查看单号"
@@ -93,21 +110,21 @@ export function useColumns(props: OrderTablePorps) {
     },
     ...(isClient()
       ? [{
-        title: '买家信息',
-        dataIndex: 'seller',
-        width: 180,
-        render(c, row) {
-          return (
-            <div className="border-r h-full p-2">
-              <LabelValue label="买家" value={stringToMasked(row.buyerUsername)}></LabelValue>
-              <LabelValue label="收货人" value={stringToMasked(row.recipients)}></LabelValue>
-              <LabelValue label="收货电话" value={stringToMasked(row.mobileNumber)}></LabelValue>
-              {row.messageToSeller ? <LabelValue valueClassName="text-red-500 font-bold" label="买家留言" value={row.messageToSeller}></LabelValue> : null}
-              <LabelValue label="收货地址" value={stringToMasked(row.detailedAddress)}></LabelValue>
-            </div>
-          )
-        },
-      }]
+          title: '买家信息',
+          dataIndex: 'seller',
+          width: 180,
+          render(c, row) {
+            return (
+              <div className="border-r h-full p-2">
+                <LabelValue label="买家" value={stringToMasked(row.buyerUsername)}></LabelValue>
+                <LabelValue label="收货人" value={stringToMasked(row.recipients)}></LabelValue>
+                <LabelValue label="收货电话" value={stringToMasked(row.mobileNumber)}></LabelValue>
+                {row.messageToSeller ? <LabelValue valueClassName="text-red-500 font-bold" label="买家留言" value={row.messageToSeller}></LabelValue> : null}
+                <LabelValue label="收货地址" value={stringToMasked(row.detailedAddress)}></LabelValue>
+              </div>
+            )
+          },
+        }]
       : []),
     // {
     //   title: '打包信息',
@@ -127,22 +144,27 @@ export function useColumns(props: OrderTablePorps) {
     // },
     ...(isAdmin()
       ? [{
-        title: '卖家信息',
-        dataIndex: 'sellerInfo',
-        width: 180,
-        render(c, row: OrderResponseItem) {
-          return (
-            <div className="border-r h-full p-2">
-              {/* <LabelValue label="打包仓库" value={<EntrepotNameFC value={row.sendWarehouse} />}></LabelValue> */}
-              <LabelValue label="卖家标识" value={row.tenantryNo}></LabelValue>
-              <LabelValue valueClassName={classNames({
-                '!text-red-500 !font-bold': row.remark
-              })} label="卖家备注" value={row.remark}></LabelValue>
-              <LabelValue label="仓库备注" value={row.entrepotRemark}></LabelValue>
-            </div>
-          )
-        },
-      }]
+          title: '卖家信息',
+          dataIndex: 'sellerInfo',
+          width: 180,
+          render(c, row: OrderResponseItem) {
+            return (
+              <div className="border-r h-full p-2">
+                {/* <LabelValue label="打包仓库" value={<EntrepotNameFC value={row.sendWarehouse} />}></LabelValue> */}
+                <LabelValue label="卖家标识" value={row.tenantryNo}></LabelValue>
+                <LabelValue
+                  valueClassName={classNames({
+                    '!text-red-500 !font-bold': row.remark,
+                  })}
+                  label="卖家备注"
+                  value={row.remark}
+                >
+                </LabelValue>
+                <LabelValue label="仓库备注" value={row.entrepotRemark}></LabelValue>
+              </div>
+            )
+          },
+        }]
       : []),
     {
       title: '订单金额',
@@ -199,17 +221,37 @@ export function useColumns(props: OrderTablePorps) {
         //     )
         //   },
         // },
-      ]
+          {
+            title: '上架时间',
+            dataIndex: 'overseasWarehouseListingTime',
+            width: 180,
+            render: c => (
+              <div className="border-r h-full p-2">
+                {c}
+              </div>
+            ),
+          },
+          {
+            title: '下架时间',
+            dataIndex: 'overseasWarehouseDelistingTime',
+            width: 180,
+            render: c => (
+              <div className="border-r h-full p-2">
+                {c}
+              </div>
+            ),
+          },
+        ]
       : []),
     ...(showActions
       ? [{
-        title: '操作',
-        dataIndex: 'actions',
-        width: 120,
-        render(c, row: OrderResponseItem) {
-          return <OrderTableActions orderItem={row} dictCode={dictCode}></OrderTableActions>
-        },
-      }]
+          title: '操作',
+          dataIndex: 'actions',
+          width: 120,
+          render(c, row: OrderResponseItem) {
+            return <OrderTableActions orderItem={row} dictCode={dictCode}></OrderTableActions>
+          },
+        }]
       : []
     ),
   ]
