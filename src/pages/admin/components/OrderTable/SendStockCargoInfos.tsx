@@ -1,4 +1,4 @@
-import { Modal, Tag, Tooltip, Typography } from '@arco-design/web-react'
+import { Tag, Typography } from '@arco-design/web-react'
 import { IconCheckCircle, IconCheckCircleFill, IconCloseCircle, IconCloseCircleFill, IconEmpty } from '@arco-design/web-react/icon'
 import { useRequest } from 'ahooks'
 import classNames from 'classnames'
@@ -333,41 +333,27 @@ export const SendCargoItemInfo: React.FC<{
         {/* <div style={{ width: 20, height: 20, borderRadius: '50%', border: '2px solid #86909c', paddingLeft: 1 }} className="border-box flex justify-center items-center mb-2">
           <IconMessage style={{ ...defaultIconStyle, fontSize: 14 }} />
         </div> */}
-        <Tooltip content={item.pickingStatus === PickingStatus.PICKED ? '取消已拣货状态' : '设置为已拣货状态'}>
-          <div
-            className="mb-1"
-            onClick={() => {
-              Modal.confirm({
-                title: item.pickingStatus === PickingStatus.PICKED ? '确认将拣货状态取消？' : '确认将拣货状态设置为已拣货？',
-                onOk: async () => {
-                  pickingStatusHandle.run({
-                    productId: item.id,
-                    pickingStatus: item.pickingStatus === PickingStatus.PICKED ? PickingStatus.DEFAULT : PickingStatus.PICKED,
-                  })
-                },
-              })
-            }}
-          >
-            {item.pickingStatus === PickingStatus.PICKED ? <IconCheckCircleFill style={{ ...defaultIconStyle, color: 'green' }} /> : <IconCheckCircle style={defaultIconStyle} />}
-          </div>
-        </Tooltip>
-
-        <Tooltip content={item.pickingStatus === PickingStatus.UNPICKED ? '取消未拣货状态' : '设置为未拣货状态'}>
-          <div onClick={() => {
-            Modal.confirm({
-              title: item.pickingStatus ? '确认将未拣货状态取消？' : '确认将拣货状态设置为未拣货？',
-              onOk: async () => {
-                pickingStatusHandle.run({
-                  productId: item.id,
-                  pickingStatus: item.pickingStatus === PickingStatus.UNPICKED ? PickingStatus.DEFAULT : PickingStatus.UNPICKED,
-                })
-              },
+        <div
+          className="mb-1"
+          onClick={() => {
+            pickingStatusHandle.run({
+              productId: item.id,
+              pickingStatus: item.pickingStatus === PickingStatus.PICKED ? PickingStatus.DEFAULT : PickingStatus.PICKED,
             })
           }}
-          >
-            {item.pickingStatus === PickingStatus.UNPICKED ? <IconCloseCircleFill style={{ ...defaultIconStyle, color: 'red' }} /> : <IconCloseCircle style={defaultIconStyle} /> }
-          </div>
-        </Tooltip>
+        >
+          {item.pickingStatus === PickingStatus.PICKED ? <IconCheckCircleFill style={{ ...defaultIconStyle, color: 'green' }} /> : <IconCheckCircle style={defaultIconStyle} />}
+        </div>
+
+        <div onClick={() => {
+          pickingStatusHandle.run({
+            productId: item.id,
+            pickingStatus: item.pickingStatus === PickingStatus.UNPICKED ? PickingStatus.DEFAULT : PickingStatus.UNPICKED,
+          })
+        }}
+        >
+          {item.pickingStatus === PickingStatus.UNPICKED ? <IconCloseCircleFill style={{ ...defaultIconStyle, color: 'red' }} /> : <IconCloseCircle style={defaultIconStyle} /> }
+        </div>
       </div>
     </div>
   )

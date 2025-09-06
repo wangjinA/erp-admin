@@ -107,9 +107,7 @@ function PageActions(props: PageActionsProps) {
   })
 
   const destroyListHandle = useRequest(async () => {
-    return showMessage(() => adminOrderApi.overseasWarehouseReturnDestroyBatch({
-      ids: selectIds,
-    }), '销毁').then(() => {
+    return showMessage(() => adminOrderApi.overseasWarehouseReturnDestroyBatch(selectIds), '销毁').then(() => {
       bus.emit(EmitTypes.refreshOrderPage)
     })
   }, {
@@ -232,12 +230,12 @@ function PageActions(props: PageActionsProps) {
                 type="outline"
                 status="danger"
                 loading={destroyListHandle.loading}
-                onClick={() => {
+                onClick={async () => {
                   if (!selectIds.length) {
                     return Message.error('请选择订单')
                   }
                   const notTakeDownItems = data.list.filter(item => selectIds.includes(item.id) && dayjs().valueOf() < dayjs(item.overseasWarehouseDelistingTime).valueOf())
-                  showModal({
+                  await showModal({
                     content: notTakeDownItems.length > 0
                       ? (
                           <div>
@@ -265,8 +263,9 @@ function PageActions(props: PageActionsProps) {
                           </div>
                         )
                       : `确认销毁选中的${selectIds.length}个订单？`,
-                  }).then(() => {
-                    destroyListHandle.run()
+                    onOk: () => {
+                      destroyListHandle.run()
+                    },
                   })
                 }}
               >

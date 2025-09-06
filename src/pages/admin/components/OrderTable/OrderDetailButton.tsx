@@ -1,18 +1,23 @@
-import { Button, ButtonProps, Descriptions, Form, Grid, InputNumber, List, Modal, Space, Table, Image } from '@arco-design/web-react'
+import { Button, ButtonProps, Descriptions, Form, Grid, Image, InputNumber, List, Modal, Space, Switch, Table } from '@arco-design/web-react'
 import { useRequest } from 'ahooks'
+import classNames from 'classnames'
 import { omit, pick } from 'lodash'
 import { useEffect, useRef, useState } from 'react'
+
+import { DeliveryButton } from './DeliveryButton'
+
+import { SendStockCargoItemInfo } from './SendStockCargoInfos'
+
+import { scanAPI } from '@/api/admin/entrepot'
 import { orderAPI } from '@/api/admin/order'
 import FilterForm from '@/components/FilterForm'
 import LabelValue from '@/components/LabelValue'
 import { DictNameFC } from '@/components/Selectors/DictSelector'
+import { ShopeeStatus } from '@/constants/order'
 import { EmitTypes, bus } from '@/hooks/useEventBus'
+import { printShippingWaybill } from '@/hooks/usePrintWaybill'
 import { OrderResponseItem } from '@/types/order'
 import { showMessage } from '@/utils'
-import classNames from 'classnames'
-import { DeliveryButton } from './DeliveryButton'
-import { ShopeeStatus } from '@/constants/order'
-import { SendStockCargoItemInfo } from './SendStockCargoInfos'
 
 interface OrderDetailButtonProps {
   orderItem?: OrderResponseItem
@@ -25,8 +30,9 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
   const [visible, setVisible] = useState(false)
   const [actualQuantityList, setActualQuantityList] = useState([])
   const [holdStockList, setHoldStockList] = useState([])
+  const [stockOutStatusList, setStockOutStatusList] = useState<boolean[]>([])
   const [updatedOrderItem, setUpdatedOrderItem] = useState<OrderResponseItem>()
-  const saveHandler = useRequest(async () => {
+  const saveHandler = useRequest(async (needDelivery?: boolean) => {
     if (updatedOrderItem) {
       await showMessage(() => orderAPI.saveOrder({
         ...(omit(updatedOrderItem, ['orderProductVOList', 'orderPackageList'])),
@@ -34,12 +40,31 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
           ...item,
           actualQuantity: actualQuantityList[i] || item.actualQuantity,
           holdStock: holdStockList[i] || item.holdStock,
+          stockOutStatus: stockOutStatusList[i] || item.stockOutStatus,
         })),
         logisticsOrderPackageList: updatedOrderItem.orderPackageList,
       }), '保存')
     }
-    setVisible(false)
-    bus.emit(EmitTypes.refreshOrderPage)
+    if (!needDelivery) {
+      setVisible(false)
+      bus.emit(EmitTypes.refreshOrderPage)
+      return
+    }
+    if (needDelivery && orderItem) {
+      await showMessage(() => scanAPI.ScanOut({
+        shrimpOrderNo: orderItem.shrimpOrderNo,
+        sendWarehouse: orderItem.sendWarehouse,
+      }))
+      printShippingWaybill({
+        orderItem,
+        sendWarehouse: orderItem.sendWarehouse || '',
+      })
+      setVisible(false)
+      setTimeout(() => {
+        bus.emit(EmitTypes.focusScanInput)
+      }, 200)
+      onSuccess()
+    }
   }, {
     manual: true,
   })
@@ -51,20 +76,21 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
     }
   }, [visible])
 
-  const modalRef = useRef<HTMLDivElement>();
-  const deliveryRef = useRef<HTMLButtonElement>();
+  const modalRef = useRef<HTMLDivElement>()
+  const deliveryRef = useRef<HTMLButtonElement>()
   const enterRef = useRef((e) => {
     console.log('按钮')
     if (e.key === 'Enter') {
       if (deliveryRef.current.disabled) {
         console.log('保存')
         saveHandler.run()
-      } else {
-        console.log('出库')
-        deliveryRef.current.click();
       }
-      e.preventDefault();
-      e.stopPropagation();
+      else {
+        console.log('出库')
+        deliveryRef.current.click()
+      }
+      e.preventDefault()
+      e.stopPropagation()
     }
   })
 
@@ -123,26 +149,21 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
             {/* <Button type="primary" status="warning">交运</Button> */}
             <DeliveryButton
               ref={deliveryRef}
-              buttonProps={{
-                type: "primary",
-                status: "danger",
-                disabled: orderItem.orderStatus !== '2' || [ShopeeStatus['取消中'], ShopeeStatus['已取消']].includes(orderItem.shopeeStatus),
-              }}
-              orderItem={orderItem}
-              sendWarehouse={orderItem.sendWarehouse}
-              shrimpOrderNo={orderItem.shrimpOrderNo}
-              onSuccess={() => {
-                setVisible(false);
-                setTimeout(() => {
-                  bus.emit(EmitTypes.focusScanInput);
-                }, 200);
-                onSuccess();
+              type="primary"
+              status="danger"
+              loading={saveHandler.loading}
+              disabled={orderItem.orderStatus !== '2' || [ShopeeStatus['取消中'], ShopeeStatus['已取消']].includes(orderItem.shopeeStatus)}
+              onClick={() => {
+                saveHandler.run(true)
               }}
             />
           </Space>
         )}
       >
-        <div className="" tabIndex={-1} ref={modalRef}
+        <div
+          className=""
+          tabIndex={-1}
+          ref={modalRef}
         >
           <Table
             rowKey="id"
@@ -194,12 +215,14 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
                 dataIndex: 'fhxx',
                 width: 250,
                 render(col, row) {
-                  return <SendStockCargoItemInfo
-                    item={row}
-                    orderStatus={orderItem.orderStatus}
-                    sendWarehouse={orderItem.sendWarehouse}
-                    orderId={orderItem.id}
-                  />
+                  return (
+                    <SendStockCargoItemInfo
+                      item={row}
+                      orderStatus={orderItem.orderStatus}
+                      sendWarehouse={orderItem.sendWarehouse}
+                      orderId={orderItem.id}
+                    />
+                  )
                   // return <SendCargoItemInfo
                   //   item={row}
                   //   orderStatus={orderItem.orderStatus}
@@ -214,12 +237,29 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
                 width: 250,
                 render(col, row, i) {
                   return (
-                    <Form.Item label="实际数量" layout="vertical" colon={true}>
-                      <InputNumber placeholder="请输入" value={actualQuantityList[i] || row.actualQuantity} onChange={e => {
-                        actualQuantityList[i] = e;
-                        setActualQuantityList([...actualQuantityList])
-                      }}></InputNumber>
-                    </Form.Item>
+                    <div>
+                      <Form.Item label="实际数量" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} colon={true}>
+                        <InputNumber
+                          placeholder="请输入"
+                          value={actualQuantityList[i] || row.actualQuantity}
+                          onChange={(e) => {
+                            actualQuantityList[i] = e
+                            setActualQuantityList([...actualQuantityList])
+                          }}
+                        >
+                        </InputNumber>
+                      </Form.Item>
+                      <Form.Item label="缺货打包" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} colon={true}>
+                        <Switch
+                          checked={stockOutStatusList[i] ?? row.stockOutStatus}
+                          onChange={(e) => {
+                            stockOutStatusList[i] = e
+                            setStockOutStatusList([...stockOutStatusList])
+                          }}
+                        >
+                        </Switch>
+                      </Form.Item>
+                    </div>
                   )
                 },
               },
@@ -258,7 +298,7 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
                     initialValues={{
                       ...pick(orderItem, ['parcelType', 'parcelWeight', 'parcelLength', 'parcelWide', 'parcelHigh']),
                       transportType: orderItem.transportType || 'KY',
-                      parcelType: orderItem.parcelType || '0'
+                      parcelType: orderItem.parcelType || '0',
                     }}
                     onValuesChange={(v) => {
                       setUpdatedOrderItem({
@@ -292,28 +332,28 @@ function OrderDetailButton(props: OrderDetailButtonProps) {
                           label: '包裹重量',
                           field: 'parcelWeight',
                         },
-                        control: 'number'
+                        control: 'number',
                       },
                       {
                         schema: {
                           label: '包裹长度',
                           field: 'parcelLength',
                         },
-                        control: 'number'
+                        control: 'number',
                       },
                       {
                         schema: {
                           label: '包裹宽度',
                           field: 'parcelWide',
                         },
-                        control: 'number'
+                        control: 'number',
                       },
                       {
                         schema: {
                           label: '包裹高度',
                           field: 'parcelHigh',
                         },
-                        control: 'number'
+                        control: 'number',
                       },
                     ]}
                   >

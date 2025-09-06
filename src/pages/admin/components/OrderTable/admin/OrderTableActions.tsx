@@ -143,7 +143,7 @@ function OrderTableActions(props: OrderTableActionsProps) {
   return (
     <div className="h-full p-2 flex justify-center flex-col">
       {
-        dictCode === OrderPageDict.OUT_ORDER_STATUS && (
+        dictCode === OrderPageDict.OUT_ORDER_STATUS && isAdmin() && (
           <div className="mb-4">
             <div>下架倒计时：</div>
             <CountDown

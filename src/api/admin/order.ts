@@ -129,8 +129,8 @@ export const orderAPI = {
     return baseAxios.get(`/api/logistics/order/overseasWarehouseReturn/destroy/${id}`)
   },
   // 批量销毁海外退件订单
-  overseasWarehouseReturnDestroyBatch(body: { ids: string[] }) {
-    return baseAxios.post('/api/logistics/order/overseasWarehouseReturn/destroyBatch', body)
+  overseasWarehouseReturnDestroyBatch(body: string[]) {
+    return baseAxios.post('/api/logistics/order/overseasWarehouseReturn/destroy/batch', body)
   },
   // 换单重出
   overseasWarehouseReturnReOutOverseasWarehouseReturnOrder(params: {

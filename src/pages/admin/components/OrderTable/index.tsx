@@ -230,7 +230,7 @@ const OrderTable: React.FC<OrderTablePorps> = (props) => {
                         </Tag>
                       </Tooltip>
                       {
-                        dictCode === OrderPageDict.OUT_ORDER_STATUS && dayjs().valueOf() >= dayjs(item.overseasWarehouseDelistingTime).valueOf()
+                        isAdmin() && dictCode === OrderPageDict.OUT_ORDER_STATUS && dayjs().valueOf() >= dayjs(item.overseasWarehouseDelistingTime).valueOf()
                           ? (
                               <Tag
                                 bordered

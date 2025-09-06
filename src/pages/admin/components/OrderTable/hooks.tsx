@@ -223,7 +223,7 @@ export function useColumns(props: OrderTablePorps) {
         // },
         ]
       : []),
-    ...(dictCode === OrderPageDict.OUT_ORDER_STATUS
+    ...(dictCode === OrderPageDict.OUT_ORDER_STATUS && isAdmin()
       ? [{
           title: '上架时间',
           dataIndex: 'overseasWarehouseListingTime',
