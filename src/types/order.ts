@@ -62,6 +62,7 @@ export interface Order {
   firstLegCost: number // 头程费用
   id: string // 主键
   abeyanceStatus: boolean // 异常搁置标记
+  consignmentStatus: boolean // 是否交运
   isOverseasWarehouseReturn: boolean // 是否海外仓退件
   label: string // 标签
   mobileNumber: string // 手机号码

@@ -329,7 +329,7 @@ export const SendCargoItemInfo: React.FC<{
             )
           : null}
       </div>
-      <div className="flex flex-col align-end">
+      <div className="flex flex-col pr-10">
         {/* <div style={{ width: 20, height: 20, borderRadius: '50%', border: '2px solid #86909c', paddingLeft: 1 }} className="border-box flex justify-center items-center mb-2">
           <IconMessage style={{ ...defaultIconStyle, fontSize: 14 }} />
         </div> */}

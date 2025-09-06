@@ -148,6 +148,13 @@ export const orderAPI = {
   }) {
     return baseAxios.get(`/api/logistics/order/mark/pickingProduct?productId=${params.productId}&pickingStatus=${params.pickingStatus}`)
   },
+  // 修改交运状态
+  updateConsignmentStatus(params: {
+    orderNo: string
+    consignmentStatus: boolean
+  }) {
+    return baseAxios.get(`/api/logistics/order/mark/delivery?orderNo=${params.orderNo}&consignmentStatus=${params.consignmentStatus}`)
+  },
 }
 
 interface getShippingParameterRes {

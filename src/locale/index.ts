@@ -15,6 +15,7 @@ const i18n = {
     'admin.business.scanHistory': '扫码记录',
     'admin.business.returnToShelves': '海外仓退件上架',
     'admin.business.retention': '盘点滞留件',
+    'admin.business.consignment': '扫码交运',
 
     'admin.order': '订单管理',
     'admin.order.all': '全部订单',

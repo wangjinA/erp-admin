@@ -27,6 +27,26 @@ export const getOrderFilter: (params?: OrderPageParams) => SearchTableSchema[] =
     },
     control: 'entrepotRadio',
   }
+  const consignmentStatus: SearchTableSchema = {
+    schema: {
+      label: '交运状态',
+      field: 'selectLogisticsOrderVO.consignmentStatus',
+      span: 24,
+    },
+    control: 'radio',
+    controlProps: {
+      options: [{
+        label: '全部',
+        value: null,
+      }, {
+        label: '交运中',
+        value: true,
+      }, {
+        label: '已交运',
+        value: 1,
+      }],
+    },
+  }
   const list: SearchTableSchema[] = [
     ...showObj(isClient(), shopSchema),
     ...showObj(isAdmin(), sendWarehouse),
@@ -61,8 +81,8 @@ export const getOrderFilter: (params?: OrderPageParams) => SearchTableSchema[] =
       },
       control: 'dictSelector',
       controlProps: {
-        dictCode: 'shopee_status'
-      }
+        dictCode: 'shopee_status',
+      },
     },
     {
       schema: {
@@ -74,16 +94,14 @@ export const getOrderFilter: (params?: OrderPageParams) => SearchTableSchema[] =
         options: [{
           label: '全部',
           value: null,
-        },
-        {
+        }, {
           label: '是',
           value: 1,
-        },
-        {
+        }, {
           label: '否',
           value: 0,
-        },]
-      }
+        }],
+      },
     },
     {
       schema: {
@@ -132,8 +150,8 @@ export const getOrderFilter: (params?: OrderPageParams) => SearchTableSchema[] =
       control: 'dictSelector',
       controlProps: {
         dictCode: 'logistics_channel',
-        mode: "multiple"
-      }
+        mode: 'multiple',
+      },
     },
     {
       schema: {
@@ -159,15 +177,17 @@ export const getOrderFilter: (params?: OrderPageParams) => SearchTableSchema[] =
             label: '不足72小时',
             value: 72,
           },
-        ]
-      }
-    },
-    ...(isAdmin() ? [{
-      schema: {
-        field: 'selectLogisticsOrderVO.tenantryNo',
-        label: '用户编号',
+        ],
       },
-    }] : []),
+    },
+    ...(isAdmin()
+      ? [{
+          schema: {
+            field: 'selectLogisticsOrderVO.tenantryNo',
+            label: '用户编号',
+          },
+        }]
+      : []),
     {
       schema: {
         field: 'selectOrderProductVO.deliveryMethod',
@@ -188,9 +208,10 @@ export const getOrderFilter: (params?: OrderPageParams) => SearchTableSchema[] =
             label: '库存',
             value: '1',
           },
-        ]
-      }
+        ],
+      },
     },
+    ...showObj(isAdmin(), consignmentStatus),
     // {
     //   schema: {
     //     field: 'selectOrderProductVO.sku',

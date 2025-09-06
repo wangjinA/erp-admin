@@ -220,6 +220,10 @@ export const routes: IRoute[] = [
       //   name: 'admin.business.retention',
       //   key: 'admin/business/retention',
       // },
+      {
+        name: 'admin.business.consignment',
+        key: 'admin/business/consignment',
+      },
     ],
   },
   {

@@ -27,12 +27,13 @@ export interface ScanComponentProps {
   loading?: boolean
   style?: React.CSSProperties
   onScan?: (params: ScanParams) => void
+  hideEntrepot?: boolean
 }
 
 export const ScanMinWidth = 650
 
 export default (props: ScanComponentProps) => {
-  const { showAlert = true, isAuto = false, placeholder, className, style, loading, onScan } = props
+  const { showAlert = true, isAuto = false, placeholder, className, style, loading, onScan, hideEntrepot } = props
   const { data, loading: loadingEntrepot } = useEntrepotOptions()
   const [value, setValue] = useState<string>()
   const [entrepot, setEntrepot] = useLocalStorageState<any>('scan-entrepot')
@@ -52,7 +53,7 @@ export default (props: ScanComponentProps) => {
   return (
     <div className={className} style={style}>
       <Grid.Row className="mx-auto w-1/2" style={{ minWidth: ScanMinWidth }}>
-        <Grid.Col span={5}>
+        <Grid.Col span={hideEntrepot ? 0 : 5}>
           <div
             className={classNames(
               height,
@@ -83,7 +84,7 @@ export default (props: ScanComponentProps) => {
             }
           </div>
         </Grid.Col>
-        <Grid.Col span={19}>
+        <Grid.Col span={hideEntrepot ? 24 : 19}>
           <Input
             ref={ref}
             value={value}

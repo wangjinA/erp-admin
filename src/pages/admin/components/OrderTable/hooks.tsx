@@ -90,6 +90,19 @@ export function useColumns(props: OrderTablePorps) {
                   )
                 : null
             }
+            {
+              isAdmin() && row.consignmentStatus
+                ? (
+                    <LabelValue
+                      label="交运状态"
+                      value={
+                        <Tag color="#168cff">交运中</Tag>
+                      }
+                    >
+                    </LabelValue>
+                  )
+                : null
+            }
             {/* <LabelValue
               label="查看单号"
               value={(
