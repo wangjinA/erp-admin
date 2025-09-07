@@ -23,6 +23,7 @@ export default () => {
         hideEntrepot={true}
         placeholder="扫描或者输入虾皮订单号"
         showAlert={false}
+        isAuto={true}
         onScan={(info) => {
           console.log(info.trackingNo)
           run(info.trackingNo)
