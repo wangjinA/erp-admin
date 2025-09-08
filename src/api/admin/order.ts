@@ -1,6 +1,8 @@
 import baseAxios from '..'
 import { APIListResponse, APIResponse, IPageParams } from '../type'
 
+import { ScanResponse } from './entrepot'
+
 import { OrderResponseItem } from '@/types/order'
 
 export const orderAPI = {
@@ -153,7 +155,7 @@ export const orderAPI = {
     orderNo: string
     consignmentStatus: boolean
   }) {
-    return baseAxios.get(`/api/logistics/order/mark/delivery?orderNo=${params.orderNo}&consignmentStatus=${params.consignmentStatus}`)
+    return baseAxios.get<APIResponse<ScanResponse>>(`/api/logistics/order/mark/delivery?orderNo=${params.orderNo}&consignmentStatus=${params.consignmentStatus}`)
   },
 }
 

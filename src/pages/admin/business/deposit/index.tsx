@@ -1,5 +1,6 @@
 import { Alert, Link, Spin } from '@arco-design/web-react'
 import { useRequest } from 'ahooks'
+import { Result } from 'ahooks/lib/useRequest/src/types'
 import { useState } from 'react'
 
 import { useHistory } from 'react-router-dom'
@@ -12,17 +13,42 @@ import {
   ScanResponse,
   scanAPI,
 } from '@/api/admin/entrepot'
-import { showMessage } from '@/utils'
 import { EmitTypes, useEventBus } from '@/hooks/useEventBus'
 import { OrderPageDict } from '@/pages/client/order/orderPage'
-import { Result } from 'ahooks/lib/useRequest/src/types'
+import { showMessage } from '@/utils'
 
-function ShowAlert(props: {
+export function ShowAlert(props: {
   data: ScanResponse
   trackingNo: string
 }) {
   const { data, trackingNo } = props
   switch (data.orderType) {
+    case '0':
+      return (
+        <Alert
+          className="mt-4"
+          type="success"
+          title={(
+            <div>
+              虾皮订单号：【
+              {trackingNo}
+              】
+            </div>
+          )}
+          content={(
+            <div>
+              匹配
+              {' '}
+              <b>{data.orderItemInfoBgResultList?.length || 0}</b>
+              {' '}
+              个订单、
+              <b>{data.orderCount || 0}</b>
+              {' '}
+              件商品
+            </div>
+          )}
+        />
+      )
     case '2':
       return (
         <Alert
@@ -102,7 +128,7 @@ function ShowAlert(props: {
               】海外仓退件上架成功
             </div>
           )}
-          content={
+          content={(
             <div>
               匹配
               {' '}
@@ -117,7 +143,7 @@ function ShowAlert(props: {
               ，上架时间：
               {data.signingTime}
             </div>
-          }
+          )}
         />
       )
     default:
@@ -154,72 +180,74 @@ function ShowAlert(props: {
 }
 
 export function ScanResult(props: {
-  trackingNo: string,
-  scanHandle: Result<ScanResponse, [ScanParams]>,
+  trackingNo: string
+  scanHandle: Result<ScanResponse, [ScanParams]>
   dictCode: OrderPageDict
 }) {
   const history = useHistory()
   const { trackingNo, scanHandle, dictCode } = props
-  return <>
-    {trackingNo && !scanHandle.error
-      ? (
-        <Spin loading={scanHandle.loading} className="block text-center pt-10">
-          {scanHandle.data
-            ? (
-              <>
-                <ShowAlert data={scanHandle.data} trackingNo={trackingNo} />
-                {scanHandle.data.orderItemInfoBgResultList
-                  ? (
-                    <OrderTable
-                      className="mt-4 text-left"
-                      data={{
-                        list: scanHandle.data.orderItemInfoBgResultList.map<any>(item => ({
-                          ...item,
-                          orderProductVOList: item.logisticsOrderProductList,
-                          orderPackageList: item.logisticsOrderPackageList,
-                        })),
-                        pageNum: 1,
-                        pageSize: scanHandle.data.orderItemInfoBgResultList.length,
-                        total: scanHandle.data.orderItemInfoBgResultList.length,
-                      }}
-                      dictCode={dictCode}
-                      loading={false}
-                    >
-                    </OrderTable>
-                  )
-                  : null}
-              </>
-            )
-            : null}
-        </Spin>
-      )
-      : null}
-    {
-      scanHandle.error
+  return (
+    <>
+      {trackingNo && !scanHandle.error
         ? (
-          <Alert
-            className="mt-4"
-            type="error"
-            title={(
-              <div>
-                {scanHandle.error.message}
-                <Link
-                  className="ml-4"
-                  onClick={() => {
-                    history.push('/admin/entrepot/info')
-                  }}
-                >
-                  {' '}
-                  仓库设置
-                </Link>
-              </div>
-            )}
-          >
-          </Alert>
-        )
-        : null
-    }
-  </>
+            <Spin loading={scanHandle.loading} className="block text-center pt-10">
+              {scanHandle.data
+                ? (
+                    <>
+                      <ShowAlert data={scanHandle.data} trackingNo={trackingNo} />
+                      {scanHandle.data.orderItemInfoBgResultList
+                        ? (
+                            <OrderTable
+                              className="mt-4 text-left"
+                              data={{
+                                list: scanHandle.data.orderItemInfoBgResultList.map<any>(item => ({
+                                  ...item,
+                                  orderProductVOList: item.logisticsOrderProductList,
+                                  orderPackageList: item.logisticsOrderPackageList,
+                                })),
+                                pageNum: 1,
+                                pageSize: scanHandle.data.orderItemInfoBgResultList.length,
+                                total: scanHandle.data.orderItemInfoBgResultList.length,
+                              }}
+                              dictCode={dictCode}
+                              loading={false}
+                            >
+                            </OrderTable>
+                          )
+                        : null}
+                    </>
+                  )
+                : null}
+            </Spin>
+          )
+        : null}
+      {
+        scanHandle.error
+          ? (
+              <Alert
+                className="mt-4"
+                type="error"
+                title={(
+                  <div>
+                    {scanHandle.error.message}
+                    <Link
+                      className="ml-4"
+                      onClick={() => {
+                        history.push('/admin/entrepot/info')
+                      }}
+                    >
+                      {' '}
+                      仓库设置
+                    </Link>
+                  </div>
+                )}
+              >
+              </Alert>
+            )
+          : null
+      }
+    </>
+  )
 }
 
 export default function Deposit() {
