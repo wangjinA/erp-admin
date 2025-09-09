@@ -42,8 +42,8 @@ export const getOrderFilter: (params?: OrderPageParams) => SearchTableSchema[] =
         label: '交运中',
         value: true,
       }, {
-        label: '已交运',
-        value: 1,
+        label: '未交运',
+        value: false,
       }],
     },
   }
