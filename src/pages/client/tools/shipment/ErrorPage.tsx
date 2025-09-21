@@ -1,6 +1,6 @@
 import { Alert, Button, Checkbox, Divider, Form, Grid, Link, Message, Radio, Table, Typography } from '@arco-design/web-react'
 
-import { IconEdit, IconLeft } from '@arco-design/web-react/icon'
+import { IconEdit, IconLeft, IconRefresh } from '@arco-design/web-react/icon'
 import { useLocalStorageState, useRequest } from 'ahooks'
 import { uniq, uniqBy } from 'lodash'
 import { useState } from 'react'
@@ -8,55 +8,66 @@ import { useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import { UpdateAttributeItem, shipmentAPI } from '@/api/shopeeUtils/shipment'
-import { ProgressInfo } from '@/api/shopeeUtils/types'
+// import { ProgressInfo } from '@/api/shopeeUtils/types'
 import FilterForm from '@/components/FilterForm'
 
 import { GlobalState } from '@/store'
 import { showMessage, showModal } from '@/utils'
 
 interface IProps {
-  data: ProgressInfo
+  // data: ProgressInfo
   shopId: any
 }
 
 const RepeatText = 'Product is duplicate with another product in the same shop'
 
-export default ({ data, shopId }: IProps) => {
+export default ({ shopId }: IProps) => {
   const [searchFromData, setSearchFromData] = useState<Record<string, any>>({})
   const [processingError, setProcessingError] = useState<boolean>(false)
   const userInfo = useSelector((state: GlobalState) => state.userInfo)
   const [selectedCategorys, setSelectedCategorys] = useState([])
+  const [page, setPage] = useState(1)
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const [categortyAttributeFillInfo, setCategortyAttributeFillInfo] = useLocalStorageState<Record<string, UpdateAttributeItem[]>>('categortyAttributeFillInfo', {
     defaultValue: {},
   })
 
-  const errorList = data?.list.filter(item => item.status === 'error') || []
+  const { data, run, loading } = useRequest(async (params) => {
+    return shipmentAPI.getUpdateErrors({
+      userLoginAccount: userInfo.userLoginAccount,
+      shopId,
+      ...params,
+    }).then(r => r.data)
+  }, {
+    refreshDeps: [shopId],
+  })
+
+  const errorList = data?.data?.list || []
 
   const list = errorList.filter((item) => {
-    if (searchFromData.category_id && searchFromData.category_id !== item.detail.categoryInfo.category_id) {
-      return false
-    }
-    if (searchFromData.item_name && !item.detail.item_name.includes(searchFromData.item_name)) {
-      return false
-    }
-    if (searchFromData.item_id && String(item.detail.item_id) !== searchFromData.item_id) {
-      return false
-    }
-    if (searchFromData.repeat && (searchFromData.repeat === 1 ? !item.msg.includes(RepeatText) : item.msg.includes(RepeatText))) {
-      return false
-    }
+    // if (searchFromData.category_id && searchFromData.category_id !== item.categoryId) {
+    //   return false
+    // }
+    // if (searchFromData.item_name && !item.itemName.includes(searchFromData.item_name)) {
+    //   return false
+    // }
+    // if (searchFromData.item_id && String(item.itemId) !== searchFromData.item_id) {
+    //   return false
+    // }
+    // if (searchFromData.repeat && (searchFromData.repeat === 1 ? !item.errorMsg.includes(RepeatText) : item.errorMsg.includes(RepeatText))) {
+    //   return false
+    // }
     return true
-  }).sort((a, b) => a.detail.item_name.localeCompare(b.detail.item_name, 'zh-Hans-CN')).map((item, index) => ({
+  }).sort((a, b) => a.itemName.localeCompare(b.itemName, 'zh-Hans-CN')).map((item, index) => ({
     ...item,
     index: index + 1,
   })) || []
 
-  const categorys = uniqBy(errorList, o => o.detail?.categoryInfo.category_id).map(item => ({
-    label: `${item.detail?.categoryInfo.display_category_name}(${errorList.filter(oitem =>
-      oitem.detail.categoryInfo.category_id === item.detail?.categoryInfo.category_id,
+  const categorys = uniqBy(errorList, o => o.categoryId).map(item => ({
+    label: `${item.displayCategoryName}(${errorList.filter(oitem =>
+      oitem.categoryId === item.categoryId,
     ).length}个)`,
-    value: item.detail?.categoryInfo.category_id,
+    value: item.categoryId,
   }))
 
   const saveHandler = useRequest(async (data) => {
@@ -120,320 +131,344 @@ export default ({ data, shopId }: IProps) => {
       {
         !processingError
           ? (
-              <FilterForm
-                className="mb-4 mt-2"
-                initialValues={{
-                  repeat: 0,
-                }}
-                formItemConfigList={[
-                  {
-                    schema: {
-                      label: '商品名称',
-                      field: 'item_name',
-                    },
+            <FilterForm
+              className="mb-4 mt-2"
+              initialValues={{
+                repeat: 0,
+              }}
+              formItemConfigList={[
+                {
+                  schema: {
+                    label: '商品名称',
+                    field: 'item_name',
                   },
-                  {
-                    schema: {
-                      label: '商品ID',
-                      field: 'item_id',
-                    },
+                },
+                {
+                  schema: {
+                    label: '商品ID',
+                    field: 'item_id',
                   },
-                  {
-                    schema: {
-                      label: '错误类目',
-                      field: 'category_id',
-                    },
-                    control: 'select',
-                    controlProps: {
-                      options: categorys,
-                    },
+                },
+                {
+                  schema: {
+                    label: '错误类目',
+                    field: 'category_id',
                   },
-                  {
-                    schema: {
-                      label: '商品重复',
-                      field: 'repeat',
-                    },
-                    control: 'radio',
-                    controlProps: {
-                      options: [
-                        {
-                          label: '全部',
-                          value: 0,
-                        },
-                        {
-                          label: '是',
-                          value: 1,
-                        },
-                        {
-                          label: '否',
-                          value: 2,
-                        },
-                      ],
-                    },
+                  control: 'select',
+                  controlProps: {
+                    options: categorys,
                   },
-                ]}
-                onValuesChange={(val, vals) => {
-                  setSearchFromData(vals)
-                }}
-              >
-              </FilterForm>
-            )
+                },
+                {
+                  schema: {
+                    label: '商品重复',
+                    field: 'repeat',
+                  },
+                  control: 'radio',
+                  controlProps: {
+                    options: [
+                      {
+                        label: '全部',
+                        value: 0,
+                      },
+                      {
+                        label: '是',
+                        value: 1,
+                      },
+                      {
+                        label: '否',
+                        value: 2,
+                      },
+                    ],
+                  },
+                },
+              ]}
+              onValuesChange={(val, vals) => {
+                setSearchFromData(vals)
+              }}
+            >
+            </FilterForm>
+          )
           : null
       }
       <div className="flex mb-4">
         {
           processingError
             ? (
-                <div className="w-full">
-                  <Button
-                    icon={<IconLeft />}
-                    type="text"
-                    onClick={() => {
-                      setProcessingError(false)
-                    }}
-                  >
-                    返回
-                  </Button>
-                </div>
-              )
-            : (
-                <div
-                  className="w-full mb-4 flex gap-4"
+              <div className="w-full">
+                <Button
+                  icon={<IconLeft />}
+                  type="text"
+                  onClick={() => {
+                    setProcessingError(false)
+                  }}
                 >
-                  <Button
-                    type="primary"
-                    status="warning"
-                    loading={changeCategortyHandler.loading}
-                    onClick={() => {
-                      changeCategortyHandler.run()
-                    }}
-                  >
-                    设置类目为：其他
-                    {' '}
-                    {selectedRowKeys.length ? `(${selectedRowKeys.length})个` : ''}
-                  </Button>
-                  <Button
-                    type="primary"
-                    status="danger"
-                    loading={deleteHandler.loading}
-                    onClick={() => {
-                      deleteHandler.run()
-                    }}
-                  >
-                    删除商品
-                    {' '}
-                    {selectedRowKeys.length ? `(${selectedRowKeys.length})个` : ''}
-                  </Button>
-                  <Button
-                    icon={<IconEdit />}
-                    className="ml-auto"
-                    type="primary"
-                    onClick={() => {
-                      setProcessingError(true)
-                    }}
-                  >
-                    编辑属性
-                  </Button>
-                </div>
-              )
+                  返回
+                </Button>
+              </div>
+            )
+            : (
+              <div
+                className="w-full mb-4 flex gap-4"
+              >
+                <Button
+                  type="primary"
+                  status="warning"
+                  loading={changeCategortyHandler.loading}
+                  onClick={() => {
+                    changeCategortyHandler.run()
+                  }}
+                >
+                  设置类目为：其他
+                  {' '}
+                  {selectedRowKeys.length ? `(${selectedRowKeys.length})个` : ''}
+                </Button>
+                <Button
+                  type="primary"
+                  status="danger"
+                  loading={deleteHandler.loading}
+                  onClick={() => {
+                    deleteHandler.run()
+                  }}
+                >
+                  删除商品
+                  {' '}
+                  {selectedRowKeys.length ? `(${selectedRowKeys.length})个` : ''}
+                </Button>
+                <Button
+                  icon={<IconRefresh />}
+                  className="ml-auto"
+                  type="primary"
+                  onClick={() => {
+                    setPage(1)
+                    run({
+                      page: 1,
+                      pageSize: 20,
+                    });
+                  }}
+                >
+                  刷新
+                </Button>
+                {/* <Button
+                  icon={<IconEdit />}
+                  className="ml-auto"
+                  type="primary"
+                  onClick={() => {
+                    setProcessingError(true)
+                  }}
+                >
+                  编辑属性
+                </Button> */}
+              </div>
+            )
         }
       </div>
       {
         processingError
           ? (
-              <div>
-                <Alert title="保存成功后可前往【修改出货天数】，重新发起修改" type="info" className="mb-4"></Alert>
-                <Typography.Title heading={6}>修改出错商品类目(不包含重复的商品出错类目)</Typography.Title>
-                <Checkbox.Group
-                  className="w-full"
-                  value={selectedCategorys}
-                  onChange={(v: any[]) => {
-                    if (categorys.every(item => v.includes(item.value))) {
-                      v.push('all')
-                    }
-                    else if (v.includes('all')) {
-                      v.splice(v.indexOf('all'), 1)
-                    }
-                    setSelectedCategorys(v)
-                  }}
-                >
-                  <Grid.Row>
-                    {/* 全选 */}
-                    <Grid.Col
-                      span={6}
-                      style={{ marginBottom: 12 }}
+            <div>
+              <Alert title="保存成功后可前往【修改出货天数】，重新发起修改" type="info" className="mb-4"></Alert>
+              <Typography.Title heading={6}>修改出错商品类目(不包含重复的商品出错类目)</Typography.Title>
+              <Checkbox.Group
+                className="w-full"
+                value={selectedCategorys}
+                onChange={(v: any[]) => {
+                  if (categorys.every(item => v.includes(item.value))) {
+                    v.push('all')
+                  }
+                  else if (v.includes('all')) {
+                    v.splice(v.indexOf('all'), 1)
+                  }
+                  setSelectedCategorys(v)
+                }}
+              >
+                <Grid.Row>
+                  {/* 全选 */}
+                  <Grid.Col
+                    span={6}
+                    style={{ marginBottom: 12 }}
+                  >
+                    <Checkbox
+                      value="all"
+                      onChange={(checked) => {
+                        if (checked) {
+                          setSelectedCategorys([...categorys.map(item => item.value), 'all'])
+                        }
+                        else {
+                          setSelectedCategorys([])
+                        }
+                      }}
                     >
-                      <Checkbox
-                        value="all"
-                        onChange={(checked) => {
-                          if (checked) {
-                            setSelectedCategorys([...categorys.map(item => item.value), 'all'])
-                          }
-                          else {
-                            setSelectedCategorys([])
-                          }
-                        }}
+                      全选
+                    </Checkbox>
+                  </Grid.Col>
+                  {
+                    categorys.map(item => (
+                      <Grid.Col
+                        key={item.value}
+                        span={6}
+                        style={{ marginBottom: 12 }}
                       >
-                        全选
-                      </Checkbox>
-                    </Grid.Col>
-                    {
-                      categorys.map(item => (
-                        <Grid.Col
-                          key={item.value}
-                          span={6}
-                          style={{ marginBottom: 12 }}
-                        >
-                          <Checkbox value={item.value}>{item.label}</Checkbox>
-                        </Grid.Col>
-                      ))
-                    }
-                  </Grid.Row>
-                </Checkbox.Group>
-                <Divider />
-                {
-                  data?.categoryAttributes?.filter(oitem => selectedCategorys.includes(oitem.category_id)).map((item) => {
-                    return (
-                      <div key={item.category_id}>
-                        <Typography.Title heading={6}>{item.display_category_name}</Typography.Title>
-                        <div>
-                          {
-                            item.attribute_list.map((oitem) => {
-                              const options = oitem.attribute_value_list.map(item => ({
-                                label: item.display_value_name,
-                                value: item.value_id,
-                              }))
-                              const value = categortyAttributeFillInfo[item.category_id]
-                                ?.find(k => k.attribute_id === oitem.attribute_id)?.attribute_value_list
-                                ?.find(item => item.original_value_name === oitem.original_attribute_name)?.value_id
+                        <Checkbox value={item.value}>{item.label}</Checkbox>
+                      </Grid.Col>
+                    ))
+                  }
+                </Grid.Row>
+              </Checkbox.Group>
+              <Divider />
+              {/* {
+                data?.filter(oitem => selectedCategorys.includes(oitem.category_id)).map((item) => {
+                  return (
+                    <div key={item.category_id}>
+                      <Typography.Title heading={6}>{item.display_category_name}</Typography.Title>
+                      <div>
+                        {
+                          item.attribute_list.map((oitem) => {
+                            const options = oitem.attribute_value_list.map(item => ({
+                              label: item.display_value_name,
+                              value: item.value_id,
+                            }))
+                            const value = categortyAttributeFillInfo[item.category_id]
+                              ?.find(k => k.attribute_id === oitem.attribute_id)?.attribute_value_list
+                              ?.find(item => item.original_value_name === oitem.original_attribute_name)?.value_id
 
-                              return (
-                                <div key={oitem.attribute_id}>
-                                  <Form.Item
-                                    label={oitem.display_attribute_name}
-                                    labelCol={{ span: 4 }}
-                                    wrapperCol={{ span: 20 }}
-                                  >
-                                    <Radio.Group
-                                      value={value}
-                                      onChange={
-                                        (value_id) => {
-                                          const saveData = {
-                                            ...categortyAttributeFillInfo,
-                                            [item.category_id]: [
-                                              ...(categortyAttributeFillInfo[item.category_id] || [])
-                                                .filter(k => k.attribute_id !== oitem.attribute_id),
-                                              {
-                                                attribute_id: oitem.attribute_id,
-                                                attribute_value_list: [{
-                                                  original_value_name: oitem.original_attribute_name,
-                                                  value_id,
-                                                }],
-                                              },
-                                            ],
-                                          }
-                                          setCategortyAttributeFillInfo(saveData)
-                                          saveHandler.run(saveData)
+                            return (
+                              <div key={oitem.attribute_id}>
+                                <Form.Item
+                                  label={oitem.display_attribute_name}
+                                  labelCol={{ span: 4 }}
+                                  wrapperCol={{ span: 20 }}
+                                >
+                                  <Radio.Group
+                                    value={value}
+                                    onChange={
+                                      (value_id) => {
+                                        const saveData = {
+                                          ...categortyAttributeFillInfo,
+                                          [item.category_id]: [
+                                            ...(categortyAttributeFillInfo[item.category_id] || [])
+                                              .filter(k => k.attribute_id !== oitem.attribute_id),
+                                            {
+                                              attribute_id: oitem.attribute_id,
+                                              attribute_value_list: [{
+                                                original_value_name: oitem.original_attribute_name,
+                                                value_id,
+                                              }],
+                                            },
+                                          ],
                                         }
+                                        setCategortyAttributeFillInfo(saveData)
+                                        saveHandler.run(saveData)
                                       }
-                                      options={options}
-                                    >
+                                    }
+                                    options={options}
+                                  >
 
-                                    </Radio.Group>
-                                  </Form.Item>
-                                </div>
-                              )
-                            })
-                          }
-                        </div>
+                                  </Radio.Group>
+                                </Form.Item>
+                              </div>
+                            )
+                          })
+                        }
                       </div>
-                    )
-                  })
-                }
-              </div>
-            )
+                    </div>
+                  )
+                })
+              } */}
+            </div>
+          )
           : null
       }
       {
         !processingError
           ? (
-              <Table
-                rowSelection={
-                  {
-                    type: 'checkbox',
-                    selectedRowKeys,
-                    onChange: (selectedRowKeys) => {
-                      setSelectedRowKeys(selectedRowKeys)
-                    },
-                    onSelectAll: (selected) => {
-                      if (selected) {
-                        setSelectedRowKeys(list.map(item => item.detail.item_id))
-                      }
-                      else {
-                        setSelectedRowKeys([])
-                      }
-                    },
-                  }
+            <Table
+              loading={loading}
+              rowSelection={
+                {
+                  type: 'checkbox',
+                  selectedRowKeys,
+                  onChange: (selectedRowKeys) => {
+                    setSelectedRowKeys(selectedRowKeys)
+                  },
+                  onSelectAll: (selected) => {
+                    if (selected) {
+                      setSelectedRowKeys(list.map(item => item.itemId))
+                    }
+                    else {
+                      setSelectedRowKeys([])
+                    }
+                  },
                 }
-                data={list}
-                rowKey={c => c.detail.item_id}
-                pagePosition="tr"
-                pagination={{
-                  sizeOptions: [15, 20, 50, 100],
-                  defaultPageSize: 15,
-                  showTotal: true,
+              }
+              data={errorList}
+              rowKey={c => c.itemId}
+              pagePosition="tr"
+              pagination={{
+                sizeOptions: [20, 50],
+                defaultPageSize: 20,
+                showTotal: true,
+                total: data?.data?.total || 0,
+                current: page,
+              }}
+              onChange={({ current, defaultPageSize }) => {
+                setPage(current)
+                run({
+                  page: current,
+                  pageSize: defaultPageSize,
+                })
+              }}
+              columns={[
+                {
+                  title: '序号',
+                  dataIndex: 'index',
+                  width: 100,
+                  render: (col, item, index) => index + 1,
+                },
+                {
+                  title: '商品名称',
+                  dataIndex: 'item_name',
+                  width: 300,
+                  render(col, item, index) {
+                    return (
+                      <span>
+                        <Link target="_blank" href={`https://seller.shopee.tw/portal/product/${item.itemId}`}>
+                          {item.itemName}
 
-                }}
-                columns={[
-                  {
-                    title: '序号',
-                    dataIndex: 'index',
-                    width: 100,
+                          {/* <IconEdit></IconEdit> */}
+                        </Link>
+                        {/* <p> */}
+                        （
+                        {item.itemId}
+                        ）
+                        {/* </p> */}
+                      </span>
+                    )
                   },
-                  {
-                    title: '商品名称',
-                    dataIndex: 'item_name',
-                    width: 600,
-                    render(col, item, index) {
-                      return (
-                        <span>
-                          <Link target="_blank" href={`https://seller.shopee.tw/portal/product/${item.detail.item_id}`}>
-                            {item.detail.item_name}
+                },
+                {
+                  title: '错误原因',
+                  dataIndex: 'errorMsg',
+                  render(msg) {
+                    const translatedMsg = msg?.replace(RepeatText, '商品重复').replace('please check and update', '请检查后再更新')
+                      .replace('is mandatory required', '是必填项').replace('Attribute', '属性').replace('requests too frequent', '频率过高，重试即可')
+                    return (
+                      <div>
+                        {translatedMsg}
+                      </div>
+                    )
+                  },
+                },
+                {
+                  title: '类目',
+                  width: 200,
+                  dataIndex: 'displayCategoryName',
+                },
+              ]}
+            >
 
-                            {/* <IconEdit></IconEdit> */}
-                          </Link>
-                          {/* <p> */}
-                          （
-                          {item.detail.item_id}
-                          ）
-                          {/* </p> */}
-                        </span>
-                      )
-                    },
-                  },
-                  {
-                    title: '错误原因',
-                    dataIndex: 'msg',
-                    render(msg) {
-                      const translatedMsg = msg?.replace(RepeatText, '商品重复').replace('please check and update', '请检查后再更新')
-                        .replace('is mandatory required', '是必填项').replace('Attribute', '属性').replace('requests too frequent', '频率过高，重试即可')
-                      return (
-                        <div>
-                          {translatedMsg}
-                        </div>
-                      )
-                    },
-                  },
-                  {
-                    title: '类目',
-                    width: 200,
-                    dataIndex: 'detail.categoryInfo.display_category_name',
-                  },
-                ]}
-              >
-
-              </Table>
-            )
+            </Table>
+          )
           : null
       }
     </div>

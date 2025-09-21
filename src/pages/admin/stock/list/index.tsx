@@ -169,6 +169,7 @@ export default () => {
         }}
       >
         <InputNumber
+          placeholder='请输入库存数量'
           value={quantity}
           onChange={setQuantity}
           step={1}

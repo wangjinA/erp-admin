@@ -53,7 +53,33 @@ export const shipmentAPI = {
   deleteItems(params: DeleteItemsParams) {
     return shopeeUtilsAxios.post<APIResponse>('/shipment/deleteItems', params)
   },
+  getUpdateErrors(body: GetUpdateErrorsParams) {
+    return shopeeUtilsAxios.post<APIResponse<{
+      list: {
+        id: string
+        userLoginAccount: string
+        shopId: string
+        itemId: string
+        itemName: string
+        errorMsg: string
+        errorType: string
+        categoryId: any;
+        displayCategoryName: any;
+      }[];
+      "total": number;
+      "page": number;
+      "pageSize": number;
+      "totalPages": number;
+    }>>('/shipment/getUpdateErrors', body)
+  },
 
+}
+
+interface GetUpdateErrorsParams {
+  userLoginAccount: string;
+  shopId: string;
+  page?: number;
+  pageSize?: number;
 }
 
 interface SaveCategortyAttributeParams {

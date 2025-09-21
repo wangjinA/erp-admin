@@ -82,7 +82,7 @@ const StoreList: React.FC<StoreListProps> = (props) => {
       }).then((r) => {
         setProcessInfo(r.data.data)
       }).finally(() => {
-        timer = setTimeout(fn, 2000)
+        timer = setTimeout(fn, 5000)
       })
     }
     fn()
@@ -308,7 +308,7 @@ const StoreList: React.FC<StoreListProps> = (props) => {
           () => setCurrentErrorShopId(null)
         }
       >
-        <ErrorPage data={processInfo?.progress?.[currentErrorShopId]} shopId={errorInfo?.shopId}></ErrorPage>
+        <ErrorPage shopId={errorInfo?.shopId}></ErrorPage>
       </Drawer>
     </div>
   )
