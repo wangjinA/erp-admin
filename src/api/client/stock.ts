@@ -88,6 +88,13 @@ export const WarehousingApplyAPI = {
   warehousing(body: WarehousingBody) {
     return baseAxios.post('/api/stock/apply/put/storage', body)
   },
+  
+  /**
+   * 设置备注
+   */
+  setRemark(body: { id: number; remarks: string }) {
+    return baseAxios.post('/api/stock/apply/set/remark', body)
+  },
 }
 
 export interface WarehousingBody {

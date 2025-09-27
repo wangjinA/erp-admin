@@ -1,4 +1,4 @@
-import { Button, Divider, Empty, InputNumber, Message, Modal, Space, Spin, Table, Tag, Timeline } from '@arco-design/web-react'
+import { Button, Divider, Empty, Input, InputNumber, Message, Modal, Space, Spin, Table, Tag, Timeline } from '@arco-design/web-react'
 
 import { useRequest } from 'ahooks'
 import { useRef, useState } from 'react'
@@ -18,6 +18,8 @@ export default () => {
   const [warehousingData, setWarehousingData] = useState<WarehousingBody>()
   const [currentNumber, setCurrentNumber] = useState<number[]>([]);
   const [currentServiceCharge, setCurrentServiceCharge] = useState<number>(0);
+  const [remarksCurrent, setRemarksCurrent] = useState<any>()
+  const [remarksValue, setRemarksValue] = useState<string>('');
 
   const ref = useRef<SearchTableRef>()
   const { run, loading } = useRequest(async () => {
@@ -48,6 +50,25 @@ export default () => {
     manual: true,
   })
 
+  const { run: remarksRun, loading: remarksLoading } = useRequest(async () => {
+    if (!remarksCurrent?.id || remarksValue === undefined) {
+      return Message.error({
+        content: '请填写备注信息',
+        duration: 2500,
+      })
+    }
+    return showMessage(() => WarehousingApplyAPI.setRemark({
+      id: remarksCurrent.id,
+      remarks: remarksValue
+    })).then(() => {
+      setRemarksCurrent(null);
+      setRemarksValue('');
+      ref.current.refreshSearchTable()
+    })
+  }, {
+    manual: true,
+  })
+
   return (
     <div className="bg-white p-4">
       <SearchTable
@@ -56,7 +77,7 @@ export default () => {
         getListRequest={WarehousingApplyAPI.getList}
         tableProps={{
           scroll: {
-            x: 1200,
+            x: 1350,
           }
         }}
         formItemConfigList={[
@@ -155,10 +176,20 @@ export default () => {
           },
           {
             schema: {
+              label: '备注',
+              field: 'remarks',
+            },
+            width: 120,
+            render(c) {
+              return c || '-'
+            }
+          },
+          {
+            schema: {
               label: '操作',
               field: 'actions',
             },
-            width: 120,
+            width: 150,
             render(c, row) {
               return (
                 <div>
@@ -200,6 +231,18 @@ export default () => {
                     }}
                   >
                     操作记录
+                  </Button>
+                  <Button
+                    type="text"
+                    size="small"
+                    status="success"
+                    loading={remarksLoading}
+                    onClick={() => {
+                      setRemarksCurrent(row)
+                      setRemarksValue(row.remarks || '')
+                    }}
+                  >
+                    备注
                   </Button>
                 </div>
               )
@@ -344,6 +387,30 @@ export default () => {
               <Empty description="暂无记录"></Empty>
             )}
         </Spin>
+      </Modal>
+      <Modal
+        title="设置备注"
+        visible={!!remarksCurrent}
+        onCancel={() => {
+          setRemarksCurrent(null)
+          setRemarksValue('')
+        }}
+        confirmLoading={remarksLoading}
+        onOk={remarksRun}
+        okText="保存"
+        cancelText="取消"
+        unmountOnExit={true}
+      >
+        <div className="py-4">
+          <Input.TextArea
+            placeholder="请输入备注信息"
+            value={remarksValue}
+            onChange={(value) => setRemarksValue(value)}
+            rows={4}
+            maxLength={500}
+            showWordLimit
+          />
+        </div>
       </Modal>
     </div>
   )
