@@ -180,6 +180,7 @@ export default () => {
               field: 'remarks',
             },
             width: 120,
+            isSearch: true,
             render(c) {
               return c || '-'
             }
