@@ -157,6 +157,14 @@ export const orderAPI = {
   }) {
     return baseAxios.get<APIResponse<ScanResponse>>(`/api/logistics/order/mark/delivery?orderNo=${params.orderNo}&consignmentStatus=${params.consignmentStatus}`)
   },
+
+  // 更新仓库备注
+  updateRemark(params: {
+    orderId: string
+    remark: string
+  }) {
+    return baseAxios.get(`/api/logistics/order/stash/remark?id=${params.orderId}&remark=${params.remark}`)
+  },
 }
 
 interface getShippingParameterRes {
