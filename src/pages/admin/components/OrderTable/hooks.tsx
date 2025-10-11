@@ -173,7 +173,14 @@ export function useColumns(props: OrderTablePorps) {
                   value={row.remark}
                 >
                 </LabelValue>
-                <LabelValue label="仓库备注" value={row.entrepotRemark}></LabelValue>
+                <LabelValue
+                  label="仓库备注"
+                  valueClassName={classNames({
+                    '!text-red-500 !font-bold': row.entrepotRemark,
+                  })}
+                  value={row.entrepotRemark}
+                >
+                </LabelValue>
               </div>
             )
           },

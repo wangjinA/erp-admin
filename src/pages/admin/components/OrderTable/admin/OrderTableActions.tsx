@@ -6,6 +6,8 @@ import ExceptionOnHoldButton from '../ExceptionOnHoldButton'
 import OrderDetailButton from '../OrderDetailButton'
 import PrintButton, { PrintType } from '../PrintButton'
 
+import RemarkButton from '../RemarkButton'
+
 import { orderAPI } from '@/api/admin/order'
 import CountDown from '@/components/CountDown'
 import { EmitTypes, bus } from '@/hooks/useEventBus'
@@ -136,6 +138,18 @@ function OrderTableActions(props: OrderTableActionsProps) {
         >
           取消订单
         </Button>
+        {
+          isAdmin() && (
+            <RemarkButton
+              id={orderItem.id}
+              buttonProps={{
+                type: 'text',
+                size: 'small',
+              }}
+            >
+            </RemarkButton>
+          )
+        }
       </>
     )
   }
