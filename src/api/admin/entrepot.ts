@@ -3,7 +3,6 @@ import baseAxios from '..'
 import { APIListResponse, APIResponse, IPageParams } from '../type'
 
 import { Order, OrderResponseItem } from '@/types/order'
-import { withCache } from '@/utils/cache'
 
 export interface Entrepot {
   consignee: string

@@ -28,6 +28,9 @@ export const orderAPI = {
   refresh(orderIdList: string[]) {
     return baseAxios.post(`/api/logistics/order/batch/update/order`, orderIdList)
   },
+  updateParameter(data) {
+    return baseAxios.post<APIResponse>(`/api/logistics/order/update/shipping/parameter`, data)
+  },
 
   /**
    * 安排出货
@@ -177,12 +180,13 @@ interface getShippingParameterRes {
   shrimpOrderNo: string
   infoNeeded: InfoNeeded
   dropoff: string
-  pickUp: null
+  pickUp: any
   deleteStatus: number
 }
 
 interface InfoNeeded {
   dropoff: ('sender_real_name' | 'tracking_no')[]
+  pickUp: any
 }
 
 export interface SearchOrderParams extends IPageParams {
