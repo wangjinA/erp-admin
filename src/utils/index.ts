@@ -278,3 +278,18 @@ export function randomNumericString(minLength: number = 9, maxLength: number = 1
 export function replaceXStr(str: string) {
   return str?.replace(new RegExp('\\*', 'g'), '') || ''
 }
+
+/**
+ * 检测字符串是否只包含中文（含繁体字）
+ * @param {string} str - 要检测的字符串
+ * @returns {boolean}
+ */
+export function isOnlyChinese(str) {
+  // \u4E00-\u9FFF  基本汉字区（简体、常见繁体）
+  // \u3400-\u4DBF  扩展A区（生僻字）
+  // \uF900-\uFAFF  兼容汉字（繁体多）
+  // \u2E80-\u2EFF  部首补充
+  // \u31C0-\u31EF  笔画符号
+  const reg = /^[\u2E80-\u2EFF\u31C0-\u31EF\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]+$/;
+  return reg.test(str);
+}

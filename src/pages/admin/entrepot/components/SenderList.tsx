@@ -3,6 +3,7 @@ import React, { useEffect } from 'react'
 import { entrepotAPI } from '@/api/admin/entrepot'
 import SearchTable, { SearchTableRef } from '@/components/SearchTable'
 import StatusTag from '@/components/StatusTag'
+import { isOnlyChinese } from '@/utils'
 
 export default ({
   entrepotId,
@@ -31,18 +32,23 @@ export default ({
       createInitialValue={{
         isDefault: false,
       }}
-      filterFormProps={{
-        onChange(e) {
-          console.log(e)
-        },
-      }}
       formItemConfigList={[
         {
           schema: {
             field: 'details',
             label: '寄件人姓名',
             span: 24,
-            required: true,
+            rules: [{
+              required: true,
+              validator: (value, callback) => {
+                if (!isOnlyChinese(value)) {
+                  callback('请输入中文姓名')
+                } else {
+                  callback()
+                }
+              },
+              message: '请输入中文姓名',
+            }]
           },
           isCreate: true,
         },

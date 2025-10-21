@@ -103,6 +103,10 @@ export const entrepotAPI = {
       .then(senderRes => {
         const senderList = senderRes?.data?.data?.list || []
         return {
+          options: senderList.map(item => ({
+            label: item.details,
+            value: item.details,
+          })),
           list: senderList,
           default: senderList.find(item => item.isDefault)?.details || senderList[0]?.details || '',
         }

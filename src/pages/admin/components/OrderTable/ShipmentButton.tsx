@@ -19,12 +19,16 @@ interface ShipmentButtonButtonProps extends ScanParams {
   onSuccess: () => void
 }
 
-const InfoNeededMap: Record<string, CreateFormItemType> = {
+const getInfoNeededMap: (options: any[]) => Record<string, CreateFormItemType> = (options: any[]) => ({
   sender_real_name: {
     schema: {
       label: '寄件人姓名',
       field: 'senderRealName',
       required: true,
+    },
+    control: 'select',
+    controlProps: {
+      options,
     },
   },
   tracking_no: {
@@ -34,7 +38,7 @@ const InfoNeededMap: Record<string, CreateFormItemType> = {
       required: true,
     },
   },
-}
+})
 
 export default (props: ShipmentButtonButtonProps) => {
   const { orderItem, buttonProps, onSuccess, ...scanParams } = props
@@ -46,7 +50,7 @@ export default (props: ShipmentButtonButtonProps) => {
   const [formRef] = Form.useForm()
   const mainHandle = async () => {
     const formData = await formRef.validate()
-    if (parameterData.current) {
+    if (parameterData.current && pickUp.length) {
       const data = {
         ...parameterData.current,
         pickUp: JSON.stringify({
@@ -84,7 +88,9 @@ export default (props: ShipmentButtonButtonProps) => {
     setInitialValues({
       senderRealName: senderRes.default,
     })
-    const ls = shippingRes?.data?.data?.infoNeeded?.dropoff?.map(o => InfoNeededMap[o]) || []
+    const dropoff = shippingRes?.data?.data?.infoNeeded?.dropoff;
+    const InfoNeededMap = getInfoNeededMap(senderRes.options)
+    const ls = dropoff?.map(o => InfoNeededMap[o]) || []
     const pickUpData: any[] = JSON.parse(shippingRes?.data?.data?.pickUp || '{}')?.address_list || []
 
     if (pickUpData.length) {
