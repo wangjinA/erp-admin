@@ -180,23 +180,23 @@ const CaiNiaoConfigInfo = {
       url: "https://item.taobao.com/item.htm?id=",
       componentDownloadUrl: "https://page.cainiao.com/waybill/cloud_printing/home.html",
     },
-    SHOPEE_TEMPLATE: {
-      url: "http://file.yimaivip.com/file/shopee-print-v1.xml",
-    },
+    // SHOPEE_TEMPLATE: {
+    //   url: "http://file.yimaivip.com/file/shopee-print-v1.xml",
+    // },
     TEMPLATEURL: {//菜鸟打印，打印模版
-      url: "http://file.yimaivip.com/file/",//库位打印（50x30）纯文字
-      seatCodeUrl: "https://cloudprint.cainiao.com/template/standard/746102/2",//库位打印（50x30）纯文字
-      seatBarCodeUrl: "https://cloudprint.cainiao.com/template/standard/745503/3",//仓位打印（100x100）条形码
+      // url: "http://file.yimaivip.com/file/",//库位打印（50x30）纯文字
+      // seatCodeUrl: "https://cloudprint.cainiao.com/template/standard/746102/2",//库位打印（50x30）纯文字
+      // seatBarCodeUrl: "https://cloudprint.cainiao.com/template/standard/745503/3",//仓位打印（100x100）条形码
       documentUrl: 'http://file.yimaivip.com/file/document-img-1.xml',
       documentUrlZpt: 'http://file.yimaivip.com/file/document-img-3.xml',// 快捷打印，宅配通
-      documentUrlCode: 'http://file.yimaivip.com/file/document-code.xml',// 取件码
+      // documentUrlCode: 'http://file.yimaivip.com/file/document-code.xml',// 取件码
       // shippingNumberUrl:'https://cloudprint.cainiao.com/template/standard/750629/14',//出货单打印模版（100x150）圆通速运
-      shippingNumberUrl: 'http://file.yimaivip.com/file/shipping_number.xml',//出货单打印模版（100x150）圆通速运
+      shippingNumberUrl: 'https://suyunbao-1307397511.cos.ap-guangzhou.myqcloud.com/template/shipping_number.xml',//出货单打印模版（100x150）圆通速运
       shippingNumberQrcodeUrl: 'http://file.yimaivip.com/file/shipping_number_qrcode.xml',//出货单打印模版（100x150）二维码
-      shippingNumberBarCodeUrl: 'http://file.yimaivip.com/file/shipping_number_barcode.xml',//出货单打印模版（100x150）条形码
-      shippingNumberBarCodeUrl02: 'http://file.yimaivip.com/file/shipping_number_barcode_100x100.xml', // 出货单打印模版（100x100）条形码
-      shippingNumberBarCodeUrl03: 'http://file.yimaivip.com/file/shipping_number_barcode_80x60.xml', // 出货单打印模版（80x60）条形码
-      customsClearanceUrl: 'http://file.yimaivip.com/file/customs_clearance.xml',//清關模版（100x100）
+      shippingNumberBarCodeUrl: 'https://suyunbao-1307397511.cos.ap-guangzhou.myqcloud.com/template/shipping_number_barcode.xml',//出货单打印模版（100x150）条形码
+      shippingNumberBarCodeUrl02: 'https://suyunbao-1307397511.cos.ap-guangzhou.myqcloud.com/template/shipping_number_barcode_100x100.xml', // 出货单打印模版（100x100）条形码
+      shippingNumberBarCodeUrl03: 'https://suyunbao-1307397511.cos.ap-guangzhou.myqcloud.com/template/shipping_number_barcode_80x60.xml', // 出货单打印模版（80x60）条形码
+      customsClearanceUrl: 'https://suyunbao-1307397511.cos.ap-guangzhou.myqcloud.com/template/customs_clearance.xml',//清關模版（100x100）
     }
   },
 };
