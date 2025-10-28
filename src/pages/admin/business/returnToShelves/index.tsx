@@ -3,7 +3,7 @@ import FilterForm from '@/components/FilterForm';
 import dayjs from 'dayjs';
 import { useRequest } from 'ahooks';
 import { Form } from '@arco-design/web-react';
-import { showMessage } from '@/utils';
+import { replaceQueryValue, showMessage } from '@/utils';
 import { useState } from 'react';
 import { EmitTypes, useEventBus } from '@/hooks/useEventBus';
 import { ScanResult } from '../deposit';
@@ -17,7 +17,7 @@ export default function returnToShelves() {
   const scanHandle = useRequest(async (v) => {
     const formData = await form.validate()
     return showMessage(() => scanAPI.scanMarkOverseasWarehouseReturnOrder({
-      shopeeOrderNo: v.trackingNo,
+      shopeeOrderNo: replaceQueryValue(v.trackingNo),
       overseasWarehouseListingTime: formData.startTime,
       overseasWarehouseDelistingTime: formData.endTime,
     })).then(r => r.data.data)
