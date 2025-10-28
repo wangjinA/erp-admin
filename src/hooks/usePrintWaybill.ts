@@ -148,8 +148,10 @@ export async function printShippingWaybill(params: {
     businessPrinter.printShippingNumber([orderItem], templateData);
   } else if (res.shippingOrderPrintingTemplate === ShippingOrderPrintingTemplateEnum.QR_CODE) {
     // 二维码打印
+    templateData.printTemplate = '3';
     businessPrinter.printQrCodeShippingNumber([orderItem], templateData);
   } else if (res.shippingOrderPrintingTemplate === ShippingOrderPrintingTemplateEnum.BAR_CODE) {
+    templateData.printTemplate = '4';
     // 条形码
     businessPrinter.printBarCodeShippingNumber([orderItem], templateData, orderItem.tenantryNo);
   } else {

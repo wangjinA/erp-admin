@@ -1,3 +1,23 @@
+国【49974139】错误提示
+打印机 Deli DL-888B(NEW)
+文档数量 1
+任务 模式 打印
+错误 码  下载失败
+错误 信息 加载 模板 http://file.yimaivip.com/file/shipping number.xml 失败 Read timed打印机 厂商 联系 信息
+帮助
+错误 来源 http://file.yimaivip.com/file/shipping number.xml解决方窒
+com.cainiao.print,base.exception.MessageException: load templatehttp://file.yimaivip.com/file/shipping number.xml failed Read timed out
+at
+com.cainiao.print.core.message.processor.PrintDocument2Pages.loadTemplate(PrintDocument2Pages.java:142)
+at
+com.cainiao,print.core.message.processor.PrintDocument2Pages.templates(PrintDocument2Pages.java:178)
+at
+com.cainiao.print.core.message.processor,PrintDocument2Pages.process(PrintD
+隐藏详细信息
+确定
+
+
+
 百度统计：https://tongji.baidu.com/main/setting/10000676540/home/site/index
 
 
