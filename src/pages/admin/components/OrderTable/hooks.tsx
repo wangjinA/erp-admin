@@ -167,7 +167,7 @@ export function useColumns(props: OrderTablePorps) {
                 <LabelValue label="卖家标识" value={row.tenantryNo}></LabelValue>
                 <LabelValue
                   valueClassName={classNames({
-                    '!text-red-500 !font-bold': row.remark,
+                    '!text-red-500 !font-bold text-[20px]': row.remark,
                   })}
                   label="卖家备注"
                   value={row.remark}
@@ -196,6 +196,7 @@ export function useColumns(props: OrderTablePorps) {
             <LabelValue label="总费用(TWD)" value={row.orderAmount}></LabelValue>
             <LabelValue label="预估运费(TWD)" value={row.estimatedShippingFee}></LabelValue>
             <LabelValue label="实际运费(TWD)" value={row.actualShippingFee}></LabelValue>
+            {row.parcelWeight ? <LabelValue label="实际重量" value={`${row.parcelWeight} KG`}></LabelValue> : ''}
           </div>
         )
       },
