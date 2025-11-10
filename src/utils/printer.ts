@@ -240,6 +240,10 @@ export const ShippingCarrierIndexOfMap = {
   "嘉里快遞": "jl",
   "店到家宅配": "dddzp",
   "賣家宅配：大型/超重物品運送": "zpdx",
+  "蝦皮店到店 - 隔日到貨": "xpdddt",
+  "蝦皮宅配": "xpzp",
+  "店到家宅配 - 標準包裹": "ddjbz",
+  "店到家宅配 - 大型包裹": "ddjdx",
 }
 
 class BusinessPrinter {
