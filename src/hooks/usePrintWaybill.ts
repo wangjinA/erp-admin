@@ -6,7 +6,7 @@ import { GlobalState } from '@/store'
 import { useSelector } from 'react-redux'
 import JsBarcode from 'jsbarcode'
 import { entrepotAPI } from '@/api/admin/entrepot'
-import { businessPrinter } from '@/utils/printer'
+import { businessPrinter, ShippingCarrierIndexOfMap } from '@/utils/printer'
 import { ShippingOrderPrintingTemplateEnum } from '@/constants/entrepot'
 import { sum } from 'lodash'
 
@@ -57,7 +57,7 @@ function getPrintHtml(orderItem: OrderResponseItem & {
                             <div>订单编号：<span style="font-size: 16px;">${orderItem.shrimpOrderNo}</span></div>
                              <div>用户标识：${orderItem.tenantryNo}</div>
                             <div>打单人员：${orderItem.userName}</div>
-                            <div>尾程物流：${orderItem.orderPackageList?.[0]?.shippingCarrier || ''}</div>
+                            <div>尾程物流：${ShippingCarrierIndexOfMap[orderItem.orderPackageList?.[0]?.shippingCarrier || ''] || ''}</div>
                             <div>备&emsp;&emsp;注：</div>
                             <div>店铺名称：</div>
                             <div>打印时间：${dayjs().format('YYYY/MM/DD HH:mm:ss')}</div>
