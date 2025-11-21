@@ -39,12 +39,12 @@ function getIconFromKey(key) {
   switch (key) {
     case 'mo/business':
       return <IconApps className={styles.icon} />;
+    case 'coupang/business':
+      return <IconArchive className={styles.icon} />;
     case 'order':
       return <IconFile className={styles.icon} />;
     case 'stash':
       return <IconArchive className={styles.icon} />;
-    case 'account':
-      return <IconUserGroup className={styles.icon} />;
     case 'express':
       return <IconCommon className={styles.icon} />;
     case 'list':

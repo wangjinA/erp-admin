@@ -47,6 +47,10 @@ export const routes: IRoute[] = [
     //   },
     // ],
   },
+  {
+    name: 'menu.tool-coupang-excel',
+    key: 'coupang/business',
+  },
 ];
 
 export const getName = (path: string, routes) => {

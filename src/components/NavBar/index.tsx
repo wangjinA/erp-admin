@@ -146,7 +146,7 @@ function Navbar({ show }: { show: boolean }) {
         <div className={styles.logo}>
           <Logo />
           <div className={styles['logo-name']}>
-            速运宝 - mo店铺-批量商品表格格式 {'{牛逼}'}
+            速运宝 - 跨境平台-批量商品表格格式
           </div>
         </div>
       </div>

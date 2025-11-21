@@ -59,6 +59,7 @@ const i18n = {
     'navbar.search.placeholder': 'Please search',
   },
   'zh-CN': {
+    'menu.tool-coupang-excel': 'coupang表格转换',
     'menu.tool-mo-excel': '商品表格转换',
     'menu.business.deposit': '扫码入库',
     'menu.business.delivery': '扫码出库',
