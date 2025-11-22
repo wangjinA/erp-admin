@@ -31,6 +31,12 @@ const StoreList: React.FC<StoreListProps> = (props) => {
       <SearchTable
         ref={ref}
         getListRequest={shopStoreAPI.getList}
+        tableProps={{
+          scroll: {
+            x: 1200,
+            y: 400,
+          }
+        }}
         // tableProps={{
         //   data: res?.data?.data?.list,
         //   pagination: {

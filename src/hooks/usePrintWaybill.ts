@@ -82,7 +82,7 @@ function getPrintHtml(orderItem: OrderResponseItem & {
                             <td>${item.freightSpaceName}</td>
                             <td>${orderItem.shrimpOrderNo}</td>
                             <td>
-                              <div>${item.specificationName||item.logisticsProduct?.productName}</div>
+                              <div>${item.specificationName || item.logisticsProduct?.productName}</div>
                               <div>${item.logisticsProduct?.sku || item.sku}</div>
                             </td>
                             <td>${item.quantity}</td>
@@ -100,25 +100,23 @@ function getPrintHtml(orderItem: OrderResponseItem & {
   return html
 }
 
+export function printHtmlMain({ orderItem, userName }: { orderItem: OrderResponseItem, userName: string }) {
+  const html = getPrintHtml({
+    ...orderItem,
+    userName,
+  })
+  printJs({ printable: html, type: 'raw-html', base64: false, targetStyles: ['*'] })
+}
+
 /**
  * 打印文件
  */
 export function usePrintHtml(orderItem: OrderResponseItem) {
   const { userInfo } = useSelector((state: GlobalState) => state)
-
-  function printHandle() {
-    const html = getPrintHtml({
-      ...orderItem,
-      userName: userInfo.userName,
-    })
-    printJs({ printable: html, type: 'raw-html', base64: false, targetStyles: ['*'] })
-  }
-
   return {
-    printHandle,
+    printHandle: () => printHtmlMain({ orderItem, userName: userInfo?.userName }),
   }
 }
-
 
 /**
  * 打印出货单
@@ -145,15 +143,15 @@ export async function printShippingWaybill(params: {
   }
   // 0:圆通速运，1：二维码
   if (res.shippingOrderPrintingTemplate === ShippingOrderPrintingTemplateEnum.YUANTONG) {
-    businessPrinter.printShippingNumber([orderItem], templateData);
+    return businessPrinter.printShippingNumber([orderItem], templateData);
   } else if (res.shippingOrderPrintingTemplate === ShippingOrderPrintingTemplateEnum.QR_CODE) {
     // 二维码打印
     templateData.printTemplate = '3';
-    businessPrinter.printQrCodeShippingNumber([orderItem], templateData);
+    return businessPrinter.printQrCodeShippingNumber([orderItem], templateData);
   } else if (res.shippingOrderPrintingTemplate === ShippingOrderPrintingTemplateEnum.BAR_CODE) {
     templateData.printTemplate = '4';
     // 条形码
-    businessPrinter.printBarCodeShippingNumber([orderItem], templateData, orderItem.tenantryNo);
+    return businessPrinter.printBarCodeShippingNumber([orderItem], templateData, orderItem.tenantryNo);
   } else {
     throw new Error("出货单打印模版不存在,请检查仓库设置！");
   }

@@ -1,5 +1,5 @@
-import { Button, Message, Modal, Popconfirm, Space, Typography } from '@arco-design/web-react'
-import { IconExport } from '@arco-design/web-react/icon'
+import { Button, Dropdown, Message, Modal, Popconfirm, Space, Typography } from '@arco-design/web-react'
+import { IconDoubleDown, IconExport, IconPrinter } from '@arco-design/web-react/icon'
 import { useRequest } from 'ahooks'
 import dayjs from 'dayjs'
 import { saveAs } from 'file-saver'
@@ -16,7 +16,11 @@ import { BatchApplyShippingCarrierList, OrderStatus, SystemName } from '@/consta
 import { EmitTypes, bus } from '@/hooks/useEventBus'
 import DownloadSheetButton from '@/pages/admin/components/OrderTable/DownloadSheetButton'
 import RefreshButton from '@/pages/admin/components/OrderTable/RefreshButton'
-import { showMessage, showModal } from '@/utils'
+import { showMessage, showModal, sleep } from '@/utils'
+import { PrintType } from '@/pages/admin/components/OrderTable/PrintButton'
+import { printHtmlMain, printShippingWaybill, usePrintHtml } from '@/hooks/usePrintWaybill'
+import { useSelector } from 'react-redux'
+import { GlobalState } from '@/store'
 
 interface PageActionsProps {
   selectIds: string[]
@@ -28,6 +32,8 @@ interface PageActionsProps {
 
 function PageActions(props: PageActionsProps) {
   const { data, selectIds, activeTab, dictCode, getPageQuery } = props
+
+  const { userInfo } = useSelector((state: GlobalState) => state)
 
   const exportOrderListHandle = useRequest(async () => {
     const body = getPageQuery({
@@ -116,6 +122,40 @@ function PageActions(props: PageActionsProps) {
 
   const isNotOutOrder = dictCode !== OrderPageDict.OUT_ORDER_STATUS
 
+  const { run: printPickListHandle, loading: printPickListLoading } = useRequest(async (printType: PrintType) => {
+    // 根据选中的ID获取订单数据
+    const selectedOrders = selectIds.length ? data.list.filter(item => selectIds.includes(item.id)) : data.list
+
+    if (!selectedOrders.length) {
+      return Message.error('未找到要打印的订单')
+    }
+
+    // 循环打印每个订单
+    for (const orderItem of selectedOrders) {
+      try {
+        if (printType === PrintType.PICKING) {
+          printHtmlMain({ orderItem, userName: userInfo?.userName || '' })
+          await sleep(500);
+        } else if (printType === PrintType.SHIPPING) {
+          // 打印出货单
+          await printShippingWaybill({
+            orderItem,
+            sendWarehouse: orderItem.sendWarehouse || '',
+          })
+          await sleep(300);
+        }
+        // 每个打印之间添加短暂延迟，避免打印机堵塞
+      } catch (error) {
+        console.error(`订单 ${orderItem.shrimpOrderNo} 打印失败:`, error?.message)
+        Message.error(`订单 ${orderItem.shrimpOrderNo} 打印失败: ${error?.message}`)
+      }
+
+    }
+    Message.success('打印完成！')
+  }, {
+    manual: true,
+  })
+
   return (
     <Space size={8}>
       <Popconfirm
@@ -137,27 +177,27 @@ function PageActions(props: PageActionsProps) {
       </Popconfirm>
       {isNotOutOrder
         ? (
-            <Button
-              type="outline"
-              loading={outListHandle.loading}
-              disabled={activeTab >= OrderStatus['已出库']}
-              onClick={async () => {
-                if (!selectIds.length) {
-                  return Message.error('请选择订单')
-                }
-                await showModal({
-                  content: `确定出库 ${selectIds.length} 个订单？`,
-                  okButtonProps: {
-                    status: 'success',
-                  },
-                })
+          <Button
+            type="outline"
+            loading={outListHandle.loading}
+            disabled={activeTab >= OrderStatus['已出库']}
+            onClick={async () => {
+              if (!selectIds.length) {
+                return Message.error('请选择订单')
+              }
+              await showModal({
+                content: `确定出库 ${selectIds.length} 个订单？`,
+                okButtonProps: {
+                  status: 'success',
+                },
+              })
 
-                outListHandle.run()
-              }}
-            >
-              批量出库
-            </Button>
-          )
+              outListHandle.run()
+            }}
+          >
+            批量出库
+          </Button>
+        )
         : null}
       <RefreshButton
         ids={selectIds}
@@ -168,110 +208,149 @@ function PageActions(props: PageActionsProps) {
       >
         批量更新订单
       </RefreshButton>
-      {isNotOutOrder ? <DownloadSheetButton getPageQuery={getPageQuery} selectIds={selectIds}></DownloadSheetButton> : null}
       {isNotOutOrder ? (
-        <Button
-          type="outline"
-          loading={shipmentBatchHandle.loading}
-          disabled={activeTab !== OrderStatus['已出库']}
-          onClick={async () => {
-            if (!selectIds.length) {
-              return Message.error('请选择订单')
-            }
-            const ids = data.list.filter(item =>
-              BatchApplyShippingCarrierList.some(o => (item.shippingCarrier || item.orderPackageList?.[0]?.shippingCarrier).includes(o)),
-            ).map(o => o.id)
+        <>
+          <DownloadSheetButton getPageQuery={getPageQuery} selectIds={selectIds}></DownloadSheetButton>
+          <Button
+            type="outline"
+            loading={shipmentBatchHandle.loading}
+            disabled={activeTab !== OrderStatus['已出库']}
+            onClick={async () => {
+              if (!selectIds.length) {
+                return Message.error('请选择订单')
+              }
+              const ids = data.list.filter(item =>
+                BatchApplyShippingCarrierList.some(o => (item.shippingCarrier || item.orderPackageList?.[0]?.shippingCarrier).includes(o)),
+              ).map(o => o.id)
 
-            const tips = `只有${BatchApplyShippingCarrierList.join('、')}的订单才能批量出货`
+              const tips = `只有${BatchApplyShippingCarrierList.join('、')}的订单才能批量出货`
 
-            if (!ids.length) {
-              Message.error(tips)
-              return
-            }
-            const successIds = selectIds.filter(id => ids.includes(id))
+              if (!ids.length) {
+                Message.error(tips)
+                return
+              }
+              const successIds = selectIds.filter(id => ids.includes(id))
 
-            // 选中的id和匹配的承运商id 都要存在
-            if (successIds.length) {
-              if (selectIds.length !== successIds.length) {
-                // Modal.confirm({
-                //   title: '温馨提示',
-                //   content: `${tips}，其他承运商的订单请手动单个出货！`,
-                //   okText: '确认出货',
-                //   onOk() {
-                //     shipmentBatchHandle.run(successIds)
-                //   }
-                // })
-                await showModal({
-                  content: `${tips}，其他承运商的订单请手动单个出货！`,
-                  okButtonProps: {
-                    status: 'success',
-                  },
-                }).then(() => {
+              // 选中的id和匹配的承运商id 都要存在
+              if (successIds.length) {
+                if (selectIds.length !== successIds.length) {
+                  // Modal.confirm({
+                  //   title: '温馨提示',
+                  //   content: `${tips}，其他承运商的订单请手动单个出货！`,
+                  //   okText: '确认出货',
+                  //   onOk() {
+                  //     shipmentBatchHandle.run(successIds)
+                  //   }
+                  // })
+                  await showModal({
+                    content: `${tips}，其他承运商的订单请手动单个出货！`,
+                    okButtonProps: {
+                      status: 'success',
+                    },
+                  }).then(() => {
+                    shipmentBatchHandle.run(successIds)
+                  })
+                }
+                else {
                   shipmentBatchHandle.run(successIds)
-                })
+                }
               }
               else {
-                shipmentBatchHandle.run(successIds)
+                Message.error('不符合出货条件，请检查订单状态和承运商信息！')
               }
+            }}
+          >
+            批量出货
+          </Button>
+          <Dropdown
+            droplist={
+              <Space direction='vertical' className="bg-white w-[136px] py-2">
+                <Button
+                  type='primary'
+                  icon={<IconPrinter />}
+                  className="block w-full"
+                  loading={printPickListLoading}
+                  onClick={() => {
+                    printPickListHandle(PrintType.PICKING)
+                  }}
+                >
+                  打印拣货单
+                </Button>
+                <Button
+                  type='primary'
+                  icon={<IconPrinter />}
+                  className="block w-full"
+                  loading={printPickListLoading}
+                  onClick={() => {
+                    printPickListHandle(PrintType.SHIPPING)
+                  }}
+                >
+                  打印出货单
+                </Button>
+              </Space>
             }
-            else {
-              Message.error('不符合出货条件，请检查订单状态和承运商信息！')
-            }
-          }}
-        >
-          批量出货
-        </Button>
+          >
+            <Button
+              type="outline"
+              icon={<IconDoubleDown />}
+              loading={printPickListLoading}
+            >
+              批量打印面单
+              {selectIds.length ? `(${selectIds.length}个)` : ''}
+            </Button>
+          </Dropdown>
+        </>
       ) : null}
       {
         isNotOutOrder
           ? null
           : (
-              <Button
-                type="outline"
-                status="danger"
-                loading={destroyListHandle.loading}
-                onClick={async () => {
-                  if (!selectIds.length) {
-                    return Message.error('请选择订单')
-                  }
-                  const notTakeDownItems = data.list.filter(item => selectIds.includes(item.id) && dayjs().valueOf() < dayjs(item.overseasWarehouseDelistingTime).valueOf())
-                  await showModal({
-                    content: notTakeDownItems.length > 0
-                      ? (
-                          <div>
-                            <div>
-                              以下订单退件未过期，请确认是否销毁选中的
-                              {selectIds.length}
-                              个订单？
+            <Button
+              type="outline"
+              status="danger"
+              loading={destroyListHandle.loading}
+              onClick={async () => {
+                if (!selectIds.length) {
+                  return Message.error('请选择订单')
+                }
+                const notTakeDownItems = data.list.filter(item => selectIds.includes(item.id) && dayjs().valueOf() < dayjs(item.overseasWarehouseDelistingTime).valueOf())
+                await showModal({
+                  content: notTakeDownItems.length > 0
+                    ? (
+                      <div>
+                        <div>
+                          以下订单退件未过期，请确认是否销毁选中的
+                          {selectIds.length}
+                          个订单？
+                        </div>
+                        <div>
+                          {notTakeDownItems.map(item => (
+                            <div className="mb-2">
+                              <div>
+                                <span>订单编号：</span>
+                                <Typography.Text copyable>
+                                  {item.shrimpOrderNo}
+                                </Typography.Text>
+                              </div>
+                              <div>
+                                <span>下架时间：</span>
+                                <span>{item.overseasWarehouseDelistingTime}</span>
+                              </div>
                             </div>
-                            <div>
-                              {notTakeDownItems.map(item => (
-                                <div className="mb-2">
-                                  <div>
-                                    <span>订单编号：</span>
-                                    <Typography.Text copyable>
-                                      {item.shrimpOrderNo}
-                                    </Typography.Text>
-                                  </div>
-                                  <div>
-                                    <span>下架时间：</span>
-                                    <span>{item.overseasWarehouseDelistingTime}</span>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )
-                      : `确认销毁选中的${selectIds.length}个订单？`,
-                    onOk: () => {
-                      destroyListHandle.run()
-                    },
-                  })
-                }}
-              >
-                批量销毁
-              </Button>
-            )
+                          ))}
+                        </div>
+                      </div>
+                    )
+                    : `确认销毁选中的${selectIds.length}个订单？`,
+                  onOk: () => {
+                    destroyListHandle.run()
+                  },
+                })
+              }}
+            >
+              批量销毁
+            </Button>
+          )
       }
       {/* <Button
         type="outline"

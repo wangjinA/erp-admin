@@ -36,9 +36,11 @@ export default (props: ShipmentButtonButtonProps) => {
   })
 
   function startMain() {
+    // 打印拣货单
     if (printType === PrintType.PICKING) {
       printHandle()
     } else if (printType === PrintType.SHIPPING) {
+      // 打印出货单
       run()
     }
   }

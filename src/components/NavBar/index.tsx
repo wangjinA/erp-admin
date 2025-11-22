@@ -14,7 +14,7 @@ import {
   IconSettings,
   IconSunFill,
 } from '@arco-design/web-react/icon'
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import Settings from '../Settings'
@@ -38,6 +38,7 @@ import { GlobalState } from '@/store'
 import useI18n from '@/utils/useI18n'
 
 import useStorage from '@/utils/useStorage'
+import { checkIsSpotRole } from '@/utils'
 
 function Navbar({ show }: { show: boolean }) {
   const t = useI18n()
@@ -89,6 +90,7 @@ function Navbar({ show }: { show: boolean }) {
       </div>
     )
   }
+  const isSpotRole = useMemo(() => checkIsSpotRole(userInfo), [userInfo]);
 
   const handleChangeRole = () => {
     // const newRole = role === 'admin' ? 'user' : 'admin'
@@ -111,7 +113,7 @@ function Navbar({ show }: { show: boolean }) {
                 color: 'green',
               },
               {
-                text: '物流端',
+                text: `物流端${isSpotRole ? '｜现货' : ''}`,
                 value: 1,
                 color: 'blue',
               },
