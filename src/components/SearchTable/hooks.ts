@@ -1,8 +1,16 @@
 import { useEffect, useState } from 'react'
 import { useHistory } from 'react-router'
 
-export function getQueryStr(data = {}) {
-  return Object.entries<any>(data).reduce((pre, [key, value]) => {
+export function getQueryStr(data = {}, preserveOtherParams = true) {// 如果需要保留其他参数，先获取当前URL中的所有参数
+  let baseParams = {}
+  if (preserveOtherParams) {
+    baseParams = getQueryData()
+  }
+
+  // 合并基础参数和新参数（新参数会覆盖同名的基础参数）
+  const mergedData = { ...baseParams, ...data }
+
+  return Object.entries<any>(mergedData).reduce((pre, [key, value]) => {
     if (['', null, undefined].includes(value)) {
       return pre
     }
