@@ -15,7 +15,7 @@ export type IRoute = AuthParams & {
 export const routes: IRoute[] = [
   {
     name: 'menu.tool-mo-excel',
-    key: 'mo',
+    key: 'mo/business',
     // children: [
     //   {
     //     name: 'menu.business.deposit',
