@@ -87,9 +87,11 @@ function Coupang() {
   });
   const [localForm, setLocalForm] = useLocalStorageState('coupang-form-data', {
     defaultValue: {
-      shippingFee: 20,
+      shippingFee: 65,
       preparationDays: 7,
       stockQuantity: 200,
+      prieceShouJia: 12, // 售价倍数
+      prieceShiJia: 14, // 市价倍数
     },
   });
   const [visible, setVisible] = useState(false);
@@ -107,6 +109,8 @@ function Coupang() {
         shippingFee: formData.shippingFee,
         preparationDays: formData.preparationDays,
         stockQuantity: formData.stockQuantity,
+        prieceShouJia: formData.prieceShouJia,
+        prieceShiJia: formData.prieceShiJia,
       });
 
       // 读取Excel数据
@@ -151,11 +155,11 @@ function Coupang() {
           // 变种图片 row[28-36]
 
           // 计算售价和原价（使用促销价作为售价，价格作为原价）
-          const salePrice = promoPrice || price;
-          const originalPrice = price;
+          const salePrice = Math.ceil((promoPrice || price) * formData.prieceShouJia);
+          const originalPrice = Math.ceil(price * formData.prieceShiJia);
 
           // 构建其他图片字符串（除第一张外的所有图片）
-          const otherImages = productImages.slice(1).join('\n');
+          const otherImages = productImages.slice(1).join(',');
 
           // 构建详细说明
           const detailDescription = [longDesc, shortDesc, sourceUrl]
@@ -199,7 +203,7 @@ function Coupang() {
             sku, // 賣家商品編號
             '', // 型號
             '', // 條碼
-            'TW_Consumer_Electronics', // 類別
+            'TW_General', // 類別
             '',
             '',
             '',
@@ -255,31 +259,12 @@ function Coupang() {
 
   return (
     <div
-      className="p-4"
-      style={{
-        background: 'var(--color-menu-light-bg)',
-        minHeight: '100vh',
-      }}
+      className="p-4 bg-white"
     >
-      <div className="w-full max-w-3xl mx-auto py-10">
+      <div className="w-full max-w-3xl mx-auto">
         <Title heading={3} style={{ marginBottom: 24 }}>
           Coupang 数据转换工具
         </Title>
-
-        <div
-          style={{
-            background: 'var(--color-bg-2)',
-            padding: 24,
-            borderRadius: 8,
-            marginBottom: 24,
-          }}
-        >
-          <Text type="secondary">
-            将淘宝商品数据转换为 Coupang
-            平台所需格式。请确保上传的文件包含正确的表头和数据。
-          </Text>
-        </div>
-
         <Form
           form={form}
           initialValues={localForm}
@@ -349,6 +334,38 @@ function Coupang() {
               placeholder="请输入默认库存数量"
               style={{ width: '100%' }}
               min={0}
+            />
+          </Form.Item>
+
+          <Form.Item
+            rules={[
+              { required: true, message: '请输入售价倍数' },
+              { type: 'number', min: 1, message: '售价倍数至少为1' },
+            ]}
+            label="售价倍数"
+            field="prieceShouJia"
+            extra="售价 = 原价格 × 售价倍数（向上取整）"
+          >
+            <InputNumber
+              placeholder="请输入售价倍数"
+              style={{ width: '100%' }}
+              min={1}
+            />
+          </Form.Item>
+
+          <Form.Item
+            rules={[
+              { required: true, message: '请输入市价倍数' },
+              { type: 'number', min: 1, message: '市价倍数至少为1' },
+            ]}
+            label="市价倍数"
+            field="prieceShiJia"
+            extra="市价 = 原价格 × 市价倍数（向上取整）"
+          >
+            <InputNumber
+              placeholder="请输入市价倍数"
+              style={{ width: '100%' }}
+              min={1}
             />
           </Form.Item>
 

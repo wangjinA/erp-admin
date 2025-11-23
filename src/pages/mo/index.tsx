@@ -6,7 +6,7 @@ import Coupang from '../coupang/Coupang';
 export default function Mo() {
   const [activeTab, setActiveTab] = useState('coupang');
   return (
-    <div>
+    <div className="p-4 bg-white">
       <Tabs>
         <Tabs.TabPane key="mo" title="mo商品表格转换">
           <Business />
