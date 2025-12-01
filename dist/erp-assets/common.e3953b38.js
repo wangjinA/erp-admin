@@ -1,0 +1,1 @@
+import{b as r,D as o}from"./vendor.475cee01.js";const t={schema:{field:"Divider",span:24},formItemProps:{noStyle:!0},control:r(o,{className:"mt-1 mb-3"})},s={formItemProps:{normalize:e=>Number(e),formatter:e=>e===1,triggerPropName:"checked"},control:"switch"};export{t as D,s as S};
