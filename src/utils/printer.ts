@@ -246,6 +246,8 @@ export const ShippingCarrierIndexOfMap = {
   "店到家宅配 - 大型包裹": "ddjdx",
 }
 
+let modalInstance = null;
+
 class BusinessPrinter {
   // 打印出货单，圆通速运
   printShippingNumber(orders: OrderResponseItem[], templateData) {
@@ -281,7 +283,7 @@ class BusinessPrinter {
       }]
     };
     contents.push(arr);
-    this.printOperation(contents);
+    return this.printOperation(contents);
   }
   // 打印出货单，二维码
   printQrCodeShippingNumber(orders: OrderResponseItem[], templateData) {
@@ -300,7 +302,7 @@ class BusinessPrinter {
       }]
     };
     contents.push(arr);
-    this.printOperation(contents);
+    return this.printOperation(contents);
   }
   // 打印出货单，条形码
   printBarCodeShippingNumber(orders: OrderResponseItem[], templateData, invitationCodeVal) {
@@ -342,7 +344,7 @@ class BusinessPrinter {
         "templateURL": printUrl
       }]
     }];
-    this.printOperation(contents);
+    return this.printOperation(contents);
   }
   //快捷打印（打印面单）
   // quickPrint(orderObj, loadingObj) {
@@ -435,22 +437,32 @@ class BusinessPrinter {
   }
   //打印操作
   printOperation(WaybillInfo: WaybillInfo) {
-    Printer.doPrint(WaybillInfo, (data) => {
-      // console.log("打印回调数据:",data);
-      if (data == "no open") {
-        let content = '您还未安装或者未开启菜鸟官方打印组件，请先安装或者开启！';
-        this.printProcessing(content);
-      }
+    return new Promise((resolve, reject) => {
+      Printer.doPrint(WaybillInfo, (data) => {
+        if (['no open', 'failed'].includes(data)) {
+          const message = data === 'no open' ? '打印失败，未安装或者未开启菜鸟官方打印组件' : '打印失败，请检查打印机是否连接正常';
+          this.printProcessing(message);
+          reject(new Error(message));
+        }
+        resolve(data);
+      });
     });
   }
   printProcessing(content) {
-    Modal.confirm({
+    if (modalInstance) {
+      return;
+    }
+    modalInstance = Modal.confirm({
       title: '提示',
       content: content,
       okText: '去下载',
       cancelText: '去开启',
+      onCancel: () => {
+        modalInstance = null;
+      },
       onOk: () => {
         window.open(CaiNiaoConfigInfo.links['CN'].componentDownloadUrl, '_blank');
+        modalInstance = null;
       }
     });
   }

@@ -8,6 +8,7 @@ import * as XLSX from 'xlsx'
 
 import { SuccessCode } from '@/api'
 import { APIResponse, SorterReq } from '@/api/type'
+import { UserInfo } from '@/api/admin/user'
 
 export function toArray(value) {
   return isArray(value) ? value : [value]
@@ -292,4 +293,8 @@ export function isOnlyChinese(str) {
   // \u31C0-\u31EF  笔画符号
   const reg = /^[\u2E80-\u2EFF\u31C0-\u31EF\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]+$/;
   return reg.test(str);
+}
+
+export function checkIsSpotRole(userInfo: Partial<UserInfo>) {
+  return userInfo?.roleName?.length && userInfo.roleName.some(o => ['现货', '現貨'].some(r => o.includes(r)))
 }

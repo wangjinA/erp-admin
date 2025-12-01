@@ -11,7 +11,7 @@ import {
 import { IconExport, IconRefresh, IconSearch } from '@arco-design/web-react/icon'
 import { useLocalStorageState, usePagination, useResetState } from 'ahooks'
 import { omit, sum } from 'lodash'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { getOrderFilter } from './schema'
 import { orderAPI as adminOrderApi } from '@/api/admin/order'
@@ -24,11 +24,11 @@ import { EmitTypes, bus, useEventBus } from '@/hooks/useEventBus'
 import OrderTable from '@/pages/admin/components/OrderTable'
 import SyncOrderButton from '@/pages/admin/components/OrderTable/SyncOrderButton'
 import { isAdmin } from '@/routes'
-import { replaceQueryValueByObject, timeArrToObject } from '@/utils'
+import { checkIsSpotRole, replaceQueryValueByObject, timeArrToObject } from '@/utils'
 import PageActions from './components/PageActions'
 import { BadgeDefaultTextList } from '@/constants/colorMap'
-import { useDispatch } from 'react-redux'
-import { CountMapKey } from '@/store'
+import { useDispatch, useSelector } from 'react-redux'
+import { CountMapKey, GlobalState } from '@/store'
 
 export enum OrderPageType {
   SHOPEE = 'shopee',
@@ -65,6 +65,7 @@ export default (props: OrderPageProps) => {
     [OrderPageType.PENDING]: OrderPageDict.PENDING,
     [OrderPageType.OUT_ORDER_STATUS]: OrderPageDict.OUT_ORDER_STATUS,
   }[type]
+  const { userInfo } = useSelector((state: GlobalState) => state)
 
   const [activeTab, setActiveTab] = useLocalStorageState<string>(location.pathname, {
     defaultValue: AllTabValue
@@ -74,9 +75,12 @@ export default (props: OrderPageProps) => {
   const [sortType, setSortType] = useLocalStorageState<number>(location.pathname + '-sortType', {
     defaultValue: 2
   })
+  const isSpotRole = useMemo(() => checkIsSpotRole(userInfo), [userInfo]);
   const [formData, _setFormData, restFormData] = useResetState<any>({
     selectLogisticsOrderVO: {},
-    selectOrderProductVO: {},
+    selectOrderProductVO: {
+      deliveryMethod: isSpotRole ? '1' : null,
+    },
   })
   const [filterForm] = Form.useForm()
 
@@ -161,6 +165,7 @@ export default (props: OrderPageProps) => {
 
     const querySelectOrderProductVO = replaceQueryValueByObject({
       ...formData.selectOrderProductVO,
+      deliveryMethod: isSpotRole ? '1' : formData?.selectOrderProductVO?.deliveryMethod,
     }, ['trackingNo'])
 
     const querySelectLogisticsVO = replaceQueryValueByObject({
@@ -184,7 +189,7 @@ export default (props: OrderPageProps) => {
       current: 1,
     }) => {
       bus.emit(EmitTypes.clearSelectOrderList)
-      if (!shrimpStatus?.length) {
+      if (!shrimpStatus?.length || !userInfo) {
         return null
       }
       const body = getPageQuery({
@@ -242,7 +247,7 @@ export default (props: OrderPageProps) => {
       defaultCurrent: 1,
       manual: false,
       debounceWait: 200,
-      refreshDeps: [activeTab, shrimpStatus, sortType],
+      refreshDeps: [activeTab, shrimpStatus, sortType, userInfo],
     },
   )
   // const cancelListHandle = useRequest(async () => {
@@ -264,18 +269,28 @@ export default (props: OrderPageProps) => {
     refresh()
   })
 
+  if (!userInfo) {
+    return null;
+  }
+
   return (
     <div className="bg-white p-4">
       <FilterForm
         form={filterForm}
         size="small"
         initialValues={{
+          // selectOrderProductVO: isSpotRole ? {
+          //   deliveryMethod: '1'
+          // } : {}
           // selectLogisticsOrderVO: {
           //   remainShippingTime: null,
           //   reissued: null,
           // }
         }}
-        formItemConfigList={getOrderFilter({ type })}
+        formItemConfigList={getOrderFilter({
+          type,
+          isSpotRole,
+        })}
         onValuesChange={(val, values) => {
           setFormData(values)
           // console.log(...e);

@@ -29,14 +29,6 @@ const StoreList: React.FC<StoreListProps> = (props) => {
     manual: true,
   })
 
-  const { run: reAuthRun, loading: reAuthLoading } = useRequest(async () => {
-    const res = await shopStoreAPI.reAuth()
-    window.open(res.data.data)
-    // ref.current.refreshSearchTable()
-  }, {
-    manual: true,
-  })
-
   return (
     <div className="p-4 bg-white">
       {String(status) === '204' && String(authInfo || '')?.length === 11 ? <Alert
@@ -57,7 +49,7 @@ const StoreList: React.FC<StoreListProps> = (props) => {
         tableProps={{
           scroll: {
             x: 1200,
-          }
+          },
         }}
         // tableProps={{
         //   data: res?.data?.data?.list,
@@ -77,17 +69,6 @@ const StoreList: React.FC<StoreListProps> = (props) => {
             render(col, row) {
               return (
                 <>
-                  <Button
-                    type="text"
-                    status="warning"
-                    icon={<IconEdit />}
-                    loading={reAuthLoading}
-                    onClick={() => {
-                      reAuthRun()
-                    }}
-                  >
-                    重新授权
-                  </Button>
                   <Button
                     type="text"
                     status="warning"

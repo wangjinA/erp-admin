@@ -337,6 +337,10 @@ export const routes: IRoute[] = [
         key: 'admin/tenantry/users',
       },
       {
+        name: 'admin.tenantry.storeList',
+        key: 'admin/tenantry/storeList',
+      },
+      {
         name: 'admin.tenantry.menu',
         key: 'admin/tenantry/menu',
       },

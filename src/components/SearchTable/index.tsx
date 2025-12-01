@@ -193,7 +193,6 @@ const SearchTable = forwardRef<SearchTableRef, SearchTableProps>(
                             onClick={() => {
                               searchFormRef.clearFields()
                               searchFormRef.setFieldsValue(resetParams())
-
                               setTimeout(() => {
                                 if (pageNum === 1) {
                                   run()

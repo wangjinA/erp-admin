@@ -87,6 +87,7 @@ const i18n = {
 
     'admin.tenantry': '店铺管理',
     'admin.tenantry.users': '店铺用户',
+    'admin.tenantry.storeList': '店铺列表',
     'admin.tenantry.role': '店铺角色',
     'admin.tenantry.menu': '店铺菜单',
     'admin.tenantry.consumer': '店铺授权',

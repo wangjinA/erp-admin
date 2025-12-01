@@ -128,7 +128,9 @@ function PageLayout() {
   const defaultRoute = defaultRouteKeyMap[getPathEndKey()]
   const currentComponent = qs.parseUrl(pathname).url.slice(1) || defaultRoute
   if (!currentComponent) {
-    location.href = `${EndType.CLIENT}`
+    // 保留query参数进行重定向
+    const search = history.location.search
+    history.replace(`/${EndType.CLIENT}${search}`)
     return null
   }
   const defaultSelectedKeys = [currentComponent]
@@ -336,6 +338,7 @@ function PageLayout() {
                             key={index}
                             path={`/${route.key}`}
                             component={route.component}
+                            render={(props) => <route.component {...props} />}
                           />
                         )
                       })}

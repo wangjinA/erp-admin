@@ -7,9 +7,11 @@ import { showObj } from '@/utils'
 
 interface OrderPageParams {
   type: OrderPageType
+  // 是否不是现货角色
+  isSpotRole?: boolean
 }
 
-export const getOrderFilter: (params?: OrderPageParams) => SearchTableSchema[] = (params) => {
+export const getOrderFilter: (params?: OrderPageParams) => SearchTableSchema[] = ({ isSpotRole = false }) => {
   const shopSchema: SearchTableSchema = {
     schema: {
       field: 'selectLogisticsOrderVO.platformShopId',
@@ -182,13 +184,13 @@ export const getOrderFilter: (params?: OrderPageParams) => SearchTableSchema[] =
     },
     ...(isAdmin()
       ? [{
-          schema: {
-            field: 'selectLogisticsOrderVO.tenantryNo',
-            label: '用户编号',
-          },
-        }]
+        schema: {
+          field: 'selectLogisticsOrderVO.tenantryNo',
+          label: '用户编号',
+        },
+      }]
       : []),
-    {
+    ...showObj(!isSpotRole, {
       schema: {
         field: 'selectOrderProductVO.deliveryMethod',
         label: '发货类型',
@@ -210,7 +212,7 @@ export const getOrderFilter: (params?: OrderPageParams) => SearchTableSchema[] =
           },
         ],
       },
-    },
+    } as SearchTableSchema),
     ...showObj(isAdmin(), consignmentStatus),
     // {
     //   schema: {
