@@ -10,10 +10,12 @@ import {
   Message,
   Space,
   Typography,
+  Select,
 } from '@arco-design/web-react';
 import { useLocalStorageState, useSessionStorageState } from 'ahooks';
 
 const { Title, Text } = Typography;
+const { Option } = Select;
 
 // 用户验证信息
 const userInfos = [
@@ -22,12 +24,28 @@ const userInfos = [
   { name: 'yunyi168', psd: 'yunyi168' },
 ];
 
+// 运费选项
+const shippingFeeOptions = [
+  { label: '運費 (0-60cm): $65', value: '運費 (0-60cm): $65' },
+  { label: '運費 (61-90cm): $70', value: '運費 (61-90cm): $70' },
+  { label: '運費 (91-120cm): $90', value: '運費 (91-120cm): $90' },
+  { label: '運費 (121-140cm): $105', value: '運費 (121-140cm): $105' },
+  { label: '運費 (141-160cm): $135', value: '運費 (141-160cm): $135' },
+  { label: '運費 (161-180cm): $180', value: '運費 (161-180cm): $180' },
+  { label: '運費 (181-200cm): $285', value: '運費 (181-200cm): $285' },
+  { label: '運費 (201-240cm): $365', value: '運費 (201-240cm): $365' },
+];
+
+
+
 // Coupang表头定义
 const coupangHeaders = [
   '品類',
   '商品名稱',
   '銷售期間(起)',
   '銷售期間(迄)',
+  '商品狀態',
+  '狀態說明',
   '品牌',
   '製造商',
   '關鍵字',
@@ -39,6 +57,10 @@ const coupangHeaders = [
   '選項值 3',
   '選項名稱 4',
   '選項值 4',
+  '選項名稱 5',
+  '選項值 5',
+  '選項名稱 6',
+  '選項值 6',
   '篩選條件 1',
   '篩選值 1',
   '篩選條件 2',
@@ -47,7 +69,40 @@ const coupangHeaders = [
   '篩選值 3',
   '篩選條件 4',
   '篩選值 4',
+  '篩選條件 5',
+  '篩選值 5',
+  '篩選條件 6',
+  '篩選值 6',
+  '篩選條件 7',
+  '篩選值 7',
+  '篩選條件 8',
+  '篩選值 8',
+  '篩選條件 9',
+  '篩選值 9',
+  '篩選條件 10',
+  '篩選值 10',
+  '篩選條件 11',
+  '篩選值 11',
+  '篩選條件 12',
+  '篩選值 12',
+  '篩選條件 13',
+  '篩選值 13',
+  '篩選條件 14',
+  '篩選值 14',
+  '篩選條件 15',
+  '篩選值 15',
+  '篩選條件 16',
+  '篩選值 16',
+  '篩選條件 17',
+  '篩選值 17',
+  '篩選條件 18',
+  '篩選值 18',
+  '篩選條件 19',
+  '篩選值 19',
+  '篩選條件 20',
+  '篩選值 20',
   '售價',
+  '代售手續費',
   '原價',
   '庫存數量',
   '出貨準備時間',
@@ -56,9 +111,24 @@ const coupangHeaders = [
   '購買上限(天)',
   '限制級商品',
   '營業稅',
+  '是否平行進口',
+  '海外代購商品',
   '賣家商品編號',
   '型號',
   '條碼',
+  '證書名稱',
+  '證書編碼',
+  '認證∙行動通訊預先承諾書或認證代理商證書',
+  '認證∙銷售商預先承諾認證標誌或行動通訊公司代理商認證標誌',
+  '認證∙申報等資訊類型',
+  '認證∙申報等資訊價值',
+  '認證∙行動通訊預先承諾書或認證代理商證書',
+  '認證∙銷售商預先承諾認證標誌或行動通訊公司代理商認證標誌',
+  '認證∙申報等資訊類型',
+  '認證∙申報等資訊價值',
+  '認證∙行動通訊預先承諾書或認證代理商證書',
+  '認證∙銷售商預先承諾認證標誌或行動通訊公司代理商認證標誌',
+  '訂單補充訊息',
   '類別',
   '欄位 1',
   '欄位 2',
@@ -75,7 +145,11 @@ const coupangHeaders = [
   '欄位 13',
   '欄位 14',
   '代表圖片',
+  '主要圖片（矩形）',
   '其他圖片',
+  '狀態圖片（二手商品）',
+  '重複圖片',
+  '圖片質量',
   '詳細說明',
 ];
 
@@ -87,7 +161,7 @@ function Coupang() {
   });
   const [localForm, setLocalForm] = useLocalStorageState('coupang-form-data', {
     defaultValue: {
-      shippingFee: 65,
+      shippingFee: shippingFeeOptions[0].value,
       preparationDays: 7,
       stockQuantity: 200,
       prieceShouJia: 12, // 售价倍数
@@ -103,7 +177,6 @@ function Coupang() {
       const file = formData.files[0].originFile;
       const fileName = file.name.split('.')[0];
       const newName = `${fileName}_coupang`;
-
       // 保存表单配置到本地存储
       setLocalForm({
         shippingFee: formData.shippingFee,
@@ -172,6 +245,8 @@ function Coupang() {
             productName, // 商品名稱
             '', // 銷售期間(起)
             '', // 銷售期間(迄)
+            '',
+            '',
             '無', // 品牌
             '', // 製造商
             '', // 關鍵字
@@ -183,6 +258,10 @@ function Coupang() {
             variantValue3, // 選項值 3
             '', // 選項名稱 4
             '', // 選項值 4
+            '', // 選項名稱 5
+            '', // 選項值 5
+            '', // 選項名稱 6
+            '', // 選項值 6
             '', // 篩選條件 1
             '', // 篩選值 1
             '', // 篩選條件 2
@@ -191,7 +270,40 @@ function Coupang() {
             '', // 篩選值 3
             '', // 篩選條件 4
             '', // 篩選值 4
+            '', // 篩選條件 5
+            '', // 篩選值 5
+            '', // 篩選條件 6
+            '', // 篩選值 6
+            '', // 篩選條件 7
+            '', // 篩選值 7
+            '', // 篩選條件 8
+            '', // 篩選值 8
+            '', // 篩選條件 9
+            '', // 篩選值 9
+            '', // 篩選條件 10
+            '', // 篩選值 10
+            '', // 篩選條件 11
+            '', // 篩選值 11
+            '', // 篩選條件 12
+            '', // 篩選值 12
+            '', // 篩選條件 13
+            '', // 篩選值 13
+            '', // 篩選條件 14
+            '', // 篩選值 14
+            '', // 篩選條件 15
+            '', // 篩選值 15
+            '', // 篩選條件 16
+            '', // 篩選值 16
+            '', // 篩選條件 17
+            '', // 篩選值 17
+            '', // 篩選條件 18
+            '', // 篩選值 18
+            '', // 篩選條件 19
+            '', // 篩選值 19
+            '', // 篩選條件 20
+            '', // 篩選值 20
             salePrice, // 售價
+            '', // 代售手續費
             originalPrice, // 原價
             stock, // 庫存數量
             formData.preparationDays, // 出貨準備時間
@@ -200,9 +312,24 @@ function Coupang() {
             '', // 購買上限(天)
             '', // 限制級商品
             '', // 營業稅
+            '', // 是否平行進口
+            '', // 海外代購商品
             sku, // 賣家商品編號
             '', // 型號
             '', // 條碼
+            '', // 證書名稱
+            '', // 證書編碼
+            '', // 認證∙行動通訊預先承諾書或認證代理商證書
+            '', // 認證∙銷售商預先承諾認證標誌或行動通訊公司代理商認證標誌
+            '', // 認證∙申報等資訊類型
+            '', // 認證∙申報等資訊價值
+            '', // 認證∙行動通訊預先承諾書或認證代理商證書
+            '', // 認證∙銷售商預先承諾認證標誌或行動通訊公司代理商認證標誌
+            '', // 認證∙申報等資訊類型
+            '', // 認證∙申報等資訊價值
+            '', // 認證∙行動通訊預先承諾書或認證代理商證書
+            '', // 認證∙銷售商預先承諾認證標誌或行動通訊公司代理商認證標誌
+            '', // 訂單補充訊息
             'TW_General', // 類別
             '',
             '',
@@ -219,7 +346,11 @@ function Coupang() {
             '',
             '', // 欄位 1-14
             productImages[0] || '', // 代表圖片
+            '', // 主要圖片（矩形）
             otherImages, // 其他圖片
+            '',// 狀態圖片（二手商品）
+            '',// 重複圖片
+            '',// 圖片質量
             detailDescription, // 詳細說明
           ];
 
@@ -290,19 +421,18 @@ function Coupang() {
           </Form.Item>
 
           <Form.Item
-            rules={[
-              { required: true, message: '请输入运费' },
-              { type: 'number', min: 0, message: '运费不能为负数' },
-            ]}
+            rules={[{ required: true, message: '请选择运费' }]}
             label="运费"
             field="shippingFee"
-            extra="单位：元"
+            extra="根据商品尺寸选择对应的运费标准"
           >
-            <InputNumber
-              placeholder="请输入运费"
-              style={{ width: '100%' }}
-              min={0}
-            />
+            <Select placeholder="请选择运费" style={{ width: '100%' }}>
+              {shippingFeeOptions.map((option) => (
+                <Option key={option.value} value={option.value}>
+                  {option.label}
+                </Option>
+              ))}
+            </Select>
           </Form.Item>
 
           <Form.Item
