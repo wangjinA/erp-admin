@@ -19,26 +19,31 @@ export function getExcleData(file): Promise<any[][]> {
 export function exportToExcel(
   data: any[][],
   fileName: string,
-  columnWidths: any[] = []
+  columnWidths: any[] = [],
+  format: 'xlsx' | 'xls' | 'xlsm' = 'xlsx'
 ) {
-  // 创建工作簿
   const workbook = XLSX.utils.book_new();
-  // 创建工作表
   const worksheet = XLSX.utils.aoa_to_sheet(data);
-
   worksheet['!cols'] = columnWidths;
-
-  // 将工作表添加到工作簿
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-  // 生成Excel文件的二进制数据
-  const excelData = XLSX.write(workbook, { type: 'array', bookType: 'xlsx' });
-  // 创建Blob对象
-  const blob = new Blob([excelData], {
-    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+
+  // 这里已经是对的：xls 用 biff8，其他用本身
+  const bookType = format === 'xls' ? 'biff8' : format;
+
+  const excelData = XLSX.write(workbook, {
+    type: 'array',
+    bookType: bookType as XLSX.BookType,
   });
-  // 创建下载链接
+
+  const mimeTypes = {
+    xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    xls: 'application/vnd.ms-excel',
+    xlsm: 'application/vnd.ms-excel.sheet.macroEnabled.12', // ✅ 这个要这样
+  } as const;
+
+  const blob = new Blob([excelData], { type: mimeTypes[format] });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
-  link.download = `${fileName}.xlsx`;
+  link.download = `${fileName}.${format}`;
   link.click();
 }
