@@ -132,7 +132,7 @@ function Coupang() {
       // 转换数据 - 包含3行表头
       const convertedData = [coupangHeaderRow1, coupangHeaderRow2, coupangHeaderRow3, coupangHeaderRow4];
 
-      dataRows.slice(0, 1).forEach((row) => {
+      dataRows.forEach((row) => {
         try {
           // 原表字段映射（根据表头顺序）
           const productName = row[0] || ''; // 产品名称
