@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import { labelClass, valueClass } from '.'
 
 import LabelValue from '@/components/LabelValue'
-import { useDictOptions } from '@/components/Selectors/DictSelector'
+import { DictNameFC, useDictOptions } from '@/components/Selectors/DictSelector'
 import { EntrepotNameFC } from '@/components/Selectors/EntrepotSelector'
 import { ShopNameFC } from '@/components/Selectors/ShopRadio'
 import { isAdmin, isClient } from '@/routes'
@@ -52,9 +52,9 @@ export default ({ data }: { data: OrderResponseItem }) => {
                 className="w-[180px]"
                 label="Shopee状态"
                 value={
-                  shopeeStatus?.find(
-                    oitem => oitem.value === data.shopeeStatus,
-                  )?.label || '-'
+                  <span className={[ShopeeStatus['取消中'], ShopeeStatus['已取消']].includes(data.shopeeStatus) ? 'text-red-500 font-bold' : ''}>
+                    <DictNameFC dictCode="shopee_status" value={data.shopeeStatus} />
+                  </span>
                 }
               >
               </LabelValue>

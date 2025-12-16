@@ -3,6 +3,7 @@ import GoodsInfo from "@/components/GoodsInfo"
 import LabelValue from "@/components/LabelValue"
 import { DictNameFC } from "@/components/Selectors/DictSelector"
 import { ShopNameFC } from "@/components/Selectors/ShopRadio"
+import { ShopeeStatus } from "@/constants/order"
 import { bus, EmitTypes } from "@/hooks/useEventBus"
 import { OrderResponseItem } from "@/types/order"
 import { showMessage, showModal } from "@/utils"
@@ -95,7 +96,9 @@ export default (props: ChangeOrderButton) => {
             render(c, row) {
               return <Space direction="vertical" size={5}>
                 <LabelValue label="订单编号" value={row.shrimpOrderNo} />
-                <LabelValue label="Shopee状态" value={<DictNameFC dictCode="shopee_status" value={row.shopeeStatus} />} />
+                <span className={[ShopeeStatus['取消中'], ShopeeStatus['已取消']].includes(row.shopeeStatus) ? 'text-red-500 font-bold' : ''}>
+                  <LabelValue label="Shopee状态" value={<DictNameFC dictCode="shopee_status" value={row.shopeeStatus} />} />
+                </span>
                 <LabelValue label="店铺" value={<ShopNameFC value={row.platformShopId}></ShopNameFC>} />
                 <LabelValue label="创建时间" value={row.createTime} />
                 {/* <LabelValue label="最后发货时间" value={<ShopNameFC value={row.platformShopId}></ShopNameFC>} /> */}
