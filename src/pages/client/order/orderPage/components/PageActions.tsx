@@ -83,10 +83,14 @@ function PageActions(props: PageActionsProps) {
       ...pre,
       ...cur,
     }), {})
-    const batchList = orderIds.filter(id => !data.list.find(o => o.id === id)?.shippingTime).map(orderId => ({
+    console.log('orderIds', orderIds)
+    const batchList = orderIds
+    // .filter(id => !data.list.find(o => o.id === id)?.shippingTime)
+    .map(orderId => ({
       orderId,
       senderRealName: entrepotSenderMap[data.list.find(o => o.id === orderId)?.sendWarehouse]?.default || SystemName,
     }))
+    console.log('batchList', batchList)
     if (!batchList.length) {
       return Message.info('已全部出货成功')
     }
