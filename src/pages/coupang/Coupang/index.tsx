@@ -146,8 +146,8 @@ function Coupang() {
           const variantName2 = `尺寸
 [必填]`
           const variantValue2 = row[7] || ''; // 变种选项2
-          const variantName3 = row[8] || ''; // 变种名称3
-          const variantValue3 = row[9] || ''; // 变种选项3
+          // const variantName3 = row[8] || ''; // 变种名称3
+          // const variantValue3 = row[9] || ''; // 变种选项3
           const price = Number(row[10]) || 0; // 价格
           const promoPrice = Number(row[11]) || 0; // 促销价
           const currency = row[12] || 'CNY'; // 货币单位
@@ -197,14 +197,14 @@ function Coupang() {
             variantValue1, // 選項值 1
             variantName2, // 選項名稱 2
             variantValue2, // 選項值 2
-            variantName3, // 選項名稱 3
-            variantValue3, // 選項值 3
-            '', // 選項名稱 4
-            '', // 選項值 4
-            '', // 選項名稱 5
-            '', // 選項值 5
-            '', // 選項名稱 6
-            '', // 選項值 6
+            '無',// variantName3, // 選項名稱 3
+            '無',// variantValue3, // 選項值 3
+            '無', // 選項名稱 4
+            '無', // 選項值 4
+            '無', // 選項名稱 5
+            '無', // 選項值 5
+            '無', // 選項名稱 6
+            '無', // 選項值 6
             // 搜尋篩選 1-4 (8列)
             '', '', '', '', '', '', '', '',
             // Unexposed attribute 5-10 (12列)
@@ -269,8 +269,10 @@ function Coupang() {
             // 詳細說明 (1列)
             detailDescription, // 詳細說明
           ];
-
-          convertedData.push(convertedRow);
+          const curCount = convertedData.filter(row => row[1] === productName).length;
+          if (curCount < 200) {
+            convertedData.push(convertedRow);
+          }
         } catch (error) {
           console.error('转换行数据失败:', error);
         }
