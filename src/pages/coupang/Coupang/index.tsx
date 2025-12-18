@@ -193,10 +193,10 @@ function Coupang() {
             '', // 製造商
             '', // 關鍵字
             // 選項 (12列)
-            variantName1, // 選項名稱 1
-            variantValue1, // 選項值 1
-            variantName2, // 選項名稱 2
-            variantValue2, // 選項值 2
+            variantName1 || '無', // 選項名稱 1
+            variantValue1 || '無', // 選項值 1
+            variantName2 || '無', // 選項名稱 2
+            variantValue2 || '無', // 選項值 2
             '無',// variantName3, // 選項名稱 3
             '無',// variantValue3, // 選項值 3
             '無', // 選項名稱 4
