@@ -11,8 +11,8 @@ import StoreListUtilsSchema from './schema'
 import { ShopStore, shopStoreAPI } from '@/api/client/shopStore'
 import { shipmentAPI } from '@/api/shopeeUtils/shipment'
 import { ProcessInfo } from '@/api/shopeeUtils/types'
-import KF1 from '@/assets/wx/kf1.png'
-import KF2 from '@/assets/wx/kf2.png'
+// import KF1 from '@/assets/wx/kf1.png'
+// import KF2 from '@/assets/wx/kf2.png'
 
 // import ZfbSkM from '@/assets/zfb_skm.png'
 import FilterForm from '@/components/FilterForm'
@@ -223,11 +223,12 @@ const StoreList: React.FC<StoreListProps> = (props) => {
                           content: (
                             <div>
                               <div className="mb-2">
-                                确定申请权限？申请后联系客服同意授权：
-                                {KF}
+                                确定申请权限？
+                                {/* 申请后联系客服同意授权：
+                                {KF} */}
                               </div>
                               <Alert type="success" content={notice?.data || ''}></Alert>
-                              <Space className="items-start">
+                              {/* <Space className="items-start">
                                 <Image
                                   width={200}
                                   src={KF1}
@@ -236,7 +237,7 @@ const StoreList: React.FC<StoreListProps> = (props) => {
                                   width={200}
                                   src={KF2}
                                 />
-                              </Space>
+                              </Space> */}
                             </div>
                           ),
                           okButtonProps: {
