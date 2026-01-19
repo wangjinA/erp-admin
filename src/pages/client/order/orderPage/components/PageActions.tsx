@@ -124,6 +124,19 @@ function PageActions(props: PageActionsProps) {
     manual: true,
   })
 
+  const batchGetTrackingNumberHandle = useRequest(async () => {
+    if (!selectIds.length) {
+      return Message.error('请选择订单')
+    }
+    await showMessage(() => adminOrderApi.batchGetTrackingNumber(selectIds), '批量申请面单')
+    Modal.success({
+      title: '温馨提示',
+      content: '批量申请面单已提交，请等待几分钟后再下载面单。',
+    })
+  }, {
+    manual: true,
+  })
+
   const isNotOutOrder = dictCode !== OrderPageDict.OUT_ORDER_STATUS
 
   const { run: printPickListHandle, loading: printPickListLoading } = useRequest(async (printType: PrintType) => {
@@ -212,6 +225,16 @@ function PageActions(props: PageActionsProps) {
       >
         批量更新订单
       </RefreshButton>
+      <Button
+        type="outline"
+        status="danger"
+        loading={batchGetTrackingNumberHandle.loading}
+        onClick={() => {
+          batchGetTrackingNumberHandle.run()
+        }}
+      >
+        批量申请面单
+      </Button>
       {isNotOutOrder ? (
         <>
           <DownloadSheetButton getPageQuery={getPageQuery} selectIds={selectIds}></DownloadSheetButton>

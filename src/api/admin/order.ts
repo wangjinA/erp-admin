@@ -25,6 +25,12 @@ export const orderAPI = {
       orderIdList,
     })
   },
+  /**
+   * 批量获取面单号
+   */
+  batchGetTrackingNumber(orderIdList: any[]) {
+    return baseAxios.post('/api/logistics/order/get/tracking/number/batch', orderIdList)
+  },
   refresh(orderIdList: string[]) {
     return baseAxios.post(`/api/logistics/order/batch/update/order`, orderIdList)
   },
