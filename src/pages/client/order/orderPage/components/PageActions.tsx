@@ -85,11 +85,11 @@ function PageActions(props: PageActionsProps) {
     }), {})
     console.log('orderIds', orderIds)
     const batchList = orderIds
-    // .filter(id => !data.list.find(o => o.id === id)?.shippingTime)
-    .map(orderId => ({
-      orderId,
-      senderRealName: entrepotSenderMap[data.list.find(o => o.id === orderId)?.sendWarehouse]?.default || SystemName,
-    }))
+      // .filter(id => !data.list.find(o => o.id === id)?.shippingTime)
+      .map(orderId => ({
+        orderId,
+        senderRealName: entrepotSenderMap[data.list.find(o => o.id === orderId)?.sendWarehouse]?.default || SystemName,
+      }))
     console.log('batchList', batchList)
     if (!batchList.length) {
       return Message.info('已全部出货成功')
@@ -128,10 +128,16 @@ function PageActions(props: PageActionsProps) {
     if (!selectIds.length) {
       return Message.error('请选择订单')
     }
-    await showMessage(() => adminOrderApi.batchGetTrackingNumber(selectIds), '批量申请面单')
-    Modal.success({
-      title: '温馨提示',
-      content: '批量申请面单已提交，请等待几分钟后再下载面单。',
+    showModal({
+      content: `确定批量申请面单？(${selectIds.length}个)`,
+      onOk: async () => {
+        const shrimpOrderNos = selectIds.map(id => data.list.find(item => item.id === id)?.shrimpOrderNo)
+        await showMessage(() => adminOrderApi.batchGetTrackingNumber(shrimpOrderNos), '批量申请面单')
+        Modal.success({
+          title: '温馨提示',
+          content: '批量申请面单已提交，请等待几分钟后再下载面单。',
+        })
+      },
     })
   }, {
     manual: true,

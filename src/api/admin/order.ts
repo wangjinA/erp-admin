@@ -28,8 +28,8 @@ export const orderAPI = {
   /**
    * 批量获取面单号
    */
-  batchGetTrackingNumber(orderIdList: any[]) {
-    return baseAxios.post('/api/logistics/order/get/tracking/number/batch', orderIdList)
+  batchGetTrackingNumber(shrimpOrderNos: string[]) {
+    return baseAxios.post('/api/logistics/order/get/tracking/number/batch', shrimpOrderNos)
   },
   refresh(orderIdList: string[]) {
     return baseAxios.post(`/api/logistics/order/batch/update/order`, orderIdList)
